@@ -25,7 +25,7 @@
 
 
     <!-- Theme Config Js -->
-    <script src="{{URL::asset('/admin/js/theme-script.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/js/theme-script.js')}}" type=""></script>
 
 
 
@@ -73,69 +73,73 @@
         @include('../elements/admin/header')
 
         <!--Content-->
-        <!-- <div class="app-body"> -->
         <!--Left Side Bar-->
         @include('../elements/admin/left-side-bar')
 
+        <div class="page-wrapper">
+
         @yield('content')
 
-        <!-- </div> -->
-        <!--Footer-->
-        @include('../elements/admin/footer')
+      
+         <!--Footer-->
+            @include('../elements/admin/footer')
+
+        </div>
 
 
 
 
     </div>
     <!-- End Main Wrapper -->
-
     <!-- jQuery -->
-    <script src="{{URL::asset('/admin/js/jquery-3.7.1.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <!-- <script src="{{URL::asset('/admin/js/jquery-3.7.1.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script> -->
+    <script src="{{URL::asset('/admin/js/jquery-3.7.1.min.js')}}" type=""></script>
+
 
     <!-- Bootstrap Core JS -->
-    <script src="{{URL::asset('/admin/js/bootstrap.bundle.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/js/bootstrap.bundle.min.js')}}" type=""></script>
 
     <!-- Select2 JS -->
-    <script src="{{URL::asset('/admin/plugins/select2/js/select2.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/select2/js/select2.min.js')}}" type=""></script>
 
     <!-- Simplebar JS -->
-    <script src="{{URL::asset('/admin/plugins/simplebar/simplebar.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/simplebar/simplebar.min.js')}}" type=""></script>
 
 
 
     <!-- Flatpickr JS -->
-    <script src="{{URL::asset('/admin/plugins/flatpickr/flatpickr.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/flatpickr/flatpickr.min.js')}}" type=""></script>
 
 
 
     <!-- Sticky Sidebar JS -->
-    <script src="{{URL::asset('/admin/plugins/theia-sticky-sidebar/ResizeSensor.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/theia-sticky-sidebar/ResizeSensor.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js')}}" type=""></script>
 
     <!-- Daterangepikcer JS -->
-    <script src="{{URL::asset('/admin/js/moment.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/plugins/daterangepicker/daterangepicker.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/js/moment.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/plugins/daterangepicker/daterangepicker.js')}}" type=""></script>
 
     <!-- Datatable JS -->
-    <script src="{{URL::asset('/admin/js/jquery.dataTables.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/js/dataTables.bootstrap5.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/js/jquery.dataTables.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/js/dataTables.bootstrap5.min.js')}}" type=""></script>
 
     <!-- Chart JS -->
-    <script src="{{URL::asset('/admin/plugins/apexchart/apexcharts.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/plugins/apexchart/chart-data.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/apexchart/apexcharts.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/plugins/apexchart/chart-data.js')}}" type=""></script>
 
 
 
     <!-- Chart JS -->
-    <script src="{{URL::asset('/admin/plugins/c3-chart/d3.v5.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/plugins/c3-chart/c3.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
-    <script src="{{URL::asset('/admin/plugins/c3-chart/chart-data.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/c3-chart/d3.v5.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/plugins/c3-chart/c3.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/admin/plugins/c3-chart/chart-data.js')}}" type=""></script>
 
     <!-- Select2 JS -->
-    <script src="{{URL::asset('/admin/plugins/select2/js/select2.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/plugins/select2/js/select2.min.js')}}" type=""></script>
 
     <!-- Main JS -->
-    <script src="{{URL::asset('/admin/js/script.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script>
+    <script src="{{URL::asset('/admin/js/script.js')}}" type=""></script>
 
     @yield('scripts')
 </body>

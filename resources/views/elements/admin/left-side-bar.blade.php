@@ -43,13 +43,10 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                <li><a href="index.html" class="active">Dashboard 1</a></li>
-                                <li><a href="index-2.html" class="">Dashboard 2</a></li>
-                                <li><a href="index-3.html" class="">Dashboard 3</a></li>
-                                <li><a href="index-4.html" class="">Dashboard 4</a></li>
+                                <li><a href="#" class="active">Dashboard</a></li>
                             </ul>
                         </li>
-                        <li class="submenu">
+                        <!-- <li class="submenu">
                             <a href="javascript:void(0);" class="">
                                 <i class="ti ti-apps"></i><span>Applications</span>
                                 <span class="menu-arrow"></span>
@@ -85,23 +82,23 @@
                                 <li><a href="social-feed.html" class="">Social Feed</a></li>
                                 <li><a href="search-list.html" class="">Search Result</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
-                <li class="menu-title"><span>Peoples & Teams</span></li>
+                <li class="menu-title"><span>Academics</span></li>
                 <li>
                     <ul>
                         <li class="">
                             <a href="companies.html">
-                                <i class="ti ti-building-community"></i><span>Companies</span>
+                                <i class="ti ti-building-community"></i><span>Insitutions</span>
                             </a>
                         </li>
                         <li class="">
                             <a href="employees.html">
-                                <i class="ti ti-users-group"></i><span>Employee</span>
+                                <i class="ti ti-users-group"></i><span>Students</span>
                             </a>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="leaves.html" class="">
                                 <i class="ti ti-calendar-star"></i><span>Leaves</span>
                             </a>
@@ -110,10 +107,10 @@
                             <a href="reviews.html" class="">
                                 <i class="ti ti-user-bolt"></i><span>Reviews</span>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
-                <li class="menu-title"><span>Utilities & Reports</span></li>
+                <!-- <li class="menu-title"><span>Utilities & Reports</span></li>
                 <li>
                     <ul>
                         <li class="">
@@ -364,7 +361,7 @@
                             </ul>
                         </li>
                     </ul>
-                </li>
+                </li> -->
             </ul>
         </div>
         <div class="sidebar-footer">

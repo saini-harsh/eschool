@@ -40,6 +40,7 @@ Template Name: Dleohr - Bootstrap Admin Template
 	function init() {
 		var $this = Sidemenu;
 		$('.sidebar-menu a').on('click', function(e) {
+			
 			if($(this).parent().hasClass('submenu')) {
 				e.preventDefault();
 			}
