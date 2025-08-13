@@ -6,12 +6,12 @@
         <div>
             <!-- Logo Normal -->
             <a href="index.html" class="logo logo-normal">
-                <img src="{{ asset('/admin/img/logo.svg') }}" alt="Logo">
+                <img src="{{ asset('/admin/img/logo.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Small -->
             <a href="index.html" class="logo-small">
-                <img src="{{ asset('/admin/img/logo-small.svg') }}" alt="Logo">
+                <img src="{{ asset('/admin/img/logo-small.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Dark -->
