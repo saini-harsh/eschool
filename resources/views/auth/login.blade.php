@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{{ URL::asset('/admin/img/favicon.png') }}">
     <title>Login - ESchool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -157,7 +158,7 @@
 
 <body>
     <div class="login-container">
-        <img src="{{ asset('images/logo.png') }}" alt="ESchool Logo" />
+        <img src="{{ asset('/admin/img/logo.png') }}" alt="ESchool Logo" />
         <h2>Login Details</h2>
         @if (session('error'))
             <div class="alert alert-danger">
