@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('logo')->nullable();
             $table->string('email')->unique();
-            $table->json('roles')->nullable();
+            $table->string('role')->default('admin');
             $table->json('setservices')->nullable();
             $table->string('password');
             $table->string('decrypt_pw');

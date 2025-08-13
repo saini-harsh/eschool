@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Super Admin',
             'logo' => 'admin_logo.png',
             'email' => 'admin@gmail.com',
-            'roles' => json_encode(["institutions", "teachers", "students"]),
+            'role' => 'admin',
             'setservices' => json_encode([]),
             'password' => Hash::make('admin'),
             'decrypt_pw' => 'admin',

@@ -10,13 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
         rel="stylesheet">
 
     <!-- Login CSS -->
     <!-- <link rel="stylesheet" href="{{ asset('css/login.css') }}"> -->
-     <style>
+    <style>
         * {
             box-sizing: border-box;
         }
@@ -38,7 +37,7 @@
             max-width: 420px;
             padding: 30px 25px;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
 
@@ -138,28 +137,33 @@
 
         @media (max-width: 480px) {
             .login-container {
-            padding: 25px 20px;
+                padding: 25px 20px;
             }
 
             .login-container img {
-            width: 130px;
+                width: 130px;
             }
 
             .input-field input {
-            font-size: 13px;
+                font-size: 13px;
             }
 
             .roles-grid {
-            grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-     </style>
+    </style>
 </head>
 
 <body>
-<div class="login-container">
+    <div class="login-container">
         <img src="{{ asset('images/logo.png') }}" alt="ESchool Logo" />
         <h2>Login Details</h2>
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('login.submit') }}">
             @csrf
@@ -176,7 +180,8 @@
 
             <!-- Role Select Dropdown -->
             <div class="input-field">
-                <select name="role" required style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 14px;">
+                <select name="role" required
+                    style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 14px;">
                     <option value="" disabled selected>Select Role</option>
                     <option value="admin">Admin</option>
                     <option value="institution">Institution</option>
@@ -206,19 +211,16 @@
         function autoLogin(role) {
             let email = '';
             let password = '';
-            if(role === 'admin'){
+            if (role === 'admin') {
                 email = 'admin@gmail.com';
                 password = 'admin';
-            }
-            else if(role === 'institution'){
+            } else if (role === 'institution') {
                 email = 'greenvalley@example.com'; // example, update as needed
                 password = 'school123';
-            }
-            else if(role === 'teacher'){
+            } else if (role === 'teacher') {
                 email = 'rajesh.green@example.com'; // example
                 password = 'teacher123';
-            }
-            else if(role === 'student'){
+            } else if (role === 'student') {
                 email = 'priya.rajesh@example.com'; // example
                 password = 'student123';
             }

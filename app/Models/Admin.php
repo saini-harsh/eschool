@@ -2,9 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
-    //
+    use Notifiable;
+
+    protected $fillable = [
+        'name',
+        'logo',
+        'email',
+        'role',
+        'setservices',
+        'password',
+        'decrypt_pw',
+        'status'
+    ];
+
+    protected $hidden = [
+        'password',
+        'decrypt_pw',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'setservices' => 'array',
+        'status' => 'boolean',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
 }
