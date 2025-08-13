@@ -16,6 +16,6 @@ class InstitutionController extends Controller
 
     public function logout()
     {
-        Auth::guard('teacher')->logout();
+        Auth::guard('institution')->logout();
     }
 }

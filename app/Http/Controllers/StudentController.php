@@ -16,6 +16,6 @@ class StudentController extends Controller
 
     public function logout()
     {
-        Auth::guard('teacher')->logout();
+        Auth::guard('student')->logout();
     }
 }

@@ -25,5 +25,6 @@ Route::middleware('admin')->group(function () {
     });
 });
 
+require_once __DIR__ . '/institution.php';
 require_once __DIR__ . '/teacher.php';
 require_once __DIR__ . '/student.php';
