@@ -63,9 +63,6 @@
 </head>
 
 <body>
-
-
-
     <!-- Start Main Wrapper -->
     <div class="main-wrapper">
 
@@ -78,16 +75,12 @@
 
         <div class="page-wrapper">
 
-        @yield('content')
+            @yield('content')
 
-      
-         <!--Footer-->
+            <!--Footer-->
             @include('../elements/admin/footer')
 
         </div>
-
-
-
 
     </div>
     <!-- End Main Wrapper -->

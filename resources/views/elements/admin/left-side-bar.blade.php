@@ -89,8 +89,18 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="companies.html">
+                            <a href="{{ route('admin.institutions') }}">
                                 <i class="ti ti-building-community"></i><span>Insitutions</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{ route('admin.teachers') }}">
+                                <i class="ti ti-users-group"></i><span>Teachers</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="employees.html">
+                                <i class="ti ti-users-group"></i><span>Students</span>
                             </a>
                         </li>
                         <li class="">

@@ -54,6 +54,8 @@ class AuthController extends Controller
         return back()->with('error', 'Invalid credentials for the selected role.');
     }
 
+
+
     public function logout(Request $request)
     {
         $guard = $request->session()->get('auth_guard', 'web');
@@ -64,4 +66,5 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
 }

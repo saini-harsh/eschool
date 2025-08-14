@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\Admin\InstitutionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +24,8 @@ Route::middleware('admin')->group(function () {
     // Place admin-protected routes here, e.g.:
     Route::prefix('admin')->group(function(){
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/institutions',[InstitutionController::class,'index'])->name('admin.institutions');
+        Route::get('/teachers',[TeacherController::class,'index'])->name('admin.teachers');
     });
 });
 
