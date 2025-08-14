@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\Institution;
+use App\Models\Section;
 use App\Models\Teacher;
 use App\Models\Student;
 
@@ -239,5 +240,34 @@ class DatabaseSeeder extends Seeder
             ]));
         }
         // Students End
+
+        // Sections start
+        $sections = [
+            // Rajesh's Students
+            [
+                'name' => 'A',
+            ],
+            [
+                'name' => 'B',
+            ],
+            [
+                'name' => 'C',
+            ],
+            [
+                'name' => 'D',
+            ],
+            [
+                'name' => 'E',
+            ],
+            [
+                'name' => 'F',
+            ],
+        ];
+        foreach ($sections as $s) {
+            Section::create(array_merge($s, [
+                'status' => 1
+            ]));
+        }
+        // Sections end
     }
 }
