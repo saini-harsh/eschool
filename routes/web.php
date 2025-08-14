@@ -26,6 +26,10 @@ Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('/institutions',[InstitutionController::class,'index'])->name('admin.institutions');
         Route::get('/teachers',[TeacherController::class,'index'])->name('admin.teachers');
+        Route::get('/add-teacher',[TeacherController::class,'AddTeacher'])->name('admin.add-teacher');
+        Route::post('/store-teacher',[TeacherController::class,'StoreTeacher'])->name('admin.store-teacher');
+        Route::get('/teachers/{teacher}', [TeacherController::class, 'EditTeacher'])->name('admin.edit-teacher');
+        Route::post('/teachers/{teacher}',[TeacherController::class,'UpdateTeacher'])->name('admin.update-teacher');
     });
 });
 

@@ -133,8 +133,6 @@
 
     <!-- Main JS -->
     <script src="{{URL::asset('/admin/js/script.js')}}" type=""></script>
-
-    @yield('scripts')
 </body>
 
 </html>

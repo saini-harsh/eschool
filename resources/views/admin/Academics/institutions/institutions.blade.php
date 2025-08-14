@@ -192,8 +192,8 @@
                                 <td>
                                     <div>
                                         <select class="select">
-                                            <option>Active</option>
-                                            <option>Inactive</option>
+                                        <option value="1" {{ $institution->status === 1 ? 'selected' : '' }}>Active</option>
+                                        <option value="0" {{ $institution->status === 0 ? 'selected' : '' }}>Inactive</option>
                                         </select>
                                     </div>
                                 </td>
