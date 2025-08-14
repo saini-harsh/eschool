@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Academic\SectionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -24,7 +25,7 @@ Route::middleware('admin')->group(function () {
     // Place admin-protected routes here, e.g.:
     Route::prefix('admin')->group(function(){
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-        
+
         Route::get('/institutions',[InstitutionController::class,'Index'])->name('admin.institutions.index');
         Route::get('/add-institution',[InstitutionController::class,'Create'])->name('admin.institutions.create');
         Route::post('/store-institution',[InstitutionController::class,'Store'])->name('admin.institutions.store');

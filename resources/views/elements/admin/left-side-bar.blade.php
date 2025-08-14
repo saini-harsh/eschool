@@ -129,7 +129,7 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.academic.sections') }}">
                                 <i class="ti ti-menu-2"></i><span>Section</span>
                             </a>
                         </li>
