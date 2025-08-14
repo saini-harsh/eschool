@@ -17,15 +17,15 @@ class TeacherController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index(){
+    public function Index(){
         $teachers = Teacher::all();
-        return view('admin.Academics.teachers.teachers',compact('teachers'));
+        return view('admin.administration.teachers.index',compact('teachers'));
     }
-    public function AddTeacher(){
+    public function Create(){
         $institutions = Institution::all();
-        return view('admin.Academics.teachers.add-teacher',compact('institutions'));
+        return view('admin.administration.teachers.create',compact('institutions'));
     }
-    public function StoreTeacher(Request $request)
+    public function Store(Request $request)
     {
         $request->validate([
             'first_name'      => 'required|string|max:255',
@@ -90,16 +90,16 @@ class TeacherController extends Controller
             // Send email or notification logic here
         }
 
-        return redirect()->route('admin.teachers')->with('success', 'Teacher added successfully!');
+        return redirect()->route('admin.teachers.index')->with('success', 'Teacher added successfully!');
 
     }
-    public function EditTeacher(Teacher $teacher)
+    public function Edit(Teacher $teacher)
     {
         $institutions = Institution::all();
 
-        return view('admin.Academics.teachers.edit-teacher', compact('teacher', 'institutions'));
+        return view('admin.administration.teachers.edit', compact('teacher', 'institutions'));
     }
-    public function UpdateTeacher(Request $request, Teacher $teacher)
+    public function Update(Request $request, Teacher $teacher)
     {
         // dd($request->all());
         $request->validate([
@@ -155,6 +155,6 @@ class TeacherController extends Controller
 
         $teacher->save();
 
-        return redirect()->route('admin.teachers')->with('success', 'Teacher updated successfully!');
+        return redirect()->route('admin.teachers.index')->with('success', 'Teacher updated successfully!');
     }
 }

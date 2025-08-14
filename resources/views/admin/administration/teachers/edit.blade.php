@@ -7,7 +7,7 @@
         <div class="col-lg-10 mx-auto">
             <div>
                 <h6 class="mb-3 fs-14">
-                    <a href="{{ route('admin.teachers') }}"><i class="ti ti-arrow-left me-1"></i>Back to Teachers</a>
+                    <a href="{{ route('admin.teachers.index') }}"><i class="ti ti-arrow-left me-1"></i>Back to Teachers</a>
                 </h6>
                 <!-- @if ($errors->any())
                     <div class="alert alert-danger">
@@ -18,7 +18,7 @@
                         </ul>
                     </div>
                 @endif -->
-                <form action="{{ route('admin.update-teacher', $teacher->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.teachers.update', $teacher->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="card rounded-0">
@@ -159,7 +159,7 @@
                     </div> <!-- end card -->
 
                     <div class="d-flex align-items-center justify-content-end mt-3">
-                        <a href="{{ route('admin.teachers') }}" class="btn btn-light me-2">Cancel</a>
+                        <a href="{{ route('admin.teachers.index') }}" class="btn btn-light me-2">Cancel</a>
                         <button type="submit" class="btn btn-primary">Update Teacher</button>
                     </div>
 

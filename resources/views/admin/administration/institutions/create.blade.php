@@ -18,8 +18,8 @@
                             </ul>
                         </div>
                     @endif -->
-                    <h6 class="mb-3 fs-14"><a href="{{ route('admin.institutions') }}"><i class="ti ti-arrow-left me-1"></i>Institutions</a></h6>
-                    <form action="{{ route('admin.store-institution') }}" method="POST" enctype="multipart/form-data">
+                    <h6 class="mb-3 fs-14"><a href="{{ route('admin.institutions.index') }}"><i class="ti ti-arrow-left me-1"></i>Institutions</a></h6>
+                    <form action="{{ route('admin.institutions.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card rounded-0">

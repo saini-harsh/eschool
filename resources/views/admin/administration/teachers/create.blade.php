@@ -9,8 +9,8 @@
 
             <div class="col-lg-10 mx-auto">
                 <div>
-                    <h6 class="mb-3 fs-14"><a href="employees.html"><i class="ti ti-arrow-left me-1"></i>Teachers</a></h6>
-                    <form action="{{ route('admin.store-teacher') }}" method="POST" enctype="multipart/form-data">
+                    <h6 class="mb-3 fs-14"><a href="{{ route('admin.teachers.index') }}"><i class="ti ti-arrow-left me-1"></i>Teachers</a></h6>
+                    <form action="{{ route('admin.teachers.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf 
                         <div class="card rounded-0">
                             <div class="card-header">

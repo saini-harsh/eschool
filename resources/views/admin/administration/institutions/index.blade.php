@@ -22,14 +22,14 @@
                 <h5 class="fw-bold">Institutions</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="index.html"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.institutions.create') }}"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Institutions</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="{{ route('admin.add-institution') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
+                <a href="{{ route('admin.institutions.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
             </div>
         </div>
         <!-- End Page Header -->
@@ -211,7 +211,7 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
-                                        <a href="{{ route('admin.edit-institution', $institution->id) }}"
+                                        <a href="{{ route('admin.institutions.edit', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                                 class="ti ti-edit"></i></a>
                                         <a href="javascript:void(0);"

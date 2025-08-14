@@ -23,14 +23,14 @@
                 <h5 class="fw-bold">Teachers</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="index.html"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.teachers.index') }}"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Teachers</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="{{ route('admin.add-teacher') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New
+                <a href="{{ route('admin.teachers.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New
                 Teacher</a>
             </div>
         </div>
@@ -240,7 +240,7 @@
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="{{ route('admin.edit-teacher', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
+                                <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                         class="ti ti-edit"></i></a>
                                 <a href="#" class="btn btn-icon btn-sm btn-outline-white border-0"
                                     data-bs-toggle="modal" data-bs-target="#delete_modal"><i

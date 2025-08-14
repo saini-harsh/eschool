@@ -8,12 +8,12 @@
             <div class="col-lg-10 mx-auto">
                 <div>
                     <h6 class="mb-3 fs-14">
-                        <a href="{{ route('admin.institutions') }}">
+                        <a href="{{ route('admin.institutions.index') }}">
                             <i class="ti ti-arrow-left me-1"></i>Institutions
                         </a>
                     </h6>
 
-                    <form action="{{ route('admin.update-institution', $institution->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.institutions.update', $institution->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card rounded-0">

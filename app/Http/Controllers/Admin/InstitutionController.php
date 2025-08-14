@@ -15,14 +15,14 @@ class InstitutionController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index(){
+    public function Index(){
         $institutions = Institution::all();
-        return view('admin.administration.institutions.institutions',compact('institutions'));
+        return view('admin.administration.institutions.index',compact('institutions'));
     }
-    public function AddInstitution(){
-        return view('admin.administration.institutions.add-institution');
+    public function Create(){
+        return view('admin.administration.institutions.create');
     }
-    public function StoreInstitution(Request $request)
+    public function Store(Request $request)
     {
 
         $request->validate([
@@ -77,14 +77,14 @@ class InstitutionController extends Controller
 
         $institution->save();
 
-        return redirect()->route('admin.institutions')->with('success', 'Institution added successfully!');
+        return redirect()->route('admin.institutions.index')->with('success', 'Institution added successfully!');
     }
-    public function EditInstitution(Institution $institution)
+    public function Edit(Institution $institution)
     {
 
-        return view('admin.administration.institutions.edit-institution', compact('institution'));
+        return view('admin.administration.institutions.edit', compact('institution'));
     }
-    public function UpdateInstitution(Request $request, Institution $institution)
+    public function Update(Request $request, Institution $institution)
     {
 
         $request->validate([
@@ -143,7 +143,7 @@ class InstitutionController extends Controller
 
         $institution->save();
 
-        return redirect()->route('admin.institutions')->with('success', 'Institution updated successfully!');
+        return redirect()->route('admin.institutions.index')->with('success', 'Institution updated successfully!');
     }
 
 

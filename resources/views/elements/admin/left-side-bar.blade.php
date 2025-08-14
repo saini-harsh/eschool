@@ -89,12 +89,12 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="{{ route('admin.institutions') }}">
+                            <a href="{{ route('admin.institutions.index') }}">
                                 <i class="ti ti-building-community"></i><span>Insitutions</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="{{ route('admin.teachers') }}">
+                            <a href="{{ route('admin.teachers.index') }}">
                                 <i class="ti ti-users-group"></i><span>Teachers</span>
                             </a>
                         </li>
