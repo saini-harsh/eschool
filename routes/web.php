@@ -37,6 +37,8 @@ Route::middleware('admin')->group(function () {
         Route::post('/store-teacher',[TeacherController::class,'Store'])->name('admin.teachers.store');
         Route::get('/teacher/{teacher}', [TeacherController::class, 'Edit'])->name('admin.teachers.edit');
         Route::post('/teacher/{teacher}',[TeacherController::class,'Update'])->name('admin.teachers.update');
+
+
     });
 });
 
