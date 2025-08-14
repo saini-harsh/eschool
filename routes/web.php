@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\InstitutionController;
 
 Route::get('/', function () {

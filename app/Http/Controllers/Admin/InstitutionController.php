@@ -15,6 +15,6 @@ class InstitutionController extends Controller
 
     public function index(){
         $institutions = Institution::all();
-        return view('admin.academics.institutions',compact('institutions'));
+        return view('admin.Academics.institutions',compact('institutions'));
     }
 }
