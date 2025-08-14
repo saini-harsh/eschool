@@ -23,7 +23,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected page example
 Route::middleware('admin')->group(function () {
-    // Place admin-protected routes here, e.g.:
+
     Route::prefix('admin')->group(function(){
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
@@ -52,7 +52,14 @@ Route::middleware('admin')->group(function () {
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
         });
 
- 
+        // SECTIONS
+        Route::prefix('sections')->group(function(){
+            Route::get('/',[SectionController::class,'Index'])->name('admin.sections.index');
+            Route::post('/store',[SectionController::class,'store'])->name('admin.sections.store');
+            Route::get('/list',[SectionController::class,'getSections'])->name('admin.sections.list');
+            Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
+        });
+
     });
 });
 

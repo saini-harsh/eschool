@@ -8,7 +8,7 @@ class Section extends Model
 {
     protected $fillable = [
         'name',
-        'slug'
+        'status'
     ];
 
 }

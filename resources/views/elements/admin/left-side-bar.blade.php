@@ -129,9 +129,10 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="#">
-                                <i class="ti ti-menu-2"></i><span>Section</span>
-                            </a>
+                            <a href="{{ route('admin.sections.index') }}">
+                                <a href="#">
+                                    <i class="ti ti-menu-2"></i><span>Section</span>
+                                </a>
                         </li>
                         <li class="">
                             <a href="#">
