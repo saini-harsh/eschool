@@ -145,6 +145,12 @@ class InstitutionController extends Controller
 
         return redirect()->route('admin.institutions.index')->with('success', 'Institution updated successfully!');
     }
+    public function Delete($id)
+    {
+        $institution = Institution::findOrFail($id);
+        $institution->delete();
 
+        return redirect()->route('admin.institutions.index')->with('success', 'Institution deleted successfully!');
+    }
 
 }

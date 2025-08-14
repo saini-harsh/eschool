@@ -33,7 +33,7 @@ class TeacherController extends Controller
             'last_name'       => 'required|string|max:255',
             'email'           => 'required|email|unique:teachers,email',
             'phone'           => 'required|string|max:20',
-            'dob'             => 'required|date',
+            'dob'             => 'required|string',
             'address'         => 'required|string|max:255',
             'pincode'         => 'required|string|max:10',
             'gender'          => 'required|in:Male,Female,Other',
@@ -156,5 +156,12 @@ class TeacherController extends Controller
         $teacher->save();
 
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher updated successfully!');
+    }
+    public function Delete($id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        $teacher->delete();
+
+        return redirect()->route('admin.teachers.index')->with('success', 'Teacher deleted successfully!');
     }
 }

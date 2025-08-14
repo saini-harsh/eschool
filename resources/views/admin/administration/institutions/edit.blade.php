@@ -162,7 +162,7 @@
                         </div>
 
                         <div class="d-flex align-items-center justify-content-end">
-                            <a href="{{ route('admin.institutions') }}" class="btn btn-light me-2">Cancel</a>
+                            <a href="{{ route('admin.institutions.index') }}" class="btn btn-light me-2">Cancel</a>
                             <button type="submit" class="btn btn-primary">Update Institution</button>
                         </div>
 

@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Admin | Teachers Management')
+@section('title', 'Admin | Students Management')
 @section('content')
 @if (session('success'))
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -20,18 +20,17 @@
         <!-- Page Header -->
         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
             <div class="flex-grow-1">
-                <h5 class="fw-bold">Teachers</h5>
+                <h5 class="fw-bold">Students</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.teachers.index') }}"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.students.index') }}"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Teachers</li>
+                        <li class="breadcrumb-item active" aria-current="page">Students</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="{{ route('admin.teachers.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New
-                Teacher</a>
+                <a href="{{ route('admin.students.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Student</a>
             </div>
         </div>
         <!-- End Page Header -->
@@ -190,59 +189,59 @@
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Insitution</th>
+                        <th>Teacher</th>
                         <th>Status</th>
                         <th class="no-sort">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                @if (isset($teachers) && !empty($teachers))
-                @foreach ($teachers as $teacher)
+                @if (isset($students) && !empty($students))
+                @foreach ($students as $student)
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
                                 <a href="employee-details.html" class="avatar avatar-sm avatar-rounded">
-                                <img src="{{ asset($teacher->profile_image) }}"
-                                        alt="img">
+                                    <img src="{{ asset($student->photo) }}" alt="img">
                                 </a>
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="employee-details.html">{{ $teacher->first_name }} {{ $teacher->last_name }}</a></h6>
+                                    <h6 class="fs-14 mb-0"><a href="employee-details.html">{{ $student->first_name }} {{ $student->last_name }}</a></h6>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <!-- <a href="javascript:void(0);" class="avatar avatar-sm avatar-rounded">
-                                    <img src="{{ asset('admin/img/managers/manager-01.jpg') }}" alt="img">
-                                </a> -->
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="javascript:void(0);">{{ $teacher->email }}</a></h6>
+                                    <h6 class="fs-14 mb-0"><a href="javascript:void(0);">{{ $student->email }}</a></h6>
                                 </div>
                             </div>
                         </td>
-                        <td>{{ $teacher->phone }}</td>
-                        @php
-                        $badgeClasses = ['badge-soft-orange', 'badge-soft-warning', 'badge-soft-info', 'badge-soft-danger', 'badge-soft-secondary'];
-                        $randomBadgeClass = $badgeClasses[array_rand($badgeClasses)];
-                    @endphp
+                        <td>{{ $student->phone }}</td>
+                        
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge {{ $randomBadgeClass }}">{{ $teacher->institution_code }}</span>
+                            <span class="badge badge-soft-secondary">{{ $student->institution_code }}</span>
+                        <!-- </a>     -->
+
+                        </td>
+                        <td>
+                        <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
+                            <span class="badge badge-soft-orange">{{ $student->teacher_id }}</span>
                         <!-- </a>     -->
 
                         </td>
                         <td>
                             <div>
                                 <select class="select">
-                                <option value="1" {{ $teacher->status === 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $teacher->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                <option value="1" {{ $student->status === 1 ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ $student->status === 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
+                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                         class="ti ti-edit"></i></a>
-                                <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $teacher->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"
+                                <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $student->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"
                                     data-bs-toggle="modal" data-bs-target="#delete_modal"><i
                                         class="ti ti-trash"></i></a>
                             </div>

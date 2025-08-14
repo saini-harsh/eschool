@@ -214,7 +214,7 @@
                                         <a href="{{ route('admin.institutions.edit', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                                 class="ti ti-edit"></i></a>
-                                        <a href="javascript:void(0);"
+                                        <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $institution->id) }}`)"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" data-bs-toggle="modal"
                                             data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
                                     </div>

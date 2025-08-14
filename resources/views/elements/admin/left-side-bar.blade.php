@@ -99,7 +99,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.students.index') }}">
                                 <i class="ti ti-users-group"></i><span>Students</span>
                             </a>
                         </li>
@@ -129,7 +129,7 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="{{ route('admin.academic.sections') }}">
+                            <a href="#">
                                 <i class="ti ti-menu-2"></i><span>Section</span>
                             </a>
                         </li>

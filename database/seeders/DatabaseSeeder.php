@@ -227,6 +227,7 @@ class DatabaseSeeder extends Seeder
             Student::create(array_merge($s, [
                 'middle_name' => null,
                 'photo' => null,
+                'gender' => 'Male',
                 'address' => 'Sample Student Address',
                 'pincode' => '110001',
                 'caste_tribe' => 'General',

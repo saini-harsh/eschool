@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone', 20);
             $table->date('dob');
+            $table->string('gender');
             $table->string('address');
             $table->string('pincode', 10);
             $table->string('caste_tribe')->nullable();
