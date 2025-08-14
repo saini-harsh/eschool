@@ -42,7 +42,6 @@ class DatabaseSeeder extends Seeder
                 'board' => 'CBSE',
                 'state' => 'Delhi',
                 'district' => 'New Delhi',
-                'unique_id' => 'INS001',
                 'email' => 'greenvalley@example.com',
                 'website' => 'http://greenvalley.edu',
                 'phone' => '9876543210',
@@ -56,7 +55,6 @@ class DatabaseSeeder extends Seeder
                 'board' => 'ICSE',
                 'state' => 'Delhi',
                 'district' => 'South Delhi',
-                'unique_id' => 'INS002',
                 'email' => 'sunrise@example.com',
                 'website' => 'http://sunrise.edu',
                 'phone' => '9876509876',
@@ -85,6 +83,7 @@ class DatabaseSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'gender' => 'Male',
                 'institution_id' => 1,
+                'profile_image' => "admin/uploads/teachers/1755163497_689dab69813d1.jpeg",
             ],
             [
                 'first_name' => 'Anita',
@@ -95,6 +94,7 @@ class DatabaseSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'gender' => 'Female',
                 'institution_id' => 1,
+                'profile_image' => "admin/uploads/teachers/1755163512_689dab787633a.jpeg",
             ],
             // Sunrise Public School
             [
@@ -106,6 +106,7 @@ class DatabaseSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'gender' => 'Male',
                 'institution_id' => 2,
+                'profile_image' => "admin/uploads/teachers/1755163484_689dab5c7eb17.jpeg",
             ],
             [
                 'first_name' => 'Neha',
@@ -116,13 +117,13 @@ class DatabaseSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'gender' => 'Female',
                 'institution_id' => 2,
+                'profile_image' => "admin/uploads/teachers/1755163497_689dab69813d1.jpeg",
             ]
         ];
 
         foreach ($teachers as $t) {
             Teacher::create(array_merge($t, [
                 'middle_name' => null,
-                'profile_image' => null,
                 'address' => 'Sample Teacher Address',
                 'pincode' => '110001',
                 'caste_tribe' => 'General',

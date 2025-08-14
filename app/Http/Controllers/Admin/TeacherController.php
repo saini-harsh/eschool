@@ -41,7 +41,6 @@ class TeacherController extends Controller
             'institution_id'  => 'required|exists:institutions,id',
             'password'        => 'required|string|min:6',
             'profile_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'status'          => 'required|boolean',
         ]);
 
         if ($request->hasFile('profile_image')) {
@@ -78,7 +77,7 @@ class TeacherController extends Controller
         $teacher->caste_tribe      = $request->caste_tribe;
         $teacher->gender           = $request->gender;
         $teacher->institution_id   = $request->institution_id;
-        $teacher->status           = $request->status;
+        $teacher->status           = 1;
         $teacher->institution_code = 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT);
         $teacher->admin_id         = auth()->id();
         $teacher->password         = Hash::make($request->password);

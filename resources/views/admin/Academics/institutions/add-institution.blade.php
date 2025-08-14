@@ -9,8 +9,17 @@
 
             <div class="col-lg-10 mx-auto">
                 <div>
+                <!-- @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif -->
                     <h6 class="mb-3 fs-14"><a href="{{ route('admin.institutions') }}"><i class="ti ti-arrow-left me-1"></i>Institutions</a></h6>
-                    <form action="{{ route('admin.store-teacher') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.store-institution') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="card rounded-0">
@@ -61,13 +70,6 @@
 
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label class="form-label">Unique ID <span class="text-danger">*</span></label>
-                                            <input type="text" name="unique_id" class="form-control" placeholder="INS001" required>
-                                        </div>
-                                    </div> <!-- end col -->
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
                                             <label class="form-label">Established Date <span class="text-danger">*</span></label>
                                             <div class="input-group w-auto input-group-flat">
                                                 <input type="text" name="established_date" class="form-control" data-provider="flatpickr"
@@ -78,7 +80,7 @@
                                             </div>
                                         </div>
                                     </div> <!-- end col -->
-
+                                    
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Board <span class="text-danger">*</span></label>
@@ -86,7 +88,7 @@
                                         </div>
                                     </div> <!-- end col -->
 
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <div>
                                             <label class="form-label">Website</label>
                                             <input type="text" name="website" class="form-control">

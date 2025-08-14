@@ -1,6 +1,18 @@
 @extends('layouts.admin')
 @section('title', 'Admin | Institutions Management')
 @section('content')
+@if (session('success'))
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+@endif
     <!-- Start Content -->
     <div class="content">
 
@@ -175,7 +187,7 @@
                                     <div class="d-flex align-items-center">
                                         <a href="company-details.html"
                                             class="avatar avatar-sm rounded-circle bg-light border">
-                                            <img src="{{ asset('admin/img/company/company-01.svg') }}"
+                                            <img src="{{ asset($institution->logo) }}"
                                                 class="w-auto h-auto" alt="img">
                                         </a>
                                         <div class="ms-2">
@@ -199,7 +211,7 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
-                                        <a href="edit-company.html"
+                                        <a href="{{ route('admin.edit-institution', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                                 class="ti ti-edit"></i></a>
                                         <a href="javascript:void(0);"

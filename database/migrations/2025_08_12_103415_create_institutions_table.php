@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('board');
             $table->string('state');
             $table->string('district');
-            $table->string('unique_id')->unique();
             $table->string('email')->unique();
             $table->string('website')->nullable();
             $table->string('phone', 20);

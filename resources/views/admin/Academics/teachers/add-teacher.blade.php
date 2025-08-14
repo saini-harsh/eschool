@@ -147,16 +147,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Status dropdown (new field) -->
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                                        <select name="status" class="select" required>
-                                            <option value="1" selected>Active</option>
-                                            <option value="0">Inactive</option>
-                                        </select>
-                                    </div>
-                                </div>
 
                                 <!-- Already existing invite checkbox -->
                                 <div class="col-md-12">

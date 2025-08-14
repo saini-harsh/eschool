@@ -20,7 +20,6 @@ class Institution extends Authenticatable
         'board',
         'state',
         'district',
-        'unique_id',
         'email',
         'website',
         'phone',

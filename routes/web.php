@@ -26,13 +26,15 @@ Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('/institutions',[InstitutionController::class,'index'])->name('admin.institutions');
         Route::get('/add-institution',[InstitutionController::class,'AddInstitution'])->name('admin.add-institution');
-        Route::post('/store-institution',[TeacherController::class,'StoreInstitution'])->name('admin.store-institution');
+        Route::post('/store-institution',[InstitutionController::class,'StoreInstitution'])->name('admin.store-institution');
+        Route::get('/institution/{institution}', [InstitutionController::class, 'EditInstitution'])->name('admin.edit-institution');
+        Route::post('/institution/{institution}',[InstitutionController::class,'UpdateInstitution'])->name('admin.update-institution');
 
         Route::get('/teachers',[TeacherController::class,'index'])->name('admin.teachers');
         Route::get('/add-teacher',[TeacherController::class,'AddTeacher'])->name('admin.add-teacher');
         Route::post('/store-teacher',[TeacherController::class,'StoreTeacher'])->name('admin.store-teacher');
-        Route::get('/teachers/{teacher}', [TeacherController::class, 'EditTeacher'])->name('admin.edit-teacher');
-        Route::post('/teachers/{teacher}',[TeacherController::class,'UpdateTeacher'])->name('admin.update-teacher');
+        Route::get('/teacher/{teacher}', [TeacherController::class, 'EditTeacher'])->name('admin.edit-teacher');
+        Route::post('/teacher/{teacher}',[TeacherController::class,'UpdateTeacher'])->name('admin.update-teacher');
     });
 });
 
