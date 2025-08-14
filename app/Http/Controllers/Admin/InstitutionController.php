@@ -17,14 +17,14 @@ class InstitutionController extends Controller
 
     public function index(){
         $institutions = Institution::all();
-        return view('admin.Academics.institutions.institutions',compact('institutions'));
+        return view('admin.administration.institutions.institutions',compact('institutions'));
     }
     public function AddInstitution(){
-        return view('admin.Academics.institutions.add-institution');
+        return view('admin.administration.institutions.add-institution');
     }
     public function StoreInstitution(Request $request)
     {
-        
+
         $request->validate([
             'name'             => 'required|string|max:255',
             'logo'             => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
@@ -82,7 +82,7 @@ class InstitutionController extends Controller
     public function EditInstitution(Institution $institution)
     {
 
-        return view('admin.Academics.institutions.edit-institution', compact('institution'));
+        return view('admin.administration.institutions.edit-institution', compact('institution'));
     }
     public function UpdateInstitution(Request $request, Institution $institution)
     {
@@ -106,22 +106,22 @@ class InstitutionController extends Controller
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $destinationPath = public_path('admin/uploads/institutions');
-            
+
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
-            
+
             $file->move($destinationPath, $fileName);
-            
+
             $logoPath = 'admin/uploads/institutions/' . $fileName;
             // delete old logo if exists
             if ($institution->logo && file_exists(public_path($institution->logo))) {
                 unlink(public_path($institution->logo));
             }
-            
+
             $institution->logo = $logoPath;
         }
-        
+
 
         $institution->name             = $request->name;
         $institution->address          = $request->address;

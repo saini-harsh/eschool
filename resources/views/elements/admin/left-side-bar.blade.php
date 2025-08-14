@@ -85,7 +85,7 @@
                         </li> -->
                     </ul>
                 </li>
-                <li class="menu-title"><span>Academics</span></li>
+                <li class="menu-title"><span>Administration</span></li>
                 <li>
                     <ul>
                         <li class="">
@@ -99,13 +99,18 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="employees.html">
+                            <a href="#">
                                 <i class="ti ti-users-group"></i><span>Students</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="employees.html">
-                                <i class="ti ti-users-group"></i><span>Students</span>
+                            <a href="#">
+                                <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-activity"></i><span>Attendance</span>
                             </a>
                         </li>
                         <!-- <li>
@@ -120,27 +125,37 @@
                         </li> -->
                     </ul>
                 </li>
-                <!-- <li class="menu-title"><span>Utilities & Reports</span></li>
+                <li class="menu-title"><span>Academics</span></li>
                 <li>
                     <ul>
                         <li class="">
-                            <a href="report-calendar.html">
-                                <i class="ti ti-calendar-event"></i><span>Calendar</span>
+                            <a href="#">
+                                <i class="ti ti-menu-2"></i><span>Section</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="team-report.html">
-                                <i class="ti ti-report"></i><span>Reports</span>
+                            <a href="#">
+                                <i class="ti ti-report"></i><span>Class</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="manage.html">
-                                <i class="ti ti-settings-2"></i><span>Manage</span>
+                            <a href="#">
+                                <i class="ti ti-book"></i><span>Subject</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-user"></i><span>Assign Class Teacher</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-checks"></i><span>Assign Subject</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Settings</span></li>
+                <!---<li class="menu-title"><span>Settings</span></li>
                 <li>
                     <ul>
                         <li class="">
