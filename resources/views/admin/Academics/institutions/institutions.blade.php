@@ -17,7 +17,7 @@
                 </nav>
             </div>
             <div>
-                <a href="add-company.html" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
+                <a href="{{ route('admin.add-institution') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
             </div>
         </div>
         <!-- End Page Header -->

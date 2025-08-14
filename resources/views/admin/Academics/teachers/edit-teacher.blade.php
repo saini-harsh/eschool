@@ -33,10 +33,10 @@
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="avatar avatar-xxl border border-dashed position-relative me-3 flex-shrink-0 p-2">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset($teacher->profile_image ?? 'build/img/employees/employee-01.jpg') }}" class="img-fluid" alt="User Img">
+                                            <img src="{{ asset($teacher->profile_image ?? 'admin/img/employees/employee-01.jpg') }}" class="img-fluid" alt="User Img">
                                         </div>
                                         <div class="position-absolute top-0 end-0 m-1">
-                                            <a href="javascript:void(0);" class="btn btn-soft-danger rounded-pill avatar-badge border-0 fs-12" onclick="document.getElementById('profile_image').value = null; this.closest('.avatar').querySelector('img').src = '{{ asset('build/img/employees/employee-01.jpg') }}';">
+                                            <a href="javascript:void(0);" class="btn btn-soft-danger rounded-pill avatar-badge border-0 fs-12" onclick="document.getElementById('profile_image').value = null; this.closest('.avatar').querySelector('img').src = '{{ asset('/admin/img/employees/employee-01.jpg') }}';">
                                                 <i class="ti ti-trash"></i>
                                             </a>
                                         </div>

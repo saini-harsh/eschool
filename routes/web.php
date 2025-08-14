@@ -25,6 +25,9 @@ Route::middleware('admin')->group(function () {
     Route::prefix('admin')->group(function(){
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('/institutions',[InstitutionController::class,'index'])->name('admin.institutions');
+        Route::get('/add-institution',[InstitutionController::class,'AddInstitution'])->name('admin.add-institution');
+        Route::post('/store-institution',[TeacherController::class,'StoreInstitution'])->name('admin.store-institution');
+
         Route::get('/teachers',[TeacherController::class,'index'])->name('admin.teachers');
         Route::get('/add-teacher',[TeacherController::class,'AddTeacher'])->name('admin.add-teacher');
         Route::post('/store-teacher',[TeacherController::class,'StoreTeacher'])->name('admin.store-teacher');
