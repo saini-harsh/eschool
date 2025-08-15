@@ -13,7 +13,7 @@
 				--lp-secondary-color: #442e66;
 			}
 		</style>
-		<title>Home - Learning</title>
+		<title>Home - eSchool</title>
 	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
 	
 		<!-- All in One SEO 4.7.8 - aioseo.com -->
@@ -24,13 +24,13 @@
 		<meta property="og:locale" content="en_US">
 		<meta property="og:site_name" content="Learning -">
 		<meta property="og:type" content="article">
-		<meta property="og:title" content="Home - Learning">
+		<meta property="og:title" content="Home - eSchool">
 		<meta property="og:description" content="Let’s Start Smart Learning Today Get latest news in your inbox. Consectetur adipiscing elit,adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Contact Now Popular Courses Choose Our Top Courses Get latest news in your inbox. Consectetur">
 		<meta property="og:url" content="https://traininginstitute.kamleshyadav.com/learning/">
 		<meta property="article:published_time" content="2017-05-15T09:22:07+00:00">
 		<meta property="article:modified_time" content="2025-01-24T11:42:15+00:00">
 		<meta name="twitter:card" content="summary_large_image">
-		<meta name="twitter:title" content="Home - Learning">
+		<meta name="twitter:title" content="Home - eSchool">
 		<meta name="twitter:description" content="Let’s Start Smart Learning Today Get latest news in your inbox. Consectetur adipiscing elit,adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Contact Now Popular Courses Choose Our Top Courses Get latest news in your inbox. Consectetur">
 		
 		<!-- All in One SEO -->
