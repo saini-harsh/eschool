@@ -8,9 +8,7 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\NonWorkingStaffController;
 use App\Http\Controllers\Admin\StudentController;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 Route::get('/', function () {
     return view('frontend.index');
 });
