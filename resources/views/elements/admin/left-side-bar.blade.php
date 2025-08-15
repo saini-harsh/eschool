@@ -104,7 +104,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.nonworkingstaff.index') }}">
                                 <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                             </a>
                         </li>

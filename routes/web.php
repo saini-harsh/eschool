@@ -6,10 +6,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\InstitutionController;
+use App\Http\Controllers\Admin\NonWorkingStaffController;
 use App\Http\Controllers\Admin\StudentController;
-
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 Route::get('/', function () {
-    return view('welcome');
+    return view('frontend.index');
 });
 
 // Auth routes
@@ -43,6 +46,14 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{teacher}',[TeacherController::class,'Update'])->name('admin.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
         });
+        Route::prefix('nonworkingstaff')->group(function(){
+            Route::get('/index',[NonWorkingStaffController::class,'Index'])->name('admin.nonworkingstaff.index');
+            Route::get('/create',[NonWorkingStaffController::class,'Create'])->name('admin.nonworkingstaff.create');
+            Route::post('/store',[NonWorkingStaffController::class,'Store'])->name('admin.nonworkingstaff.store');
+            Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
+            Route::post('/update/{nonworkingstaff}',[NonWorkingStaffController::class,'Update'])->name('admin.nonworkingstaff.update');
+            Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
+        });
         Route::prefix('students')->group(function(){
             Route::get('/index',[StudentController::class,'Index'])->name('admin.students.index');
             Route::get('/create',[StudentController::class,'Create'])->name('admin.students.create');
@@ -51,6 +62,8 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{student}',[StudentController::class,'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
         });
+
+        
 
         // SECTIONS
         Route::prefix('sections')->group(function(){

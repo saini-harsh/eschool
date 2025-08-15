@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\Institution;
+use App\Models\NonWorkingStaff;
 use App\Models\Section;
 use App\Models\Teacher;
 use App\Models\Student;
@@ -36,7 +37,6 @@ class DatabaseSeeder extends Seeder
         $institutions = [
             [
                 'name' => 'Green Valley School',
-                'logo' => 'greenvalley.png',
                 'address' => '123 Main Street',
                 'pincode' => '110011',
                 'established_date' => '2005-06-15',
@@ -49,7 +49,6 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Sunrise Public School',
-                'logo' => 'sunrise.png',
                 'address' => '456 Sunrise Road',
                 'pincode' => '110022',
                 'established_date' => '2010-09-10',
@@ -65,6 +64,7 @@ class DatabaseSeeder extends Seeder
         foreach ($institutions as $inst) {
             Institution::create(array_merge($inst, [
                 'admin_id' => 1,
+                'logo' => 1,
                 'password' => Hash::make('school123'),
                 'decrypt_pw' => 'school123',
                 'status' => 1
@@ -227,7 +227,7 @@ class DatabaseSeeder extends Seeder
         foreach ($students as $s) {
             Student::create(array_merge($s, [
                 'middle_name' => null,
-                'photo' => null,
+                'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
                 'gender' => 'Male',
                 'address' => 'Sample Student Address',
                 'pincode' => '110001',
@@ -269,5 +269,53 @@ class DatabaseSeeder extends Seeder
             ]));
         }
         // Sections end
+
+        // ✅ Non Working Staff Start
+        $staffs = [
+            [
+                'first_name' => 'Suresh',
+                'middle_name' => null,
+                'last_name' => 'Kumar',
+                'dob' => '1975-05-12',
+                'email' => 'suresh.green@example.com',
+                'phone' => '9876598765',
+                'address' => 'Staff Colony, Delhi',
+                'pincode' => '110011',
+                'institution_code' => 'INS001',
+                'gender' => 'Male',
+                'caste_tribe' => 'General',
+                'institution_id' => 1,
+                'admin_id' => 1,
+                'designation' => 'Clerk',
+                'date_of_joining' => '2015-07-01',
+            ],
+            [
+                'first_name' => 'Meena',
+                'middle_name' => null,
+                'last_name' => 'Devi',
+                'dob' => '1980-09-20',
+                'email' => 'meena.sunrise@example.com',
+                'phone' => '9876523456',
+                'address' => 'Sunrise Colony, Delhi',
+                'pincode' => '110022',
+                'institution_code' => 'INS002',
+                'gender' => 'Female',
+                'caste_tribe' => 'OBC',
+                'institution_id' => 2,
+                'admin_id' => 1,
+                'designation' => 'Librarian',
+                'date_of_joining' => '2018-03-15',
+                ]
+            ];
+            
+            foreach ($staffs as $st) {
+                NonWorkingStaff::create(array_merge($st, [
+                'profile_image' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
+                'password' => Hash::make('staff123'),
+                'decrypt_pw' => 'staff123',
+                'status' => 1
+            ]));
+        }
+        // ✅ Non Working Staff End
     }
 }
