@@ -10,7 +10,7 @@ class TeacherController extends Controller
     //
     public function dashboard()
     {
-        dd('teacher dashboard');
+       return view('teacher.index');
     }
 
     public function logout()

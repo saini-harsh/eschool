@@ -29,39 +29,8 @@
     <!-- Theme Config Js -->
     <script src="{{URL::asset('/adminpanel/js/theme-script.js')}}" type=""></script>
 
+    @include('components.dashboard.styles')
 
-
-    <!-- Daterangepikcer CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/daterangepicker/daterangepicker.css') }}">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/css/bootstrap.min.css') }}">
-
-    <!-- Select2 CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/select2/css/select2.min.css') }}">
-
-    <!-- Simplebar CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/simplebar/simplebar.min.css') }}">
-
-    <!-- Tabler Icon CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/tabler-icons/tabler-icons.min.css') }}">
-
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/flatpickr/flatpickr.min.css') }}">
-
-    <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/fontawesome/css/fontawesome.min.css') }}">
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/fontawesome/css/all.min.css') }}">
-
-    <!-- Datatable CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/css/dataTables.bootstrap5.min.css') }}">
-
-
-    <!-- ChartC3 CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/c3-chart/c3.min.css') }}">
-
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/css/style.css') }}" id="app-style">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <body>
@@ -87,57 +56,7 @@
     </div>
     <!-- End Main Wrapper -->
     <!-- jQuery -->
-    <!-- <script src="{{URL::asset('/adminpanel/js/jquery-3.7.1.min.js')}}" type="816fa5b22d2c9cff7571ef15-text/javascript"></script> -->
-    <script src="{{URL::asset('/adminpanel/js/jquery-3.7.1.min.js')}}" type=""></script>
-
-
-    <!-- Bootstrap Core JS -->
-    <script src="{{URL::asset('/adminpanel/js/bootstrap.bundle.min.js')}}" type=""></script>
-
-    <!-- Select2 JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/select2/js/select2.min.js')}}" type=""></script>
-
-    <!-- Simplebar JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/simplebar/simplebar.min.js')}}" type=""></script>
-
-
-
-    <!-- Flatpickr JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/flatpickr/flatpickr.min.js')}}" type=""></script>
-
-
-
-    <!-- Sticky Sidebar JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/theia-sticky-sidebar/ResizeSensor.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js')}}" type=""></script>
-
-    <!-- Daterangepikcer JS -->
-    <script src="{{URL::asset('/adminpanel/js/moment.min.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/plugins/daterangepicker/daterangepicker.js')}}" type=""></script>
-
-    <!-- Datatable JS -->
-    <script src="{{URL::asset('/adminpanel/js/jquery.dataTables.min.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/js/dataTables.bootstrap5.min.js')}}" type=""></script>
-
-    <!-- Chart JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/apexchart/apexcharts.min.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/plugins/apexchart/chart-data.js')}}" type=""></script>
-
-
-
-    <!-- Chart JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/c3-chart/d3.v5.min.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/plugins/c3-chart/c3.min.js')}}" type=""></script>
-    <script src="{{URL::asset('/adminpanel/plugins/c3-chart/chart-data.js')}}" type=""></script>
-
-    <!-- Select2 JS -->
-    <script src="{{URL::asset('/adminpanel/plugins/select2/js/select2.min.js')}}" type=""></script>
-
-    <!-- Main JS -->
-    <script src="{{URL::asset('/adminpanel/js/script.js')}}" type=""></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="{{ URL::asset('/custom/js/sections.js') }}"></script>
+    @include('components.dashboard.scripts')
 </body>
 
 </html>
