@@ -42,8 +42,11 @@
 
         <!--Content-->
         <!--Left Side Bar-->
-        @include('../elements/admin/left-side-bar')
-
+        @if(Auth::guard('teacher')->check())
+            @include('../elements/teacher/left-side-bar')
+        @elseif(Auth::guard('admin')->check())
+            @include('../elements/admin/left-side-bar')
+        @endif
         <div class="page-wrapper">
 
             @yield('content')

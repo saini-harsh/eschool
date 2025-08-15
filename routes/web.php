@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Academic\SectionController;
+use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -65,6 +66,13 @@ Route::middleware('admin')->group(function () {
         Route::prefix('attendance')->group(function(){
             Route::get('/',[AttendanceController::class,'Index'])->name('admin.attendance');
             Route::post('/filter', [AttendanceController::class, 'filter']);
+        });
+
+        Route::prefix('subjects')->group(function(){
+            Route::get('/',[SubjectController::class,'Index'])->name('admin.subjects.index');
+            Route::post('/store',[SubjectController::class,'store'])->name('admin.subjects.store');
+            Route::get('/list',[SubjectController::class,'getSubjects'])->name('admin.subjects.list');
+            Route::post('/{id}/status',[SubjectController::class,'updateStatus'])->name('admin.subjects.status');
         });
 
         // SECTIONS

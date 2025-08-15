@@ -1,6 +1,6 @@
 
     <!-- Daterangepikcer CSS -->
-    <link rel="stylesheet" href="{{ URL::asset('/adminpanel/plugins/daterangepicker/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('/adminpanel/plugins/daterangepicker/daterangepicker.css') }}">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ URL::asset('/adminpanel/css/bootstrap.min.css') }}">

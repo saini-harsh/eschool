@@ -24,7 +24,7 @@
                                         <li class="breadcrumb-item fw-medium active" aria-current="page">Dashboard</li>
                                     </ol>
                                 </nav>
-                                <h5 class="fw-bold mb-0">Admin Dashboard</h5>
+                                <h5 class="fw-bold mb-0">Teacher Dashboard</h5>
                             </div>
                         </div><!-- end card body -->
                     </div><!-- end card -->

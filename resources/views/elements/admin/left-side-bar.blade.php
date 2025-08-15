@@ -139,7 +139,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.subjects.index') }}">
                                 <i class="ti ti-book"></i><span>Subject</span>
                             </a>
                         </li>
