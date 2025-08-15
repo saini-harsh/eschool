@@ -109,7 +109,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.attendance') }}">
                                 <i class="ti ti-activity"></i><span>Attendance</span>
                             </a>
                         </li>

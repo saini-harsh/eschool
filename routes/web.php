@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Academic\SectionController;
+use App\Http\Controllers\Admin\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -61,7 +62,10 @@ Route::middleware('admin')->group(function () {
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
         });
 
-        
+        Route::prefix('attendance')->group(function(){
+            Route::get('/',[AttendanceController::class,'Index'])->name('admin.attendance');
+            Route::post('/filter', [AttendanceController::class, 'filter']);
+        });
 
         // SECTIONS
         Route::prefix('sections')->group(function(){
@@ -73,6 +77,8 @@ Route::middleware('admin')->group(function () {
 
     });
 });
+
+
 
 require_once __DIR__ . '/institution.php';
 require_once __DIR__ . '/teacher.php';

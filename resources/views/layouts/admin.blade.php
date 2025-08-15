@@ -137,7 +137,7 @@
     <script src="{{URL::asset('/adminpanel/js/script.js')}}" type=""></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="{{ URL::asset('/adminpanel/dashboard/js/sections.js') }}"></script>
+    <script src="{{ URL::asset('/custom/js/sections.js') }}"></script>
 </body>
 
 </html>

@@ -25,13 +25,15 @@ return new class extends Migration
             $table->string('institution_code');
             $table->string('gender');
             $table->string('caste_tribe')->nullable();
-            $table->string('designation');
             $table->date('date_of_joining');
             $table->foreignId('institution_id')->constrained()->onDelete('cascade');
             $table->foreignId('admin_id')->constrained()->onDelete('cascade');
             $table->string('password');
             $table->string('decrypt_pw');
             $table->boolean('status')->default(1);
+            $table->string('employee_id')->unique()->nullable(); // Staff employee ID
+            $table->string('designation')->nullable(); // Job designation
+            $table->string('department')->nullable(); // Department they work in
             $table->timestamps();
         });
     }

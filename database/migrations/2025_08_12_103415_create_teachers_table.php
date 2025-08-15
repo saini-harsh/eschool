@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('decrypt_pw');
             $table->boolean('status')->default(1);
+            $table->string('employee_id')->unique()->nullable(); // Teacher employee ID
             $table->timestamps();
         });
     }

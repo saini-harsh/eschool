@@ -1,40 +1,31 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class NonWorkingStaff extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'non_working_staff';
 
     protected $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
-        'dob',
+        'institution_id',
+        'name',
         'email',
         'phone',
-        'profile_image',
-        'address',
-        'pincode',
-        'institution_code',
-        'gender',
-        'caste_tribe',
-        'institution_id',
-        'admin_id',
+        'profile_photo',
+        'employee_id',
         'designation',
-        'date_of_joining',
-        'password',
-        'decrypt_pw',
-        'status',
+        'department',
+        'status'
     ];
 
-    protected $hidden = [
-        'password',
-        'decrypt_pw',
+    protected $casts = [
+        'status' => 'string'
     ];
 
     // Relationships
@@ -43,8 +34,31 @@ class NonWorkingStaff extends Model
         return $this->belongsTo(Institution::class);
     }
 
-    public function admin()
+    public function attendance()
     {
-        return $this->belongsTo(Admin::class);
+        return $this->hasMany(Attendance::class, 'role_id')
+            ->where('role_type', 'nonworkingstaff');
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeByInstitution($query, $institutionId)
+    {
+        return $query->where('institution_id', $institutionId);
+    }
+
+    // Methods
+    public function getFullNameAttribute()
+    {
+        return $this->name;
+    }
+
+    public function getRoleDisplayAttribute()
+    {
+        return 'Non-working Staff';
     }
 }
