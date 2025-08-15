@@ -6,17 +6,17 @@
         <div>
             <!-- Logo Normal -->
             <a href="index.html" class="logo logo-normal">
-                <img src="{{ asset('/admin/img/logo.png') }}" alt="Logo">
+                <img src="{{ asset('/adminpanel/img/logo.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Small -->
             <a href="index.html" class="logo-small">
-                <img src="{{ asset('/admin/img/logo-small.png') }}" alt="Logo">
+                <img src="{{ asset('/adminpanel/img/logo-small.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Dark -->
             <a href="index.html" class="dark-logo">
-                <img src="{{ asset('/admin/img/logo-white.svg') }}" alt="Logo">
+                <img src="{{ asset('/adminpanel/img/logo-white.svg') }}" alt="Logo">
             </a>
         </div>
         <button class="sidenav-toggle-btn btn p-0" id="toggle_btn">
@@ -392,7 +392,7 @@
         <div class="sidebar-footer">
             <div class="bg-light p-2 rounded d-flex align-items-center">
                 <a href="#" class="avatar avatar-md me-2"><img
-                        src="{{ asset('/admin/img/users/avatar-2.jpg') }}" alt=""></a>
+                        src="{{ asset('/adminpanel/img/users/avatar-2.jpg') }}" alt=""></a>
                 <div>
                     <h6 class="fs-14 fw-semibold mb-1"><a href="#">Joseph Smith</a></h6>
                     <p class="fs-13 mb-0"><a href="https://dleohr.dreamstechnologies.com/cdn-cgi/l/email-protection"

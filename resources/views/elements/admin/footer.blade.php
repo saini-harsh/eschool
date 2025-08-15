@@ -1,10 +1,10 @@
  <!-- Footer Start -->
  <div
             class="footer d-flex align-items-center justify-content-between flex-column flex-sm-row row-gap-2 border-top py-2 px-3">
-            <p class="text-dark mb-0">2025 &copy; <a href="javascript:void(0);" class="link-primary">Dleo HR</a>, All
+            <p class="text-dark mb-0">2025 &copy; <a href="javascript:void(0);" class="link-primary">eSchool</a>, All
                 Rights Reserved</p>
-            <p class="text-dark mb-0">Design & Developed by <a href="https://dreamstechnologies.com/" target="_blank"
-                    class="link-primary">Dreams Technologies</a></p>
+            <p class="text-dark mb-0">Design & Developed by <a href="#" target="_blank"
+                    class="link-primary">Gugun & Harsh</a></p>
         </div>
         <!-- Footer End -->
 
