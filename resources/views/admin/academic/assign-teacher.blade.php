@@ -39,9 +39,8 @@
                         <h6 class="fw-bold">Assign Class Teacher</h6>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post" id="subject-form">
+                        <form action="" method="post" id="assign-teacher-form">
                             @csrf
-                            <input type="hidden" name="id" id="subject-id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
@@ -50,8 +49,7 @@
                                             <option value="">Select Institution</option>
                                             @if (isset($institutions) && !empty($institutions))
                                                 @foreach ($institutions as $institution)
-                                                    <option value="{{ $institution->id }}">{{ $institution->name }}
-                                                    </option>
+                                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -62,34 +60,22 @@
                                         <label class="form-label">Class</label>
                                         <select class="form-select" name="class_id">
                                             <option value="">Select Class</option>
-                                            @if (isset($classes) && !empty($classes))
-                                                @foreach ($classes as $class)
-                                                    <option value="{{ $class['id'] }}">{{ $class['name'] }}</option>
-                                                @endforeach
-                                            @endif
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control"
-                                            placeholder="Enter Subject name" autocomplete="off">
+                                        <label class="form-label">Section</label>
+                                        <select class="form-select" name="section_id">
+                                            <option value="">Select Section</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Code</label>
-                                        <input type="text" name="code" class="form-control"
-                                            placeholder="Enter Subject code" autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Type</label>
-                                       <select class="form-select" name="type">
-                                            <option value="theory">Theory</option>
-                                            <option value="practical">Practical</option>
+                                        <label class="form-label">Teacher</label>
+                                        <select class="form-select" name="teacher_id">
+                                            <option value="">Select Teacher</option>
                                         </select>
                                     </div>
                                 </div>
@@ -105,8 +91,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" type="button" id="add-subject">Submit</button>
-                            <button class="btn btn-primary d-none" type="button" id="update-subject">Update</button>
+                            <button class="btn btn-primary" type="button" id="assign-teacher">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -237,11 +222,10 @@
                     <table class="table table-nowrap datatable">
                         <thead class="thead-ight">
                             <tr>
-                                <th>Name</th>
-                                <th>Code</th>
-                                <th>Type</th>
+                                <th>Teacher</th>
                                 <th>Institution</th>
                                 <th>Class</th>
+                                <th>Section</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -253,21 +237,7 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->name }}</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->code }}</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ ucfirst($list->type) }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ $list->teacher->first_name .' '. $list->teacher->last_name }}</h6>
                                                 </div>
                                             </div>
                                         </td>
@@ -281,7 +251,14 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->class_id }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ ucfirst($list->class->name) }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="ms-2">
+                                                    <h6 class="fs-14 mb-0">{{ $list->section->name }}</h6>
                                                 </div>
                                             </div>
                                         </td>

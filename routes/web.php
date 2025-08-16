@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NonWorkingStaffController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
+use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -102,10 +103,11 @@ Route::middleware('admin')->group(function () {
 
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
-            Route::get('/assign-teacher', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
-            // Route::post('/assign-teacher/store', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'store'])->name('admin.academic.assign-teacher.store');
-            // Route::get('/assign-teacher/list', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'getAssignedTeachers'])->name('admin.academic.assign-teacher.list');
-            // Route::post('/assign-teacher/{id}/status', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'updateStatus'])->name('admin.academic.assign-teacher.status        ');
+            Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
+            Route::get('/classes-by-institution/{id}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
+            Route::get('/teachers-by-institution/{id}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
+            Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
+            Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
         });
     });
 });
