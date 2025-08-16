@@ -144,7 +144,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.academic.assign-teacher.index') }}">
                                 <i class="ti ti-user"></i><span>Assign Class Teacher</span>
                             </a>
                         </li>
