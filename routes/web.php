@@ -28,52 +28,52 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protected page example
 Route::middleware('admin')->group(function () {
 
-    Route::prefix('admin')->group(function(){
+    Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        Route::prefix('institutions')->group(function(){
-            Route::get('/index',[InstitutionController::class,'Index'])->name('admin.institutions.index');
-            Route::get('/create',[InstitutionController::class,'Create'])->name('admin.institutions.create');
-            Route::post('/store',[InstitutionController::class,'Store'])->name('admin.institutions.store');
+        Route::prefix('institutions')->group(function () {
+            Route::get('/index', [InstitutionController::class, 'Index'])->name('admin.institutions.index');
+            Route::get('/create', [InstitutionController::class, 'Create'])->name('admin.institutions.create');
+            Route::post('/store', [InstitutionController::class, 'Store'])->name('admin.institutions.store');
             Route::get('/edit/{institution}', [InstitutionController::class, 'Edit'])->name('admin.institutions.edit');
-            Route::post('/update/{institution}',[InstitutionController::class,'Update'])->name('admin.institutions.update');
+            Route::post('/update/{institution}', [InstitutionController::class, 'Update'])->name('admin.institutions.update');
             Route::post('/delete/{institution}', [InstitutionController::class, 'Delete'])->name('admin.institutions.delete');
         });
-        Route::prefix('teachers')->group(function(){
-            Route::get('/index',[TeacherController::class,'Index'])->name('admin.teachers.index');
-            Route::get('/create',[TeacherController::class,'Create'])->name('admin.teachers.create');
-            Route::post('/store',[TeacherController::class,'Store'])->name('admin.teachers.store');
+        Route::prefix('teachers')->group(function () {
+            Route::get('/index', [TeacherController::class, 'Index'])->name('admin.teachers.index');
+            Route::get('/create', [TeacherController::class, 'Create'])->name('admin.teachers.create');
+            Route::post('/store', [TeacherController::class, 'Store'])->name('admin.teachers.store');
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('admin.teachers.edit');
-            Route::post('/update/{teacher}',[TeacherController::class,'Update'])->name('admin.teachers.update');
+            Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('admin.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
         });
-        Route::prefix('nonworkingstaff')->group(function(){
-            Route::get('/index',[NonWorkingStaffController::class,'Index'])->name('admin.nonworkingstaff.index');
-            Route::get('/create',[NonWorkingStaffController::class,'Create'])->name('admin.nonworkingstaff.create');
-            Route::post('/store',[NonWorkingStaffController::class,'Store'])->name('admin.nonworkingstaff.store');
+        Route::prefix('nonworkingstaff')->group(function () {
+            Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
+            Route::get('/create', [NonWorkingStaffController::class, 'Create'])->name('admin.nonworkingstaff.create');
+            Route::post('/store', [NonWorkingStaffController::class, 'Store'])->name('admin.nonworkingstaff.store');
             Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
-            Route::post('/update/{nonworkingstaff}',[NonWorkingStaffController::class,'Update'])->name('admin.nonworkingstaff.update');
+            Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
             Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
         });
-        Route::prefix('students')->group(function(){
-            Route::get('/index',[StudentController::class,'Index'])->name('admin.students.index');
-            Route::get('/create',[StudentController::class,'Create'])->name('admin.students.create');
-            Route::post('/store',[StudentController::class,'Store'])->name('admin.students.store');
+        Route::prefix('students')->group(function () {
+            Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
+            Route::get('/create', [StudentController::class, 'Create'])->name('admin.students.create');
+            Route::post('/store', [StudentController::class, 'Store'])->name('admin.students.store');
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
-            Route::post('/update/{student}',[StudentController::class,'Update'])->name('admin.students.update');
+            Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
         });
 
-        Route::prefix('attendance')->group(function(){
-            Route::get('/',[AttendanceController::class,'Index'])->name('admin.attendance');
+        Route::prefix('attendance')->group(function () {
+            Route::get('/', [AttendanceController::class, 'Index'])->name('admin.attendance');
             Route::post('/filter', [AttendanceController::class, 'filter']);
         });
 
-        Route::prefix('subjects')->group(function(){
-            Route::get('/',[SubjectController::class,'Index'])->name('admin.subjects.index');
-            Route::post('/store',[SubjectController::class,'store'])->name('admin.subjects.store');
-            Route::get('/list',[SubjectController::class,'getSubjects'])->name('admin.subjects.list');
-            Route::post('/{id}/status',[SubjectController::class,'updateStatus'])->name('admin.subjects.status');
+        Route::prefix('subjects')->group(function () {
+            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
+            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
+            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
+            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
             Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
             Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
         });
@@ -91,15 +91,19 @@ Route::middleware('admin')->group(function () {
 
         // SECTIONS
         Route::prefix('sections')->group(function(){
-            Route::get('/',[SectionController::class,'index'])->name('admin.sections.index');
+            Route::get('/',[SectionController::class,'Index'])->name('admin.sections.index');
             Route::post('/store',[SectionController::class,'store'])->name('admin.sections.store');
             Route::get('/list',[SectionController::class,'getSections'])->name('admin.sections.list');
-            Route::get('/edit/{id}', [SectionController::class, 'edit'])->name('admin.sections.edit');
-            Route::post('/update/{id}', [SectionController::class, 'update'])->name('admin.sections.update');
-            Route::post('/delete/{id}', [SectionController::class, 'delete'])->name('admin.sections.delete');
             Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
         });
 
+        // ASSIGN CLASS TEACHER
+        Route::prefix('academic')->group(function () {
+            Route::get('/assign-teacher', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
+            // Route::post('/assign-teacher/store', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'store'])->name('admin.academic.assign-teacher.store');
+            // Route::get('/assign-teacher/list', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'getAssignedTeachers'])->name('admin.academic.assign-teacher.list');
+            // Route::post('/assign-teacher/{id}/status', [App\Http\Controllers\Admin\Academic\AssignClassTeacherController::class, 'updateStatus'])->name('admin.academic.assign-teacher.status        ');
+        });
     });
 });
 
