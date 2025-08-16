@@ -79,12 +79,14 @@ Route::middleware('admin')->group(function () {
         });
 
 // Classes
-        Route::prefix('classes')->group(function () {
-            Route::get('/',[SchoolClassController::class,'Index'])->name('admin.classes.index');
-            Route::post('/store',[SchoolClassController::class,'store'])->name('admin.classes.store');
-            Route::get('/list',[SchoolClassController::class,'getSchoolClasses'])->name('admin.classes.list');
-            Route::post('/{id}/status',[SchoolClassController::class,'updateStatus'])->name('admin.classes.status');
-        });
+Route::prefix('classes')->group(function () {
+    Route::get('/',[SchoolClassController::class,'index'])->name('admin.classes.index');
+    Route::post('/store',[SchoolClassController::class,'store'])->name('admin.classes.store');
+    Route::get('/list',[SchoolClassController::class,'getSchoolClasses'])->name('admin.classes.list');
+    Route::get('/edit/{id}', [SchoolClassController::class, 'edit'])->name('admin.classes.edit');
+    Route::post('/update/{id}', [SchoolClassController::class, 'update'])->name('admin.classes.update');
+    Route::post('/{id}/status',[SchoolClassController::class,'updateStatus'])->name('admin.classes.status');
+});
 
         // SECTIONS
         Route::prefix('sections')->group(function(){

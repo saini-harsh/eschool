@@ -37,11 +37,12 @@
                     <h6 class="fw-bold">Add Class</h6>
                 </div>
                 <div class="card-body">
-                    <form action="" method="post">
+                    <form action="" method="post" id="class-form">
                         @csrf
+                        <input type="hidden" name="class_id" id="class_id">
                         <div class="mb-3">
                         <label class="form-label">Institution <span class="text-danger">*</span></label>
-                        <select name="institution_id" class="select" required>
+                        <select name="institution_id" class="select" id="institution_id" required>
                             @if (isset($institutions) && !empty($institutions))
                             @foreach ($institutions as $institution)
                             <option value="{{ $institution->id }}">{{ $institution->name }}</option>
@@ -51,14 +52,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Class Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter class name">
+                            <input type="text" name="name" id="class_name" class="form-control" placeholder="Enter class name">
                         </div>
                         <div class="mb-3">
                             <label class="form-label d-block">Sections</label>
                             @foreach($sections as $section)
                                 <div class="form-check">
                                     <input type="checkbox" name="section_ids[]" value="{{ $section->id }}"
-                                        class="form-check-input" id="section_{{ $section->id }}">
+                                        class="form-check-input section-checkbox" id="section_{{ $section->id }}">
                                     <label class="form-check-label" for="section_{{ $section->id }}">
                                         {{ $section->name }}
                                     </label>
@@ -68,11 +69,13 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input type="checkbox" name="status" value="1" class="form-check-input" checked>
+                                <input type="checkbox" name="status" value="1" class="form-check-input" id="class_status" checked>
                                 <label class="form-check-label">Active</label>
                             </div>
                         </div>
                         <button type="button" class="btn btn-primary" id="add-class">Submit</button>
+                        <button type="button" class="btn btn-success d-none" id="update-class">Update</button>
+                        <button type="button" class="btn btn-secondary d-none" id="cancel-edit">Cancel</button>
                     </form>
                 </div>
             </div>
@@ -237,28 +240,51 @@
                     <tbody>
                         @foreach($classes as $class)
                             <tr>
-                                <td>{{ $class->name }}</td>
                                 <td>
-                                @php
-                                    $sectionIds = is_array($class->section_ids)
-                                        ? $class->section_ids
-                                        : json_decode($class->section_ids, true);
-
-                                    $sectionNames = \App\Models\Section::whereIn('id', $sectionIds ?: [])->pluck('name')->toArray();
-                                @endphp
-
-                                {{ implode(', ', $sectionNames) ?: '-' }}
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-0">{{ $class->name }}</h6>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td>{{ $class->student_count ?? 0 }}</td> {{-- ✅ Show student count --}}
                                 <td>
-                                        <select class="form-select status-select" data-class-id="{{ $class->id }}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            @php
+                                                $sectionIds = is_array($class->section_ids)
+                                                    ? $class->section_ids
+                                                    : json_decode($class->section_ids, true);
+
+                                                $sectionNames = \App\Models\Section::whereIn('id', $sectionIds ?: [])->pluck('name')->toArray();
+                                            @endphp
+                                            <h6 class="fs-14 mb-0">{{ implode(', ', $sectionNames) ?: '-' }}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-0">{{ $class->student_count ?? 0 }}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select class="form-select class-status-select" data-class-id="{{ $class->id }}">
                                             <option value="1" {{ $class->status == 1 ? 'selected' : '' }}>Active</option>
                                             <option value="0" {{ $class->status == 0 ? 'selected' : '' }}>Inactive</option>
                                         </select>
+                                    </div>
                                 </td>
                                 <td>
 
-                                    <a href="#" class="btn btn-icon btn-sm btn-outline-white border-0 edit-class"><i class="ti ti-edit"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-class" 
+                                       data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}" 
+                                       data-institution-id="{{ $class->institution_id }}" 
+                                       data-section-ids="{{ json_encode($sectionIds) }}" 
+                                       data-status="{{ $class->status }}">
+                                        <i class="ti ti-edit"></i>
+                                    </a>
                                     <a href="#" class="btn btn-icon btn-sm btn-outline-white border-0"
                                     data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
                                 </td>

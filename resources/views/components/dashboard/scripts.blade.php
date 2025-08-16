@@ -50,3 +50,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ URL::asset('/custom/js/sections.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/subjects.js') }}"></script>
+    <script src="{{ URL::asset('/custom/js/schoolclass.js') }}"></script>
