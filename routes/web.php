@@ -70,14 +70,6 @@ Route::middleware('admin')->group(function () {
             Route::post('/filter', [AttendanceController::class, 'filter']);
         });
 
-        Route::prefix('subjects')->group(function () {
-            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
-            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
-            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
-            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
-            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
-            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
-        });
 
         // Classes
         Route::prefix('classes')->group(function () {
@@ -101,6 +93,17 @@ Route::middleware('admin')->group(function () {
             Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
         });
 
+        // SUBJECTS
+        Route::prefix('subjects')->group(function () {
+            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
+            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
+            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
+            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
+            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
+            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
+            Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
+        });
+
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
             Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
@@ -108,6 +111,26 @@ Route::middleware('admin')->group(function () {
             Route::get('/teachers-by-institution/{id}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
             Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
             Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
+        });
+
+        Route::prefix('calender')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'index'])->name('admin.academic.calendar.index');
+            Route::get('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
+            Route::post('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'store'])->name('admin.academic.calendar.store');
+            Route::put('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'update'])->name('admin.academic.calendar.update');
+            Route::delete('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'destroy'])->name('admin.academic.calendar.destroy');
+            Route::get('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvent'])->name('admin.academic.calendar.show');
+        });
+
+        // Event Management Routes
+        Route::prefix('events')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\Academic\EventController::class, 'index'])->name('admin.events.index');
+            Route::post('/', [App\Http\Controllers\Admin\Academic\EventController::class, 'store'])->name('admin.events.store');
+            Route::get('/list', [App\Http\Controllers\Admin\Academic\EventController::class, 'getEvents'])->name('admin.events.list');
+            Route::get('/{id}/edit', [App\Http\Controllers\Admin\Academic\EventController::class, 'edit'])->name('admin.events.edit');
+            Route::put('/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'update'])->name('admin.events.update');
+            Route::delete('/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'destroy'])->name('admin.events.destroy');
+            Route::post('/{id}/status', [App\Http\Controllers\Admin\Academic\EventController::class, 'updateStatus'])->name('admin.events.status');
         });
     });
 });

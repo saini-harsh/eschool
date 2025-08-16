@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Academic;
 
 use App\Models\Subject;
 use App\Models\Institution;
+use App\Models\SchoolClass;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -18,14 +19,11 @@ class SubjectController extends Controller
     public function Index()
     {
         // Logic to retrieve and display subjects
-        $lists = Subject::with('institution')->orderBy('created_at', 'desc')->get();
-        $institutions = Institution::all(); // Assuming you have an Institution model
-        $classes = [
-            ['id' => 1, 'name' => 'Class 1'],
-            ['id' => 2, 'name' => 'Class 2'],
-            ['id' => 3, 'name' => 'Class 3'],
-        ]; // Placeholder for classes if needed
-        return view('admin.academic.subject.index',compact('lists', 'institutions', 'classes'));
+        $lists = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
+        $institutions = Institution::all();
+        $classes = SchoolClass::where('status', 1)->get(); // Get only active classes
+        
+        return view('admin.academic.subject.index', compact('lists', 'institutions', 'classes'));
     }
 
     public function store(Request $request)
@@ -37,7 +35,7 @@ class SubjectController extends Controller
                 'type' => 'required|string|max:255',
                 'status' => 'nullable|boolean',
                 'institution_id' => 'required|exists:institutions,id',
-                'class_id' => 'nullable', // Assuming you have a
+                'class_id' => 'nullable|exists:classes,id',
             ]);
 
             if ($validator->fails()) {
@@ -48,19 +46,19 @@ class SubjectController extends Controller
                 ], 422);
             }
 
-            $Subject = Subject::create([
+            $subject = Subject::create([
                 'name' => $request->name,
                 'code' => $request->code,
                 'type' => $request->type,
-                'status' => $request->status ?? true, // Default to true if not provided
+                'status' => $request->status ?? true,
                 'institution_id' => $request->institution_id,
-                'class_id' => $request->class_id, // Assuming class_id is optional
-            ])->fresh(); // Fresh to get the newly created instance with ID
+                'class_id' => $request->class_id,
+            ])->fresh();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Subject created successfully',
-                'data' => $Subject
+                'data' => $subject
             ], 201);
 
         } catch (\Exception $e) {
@@ -75,11 +73,11 @@ class SubjectController extends Controller
     public function getSubjects()
     {
         try {
-            $Subjects = Subject::with('institution')->orderBy('created_at', 'desc')->get();
+            $subjects = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $Subjects
+                'data' => $subjects
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -92,8 +90,8 @@ class SubjectController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
-            $Subject = Subject::with('institution')->findOrFail($id);
-            $Subject->update(['status' => $request->status]);
+            $subject = Subject::with(['institution', 'schoolClass'])->findOrFail($id);
+            $subject->update(['status' => $request->status]);
 
             return response()->json([
                 'success' => true,
@@ -110,10 +108,10 @@ class SubjectController extends Controller
     public function edit($id)
     {
         try {
-            $Subject = Subject::with('institution')->findOrFail($id);
+            $subject = Subject::with(['institution', 'schoolClass'])->findOrFail($id);
             return response()->json([
                 'success' => true,
-                'data' => $Subject
+                'data' => $subject
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -132,7 +130,7 @@ class SubjectController extends Controller
                 'type' => 'required|string|max:255',
                 'status' => 'nullable|boolean',
                 'institution_id' => 'required|exists:institutions,id',
-                'class_id' => 'nullable', // Assuming you have a class_id field
+                'class_id' => 'nullable|exists:classes,id',
             ]);
 
             if ($validator->fails()) {
@@ -143,26 +141,44 @@ class SubjectController extends Controller
                 ], 422);
             }
 
-            $Subject = Subject::findOrFail($id);
-            $Subject->update([
+            $subject = Subject::findOrFail($id);
+            $subject->update([
                 'name' => $request->name,
                 'code' => $request->code,
                 'type' => $request->type,
-                'status' => $request->status ?? true, // Default to true if not provided
+                'status' => $request->status ?? true,
                 'institution_id' => $request->institution_id,
-                'class_id' => $request->class_id, // Assuming class_id is optional
+                'class_id' => $request->class_id,
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Subject updated successfully',
-                'data' => $Subject
+                'data' => $subject
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while updating the Subject',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $subject = Subject::findOrFail($id);
+            $subject->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting subject'
             ], 500);
         }
     }

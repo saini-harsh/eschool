@@ -20,4 +20,8 @@ class Subject extends Model
         return $this->belongsTo(Institution::class);
     }
 
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
 }

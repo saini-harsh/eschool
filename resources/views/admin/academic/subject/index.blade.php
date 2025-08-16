@@ -64,7 +64,7 @@
                                             <option value="">Select Class</option>
                                             @if (isset($classes) && !empty($classes))
                                                 @foreach ($classes as $class)
-                                                    <option value="{{ $class['id'] }}">{{ $class['name'] }}</option>
+                                                    <option value="{{ $class->id }}">{{ $class->name }}</option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -107,6 +107,7 @@
                             </div>
                             <button class="btn btn-primary" type="button" id="add-subject">Submit</button>
                             <button class="btn btn-primary d-none" type="button" id="update-subject">Update</button>
+                            <button class="btn btn-secondary d-none" type="button" id="cancel-edit">Cancel</button>
                         </form>
                     </div>
                 </div>
@@ -281,17 +282,15 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->class_id }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ $list->schoolClass ? $list->schoolClass->name : 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="select">
-                                                    <option value="1" {{ $list->status == 1 ? 'active' : '' }}>Active
-                                                    </option>
-                                                    <option value="0" {{ $list->status == 2 ? 'active' : '' }}>
-                                                        Inactive</option>
+                                                <select class="form-select status-select" data-subject-id="{{ $list->id }}">
+                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
+                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
                                                 </select>
                                             </div>
                                         </td>
@@ -300,9 +299,9 @@
                                                 <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
                                                     class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject"><i
                                                         class="ti ti-edit"></i></a>
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
+                                                <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
+                                                    data-subject-name="{{ $list->name }}"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 delete-subject"><i
                                                         class="ti ti-trash"></i></a>
                                             </div>
                                         </td>
@@ -318,4 +317,27 @@
     </div>
 
     <!-- End Content -->
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Subject</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Delete Subject</h6>
+                    <p>Are you sure you want to delete this subject?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

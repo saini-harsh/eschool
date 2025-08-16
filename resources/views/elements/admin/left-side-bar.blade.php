@@ -153,6 +153,16 @@
                                 <i class="ti ti-checks"></i><span>Assign Subject</span>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="{{ route('admin.academic.calendar.index') }}">
+                                <i class="ti ti-calendar"></i><span>Calendar</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{ route('admin.events.index') }}">
+                                <i class="ti ti-list"></i><span>Event Management</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <!---<li class="menu-title"><span>Settings</span></li>

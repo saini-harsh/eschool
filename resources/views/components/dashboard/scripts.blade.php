@@ -16,6 +16,9 @@
     <!-- Flatpickr JS -->
     <script src="{{URL::asset('/adminpanel/plugins/flatpickr/flatpickr.min.js')}}" type=""></script>
 
+    <!-- Fullcalendar JS -->
+    <script src="{{URL::asset('/adminpanel/plugins/fullcalendar/index.global.min.js')}}" type=""></script>
+    <script src="{{URL::asset('/adminpanel/plugins/fullcalendar/calendar-data.js')}}" type=""></script>
 
 
     <!-- Sticky Sidebar JS -->

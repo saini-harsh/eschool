@@ -11,6 +11,7 @@ use App\Models\Teacher;
 use App\Models\Institution;
 use App\Models\SchoolClass;
 use App\Models\NonWorkingStaff;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -346,5 +347,30 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         // SchoolClass End
+
+        // Subjects Start
+        $subjects = [
+            ['name' => 'Mathematics', 'code' => 'MATH', 'type' => 'theory'],
+            ['name' => 'English', 'code' => 'ENG', 'type' => 'theory'],
+            ['name' => 'Science', 'code' => 'SCI', 'type' => 'theory'],
+            ['name' => 'Social Studies', 'code' => 'SST', 'type' => 'theory'],
+            ['name' => 'Hindi', 'code' => 'HIN', 'type' => 'theory'],
+            ['name' => 'Computer', 'code' => 'COMP', 'type' => 'practical'],
+            ['name' => 'Art', 'code' => 'ART', 'type' => 'practical'],
+            ['name' => 'Physical Education', 'code' => 'PE', 'type' => 'practical'],
+        ];
+        
+        foreach ($subjects as $subject) {
+            Subject::create([
+                'name' => $subject['name'],
+                'code' => $subject['code'],
+                'type' => $subject['type'],
+                'status' => 1,
+                'institution_id' => 1, // adjust if multiple institutions
+                'class_id' => 1,    // you can link to class later
+            ]);
+        }
+        // Subjects End
+
     }
 }
