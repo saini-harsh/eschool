@@ -164,4 +164,34 @@ class SchoolClassController extends Controller
             ], 500);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $class = SchoolClass::findOrFail($id);
+            
+            // Check if class has any students (you can add this validation if needed)
+            // if ($class->students()->count() > 0) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Cannot delete class. It has associated students.'
+            //     ], 422);
+            // }
+            
+            $className = $class->name;
+            $class->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Class '{$className}' deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting class', ['id' => $id, 'error' => $e->getMessage()]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the class'
+            ], 500);
+        }
+    }
 }

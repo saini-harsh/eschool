@@ -43,5 +43,8 @@ function confirmDelete(url) {
     let modal = new bootstrap.Modal(document.getElementById('delete_modal'));
     modal.show();
 }
+
+// Handle delete form submission for classes
+
 </script>
 <!-- End Modal -->

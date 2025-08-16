@@ -312,14 +312,6 @@ $(document).ready(function () {
         const form = $(this).closest("form");
         const formData = new FormData(form[0]);
 
-        // Handle checkbox status properly
-        const statusCheckbox = form.find('input[name="status"]');
-        if (statusCheckbox.is(':checked')) {
-            formData.set('status', '1');
-        } else {
-            formData.set('status', '0');
-        }
-
         // Disable submit button and show loading state
         const submitBtn = $(this);
         const originalText = submitBtn.text();
@@ -347,7 +339,7 @@ $(document).ready(function () {
                     form[0].reset();
 
                     // Re-check the status checkbox since reset() unchecks it
-                    statusCheckbox.prop("checked", true);
+                    $("#subject-status").prop("checked", true);
 
                     // Refresh the subjects list dynamically
                     refreshSubjectsList();

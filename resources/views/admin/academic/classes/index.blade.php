@@ -285,8 +285,10 @@
                                        data-status="{{ $class->status }}">
                                         <i class="ti ti-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-icon btn-sm btn-outline-white border-0"
-                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-class" 
+                                       data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}">
+                                        <i class="ti ti-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

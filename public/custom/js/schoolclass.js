@@ -1,3 +1,5 @@
+
+
 $(document).ready(function () {
     // Check if we're on the classes page by looking for class-specific elements
     if ($(".class-status-select").length > 0 || window.location.pathname.includes('/admin/classes')) {
@@ -145,6 +147,66 @@ $(document).ready(function () {
     $("#cancel-edit").on("click", function (e) {
         e.preventDefault();
         resetForm();
+    });
+
+    // Delete class functionality
+    $(document).on("click", ".delete-class", function (e) {
+        e.preventDefault();
+        const classId = $(this).data("class-id");
+        const className = $(this).data("class-name");
+        
+        // Update modal content with class-specific information
+        $("#delete_modal .modal-body h6").text("Delete Class");
+        $("#delete_modal .modal-body p").text(`Are you sure you want to delete the class "${className}"?`);
+        
+        // Set up the delete form action
+        $("#deleteForm").attr("action", `/admin/classes/delete/${classId}`);
+        
+        // Show the modal
+        const deleteModal = new bootstrap.Modal(document.getElementById('delete_modal'));
+        deleteModal.show();
+    });
+
+    // Handle delete form submission
+    $("#deleteForm").on("submit", function (e) {
+        e.preventDefault();
+        
+        const form = $(this);
+        const submitBtn = form.find('button[type="submit"]');
+        const originalText = submitBtn.text();
+        
+        // Disable submit button and show loading state
+        submitBtn.prop("disabled", true).text("Deleting...");
+        
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: form.serialize(),
+            headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+            success: function (response) {
+                if (response.success) {
+                    toastr.success(response.message || "Class deleted successfully");
+                    // Hide the modal
+                    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('delete_modal'));
+                    deleteModal.hide();
+                    // Refresh the class list
+                    refreshClassList();
+                } else {
+                    toastr.error(response.message || "Failed to delete class");
+                }
+            },
+            error: function (xhr) {
+                let errorMessage = "An error occurred while deleting the class";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                toastr.error(errorMessage);
+            },
+            complete: function () {
+                // Re-enable submit button
+                submitBtn.prop("disabled", false).text(originalText);
+            }
+        });
     });
 
     // Function to reset form to add mode
@@ -327,4 +389,3 @@ $(document).ready(function () {
         return text.replace(/[&<>"']/g, function(m) { return map[m]; });
     }
 });
-
