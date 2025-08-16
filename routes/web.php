@@ -69,14 +69,6 @@ Route::middleware('admin')->group(function () {
             Route::post('/filter', [AttendanceController::class, 'filter']);
         });
 
-        Route::prefix('subjects')->group(function () {
-            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
-            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
-            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
-            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
-            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
-            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
-        });
 
         // Classes
         Route::prefix('classes')->group(function () {
@@ -98,6 +90,17 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{id}', [SectionController::class, 'update'])->name('admin.sections.update');
             Route::post('/delete/{id}', [SectionController::class, 'delete'])->name('admin.sections.delete');
             Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
+        });
+
+        // SUBJECTS
+        Route::prefix('subjects')->group(function () {
+            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
+            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
+            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
+            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
+            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
+            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
+            Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
         });
 
         // ASSIGN CLASS TEACHER

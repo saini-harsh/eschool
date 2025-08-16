@@ -1,4 +1,13 @@
 $(document).ready(function () {
+    // Check if we're on the subjects page by looking for subject-specific elements
+    if ($(".subject-status-select").length > 0 || window.location.pathname.includes('/admin/subjects')) {
+        // Initialize Select2 for existing dropdowns
+        initializeSelect2();
+        
+        // Add event listeners for status changes on page load
+        addStatusChangeListeners();
+    }
+
     // Add subject form submission
     $("#add-subject").on("click", function (e) {
         e.preventDefault();
@@ -40,10 +49,7 @@ $(document).ready(function () {
                     showToast("success", response.message);
 
                     // Reset form
-                    form[0].reset();
-
-                    // Re-check the status checkbox since reset() unchecks it
-                    statusCheckbox.prop("checked", true);
+                    resetForm();
 
                     // Refresh the subjects list dynamically
                     refreshSubjectsList();
@@ -102,6 +108,23 @@ $(document).ready(function () {
         }
     }
 
+    // Function to reset form to add mode
+    function resetForm() {
+        const form = $("#subject-form")[0];
+        form.reset();
+
+        // Re-check the status checkbox since reset() unchecks it
+        $("#subject-status").prop("checked", true);
+
+        // Clear hidden field
+        $("#subject-id").val("");
+
+        // Switch buttons back to add mode
+        $("#add-subject").removeClass("d-none");
+        $("#update-subject").addClass("d-none");
+        $("#cancel-edit").addClass("d-none");
+    }
+
     // Function to refresh subjects list dynamically
     function refreshSubjectsList() {
         $.ajax({
@@ -127,46 +150,47 @@ $(document).ready(function () {
 
         if (subjects.length === 0) {
             html =
-                '<tr><td colspan="3" class="text-center">No subjects found</td></tr>';
+                '<tr><td colspan="7" class="text-center">No subjects found</td></tr>';
         } else {
             subjects.forEach(function (subject) {
                 const statusText = subject.status == 1 ? "Active" : "Inactive";
                 const statusClass = subject.status == 1 ? "active" : "";
+                const className = subject.school_class ? subject.school_class.name : 'N/A';
 
                 html += `
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${subject.name}</h6>
+                                    <h6 class="fs-14 mb-0">${escapeHtml(subject.name)}</h6>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${subject.code}</h6>
+                                    <h6 class="fs-14 mb-0">${escapeHtml(subject.code)}</h6>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${subject.type}</h6>
+                                    <h6 class="fs-14 mb-0">${escapeHtml(subject.type)}</h6>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${subject.institution.name}</h6>
+                                    <h6 class="fs-14 mb-0">${escapeHtml(subject.institution.name)}</h6>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${subject.class_id}</h6>
+                                    <h6 class="fs-14 mb-0">${escapeHtml(className)}</h6>
                                 </div>
                             </div>
                         </td>
@@ -191,8 +215,10 @@ $(document).ready(function () {
                                 }" class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject">
                                     <i class="ti ti-edit"></i>
                                 </a>
-                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0"
-                                   data-bs-toggle="modal" data-bs-target="#delete_modal">
+                                <a href="javascript:void(0);" data-subject-id="${
+                                    subject.id
+                                }" data-subject-name="${escapeHtml(subject.name)}" 
+                                   class="btn btn-icon btn-sm btn-outline-white border-0 delete-subject">
                                     <i class="ti ti-trash"></i>
                                 </a>
                             </div>
@@ -224,17 +250,20 @@ $(document).ready(function () {
 
     // Function to add event listeners for status changes
     function addStatusChangeListeners() {
+        // Remove any existing listeners to prevent conflicts
+        $(".status-select").off("change");
+        
         $(".status-select").on("change", function () {
             const subjectId = $(this).data("subject-id");
             const newStatus = $(this).val();
 
             // Update status via AJAX
-            updatesubjectstatus(subjectId, newStatus);
+            updateSubjectStatus(subjectId, newStatus);
         });
     }
 
     // Function to update subject status
-    function updatesubjectstatus(subjectId, status) {
+    function updateSubjectStatus(subjectId, status) {
         $.ajax({
             url: `/admin/subjects/${subjectId}/status`,
             type: "POST",
@@ -245,6 +274,10 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     showToast("success", "Status updated successfully");
+                    // Refresh the subject list to show updated data
+                    setTimeout(function() {
+                        refreshSubjectsList();
+                    }, 1000);
                 } else {
                     showToast(
                         "error",
@@ -260,12 +293,7 @@ $(document).ready(function () {
         });
     }
 
-    // Initial load of subjects (optional - if you want to load on page load)
-    // refreshSubjectsList();
-    initializeSelect2(); // Initialize Select2 for existing dropdowns
-    addStatusChangeListeners(); // Add event listeners for status changes
-
-    // edit subject
+    // Edit subject
     $(document).on("click", ".edit-subject", function (e) {
         e.preventDefault();
         const subjectId = $(this).data("subject-id");
@@ -291,9 +319,11 @@ $(document).ready(function () {
                         response.data.class_id
                     );
                     $("#subject-form [name='id']").val(response.data.id);
+                    
                     // Show the edit modal
                     $("#add-subject").addClass("d-none");
                     $("#update-subject").removeClass("d-none");
+                    $("#cancel-edit").removeClass("d-none");
                 } else {
                     showToast("error", "Failed to fetch subject details");
                 }
@@ -302,8 +332,8 @@ $(document).ready(function () {
                 showToast("error", "Error fetching subject details");
             },
         });
-    }
-    );
+    });
+
     // Update subject
     $(document).on("click", "#update-subject", function (e) {
         e.preventDefault();
@@ -336,10 +366,7 @@ $(document).ready(function () {
                     showToast("success", response.message);
 
                     // Reset form
-                    form[0].reset();
-
-                    // Re-check the status checkbox since reset() unchecks it
-                    $("#subject-status").prop("checked", true);
+                    resetForm();
 
                     // Refresh the subjects list dynamically
                     refreshSubjectsList();
@@ -370,6 +397,93 @@ $(document).ready(function () {
                 submitBtn.prop("disabled", false).text(originalText);
             },
         });
+    });
+
+    // Cancel edit
+    $(document).on("click", "#cancel-edit", function (e) {
+        e.preventDefault();
+        resetForm();
+    });
+
+    // Delete subject functionality
+    $(document).on("click", ".delete-subject", function (e) {
+        e.preventDefault();
+        const subjectId = $(this).data("subject-id");
+        const subjectName = $(this).data("subject-name");
+        
+        // Update modal content with subject-specific information
+        $("#delete_modal .modal-body h6").text("Delete Subject");
+        $("#delete_modal .modal-body p").text(`Are you sure you want to delete the subject "${subjectName}"?`);
+        
+        // Set up the delete form action
+        $("#deleteForm").attr("action", `/admin/subjects/delete/${subjectId}`);
+        
+        // Show the modal
+        const deleteModal = new bootstrap.Modal(document.getElementById('delete_modal'));
+        deleteModal.show();
+    });
+
+    // Handle delete form submission for subjects
+    $("#deleteForm").on("submit", function (e) {
+        e.preventDefault();
+        
+        // Only handle if we're on the subjects page
+        if (!window.location.pathname.includes('/admin/subjects')) {
+            return;
+        }
+        
+        const form = $(this);
+        const submitBtn = form.find('button[type="submit"]');
+        const originalText = submitBtn.text();
+        
+        // Disable submit button and show loading state
+        submitBtn.prop("disabled", true).text("Deleting...");
+        
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: form.serialize(),
+            headers: { "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content") },
+            success: function (response) {
+                if (response.success) {
+                    showToast("success", response.message || "Subject deleted successfully");
+                    // Hide the modal
+                    const deleteModal = bootstrap.Modal.getInstance(document.getElementById('delete_modal'));
+                    deleteModal.hide();
+                    // Refresh the subject list
+                    refreshSubjectsList();
+                } else {
+                    showToast("error", response.message || "Failed to delete subject");
+                }
+            },
+            error: function (xhr) {
+                let errorMessage = "An error occurred while deleting the subject";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                showToast("error", errorMessage);
+            },
+            complete: function () {
+                // Re-enable submit button
+                submitBtn.prop("disabled", false).text(originalText);
+            }
+        });
+    });
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
     }
-    );
+
+    // Initial load of subjects (optional - if you want to load on page load)
+    // refreshSubjectsList();
+    initializeSelect2(); // Initialize Select2 for existing dropdowns
+    addStatusChangeListeners(); // Add event listeners for status changes
 });
