@@ -167,9 +167,14 @@ $(document).ready(function () {
         deleteModal.show();
     });
 
-    // Handle delete form submission
+    // Handle delete form submission for classes
     $("#deleteForm").on("submit", function (e) {
         e.preventDefault();
+        
+        // Only handle if we're on the classes page
+        if (!window.location.pathname.includes('/admin/classes')) {
+            return;
+        }
         
         const form = $(this);
         const submitBtn = form.find('button[type="submit"]');
@@ -208,6 +213,8 @@ $(document).ready(function () {
             }
         });
     });
+
+
 
     // Function to reset form to add mode
     function resetForm() {

@@ -24,7 +24,7 @@ class SectionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255|unique:sections,name',
-                'status' => 'nullable|boolean'
+                'status' => 'nullable|in:0,1'
             ]);
 
             if ($validator->fails()) {
@@ -37,7 +37,7 @@ class SectionController extends Controller
 
             $section = Section::create([
                 'name' => $request->name,
-                'status' => $request->status ?? true // Default to true if not provided
+                'status' => $request->status ?? 1 // Default to 1 if not provided
             ]);
 
             return response()->json([
@@ -68,6 +68,88 @@ class SectionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching sections'
+            ], 500);
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $section = Section::findOrFail($id);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $section
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Section not found'
+            ], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|unique:sections,name,' . $id,
+                'status' => 'nullable|in:0,1'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $section = Section::findOrFail($id);
+            $section->update([
+                'name' => $request->name,
+                'status' => $request->status ?? 1,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Section updated successfully',
+                'data' => $section
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the section',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $section = Section::findOrFail($id);
+            
+            // Check if section is used in any classes
+            $classesUsingSection = \App\Models\SchoolClass::whereJsonContains('section_ids', $id)->count();
+            if ($classesUsingSection > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete section. It is being used by one or more classes.'
+                ], 422);
+            }
+            
+            $sectionName = $section->name;
+            $section->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Section '{$sectionName}' deleted successfully"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the section'
             ], 500);
         }
     }

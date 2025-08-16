@@ -39,13 +39,14 @@
                         <h6 class="fw-bold">Add Section</h6>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post">
+                        <form action="" method="post" id="section-form">
                             @csrf
+                            <input type="hidden" name="section_id" id="section_id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control"
+                                        <input type="text" name="name" id="section_name" class="form-control"
                                             placeholder="Enter section name" autocomplete="off">
                                     </div>
                                 </div>
@@ -53,8 +54,8 @@
                                     <div class="mb-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="status" value="1"
-                                                id="section-status" checked>
-                                            <label class="form-check-label" for="section-status">
+                                                id="section_status" checked>
+                                            <label class="form-check-label" for="section_status">
                                                 Active
                                             </label>
                                         </div>
@@ -62,6 +63,8 @@
                                 </div>
                             </div>
                             <button class="btn btn-primary" type="button" id="add-section">Submit</button>
+                            <button class="btn btn-success d-none" type="button" id="update-section">Update</button>
+                            <button class="btn btn-secondary d-none" type="button" id="cancel-edit">Cancel</button>
                         </form>
                     </div>
                 </div>
@@ -234,23 +237,23 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="select">
-                                                    <option value="1" {{ $list->status == 1 ? 'active' : '' }}>Active
-                                                    </option>
-                                                    <option value="0" {{ $list->status == 2 ? 'active' : '' }}>
-                                                        Inactive</option>
+                                                <select class="form-select section-status-select" data-section-id="{{ $list->id }}">
+                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
+                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
-                                                <a href=""
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0"><i
-                                                        class="ti ti-edit"></i></a>
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="ti ti-trash"></i></a>
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-section" 
+                                                   data-section-id="{{ $list->id }}" data-section-name="{{ $list->name }}" 
+                                                   data-status="{{ $list->status }}">
+                                                    <i class="ti ti-edit"></i>
+                                                </a>
+                                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-section" 
+                                                   data-section-id="{{ $list->id }}" data-section-name="{{ $list->name }}">
+                                                    <i class="ti ti-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
