@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\Admin\Academic\SectionController;
-use App\Http\Controllers\Admin\Academic\SubjectController;
-use App\Http\Controllers\Admin\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TeacherController;
+use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\NonWorkingStaffController;
-use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\Academic\SectionController;
+use App\Http\Controllers\Admin\Academic\SubjectController;
+use App\Http\Controllers\Admin\Academic\SchoolClassController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -73,6 +74,16 @@ Route::middleware('admin')->group(function () {
             Route::post('/store',[SubjectController::class,'store'])->name('admin.subjects.store');
             Route::get('/list',[SubjectController::class,'getSubjects'])->name('admin.subjects.list');
             Route::post('/{id}/status',[SubjectController::class,'updateStatus'])->name('admin.subjects.status');
+            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
+            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
+        });
+
+// Classes
+        Route::prefix('classes')->group(function () {
+            Route::get('/',[SchoolClassController::class,'Index'])->name('admin.classes.index');
+            Route::post('/store',[SchoolClassController::class,'store'])->name('admin.classes.store');
+            Route::get('/list',[SchoolClassController::class,'getSchoolClasses'])->name('admin.classes.list');
+            Route::post('/{id}/status',[SchoolClassController::class,'updateStatus'])->name('admin.classes.status');
         });
 
         // SECTIONS

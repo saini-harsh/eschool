@@ -106,4 +106,64 @@ class SubjectController extends Controller
             ], 500);
         }
     }
+
+    public function edit($id)
+    {
+        try {
+            $Subject = Subject::with('institution')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $Subject
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching Subject'
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|unique:subjects,name,' . $id,
+                'code' => 'required|string|max:255|unique:subjects,code,' . $id,
+                'type' => 'required|string|max:255',
+                'status' => 'nullable|boolean',
+                'institution_id' => 'required|exists:institutions,id',
+                'class_id' => 'nullable', // Assuming you have a class_id field
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $Subject = Subject::findOrFail($id);
+            $Subject->update([
+                'name' => $request->name,
+                'code' => $request->code,
+                'type' => $request->type,
+                'status' => $request->status ?? true, // Default to true if not provided
+                'institution_id' => $request->institution_id,
+                'class_id' => $request->class_id, // Assuming class_id is optional
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subject updated successfully',
+                'data' => $Subject
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the Subject',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

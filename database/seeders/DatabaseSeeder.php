@@ -4,14 +4,15 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Admin;
+use App\Models\Section;
+use App\Models\Student;
+use App\Models\Teacher;
+use App\Models\Institution;
+use App\Models\SchoolClass;
+use App\Models\NonWorkingStaff;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Admin;
-use App\Models\Institution;
-use App\Models\NonWorkingStaff;
-use App\Models\Section;
-use App\Models\Teacher;
-use App\Models\Student;
 
 class DatabaseSeeder extends Seeder
 {
@@ -307,7 +308,7 @@ class DatabaseSeeder extends Seeder
                 'date_of_joining' => '2018-03-15',
                 ]
             ];
-            
+
             foreach ($staffs as $st) {
                 NonWorkingStaff::create(array_merge($st, [
                 'profile_image' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
@@ -317,5 +318,33 @@ class DatabaseSeeder extends Seeder
             ]));
         }
         // ✅ Non Working Staff End
+
+        // SchoolClass Start
+        $classNames = [
+            'Nursery',
+            'LKG',
+            'UKG',
+            'Class 1',
+            'Class 2',
+            'Class 3',
+            'Class 4',
+            'Class 5',
+            'Class 6',
+            'Class 7',
+            'Class 8',
+            'Class 9',
+        ];
+
+        foreach ($classNames as $name) {
+            SchoolClass::create([
+                'name' => $name,
+                'section_ids' => json_encode(['0', '1']), // default sections
+                'student_count' => 0,
+                'institution_id' => 1, // change if needed
+                'admin_id' => 1,       // change if needed
+                'status' => 1,       // change if needed
+            ]);
+        }
+        // SchoolClass End
     }
 }

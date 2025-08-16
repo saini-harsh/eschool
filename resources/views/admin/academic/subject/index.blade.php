@@ -39,8 +39,9 @@
                         <h6 class="fw-bold">Add Subjects</h6>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post">
+                        <form action="" method="post" id="subject-form">
                             @csrf
+                            <input type="hidden" name="id" id="subject-id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
@@ -105,6 +106,7 @@
                                 </div>
                             </div>
                             <button class="btn btn-primary" type="button" id="add-subject">Submit</button>
+                            <button class="btn btn-primary d-none" type="button" id="update-subject">Update</button>
                         </form>
                     </div>
                 </div>
@@ -295,7 +297,7 @@
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
-                                                <a href="javascript:void(0);"
+                                                <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
                                                     class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject"><i
                                                         class="ti ti-edit"></i></a>
                                                 <a href="javascript:void(0);"

@@ -134,7 +134,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="#">
+                            <a href="{{ route('admin.classes.index')}}">
                                 <i class="ti ti-report"></i><span>Class</span>
                             </a>
                         </li>
@@ -402,7 +402,7 @@
             </div>
         </div>
         <div class="p-3 pt-0">
-            <a href="login.html" class="btn btn-danger w-100"><i class="ti ti-logout-2 me-1"></i>Logout</a>
+            <a href="{{ route('logout')}}" class="btn btn-danger w-100"><i class="ti ti-logout-2 me-1"></i>Logout</a>
         </div>
     </div>
 

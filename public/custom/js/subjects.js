@@ -178,7 +178,9 @@ $(document).ready(function () {
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="" class="btn btn-icon btn-sm btn-outline-white border-0">
+                                <a href="javascript:void(0);" data-subject-id="${
+                                    subject.id
+                                }" class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject">
                                     <i class="ti ti-edit"></i>
                                 </a>
                                 <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0"
@@ -252,4 +254,114 @@ $(document).ready(function () {
 
     // Initial load of subjects (optional - if you want to load on page load)
     // refreshSubjectsList();
+    initializeSelect2(); // Initialize Select2 for existing dropdowns
+    addStatusChangeListeners(); // Add event listeners for status changes
+
+    // edit subject
+    $(document).on("click", ".edit-subject", function (e) {
+        e.preventDefault();
+        const subjectId = $(this).data("subject-id");
+
+        // Fetch subject details via AJAX
+        $.ajax({
+            url: `/admin/subjects/edit/${subjectId}`,
+            type: "GET",
+            success: function (response) {
+                if (response.success) {
+                    // Populate the form with subject data
+                    $("#subject-form [name='name']").val(response.data.name);
+                    $("#subject-form [name='code']").val(response.data.code);
+                    $("#subject-form [name='type']").val(response.data.type);
+                    $("#subject-form [name='status']").prop(
+                        "checked",
+                        response.data.status
+                    );
+                    $("#subject-form [name='institution_id']").val(
+                        response.data.institution_id
+                    );
+                    $("#subject-form [name='class_id']").val(
+                        response.data.class_id
+                    );
+                    $("#subject-form [name='id']").val(response.data.id);
+                    // Show the edit modal
+                    $("#add-subject").addClass("d-none");
+                    $("#update-subject").removeClass("d-none");
+                } else {
+                    showToast("error", "Failed to fetch subject details");
+                }
+            },
+            error: function () {
+                showToast("error", "Error fetching subject details");
+            },
+        });
+    }
+    );
+    // Update subject
+    $(document).on("click", "#update-subject", function (e) {
+        e.preventDefault();
+
+        // Get form data
+        const form = $(this).closest("form");
+        const formData = new FormData(form[0]);
+
+        // Disable submit button and show loading state
+        const submitBtn = $(this);
+        const originalText = submitBtn.text();
+        submitBtn.prop("disabled", true).text("Updating...");
+
+        // Clear previous error messages
+        $(".error-message").remove();
+        $(".is-invalid").removeClass("is-invalid");
+
+        // Make AJAX request to update subject
+        $.ajax({
+            url: `/admin/subjects/update/${formData.get("id")}`,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (response.success) {
+                    showToast("success", response.message);
+
+                    // Reset form
+                    form[0].reset();
+
+                    // Re-check the status checkbox since reset() unchecks it
+                    $("#subject-status").prop("checked", true);
+
+                    // Refresh the subjects list dynamically
+                    refreshSubjectsList();
+                } else {
+                    showToast(
+                        "error",
+                        response.message || "Something went wrong"
+                    );
+                }
+            },
+            error: function (xhr) {
+                let errorMessage =
+                    "An error occurred while updating the subject";
+
+                if (xhr.status === 422) {
+                    // Validation errors
+                    const errors = xhr.responseJSON.errors;
+                    displayValidationErrors(errors);
+                    errorMessage = "Please fix the validation errors";
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+
+                showToast("error", errorMessage);
+            },
+            complete: function () {
+                // Re-enable submit button
+                submitBtn.prop("disabled", false).text(originalText);
+            },
+        });
+    }
+    );
 });
