@@ -91,9 +91,12 @@ Route::middleware('admin')->group(function () {
 
         // SECTIONS
         Route::prefix('sections')->group(function(){
-            Route::get('/',[SectionController::class,'Index'])->name('admin.sections.index');
+            Route::get('/',[SectionController::class,'index'])->name('admin.sections.index');
             Route::post('/store',[SectionController::class,'store'])->name('admin.sections.store');
             Route::get('/list',[SectionController::class,'getSections'])->name('admin.sections.list');
+            Route::get('/edit/{id}', [SectionController::class, 'edit'])->name('admin.sections.edit');
+            Route::post('/update/{id}', [SectionController::class, 'update'])->name('admin.sections.update');
+            Route::post('/delete/{id}', [SectionController::class, 'delete'])->name('admin.sections.delete');
             Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
         });
 
