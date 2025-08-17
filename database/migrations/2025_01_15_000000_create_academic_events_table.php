@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('academic_events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('location')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->time('start_time')->nullable();
@@ -21,6 +22,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('category', 100);
             $table->string('color', 7)->default('#3788d8');
+            $table->string('url')->nullable();
+            $table->string('file_path')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

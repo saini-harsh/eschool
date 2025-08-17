@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -29,13 +32,16 @@ class EventController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
-                'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'location' => 'required|string|max:255',
+                'start_date' => 'required|date_format:d M, Y',
+                'end_date' => 'required|date_format:d M, Y',
                 'start_time' => 'nullable|date_format:H:i',
                 'end_time' => 'nullable|date_format:H:i|after:start_time',
-                'description' => 'nullable|string',
+                'description' => 'required|string',
                 'category' => 'required|string|max:100',
                 'color' => 'nullable|string|max:7',
+                'url' => 'nullable|url|max:255',
+                'file' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
                 'status' => 'nullable|boolean',
             ]);
 
@@ -47,15 +53,26 @@ class EventController extends Controller
                 ], 422);
             }
 
+            $filePath = null;
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = 'uploads/events/' . $fileName;
+                $file->storeAs('public/uploads/events', $fileName);
+            }
+
             $eventId = DB::table('academic_events')->insertGetId([
                 'title' => $request->title,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date ?? $request->start_date,
+                'location' => $request->location,
+                'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
+                'end_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->end_date)->format('Y-m-d'),
                 'start_time' => $request->start_time,
                 'end_time' => $request->end_time,
                 'description' => $request->description,
                 'category' => $request->category,
                 'color' => $request->color ?? '#3788d8',
+                'url' => $request->url,
+                'file_path' => $filePath,
                 'status' => $request->status ?? 1,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -153,15 +170,19 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
-                'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'location' => 'required|string|max:255',
+                'start_date' => 'required|string',
+                'end_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
                 'end_time' => 'nullable|date_format:H:i|after:start_time',
-                'description' => 'nullable|string',
+                'description' => 'required|string',
                 'category' => 'required|string|max:100',
                 'color' => 'nullable|string|max:7',
+                'url' => 'nullable|url|max:255',
+                'file' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
                 'status' => 'nullable|boolean',
             ]);
 
@@ -182,17 +203,33 @@ class EventController extends Controller
                 ], 404);
             }
 
+            $filePath = $event->file_path;
+            if ($request->hasFile('file')) {
+                // Delete old file if exists
+                if ($filePath && Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+                
+                $file = $request->file('file');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = 'uploads/events/' . $fileName;
+                $file->storeAs('public/uploads/events', $fileName);
+            }
+
             DB::table('academic_events')
                 ->where('id', $id)
                 ->update([
                     'title' => $request->title,
-                    'start_date' => $request->start_date,
-                    'end_date' => $request->end_date ?? $request->start_date,
+                    'location' => $request->location,
+                    'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
+                    'end_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->end_date)->format('Y-m-d'),
                     'start_time' => $request->start_time,
                     'end_time' => $request->end_time,
                     'description' => $request->description,
                     'category' => $request->category,
                     'color' => $request->color ?? '#3788d8',
+                    'url' => $request->url,
+                    'file_path' => $filePath,
                     'status' => $request->status ?? 1,
                     'updated_at' => now()
                 ]);
@@ -214,7 +251,7 @@ class EventController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
         try {
             $event = DB::table('academic_events')->where('id', $id)->first();
@@ -224,6 +261,11 @@ class EventController extends Controller
                     'success' => false,
                     'message' => 'Event not found'
                 ], 404);
+            }
+
+            // Delete file if exists
+            if ($event->file_path && Storage::disk('public')->exists($event->file_path)) {
+                Storage::disk('public')->delete($event->file_path);
             }
 
             DB::table('academic_events')

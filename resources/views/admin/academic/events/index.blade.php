@@ -1,22 +1,21 @@
 @extends('layouts.admin')
 @section('title', 'Admin | Event Management')
 @section('content')
-    @if (session('success'))
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-            <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
-                aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
+@if (session('success'))
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') }}
                 </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
-    @endif
-    <!-- Start Content -->
-    <div class="content">
+    </div>
+@endif
+
+     <!-- Start Content -->
+     <div class="content">
 
         <!-- Page Header -->
         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
@@ -30,165 +29,328 @@
                     </ol>
                 </nav>
             </div>
-        </div>
+        </div>  
         <!-- End Page Header -->
+
         <div class="row">
-            <div class="col-3">
+            <!-- Left Side - Add Event Form -->
+            <div class="col-lg-3">
                 <div class="card">
                     <div class="card-header">
                         <h6 class="fw-bold">Add Event</h6>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post" id="event-form">
+                        <form id="event-form" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" id="event-id">
+                            
+                            <div class="mb-3">
+                                <label class="form-label">EVENT TITLE <span class="text-danger">*</span></label>
+                                <input type="text" name="title" class="form-control" placeholder="Enter event title" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Role <span class="text-danger">*</span></label>
+                                <select class="form-select" name="category" required>
+                                    <option value="">Select</option>
+                                    <option value="Exam">Exam</option>
+                                    <option value="Holiday">Holiday</option>
+                                    <option value="Meeting">Meeting</option>
+                                    <option value="Event">Event</option>
+                                    <option value="Deadline">Deadline</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">EVENT LOCATION <span class="text-danger">*</span></label>
+                                <input type="text" name="location" class="form-control" placeholder="Enter event location" required>
+                            </div>
+
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Event Title <span class="text-danger">*</span></label>
-                                        <input type="text" name="title" class="form-control"
-                                            placeholder="Enter Event title" autocomplete="off" required>
+                                        <label class="form-label">FROM DATE <span class="text-danger">*</span></label>
+                                        <input type="text" name="start_date" class="form-control" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Start Date <span class="text-danger">*</span></label>
-                                        <input type="date" name="start_date" class="form-control" required>
+                                        <label class="form-label">TO DATE <span class="text-danger">*</span></label>
+                                        <input type="text" name="end_date" class="form-control" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">End Date</label>
-                                        <input type="date" name="end_date" class="form-control">
-                                    </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">DESCRIPTION <span class="text-danger">*</span></label>
+                                <textarea name="description" class="form-control" rows="3" placeholder="Enter event description" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">URL</label>
+                                <input type="url" name="url" class="form-control" placeholder="Enter event URL (optional)">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">File</label>
+                                <div class="input-group">
+                                    <input type="file" name="file" class="form-control" accept=".jpg,.jpeg,.png,.gif">
+                                    <button class="btn btn-outline-secondary" type="button">BROWSE</button>
                                 </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Start Time</label>
-                                        <input type="time" name="start_time" class="form-control">
-                                    </div>
+                                <small class="text-muted">(JPG, JPEG, PNG, GIF are allowed for upload)</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="hidden" name="status" value="0">
+                                    <input class="form-check-input" type="checkbox" name="status" value="1" id="event-status" checked>
+                                    <label class="form-check-label" for="event-status">
+                                        Active
+                                    </label>
                                 </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">End Time</label>
-                                        <input type="time" name="end_time" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Category <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="category" required>
-                                            <option value="">Select Category</option>
-                                            <option value="Exam">Exam</option>
-                                            <option value="Holiday">Holiday</option>
-                                            <option value="Meeting">Meeting</option>
-                                            <option value="Event">Event</option>
-                                            <option value="Deadline">Deadline</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Color</label>
-                                        <input type="color" name="color" class="form-control form-control-color" value="#3788d8">
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Description</label>
-                                        <textarea name="description" class="form-control" rows="3" placeholder="Enter event description"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="status" value="1"
-                                                id="event-status" checked>
-                                            <label class="form-check-label" for="event-status">
-                                                Active
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="mb-3">
-                                        <button type="submit" class="btn btn-primary w-100" id="submit-btn">
-                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                            <span class="btn-text">Add Event</span>
-                                        </button>
-                                    </div>
-                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary w-100" id="submit-btn">
+                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    <span class="btn-text">
+                                        <i class="ti ti-check me-1"></i>SAVE
+                                    </span>
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="col-9">
+
+            <!-- Right Side - Event List -->
+            <div class="col-lg-9">
                 <div class="card">
                     <div class="card-header">
                         <h6 class="fw-bold">Event List</h6>
                     </div>
                     <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                            <div class="datatable-search">
+                                <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center border rounded table-grid me-2">
+                                    <a href="javascript:void(0);" class="btn p-1 btn-primary"><i class="ti ti-list"></i></a>
+                                    <a href="javascript:void(0);" class="btn p-1"><i class="ti ti-layout-grid"></i></a>
+                                </div>
+                                <div class="dropdown me-2">
+                                    <a href="javascript:void(0);"
+                                        class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                        <i class="ti ti-filter me-1"></i>Filter
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                                        <div class="card mb-0">
+                                            <div class="card-header">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h6 class="fw-bold mb-0">Filter</h6>
+                                                    <div class="d-flex align-items-center">
+                                                        <a href="javascript:void(0);"
+                                                            class="link-danger text-decoration-underline">Clear All</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <form action="#">
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <label class="form-label">Category</label>
+                                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <a href="javascript:void(0);"
+                                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                                aria-expanded="true">
+                                                                Select
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu w-100">
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Exam
+                                                                    </label>
+                                                                </li>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Holiday
+                                                                    </label>
+                                                                </li>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Meeting
+                                                                    </label>
+                                                                </li>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Event
+                                                                    </label>
+                                                                </li>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Deadline
+                                                                    </label>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <label class="form-label">Status</label>
+                                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <a href="javascript:void(0);"
+                                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                                aria-expanded="true">
+                                                                Select
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu w-100">
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Active
+                                                                    </label>
+                                                                </li>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                        Inactive
+                                                                    </label>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex align-items-center justify-content-end">
+                                                    <button type="button" class="btn btn-outline-white me-2"
+                                                        id="close-filter">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <a href="javascript:void(0);"
+                                        class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                                        data-bs-toggle="dropdown">
+                                        <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end p-1">
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover" id="event-table">
-                                <thead>
+                            <table class="table table-nowrap datatable" id="event-table">
+                                <thead class="thead-ight">
                                     <tr>
-                                        <th>SL</th>
                                         <th>Title</th>
                                         <th>Category</th>
+                                        <th>Location</th>
                                         <th>Date</th>
                                         <th>Time</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th class="no-sort">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(isset($events) && !empty($events))
-                                        @foreach($events as $key => $event)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $event->title }}</td>
-                                                <td>
-                                                    <span class="badge" style="background-color: {{ $event->color }}; color: white;">
-                                                        {{ $event->category }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {{ \Carbon\Carbon::parse($event->start_date)->format('d M, Y') }}
-                                                    @if($event->end_date && $event->end_date != $event->start_date)
-                                                        - {{ \Carbon\Carbon::parse($event->end_date)->format('d M, Y') }}
+                                @if (isset($events) && !empty($events))
+                                @foreach ($events as $event)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm avatar-rounded bg-light">
+                                                    <i class="ti ti-calendar-event text-primary"></i>
+                                                </div>
+                                                <div class="ms-2">
+                                                    <h6 class="fs-14 mb-0"><a href="javascript:void(0);">{{ $event->title }}</a></h6>
+                                                    @if($event->description)
+                                                        <small class="text-muted">{{ Str::limit($event->description, 50) }}</small>
                                                     @endif
-                                                </td>
-                                                <td>
-                                                    @if($event->start_time)
-                                                        {{ $event->start_time }}
-                                                        @if($event->end_time)
-                                                            - {{ $event->end_time }}
-                                                        @endif
-                                                    @else
-                                                        All Day
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input status-toggle" type="checkbox" 
-                                                               data-id="{{ $event->id }}" 
-                                                               {{ $event->status ? 'checked' : '' }}>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex gap-2">
-                                                        <button class="btn btn-sm btn-primary edit-btn" data-id="{{ $event->id }}">
-                                                            <i class="ti ti-edit"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $event->id }}">
-                                                            <i class="ti ti-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge" style="background-color: {{ $event->color }}; color: white;">
+                                                {{ $event->category }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">{{ $event->location ?? 'N/A' }}</span>
+                                        </td>
+                                        <td>
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('d M, Y') }}
+                                            @if($event->end_date && $event->end_date != $event->start_date)
+                                                - {{ \Carbon\Carbon::parse($event->end_date)->format('d M, Y') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($event->start_time)
+                                                {{ $event->start_time }}
+                                                @if($event->end_time)
+                                                    - {{ $event->end_time }}
+                                                @endif
+                                            @else
+                                                All Day
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <select class="select status-toggle" data-id="{{ $event->id }}">
+                                                    <option value="1" {{ $event->status === 1 ? 'selected' : '' }}>Active</option>
+                                                    <option value="0" {{ $event->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                                                <td>
+                            <div class="d-inline-flex align-items-center">
+                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-event-btn" data-id="{{ $event->id }}">
+                                    <i class="ti ti-edit"></i>
+                                </a>
+                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-event-btn" data-id="{{ $event->id }}" data-title="{{ $event->title }}">
+                                    <i class="ti ti-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                                    </tr>
+                                    @endforeach
                                     @endif
                                 </tbody>
                             </table>
@@ -197,240 +359,31 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End Content -->
-@endsection
 
-@push('scripts')
-<script>
-$(document).ready(function() {
-    // Handle form submission
-    $('#event-form').on('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const submitBtn = $('#submit-btn');
-        const spinner = submitBtn.find('.spinner-border');
-        const btnText = submitBtn.find('.btn-text');
-        
-        // Show loading state
-        spinner.removeClass('d-none');
-        btnText.text('Processing...');
-        submitBtn.prop('disabled', true);
-        
-        const eventId = $('#event-id').val();
-        const url = eventId ? `/admin/events/${eventId}` : '/admin/events';
-        const method = eventId ? 'PUT' : 'POST';
-        
-        $.ajax({
-            url: url,
-            method: method,
-            data: Object.fromEntries(formData),
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    showAlert(response.message, 'success');
-                    resetForm();
-                    loadEvents();
-                } else {
-                    showAlert(response.message, 'error');
-                }
-            },
-            error: function(xhr) {
-                const response = xhr.responseJSON;
-                if (response && response.errors) {
-                    showAlert('Validation failed. Please check your inputs.', 'error');
-                } else {
-                    showAlert('An error occurred. Please try again.', 'error');
-                }
-            },
-            complete: function() {
-                // Hide loading state
-                spinner.addClass('d-none');
-                btnText.text(eventId ? 'Update Event' : 'Add Event');
-                submitBtn.prop('disabled', false);
-            }
-        });
-    });
+</div>
 
-    // Handle edit button click
-    $(document).on('click', '.edit-btn', function() {
-        const eventId = $(this).data('id');
-        
-        $.ajax({
-            url: `/admin/events/${eventId}/edit`,
-            method: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    const event = response.data;
-                    populateForm(event);
-                } else {
-                    showAlert(response.message, 'error');
-                }
-            },
-            error: function() {
-                showAlert('Error fetching event details', 'error');
-            }
-        });
-    });
-
-    // Handle delete button click
-    $(document).on('click', '.delete-btn', function() {
-        const eventId = $(this).data('id');
-        
-        if (confirm('Are you sure you want to delete this event?')) {
-            $.ajax({
-                url: `/admin/events/${eventId}`,
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        showAlert(response.message, 'success');
-                        loadEvents();
-                    } else {
-                        showAlert(response.message, 'error');
-                    }
-                },
-                error: function() {
-                    showAlert('Error deleting event', 'error');
-                }
-            });
-        }
-    });
-
-    // Handle status toggle
-    $(document).on('change', '.status-toggle', function() {
-        const eventId = $(this).data('id');
-        const status = $(this).is(':checked') ? 1 : 0;
-        
-        $.ajax({
-            url: `/admin/events/${eventId}/status`,
-            method: 'POST',
-            data: { status: status },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    showAlert(response.message, 'success');
-                } else {
-                    showAlert(response.message, 'error');
-                }
-            },
-            error: function() {
-                showAlert('Error updating status', 'error');
-            }
-        });
-    });
-
-    function populateForm(event) {
-        $('#event-id').val(event.id);
-        $('input[name="title"]').val(event.title);
-        $('input[name="start_date"]').val(event.start_date);
-        $('input[name="end_date"]').val(event.end_date);
-        $('input[name="start_time"]').val(event.start_time);
-        $('input[name="end_time"]').val(event.end_time);
-        $('select[name="category"]').val(event.category);
-        $('input[name="color"]').val(event.color);
-        $('textarea[name="description"]').val(event.description);
-        $('input[name="status"]').prop('checked', event.status == 1);
-        
-        $('#submit-btn .btn-text').text('Update Event');
-    }
-
-    function resetForm() {
-        $('#event-form')[0].reset();
-        $('#event-id').val('');
-        $('#submit-btn .btn-text').text('Add Event');
-    }
-
-    function loadEvents() {
-        $.ajax({
-            url: '/admin/events/list',
-            method: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    updateTable(response.data);
-                }
-            }
-        });
-    }
-
-    function updateTable(events) {
-        let tbody = '';
-        events.forEach((event, index) => {
-            const startDate = new Date(event.start_date).toLocaleDateString('en-US', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-            const endDate = event.end_date && event.end_date != event.start_date ? 
-                ' - ' + new Date(event.end_date).toLocaleDateString('en-US', { 
-                    day: '2-digit', 
-                    month: 'short', 
-                    year: 'numeric' 
-                }) : '';
-            
-            const time = event.start_time ? 
-                event.start_time + (event.end_time ? ' - ' + event.end_time : '') : 
-                'All Day';
-            
-            tbody += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${event.title}</td>
-                    <td><span class="badge" style="background-color: ${event.color}; color: white;">${event.category}</span></td>
-                    <td>${startDate}${endDate}</td>
-                    <td>${time}</td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input status-toggle" type="checkbox" 
-                                   data-id="${event.id}" 
-                                   ${event.status ? 'checked' : ''}>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-primary edit-btn" data-id="${event.id}">
-                                <i class="ti ti-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${event.id}">
-                                <i class="ti ti-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        });
-        $('#event-table tbody').html(tbody);
-    }
-
-    function showAlert(message, type) {
-        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-        const alertHtml = `
-            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- Delete Modal -->
+<div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        `;
-        
-        const alertContainer = document.createElement('div');
-        alertContainer.style.position = 'fixed';
-        alertContainer.style.top = '20px';
-        alertContainer.style.right = '20px';
-        alertContainer.style.zIndex = '9999';
-        alertContainer.innerHTML = alertHtml;
-        
-        document.body.appendChild(alertContainer);
-        
-        setTimeout(() => {
-            alertContainer.remove();
-        }, 5000);
-    }
-});
-</script>
-@endpush
+            <div class="modal-body">
+                <h6>Delete Event</h6>
+                <p>Are you sure you want to delete this event?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Content -->
+@endsection

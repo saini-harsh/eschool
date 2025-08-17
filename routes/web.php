@@ -103,7 +103,7 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
             Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
         });
-
+        
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
             Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
@@ -112,7 +112,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
             Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
         });
-
+        
         Route::prefix('calender')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'index'])->name('admin.academic.calendar.index');
             Route::get('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
@@ -129,7 +129,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/list', [App\Http\Controllers\Admin\Academic\EventController::class, 'getEvents'])->name('admin.events.list');
             Route::get('/{id}/edit', [App\Http\Controllers\Admin\Academic\EventController::class, 'edit'])->name('admin.events.edit');
             Route::put('/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'update'])->name('admin.events.update');
-            Route::delete('/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'destroy'])->name('admin.events.destroy');
+            Route::post('/delete/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'delete'])->name('admin.events.delete');
             Route::post('/{id}/status', [App\Http\Controllers\Admin\Academic\EventController::class, 'updateStatus'])->name('admin.events.status');
         });
     });

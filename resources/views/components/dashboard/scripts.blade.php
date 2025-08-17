@@ -55,3 +55,4 @@
     <script src="{{ URL::asset('/custom/js/subjects.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/schoolclass.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/assign-teacher.js') }}"></script>
+    <script src="{{ URL::asset('/custom/js/events.js') }}"></script>
