@@ -26,12 +26,21 @@ class AttendanceController extends Controller
         $role = $request->role;
         $institution = $request->institution;
 
-        // Example: Fetch teacher attendance records
-        $records = Attendance::where('role', $role)
-            ->when($institution, function ($query) use ($institution) {
-                return $query->where('institution_id', $institution);
-            })
-            ->get();
+        $query = Attendance::where('role', $role)
+            ->when($institution, function ($q) use ($institution) {
+                return $q->where('institution_id', $institution);
+            });
+
+        // Eager load based on role
+        if ($role === 'student') {
+            $query->with('student');
+        } elseif ($role === 'teacher') {
+            $query->with('teacher');
+        } elseif ($role === 'staff') {
+            $query->with('staff');
+        }
+
+        $records = $query->get();
 
         return response()->json($records);
     }
