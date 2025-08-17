@@ -76,8 +76,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">TO DATE <span class="text-danger">*</span></label>
-                                        <input type="text" name="end_date" class="form-control" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" required>
+                                        <label class="form-label">START TIME</label>
+                                        <input type="time" name="start_time" data-provider="timepickr" data-time-basic="true" class="form-control" placeholder="HH:MM">
                                     </div>
                                 </div>
                             </div>
@@ -284,8 +284,7 @@
                                         <th>Title</th>
                                         <th>Category</th>
                                         <th>Location</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
+                                        <th>Date & Time</th>
                                         <th>Status</th>
                                         <th class="no-sort">Action</th>
                                     </tr>
@@ -317,18 +316,8 @@
                                         </td>
                                         <td>
                                             {{ \Carbon\Carbon::parse($event->start_date)->format('d M, Y') }}
-                                            @if($event->end_date && $event->end_date != $event->start_date)
-                                                - {{ \Carbon\Carbon::parse($event->end_date)->format('d M, Y') }}
-                                            @endif
-                                        </td>
-                                        <td>
                                             @if($event->start_time)
-                                                {{ $event->start_time }}
-                                                @if($event->end_time)
-                                                    - {{ $event->end_time }}
-                                                @endif
-                                            @else
-                                                All Day
+                                                <br><small class="text-muted">{{ $event->start_time }}</small>
                                             @endif
                                         </td>
                                         <td>
@@ -386,4 +375,7 @@
 </div>
 
 <!-- End Content -->
+
+<script src="{{ asset('custom/js/events.js') }}"></script>
+
 @endsection

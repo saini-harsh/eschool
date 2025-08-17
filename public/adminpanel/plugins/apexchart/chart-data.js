@@ -494,181 +494,181 @@ $(document).ready(function () {
   chart.render();
 }
 
-	// Index-2 chats
-  if ($('#circle_chart_1').length > 0) {
-    var options = {
-    series: [70],
-    chart: {
-      height: 70,
-      width: 80,
-      type: 'radialBar',
-      toolbar: { show: false }
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: '40%'
-        },
-        dataLabels: {
-          show: true,
-          name: {
-            show: false
+    // Index-2 chats
+    if ($('#circle_chart_1').length > 0) {
+      var options = {
+      series: [70],
+      chart: {
+        height: 70,
+        width: 80,
+        type: 'radialBar',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '40%'
           },
-          value: {
+          dataLabels: {
             show: true,
-            fontSize: '14px',
-            color: '#333',
-            offsetY: 5,
-            formatter: function (val) {
-              return 700;
+            name: {
+              show: false
+            },
+            value: {
+              show: true,
+              fontSize: '14px',
+              color: '#333',
+              offsetY: 5,
+              formatter: function (val) {
+                return 700;
+              }
             }
-          }
-        },
-        track: {
-          background: '#f5f5f5',
-          strokeWidth: '100%'
-        }
-      }
-    },
-    colors: ['#10B3A1'],
-    labels: ['Progress']
-  };
-
-  var chart = new ApexCharts(document.querySelector("#circle_chart_1"), options);
-  chart.render();
-}
-
-	// Index-2 chats2
-  if ($('#circle_chart_2').length > 0) {
-	  var options = {
-    series: [70],
-    chart: {
-      height: 70,
-      width: 80,
-      type: 'radialBar',
-      toolbar: { show: false }
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: '40%'
-        },
-        dataLabels: {
-          show: true,
-          name: {
-            show: false
           },
-          value: {
-            show: true,
-            fontSize: '14px',
-            color: '#333',
-            offsetY: 5,
-            formatter: function (val) {
-              return 30;
-            }
+          track: {
+            background: '#f5f5f5',
+            strokeWidth: '100%'
           }
-        },
-        track: {
-          background: '#f5f5f5',
-          strokeWidth: '100%'
         }
-      }
-    },
-    colors: ['#ECCA00'],
-    labels: ['Progress']
-  };
+      },
+      colors: ['#10B3A1'],
+      labels: ['Progress']
+    };
 
-  var chart2 = new ApexCharts(document.querySelector("#circle_chart_2"), options);
-  chart2.render();
-}
+    var chart = new ApexCharts(document.querySelector("#circle_chart_1"), options);
+    chart.render();
+  }
 
-	// Index-2 chats3
-  if ($('#circle_chart_3').length > 0) {
-	  var options = {
-    series: [70],
-    chart: {
-      height: 70,
-      width: 80,
-      type: 'radialBar',
-      toolbar: { show: false }
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: '40%'
-        },
-        dataLabels: {
-          show: true,
-          name: {
-            show: false
+    // Index-2 chats2
+    if ($('#circle_chart_2').length > 0) {
+      var options = {
+      series: [70],
+      chart: {
+        height: 70,
+        width: 80,
+        type: 'radialBar',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '40%'
           },
-          value: {
+          dataLabels: {
             show: true,
-            fontSize: '14px',
-            color: '#333',
-            offsetY: 5,
-            formatter: function (val) {
-              return "05";
+            name: {
+              show: false
+            },
+            value: {
+              show: true,
+              fontSize: '14px',
+              color: '#333',
+              offsetY: 5,
+              formatter: function (val) {
+                return 30;
+              }
             }
-          }
-        },
-        track: {
-          background: '#f5f5f5',
-          strokeWidth: '100%'
-        }
-      }
-    },
-    colors: ['#FF6C03'],
-    labels: ['Progress']
-  };
-
-  var chart3 = new ApexCharts(document.querySelector("#circle_chart_3"), options);
-  chart3.render();
-}
-
-	// Index-2 chats4
-  if ($('#circle_chart_4').length > 0) {
-	  var options = {
-    series: [70],
-    chart: {
-      height: 70,
-      width: 80,
-      type: 'radialBar',
-      toolbar: { show: false }
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: '40%'
-        },
-        dataLabels: {
-          show: true,
-          name: {
-            show: false
           },
-          value: {
-            show: true,
-            fontSize: '14px',
-            color: '#333',
-            offsetY: 5,
-            formatter: function (val) {
-              return 700;
-            }
+          track: {
+            background: '#f5f5f5',
+            strokeWidth: '100%'
           }
-        },
-        track: {
-          background: '#f5f5f5',
-          strokeWidth: '100%'
         }
-      }
-    },
-    colors: ['#DF1F8F'],
-    labels: ['Progress']
-  };
+      },
+      colors: ['#ECCA00'],
+      labels: ['Progress']
+    };
 
-  var chart4 = new ApexCharts(document.querySelector("#circle_chart_4"), options);
-  chart4.render();
-}
+    var chart2 = new ApexCharts(document.querySelector("#circle_chart_2"), options);
+    chart2.render();
+  }
+
+    // Index-2 chats3
+    if ($('#circle_chart_3').length > 0) {
+      var options = {
+      series: [70],
+      chart: {
+        height: 70,
+        width: 80,
+        type: 'radialBar',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '40%'
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              show: false
+            },
+            value: {
+              show: true,
+              fontSize: '14px',
+              color: '#333',
+              offsetY: 5,
+              formatter: function (val) {
+                return "05";
+              }
+            }
+          },
+          track: {
+            background: '#f5f5f5',
+            strokeWidth: '100%'
+          }
+        }
+      },
+      colors: ['#FF6C03'],
+      labels: ['Progress']
+    };
+
+    var chart3 = new ApexCharts(document.querySelector("#circle_chart_3"), options);
+    chart3.render();
+  }
+
+    // Index-2 chats4
+    if ($('#circle_chart_4').length > 0) {
+      var options = {
+      series: [70],
+      chart: {
+        height: 70,
+        width: 80,
+        type: 'radialBar',
+        toolbar: { show: false }
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '40%'
+          },
+          dataLabels: {
+            show: true,
+            name: {
+              show: false
+            },
+            value: {
+              show: true,
+              fontSize: '14px',
+              color: '#333',
+              offsetY: 5,
+              formatter: function (val) {
+                return 700;
+              }
+            }
+          },
+          track: {
+            background: '#f5f5f5',
+            strokeWidth: '100%'
+          }
+        }
+      },
+      colors: ['#DF1F8F'],
+      labels: ['Progress']
+    };
+
+    var chart4 = new ApexCharts(document.querySelector("#circle_chart_4"), options);
+    chart4.render();
+  }
 
 
 	// Index-2 chats5

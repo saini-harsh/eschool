@@ -290,95 +290,95 @@
             <!-- start row -->
             <div class="row">
 
-                <div class="col-lg-5 d-flex">
-                    <div class="card shadow flex-fill">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <h6 class="fw-bold mb-0">Recent Activities</h6>
-                            <a href="#" class="btn btn-sm btn-icon btn-outline-white border-0"><i
-                                    class="ti ti-refresh"></i></a>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-01.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">John Carter</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Added New Project HRMS Dashboard</p>
-                                    </div>
-                                </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>06:20
-                                    PM</span>
+                    <div class="col-lg-5 d-flex">
+                        <div class="card shadow flex-fill">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h6 class="fw-bold mb-0">Recent Activities</h6>
+                                <a href="#" class="btn btn-sm btn-icon btn-outline-white border-0"><i
+                                        class="ti ti-refresh"></i></a>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-02.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">Sophia White</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Commented on Uploaded Document</p>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-01.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">John Carter</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Added New Project HRMS Dashboard</p>
+                                        </div>
                                     </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>06:20
+                                        PM</span>
                                 </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>04:00
-                                    PM</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-03.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">Michael Johnson</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Approved Task Projects</p>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-02.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">Sophia White</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Commented on Uploaded Document</p>
+                                        </div>
                                     </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>04:00
+                                        PM</span>
                                 </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>02:30
-                                    PM</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-04.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">Emily Clark</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Requesting Access to Module Tickets</p>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-03.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">Michael Johnson</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Approved Task Projects</p>
+                                        </div>
                                     </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>02:30
+                                        PM</span>
                                 </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>12:10
-                                    PM</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-05.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">David Anderson</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Downloaded App Reports</p>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-04.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">Emily Clark</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Requesting Access to Module Tickets</p>
+                                        </div>
                                     </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>12:10
+                                        PM</span>
                                 </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>10:40
-                                    AM</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-06.jpg') }}" alt="img">
-                                    </a>
-                                    <div class="ms-2">
-                                        <h6 class="fs-14 mb-1"><a href="employee-details.html">Olivia Haris</a></h6>
-                                        <p class="fs-13 mb-0 text-truncate">Completed ticket module in HRMS</p>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-05.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">David Anderson</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Downloaded App Reports</p>
+                                        </div>
                                     </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>10:40
+                                        AM</span>
                                 </div>
-                                <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>09:50
-                                    AM</span>
-                            </div>
-                        </div> <!-- end card body -->
-                    </div> <!-- end card -->
-                </div><!-- end col -->
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
+                                            <img src="{{ asset('admin/img/employees/employee-06.jpg') }}" alt="img">
+                                        </a>
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-1"><a href="employee-details.html">Olivia Haris</a></h6>
+                                            <p class="fs-13 mb-0 text-truncate">Completed ticket module in HRMS</p>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-soft-primary"><i class="ti ti-clock-hour-3 me-1"></i>09:50
+                                        AM</span>
+                                </div>
+                            </div> <!-- end card body -->
+                        </div> <!-- end card -->
+                    </div><!-- end col -->
 
                 <div class="col-lg-7 d-flex">
                     <div class="card shadow flex-fill">

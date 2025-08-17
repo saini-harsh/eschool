@@ -131,11 +131,7 @@ function submitEventForm() {
         formData.append('_method', 'PUT');
     }
     
-    // Debug: Log form data
-    console.log('Form Data being sent:');
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
+
     
     $.ajax({
         url: url,
@@ -277,16 +273,10 @@ function updateTable(events) {
             month: 'short', 
             year: 'numeric' 
         });
-        const endDate = event.end_date && event.end_date != event.start_date ? 
-            ' - ' + new Date(event.end_date).toLocaleDateString('en-US', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            }) : '';
         
-        const time = event.start_time ? 
-            event.start_time + (event.end_time ? ' - ' + event.end_time : '') : 
-            'All Day';
+        const dateTime = event.start_time ? 
+            `${startDate}<br><small class="text-muted">${event.start_time}</small>` : 
+            startDate;
         
         tbody += `
             <tr>
@@ -303,8 +293,7 @@ function updateTable(events) {
                 </td>
                 <td><span class="badge" style="background-color: ${event.color}; color: white;">${event.category}</span></td>
                 <td><span class="text-muted">${event.location || 'N/A'}</span></td>
-                <td>${startDate}${endDate}</td>
-                <td>${time}</td>
+                <td>${dateTime}</td>
                 <td>
                     <div>
                         <select class="select status-toggle" data-id="${event.id}">
@@ -335,24 +324,13 @@ function populateForm(event) {
     $('input[name="title"]').val(event.title);
     $('input[name="location"]').val(event.location);
     $('input[name="start_date"]').val(formatDateForPicker(event.start_date));
-    $('input[name="end_date"]').val(formatDateForPicker(event.end_date));
+    $('input[name="start_time"]').val(event.start_time);
     $('select[name="category"]').val(event.category);
     $('textarea[name="description"]').val(event.description);
     $('input[name="url"]').val(event.url);
     $('input[name="status"]').prop('checked', event.status == 1);
     
-    // Debug: Log populated data
-    console.log('Populated form data:', {
-        id: event.id,
-        title: event.title,
-        location: event.location,
-        start_date: formatDateForPicker(event.start_date),
-        end_date: formatDateForPicker(event.end_date),
-        category: event.category,
-        description: event.description,
-        url: event.url,
-        status: event.status
-    });
+
     
     // Update button text
     $('#submit-btn .btn-text').html('<i class="ti ti-check me-1"></i>UPDATE EVENT');
@@ -364,8 +342,9 @@ function resetForm() {
     $('#event-id').val('');
     $('#submit-btn .btn-text').html('<i class="ti ti-check me-1"></i>SAVE');
     
-    // Clear date pickers
-    $('input[name="start_date"], input[name="end_date"]').val('');
+    // Clear date picker and time field
+    $('input[name="start_date"]').val('');
+    $('input[name="start_time"]').val('');
 }
 
 // Format date for date picker

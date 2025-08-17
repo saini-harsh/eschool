@@ -270,33 +270,8 @@
 
 @endsection
 
-@push('styles')
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<style>
-    .fc-event {
-        cursor: pointer;
-    }
-    .fc-event:hover {
-        opacity: 0.8;
-    }
-    .border.rounded {
-        cursor: move;
-        transition: all 0.3s ease;
-    }
-    .border.rounded:hover {
-        background-color: #f8f9fa;
-        transform: translateY(-2px);
-    }
-    .border.rounded.dragging {
-        opacity: 0.5;
-    }
-</style>
-@endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let calendar;

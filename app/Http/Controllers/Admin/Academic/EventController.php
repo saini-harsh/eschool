@@ -33,10 +33,8 @@ class EventController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
-                'start_date' => 'required|date_format:d M, Y',
-                'end_date' => 'required|date_format:d M, Y',
+                'start_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
-                'end_time' => 'nullable|date_format:H:i|after:start_time',
                 'description' => 'required|string',
                 'category' => 'required|string|max:100',
                 'color' => 'nullable|string|max:7',
@@ -53,6 +51,17 @@ class EventController extends Controller
                 ], 422);
             }
 
+            // Custom validation for date format
+            try {
+                $startDate = \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => ['start_date' => ['The start date field must match the format d M, Y (e.g., 15 Jan, 2025)']]
+                ], 422);
+            }
+
             $filePath = null;
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
@@ -65,9 +74,7 @@ class EventController extends Controller
                 'title' => $request->title,
                 'location' => $request->location,
                 'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
-                'end_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->end_date)->format('Y-m-d'),
                 'start_time' => $request->start_time,
-                'end_time' => $request->end_time,
                 'description' => $request->description,
                 'category' => $request->category,
                 'color' => $request->color ?? '#3788d8',
@@ -175,9 +182,7 @@ class EventController extends Controller
                 'title' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|string',
-                'end_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
-                'end_time' => 'nullable|date_format:H:i|after:start_time',
                 'description' => 'required|string',
                 'category' => 'required|string|max:100',
                 'color' => 'nullable|string|max:7',
@@ -191,6 +196,17 @@ class EventController extends Controller
                     'success' => false,
                     'message' => 'Validation failed',
                     'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Custom validation for date format
+            try {
+                $startDate = \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => ['start_date' => ['The start date field must match the format d M, Y (e.g., 15 Jan, 2025)']]
                 ], 422);
             }
 
@@ -222,9 +238,7 @@ class EventController extends Controller
                     'title' => $request->title,
                     'location' => $request->location,
                     'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
-                    'end_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->end_date)->format('Y-m-d'),
                     'start_time' => $request->start_time,
-                    'end_time' => $request->end_time,
                     'description' => $request->description,
                     'category' => $request->category,
                     'color' => $request->color ?? '#3788d8',
