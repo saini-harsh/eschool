@@ -51,6 +51,16 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Role <span class="text-danger">*</span></label>
+                                <select class="form-select" name="role" required>
+                                    <option value="">Select</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="student">Students</option>
+                                    <option value="nonworkingstaff">Non Working Staff</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Category <span class="text-danger">*</span></label>
                                 <select class="form-select" name="category" required>
                                     <option value="">Select</option>
                                     <option value="Exam">Exam</option>
@@ -59,6 +69,16 @@
                                     <option value="Event">Event</option>
                                     <option value="Deadline">Deadline</option>
                                     <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Institution <span class="text-danger">*</span></label>
+                                <select class="form-select" name="institution_id" required>
+                                    <option value="">Select Institution</option>
+                                    @foreach(\App\Models\Institution::all() as $institution)
+                                        <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -282,7 +302,9 @@
                                 <thead class="thead-ight">
                                     <tr>
                                         <th>Title</th>
+                                        <th>Role</th>
                                         <th>Category</th>
+                                        <th>Institution</th>
                                         <th>Location</th>
                                         <th>Date & Time</th>
                                         <th>Status</th>
@@ -307,9 +329,15 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <span class="badge bg-primary">{{ ucfirst($event->role ?? 'N/A') }}</span>
+                                        </td>
+                                        <td>
                                             <span class="badge" style="background-color: {{ $event->color }}; color: white;">
                                                 {{ $event->category }}
                                             </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted">{{ $event->institution_name ?? 'N/A' }}</span>
                                         </td>
                                         <td>
                                             <span class="text-muted">{{ $event->location ?? 'N/A' }}</span>

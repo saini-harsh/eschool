@@ -57,3 +57,4 @@
     <script src="{{ URL::asset('/custom/js/assign-teacher.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/events.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/attendance.js') }}"></script>
+    <script src="{{ URL::asset('/custom/js/calender.js') }}"></script>

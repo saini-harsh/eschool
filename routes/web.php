@@ -113,9 +113,10 @@ Route::middleware('admin')->group(function () {
             Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
         });
 
-        Route::prefix('calender')->group(function () {
+        Route::prefix('calendar')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'index'])->name('admin.academic.calendar.index');
             Route::get('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
+            Route::get('/check-database', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'checkDatabase'])->name('admin.academic.calendar.check-database');
             Route::post('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'store'])->name('admin.academic.calendar.store');
             Route::put('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'update'])->name('admin.academic.calendar.update');
             Route::delete('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'destroy'])->name('admin.academic.calendar.destroy');

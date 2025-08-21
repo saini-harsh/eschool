@@ -273,11 +273,9 @@ function updateTable(events) {
             month: 'short', 
             year: 'numeric' 
         });
-        
-        const dateTime = event.start_time ? 
-            `${startDate}<br><small class="text-muted">${event.start_time}</small>` : 
-            startDate;
-        
+        const dateTime = event.start_time ? `${startDate}<br><small class="text-muted">${event.start_time}</small>` : startDate;
+        const roleBadge = event.role ? `<span class=\"badge bg-primary\">${(event.role || '').charAt(0).toUpperCase() + (event.role || '').slice(1)}</span>` : '<span class="text-muted">N/A</span>';
+        const institutionText = event.institution_name || 'N/A';
         tbody += `
             <tr>
                 <td>
@@ -291,7 +289,9 @@ function updateTable(events) {
                         </div>
                     </div>
                 </td>
+                <td>${roleBadge}</td>
                 <td><span class="badge" style="background-color: ${event.color}; color: white;">${event.category}</span></td>
+                <td><span class="text-muted">${institutionText}</span></td>
                 <td><span class="text-muted">${event.location || 'N/A'}</span></td>
                 <td>${dateTime}</td>
                 <td>
@@ -329,9 +329,15 @@ function populateForm(event) {
     $('textarea[name="description"]').val(event.description);
     $('input[name="url"]').val(event.url);
     $('input[name="status"]').prop('checked', event.status == 1);
-    
 
-    
+    // Set role and institution
+    if (event.role !== undefined) {
+        $('select[name="role"]').val(event.role).trigger('change');
+    }
+    if (event.institution_id !== undefined) {
+        $('select[name="institution_id"]').val(String(event.institution_id)).trigger('change');
+    }
+
     // Update button text
     $('#submit-btn .btn-text').html('<i class="ti ti-check me-1"></i>UPDATE EVENT');
 }

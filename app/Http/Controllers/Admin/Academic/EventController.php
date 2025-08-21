@@ -20,8 +20,10 @@ class EventController extends Controller
     public function index()
     {
         $events = DB::table('academic_events')
-            ->where('status', 1)
-            ->orderBy('created_at', 'desc')
+            ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
+            ->select('academic_events.*', 'institutions.name as institution_name')
+            ->where('academic_events.status', 1)
+            ->orderBy('academic_events.created_at', 'desc')
             ->get();
 
         return view('admin.academic.events.index', compact('events'));
@@ -32,11 +34,13 @@ class EventController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
+                'role' => 'required|string|in:teacher,student,nonworkingstaff',
+                'category' => 'required|string|max:100',
+                'institution_id' => 'required|exists:institutions,id',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
                 'description' => 'required|string',
-                'category' => 'required|string|max:100',
                 'color' => 'nullable|string|max:7',
                 'url' => 'nullable|url|max:255',
                 'file' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
@@ -72,11 +76,13 @@ class EventController extends Controller
 
             $eventId = DB::table('academic_events')->insertGetId([
                 'title' => $request->title,
+                'role' => $request->role,
+                'category' => $request->category,
+                'institution_id' => $request->institution_id,
                 'location' => $request->location,
                 'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
                 'start_time' => $request->start_time,
                 'description' => $request->description,
-                'category' => $request->category,
                 'color' => $request->color ?? '#3788d8',
                 'url' => $request->url,
                 'file_path' => $filePath,
@@ -106,8 +112,10 @@ class EventController extends Controller
     {
         try {
             $events = DB::table('academic_events')
-                ->where('status', 1)
-                ->orderBy('created_at', 'desc')
+                ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
+                ->select('academic_events.*', 'institutions.name as institution_name')
+                ->where('academic_events.status', 1)
+                ->orderBy('academic_events.created_at', 'desc')
                 ->get();
 
             return response()->json([
@@ -180,6 +188,8 @@ class EventController extends Controller
             
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
+                'role' => 'required|string|in:teacher,student,nonworkingstaff',
+                'institution_id' => 'required|exists:institutions,id',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
@@ -236,6 +246,8 @@ class EventController extends Controller
                 ->where('id', $id)
                 ->update([
                     'title' => $request->title,
+                    'role' => $request->role,
+                    'institution_id' => $request->institution_id,
                     'location' => $request->location,
                     'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
                     'start_time' => $request->start_time,
