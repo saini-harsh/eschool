@@ -49,5 +49,10 @@ class Institution extends Authenticatable
         return $this->belongsTo(Admin::class);
     }
 
+    public function classes()
+    {
+        return $this->hasMany(SchoolClass::class, 'institution_id');
+    }
+
 
 }

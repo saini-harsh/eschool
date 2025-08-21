@@ -34,10 +34,13 @@ class AttendanceController extends Controller
         // Eager load based on role
         if ($role === 'student') {
             $query->with('student');
+            $query->with('institution');
         } elseif ($role === 'teacher') {
             $query->with('teacher');
+            $query->with('institution');
         } elseif ($role === 'staff') {
             $query->with('staff');
+            $query->with('institution');
         }
 
         $records = $query->get();

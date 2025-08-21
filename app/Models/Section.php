@@ -18,4 +18,8 @@ class Section extends Model
     protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function student(){
+        return $this->hasMany(Student::class, 'section_id');
+    }
 }

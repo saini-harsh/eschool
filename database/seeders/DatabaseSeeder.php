@@ -360,7 +360,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Art', 'code' => 'ART', 'type' => 'practical'],
             ['name' => 'Physical Education', 'code' => 'PE', 'type' => 'practical'],
         ];
-        
+
         foreach ($subjects as $subject) {
             Subject::create([
                 'name' => $subject['name'],

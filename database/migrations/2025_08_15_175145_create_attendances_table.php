@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // Reference to users table
-            $table->string('role'); // student, teacher, nonworkingstaff
-            $table->unsignedBigInteger('institution_id'); // Reference to institutions table
+            $table->unsignedBigInteger('user_id');
+            $table->string('role');
+            $table->unsignedBigInteger('institution_id');
+            $table->foreignId('class_id')->nullable()->constrained('classes')->onDelete('cascade');
+            $table->foreignId('section_id')->nullable()->constrained('sections')->onDelete('cascade');
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'late', 'excused'])->default('present');
             $table->text('remarks')->nullable();
             $table->timestamps();
 
-            // Foreign keys (optional, if you have users/institutions tables)
+            // Foreign keys for user_id and institution_id (uncomment if needed)
             // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             // $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
         });

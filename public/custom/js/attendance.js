@@ -70,4 +70,13 @@ $(document).ready(function() {
             }
         });
     });
+
+    $("#attendance-filter-form").on("change", "#role", function() {
+        let role = $(this).val();
+        if (role === 'student') {
+            $('#student-data-fields').css('display', 'flex');
+        }else {
+            $('#student-data-fields').css('display', 'none');
+        }
+    });
 });

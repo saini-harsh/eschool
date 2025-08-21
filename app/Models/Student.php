@@ -62,4 +62,5 @@ class Student extends Authenticatable
     {
         return $this->belongsTo(Teacher::class);
     }
+
 }
