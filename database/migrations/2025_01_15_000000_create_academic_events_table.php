@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('academic_events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('role')->nullable();
+            $table->foreignId('institution_id')->constrained()->onDelete('cascade');
             $table->string('location')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();
