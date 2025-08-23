@@ -165,17 +165,22 @@
                         </li>
                     </ul>
                 </li>
-                <!---<li class="menu-title"><span>Settings</span></li>
+                <li class="menu-title"><span>Exam Management</span></li>
                 <li>
                     <ul>
                         <li class="">
-                            <a href="settings.html">
-                                <i class="ti ti-settings"></i><span>Settings</span>
+                            <a href="#">
+                                <i class="ti ti-home"></i><span>Room Management</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Authentication</span></li>
+                <!---<li class="menu-title"><span>Authentication</span></li>
                 <li>
                     <ul>
                         <li>
