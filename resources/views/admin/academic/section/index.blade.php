@@ -292,3 +292,7 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/sections.js') }}"></script>
+@endpush

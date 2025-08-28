@@ -273,3 +273,7 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/attendance.js') }}"></script>
+@endpush

@@ -266,3 +266,7 @@
 </script>
 <!-- End Content -->
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/teachers.js') }}"></script>
+@endpush

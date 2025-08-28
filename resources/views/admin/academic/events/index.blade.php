@@ -404,6 +404,9 @@
 
 <!-- End Content -->
 
-<script src="{{ asset('custom/js/events.js') }}"></script>
-
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/events.js') }}"></script>
+@endpush
+

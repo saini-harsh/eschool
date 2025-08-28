@@ -181,4 +181,6 @@
 </div>
 @endsection
 
-<script src="{{ asset('custom/js/students.js') }}"></script>
+@push('scripts')
+    <script src="{{ asset('custom/js/students.js') }}"></script>
+@endpush

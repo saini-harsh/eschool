@@ -356,3 +356,7 @@
 </script>
 <!-- End Content -->
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/students.js') }}"></script>
+@endpush
