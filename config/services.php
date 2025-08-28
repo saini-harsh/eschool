@@ -14,12 +14,15 @@ return [
     |
     */
 
-    'postmark' => [
-        'token' => env('POSTMARK_TOKEN'),
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
     ],
 
-    'resend' => [
-        'key' => env('RESEND_KEY'),
+    'postmark' => [
+        'token' => env('POSTMARK_TOKEN'),
     ],
 
     'ses' => [
@@ -28,11 +31,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'slack' => [
-        'notifications' => [
-            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
-        ],
+    'rapidapi' => [
+        'key' => env('RAPIDAPI_KEY'),
+        'email_host' => env('RAPIDAPI_EMAIL_HOST', 'rapid-send-email.p.rapidapi.com'),
+        'email_url' => env('RAPIDAPI_EMAIL_URL', 'https://rapid-send-email.p.rapidapi.com/send'),
+        'sms_host' => env('RAPIDAPI_SMS_HOST', 'rapid-sms.p.rapidapi.com'),
+        'sms_url' => env('RAPIDAPI_SMS_URL', 'https://rapid-sms.p.rapidapi.com/send'),
+    ],
+
+    'sms' => [
+        'from' => env('SMS_FROM_NUMBER', 'ESchool'),
     ],
 
 ];

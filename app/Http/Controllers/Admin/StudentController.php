@@ -43,6 +43,8 @@ class StudentController extends Controller
             'district'       => 'required|string|max:255',
             'teacher_id'     => 'nullable|exists:teachers,id',
             'institution_id' => 'required|exists:institutions,id',
+            'class_id'       => 'nullable|exists:classes,id',
+            'section_id'     => 'nullable|exists:sections,id',
             'password'       => 'required|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
@@ -82,6 +84,8 @@ class StudentController extends Controller
         $student->institution_code = 'INS' . str_pad($request->institution_id, 3, '0', STR_PAD_LEFT);
         $student->teacher_id     = $request->teacher_id;
         $student->institution_id = $request->institution_id;
+        $student->class_id       = $request->class_id;
+        $student->section_id     = $request->section_id;
         $student->status           = 1;
         $student->admin_id         = auth()->id();
         $student->password       = Hash::make($request->password);
@@ -107,7 +111,7 @@ class StudentController extends Controller
     public function Update(Request $request, Student $student)
     {
         $request->validate([
-            'first_name'     => 'required|string|max:255',
+            
             'middle_name'    => 'nullable|string|max:255',
             'last_name'      => 'required|string|max:255',
             'email'          => 'required|email|unique:students,email,' . $student->id,
@@ -120,6 +124,8 @@ class StudentController extends Controller
             'district'       => 'required|string|max:255',
             'teacher_id'     => 'nullable|exists:teachers,id',
             'institution_id' => 'required|exists:institutions,id',
+            'class_id'       => 'nullable|exists:classes,id',
+            'section_id'     => 'nullable|exists:sections,id',
             'password'       => 'nullable|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
@@ -153,6 +159,8 @@ class StudentController extends Controller
         $student->teacher_id     = $request->teacher_id;
         $student->institution_id = $request->institution_id;
         $student->institution_code = 'INS' . str_pad($request->institution_id, 3, '0', STR_PAD_LEFT);
+        $student->class_id       = $request->class_id;
+        $student->section_id     = $request->section_id;
         $student->admin_id       = auth()->id();
     
         // Update password only if provided

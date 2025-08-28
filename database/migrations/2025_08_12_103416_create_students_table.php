@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('institution_code');
             $table->foreignId('teacher_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('institution_id')->constrained()->onDelete('cascade');
+            $table->foreignId('class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('section_id')->constrained()->onDelete('cascade');
             $table->foreignId('admin_id')->constrained()->onDelete('cascade');
             $table->string('password');
             $table->string('decrypt_pw');

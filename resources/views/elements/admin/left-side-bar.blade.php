@@ -129,14 +129,14 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a href="{{ route('admin.sections.index') }}">
-                                <i class="ti ti-menu-2"></i><span>Section</span>
-                            </a>
-                        </li>
-                        <li class="">
                             <a href="{{ route('admin.classes.index')}}">
                                 <i class="ti ti-report"></i><span>Class</span>
                             </a>
+                            </li>
+                            <li class="">
+                                <a href="{{ route('admin.sections.index') }}">
+                                    <i class="ti ti-menu-2"></i><span>Section</span>
+                                </a>
                         </li>
                         <li class="">
                             <a href="{{ route('admin.subjects.index') }}">
@@ -161,6 +161,16 @@
                         <li class="">
                             <a href="{{ route('admin.events.index') }}">
                                 <i class="ti ti-list"></i><span>Event Management</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-title"><span>Communication</span></li>
+                <li>
+                    <ul>
+                        <li class="">
+                            <a href="{{ route('admin.email-sms.index') }}">
+                                <i class="ti ti-menu-2"></i><span>Email / Sms</span>
                             </a>
                         </li>
                     </ul>
