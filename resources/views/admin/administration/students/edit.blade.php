@@ -127,6 +127,20 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Class</label>
+                                    <select name="class_id" class="form-select">
+                                        <option value="">Select Class</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Section</label>
+                                    <select name="section_id" class="form-select">
+                                        <option value="">Select Section</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Assign Teacher</label>
                                     <select name="teacher_id" class="form-select">
                                         <option value="">-- None --</option>
@@ -156,4 +170,48 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('custom/js/assign-teacher.js') }}"></script>
+<script>
+    (function() {
+        const currentInstitutionId = '{{ old('institution_id', $student->institution_id) }}';
+        const currentClassId = '{{ old('class_id', $student->class_id) }}';
+        const currentSectionId = '{{ old('section_id', $student->section_id) }}';
+
+        function populateClasses(institutionId) {
+            if (!institutionId) return;
+            $.get('/admin/academic/classes-by-institution/' + institutionId, function(data){
+                let classOptions = '<option value="">Select Class</option>';
+                (data.classes || []).forEach(function (cls) {
+                    const selected = String(cls.id) === String(currentClassId) ? 'selected' : '';
+                    classOptions += `<option value="${cls.id}" ${selected}>${cls.name}</option>`;
+                });
+                $('select[name="class_id"]').html(classOptions);
+
+                if (currentClassId) {
+                    populateSections(currentClassId);
+                }
+            });
+        }
+
+        function populateSections(classId) {
+            if (!classId) return;
+            $.get('/admin/academic/sections-by-class/' + classId, function(data){
+                let sectionOptions = '<option value="">Select Section</option>';
+                (data.sections || data.data || []).forEach(function (sec) {
+                    const id = sec.id;
+                    const name = sec.name;
+                    const selected = String(id) === String(currentSectionId) ? 'selected' : '';
+                    sectionOptions += `<option value="${id}" ${selected}>${name}</option>`;
+                });
+                $('select[name="section_id"]').html(sectionOptions);
+            });
+        }
+
+        // Initial population on page load
+        populateClasses(currentInstitutionId);
+        if (currentClassId) {
+            populateSections(currentClassId);
+        }
+    })();
+</script>
 @endsection

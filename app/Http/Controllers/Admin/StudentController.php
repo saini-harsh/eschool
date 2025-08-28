@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Section;
+use App\Models\SchoolClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +27,10 @@ class StudentController extends Controller
     public function Create(){
         $institutions = Institution::all();
         $teachers = Teacher::all();
-        return view('admin.administration.students.create',compact('institutions','teachers'));
+        $classes = SchoolClass::all(['id','name','institution_id','section_ids']);
+        $sections = Section::all(['id','name']);
+
+        return view('admin.administration.students.create',compact('institutions','teachers','classes','sections'));
     }
     public function Store(Request $request)
     {
@@ -105,8 +110,18 @@ class StudentController extends Controller
     {
         $institutions = Institution::all();
         $teachers = Teacher::all();
+        $classes = SchoolClass::where('institution_id', $student->institution_id)
+            ->get(['id','name','institution_id','section_ids']);
+        $sections = collect();
+        if ($student->class_id) {
+            $class = SchoolClass::find($student->class_id);
+            $sectionIds = $class && is_array($class->section_ids) ? $class->section_ids : [];
+            if (!empty($sectionIds)) {
+                $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
+            }
+        }
 
-        return view('admin.administration.students.edit', compact('student', 'institutions','teachers'));
+        return view('admin.administration.students.edit', compact('student', 'institutions','teachers','classes','sections'));
     }
     public function Update(Request $request, Student $student)
     {

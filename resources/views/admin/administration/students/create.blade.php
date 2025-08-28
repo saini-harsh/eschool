@@ -126,6 +126,26 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Class</label>
+                                    <select name="class_id" class="form-select">
+                                        <option value="">Select Class</option>
+                                        @foreach ($classes as $class)
+                                            <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Section</label>
+                                    <select name="section_id" class="form-select">
+                                        <option value="">Select Section</option>
+                                        @foreach ($sections as $section)
+                                            <option value="{{ $section->id }}">{{ $section->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Assign Teacher</label>
                                     <select name="teacher_id" class="form-select">
                                         <option value="">-- None --</option>

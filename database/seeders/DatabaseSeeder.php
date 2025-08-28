@@ -150,7 +150,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512340',
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
-                'institution_id' => 1
+                'institution_id' => 1,
+                'class_id' => 1,
+                'section_id' => 2
             ],
             [
                 'first_name' => 'Rohan',
@@ -160,7 +162,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512341',
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
-                'institution_id' => 1
+                'institution_id' => 1,
+                'class_id' => 2,
+                'section_id' => 3
             ],
             // Anita's Students
             [
@@ -171,7 +175,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512342',
                 'institution_code' => 'INS001',
                 'teacher_id' => 2,
-                'institution_id' => 1
+                'institution_id' => 1,
+                'class_id' => 2,
+                'section_id' => 3
             ],
             [
                 'first_name' => 'Aman',
@@ -181,7 +187,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512343',
                 'institution_code' => 'INS001',
                 'teacher_id' => 2,
-                'institution_id' => 1
+                'institution_id' => 1,
+                'class_id' => 3,
+                'section_id' => 4
             ],
             // Vikram's Students
             [
@@ -192,7 +200,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512344',
                 'institution_code' => 'INS002',
                 'teacher_id' => 3,
-                'institution_id' => 2
+                'institution_id' => 2,
+                'class_id' => 1,
+                'section_id' => 2
             ],
             [
                 'first_name' => 'Tanya',
@@ -202,7 +212,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512345',
                 'institution_code' => 'INS002',
                 'teacher_id' => 3,
-                'institution_id' => 2
+                'institution_id' => 2,
+                'class_id' => 2,
+                'section_id' => 3
             ],
             // Neha's Students
             [
@@ -213,7 +225,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512346',
                 'institution_code' => 'INS002',
                 'teacher_id' => 4,
-                'institution_id' => 2
+                'institution_id' => 2,
+                'class_id' => 1,
+                'section_id' => 2
             ],
             [
                 'first_name' => 'Meera',
@@ -223,7 +237,9 @@ class DatabaseSeeder extends Seeder
                 'phone' => '9876512347',
                 'institution_code' => 'INS002',
                 'teacher_id' => 4,
-                'institution_id' => 2
+                'institution_id' => 2,
+                'class_id' => 2,
+                'section_id' => 3
             ]
         ];
 

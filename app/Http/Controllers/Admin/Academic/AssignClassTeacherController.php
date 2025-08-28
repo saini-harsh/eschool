@@ -42,7 +42,16 @@ class AssignClassTeacherController extends Controller
     // Fetch sections by class
     public function getSectionsByClass($classId)
     {
-        $sections = Section::get(['id', 'name']);
+        $class = SchoolClass::find($classId);
+        if (!$class) {
+            return response()->json(['sections' => []]);
+        }
+
+        $sectionIds = is_array($class->section_ids) ? $class->section_ids : [];
+        $sections = empty($sectionIds)
+            ? []
+            : Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+
         return response()->json(['sections' => $sections]);
     }
 
