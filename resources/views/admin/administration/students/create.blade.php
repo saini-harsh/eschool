@@ -52,7 +52,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">First Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}">
+                                    <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}" required>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
@@ -116,45 +116,40 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Institution <span class="text-danger">*</span></label>
-                                    <select name="institution_id" class="form-select">
+                                    <select name="institution_id" id="institution_id" class="form-select">
+                                        <option value="">Select Institution</option>
                                         @foreach ($institutions as $institution)
-                                            <option value="{{ $institution->id }}" {{ old('institution_id')==$institution->id ? 'selected' : '' }}>
+                                            <option value="{{ $institution->id }}">
                                                 {{ $institution->name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Assign Teacher</label>
+                                    <select name="teacher_id" id="teacher_id" class="form-select">
+                                        <option value="">-- None --</option>
+                                    </select>
+                                </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Class</label>
-                                    <select name="class_id" class="form-select">
-                                        <option value="">Select Class</option>
-                                        @foreach ($classes as $class)
-                                            <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                        @endforeach
+                                    <select name="class_id" id="class_id" class="form-select">
+                                        <option value="">-- None --</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Section</label>
-                                    <select name="section_id" class="form-select">
-                                        <option value="">Select Section</option>
-                                        @foreach ($sections as $section)
-                                            <option value="{{ $section->id }}">{{ $section->name }}</option>
-                                        @endforeach
+                                    <select name="section_id" id="section_id" class="form-select">
+                                        <option value="">-- None --</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Assign Teacher</label>
-                                    <select name="teacher_id" class="form-select">
-                                        <option value="">-- None --</option>
-                                        @foreach ($teachers as $teacher)
-                                            <option value="{{ $teacher->id }}" {{ old('teacher_id')==$teacher->id ? 'selected' : '' }}>
-                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <label class="form-label">Institution Code</label>
+                                    <input type="text" name="institution_code" class="form-control" readonly>
+                                    <small class="text-muted">Auto-generated based on selected institution</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -185,3 +180,5 @@
     </div>
 </div>
 @endsection
+
+<script src="{{ asset('custom/js/students.js') }}"></script>

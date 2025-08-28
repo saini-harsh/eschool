@@ -219,21 +219,33 @@
                         
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-secondary">{{ $student->institution_code }}</span>
+                            <span class="badge badge-soft-secondary">
+                                @if($student->institution)
+                                    {{ $student->institution->name }}
+                                @else
+                                    {{ $student->institution_code }}
+                                @endif
+                            </span>
                         <!-- </a>     -->
 
                         </td>
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-orange">{{ $student->teacher_id }}</span>
+                            <span class="badge badge-soft-orange">
+                                @if($student->teacher)
+                                    {{ $student->teacher->first_name }} {{ $student->teacher->last_name }}
+                                @else
+                                    Not Assigned
+                                @endif
+                            </span>
                         <!-- </a>     -->
 
                         </td>
                         <td>
                             <div>
-                                <select class="select">
-                                <option value="1" {{ $student->status === 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $student->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                <select class="form-select form-select-sm status-select" data-student-id="{{ $student->id }}">
+                                    <option value="1" {{ $student->status === 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ $student->status === 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                         </td>
@@ -254,6 +266,29 @@
         </div>
 
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this student? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     setTimeout(() => {
         const toastEl = document.querySelector('.toast');
@@ -262,6 +297,62 @@
             bsToast.hide();
         }
     }, 3000); // Hide after 3 seconds
+
+    function confirmDelete(deleteUrl) {
+        document.getElementById('deleteForm').action = deleteUrl;
+        $('#delete_modal').modal('show');
+    }
+
+    // Handle status updates
+    $(document).ready(function() {
+        $('.status-select').on('change', function() {
+            var studentId = $(this).data('student-id');
+            var newStatus = $(this).val();
+            var selectElement = $(this);
+
+            $.ajax({
+                url: '/admin/students/status/' + studentId,
+                type: 'POST',
+                data: {
+                    status: newStatus,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    // Show success message
+                    showToast('Status updated successfully!', 'success');
+                },
+                error: function() {
+                    // Revert the selection on error
+                    selectElement.val(selectElement.find('option[selected]').val());
+                    showToast('Error updating status!', 'error');
+                }
+            });
+        });
+    });
+
+    function showToast(message, type) {
+        // Create toast element
+        var toastHtml = `
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+                <div class="toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add toast to page
+        $('body').append(toastHtml);
+        
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            $('.toast').remove();
+        }, 3000);
+    }
 </script>
 <!-- End Content -->
 @endsection

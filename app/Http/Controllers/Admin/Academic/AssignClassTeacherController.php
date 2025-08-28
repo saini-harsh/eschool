@@ -46,12 +46,11 @@ class AssignClassTeacherController extends Controller
         if (!$class) {
             return response()->json(['sections' => []]);
         }
+        
+        
+        $sectionIds = json_decode($class->section_ids) ?? [];
 
-        $sectionIds = is_array($class->section_ids) ? $class->section_ids : [];
-        $sections = empty($sectionIds)
-            ? []
-            : Section::whereIn('id', $sectionIds)->get(['id', 'name']);
-
+        $sections = empty($sectionIds) ? [] : Section::whereIn('id', $sectionIds)->get(['id', 'name']);
         return response()->json(['sections' => $sections]);
     }
 

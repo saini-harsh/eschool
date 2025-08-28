@@ -117,7 +117,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Institution <span class="text-danger">*</span></label>
-                                    <select name="institution_id" class="form-select">
+                                    <select name="institution_id" id="institution_id" class="form-select">
                                         @foreach ($institutions as $institution)
                                             <option value="{{ $institution->id }}" {{ old('institution_id', $student->institution_id) == $institution->id ? 'selected' : '' }}>
                                                 {{ $institution->name }}
@@ -128,27 +128,28 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Class</label>
-                                    <select name="class_id" class="form-select">
+                                    <select name="class_id" id="class_id" class="form-select">
                                         <option value="">Select Class</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Section</label>
-                                    <select name="section_id" class="form-select">
+                                    <select name="section_id" id="section_id" class="form-select">
                                         <option value="">Select Section</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Institution Code</label>
+                                    <input type="text" name="institution_code" class="form-control" value="{{ $student->institution_code }}" readonly>
+                                    <small class="text-muted">Auto-generated based on selected institution</small>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Assign Teacher</label>
-                                    <select name="teacher_id" class="form-select">
+                                    <select name="teacher_id" id="teacher_id" class="form-select">
                                         <option value="">-- None --</option>
-                                        @foreach ($teachers as $teacher)
-                                            <option value="{{ $teacher->id }}" {{ old('teacher_id', $student->teacher_id) == $teacher->id ? 'selected' : '' }}>
-                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                            </option>
-                                        @endforeach
                                     </select>
                                 </div>
 
@@ -171,47 +172,21 @@
     </div>
 </div>
 <script src="{{ asset('custom/js/assign-teacher.js') }}"></script>
+<script src="{{ asset('custom/js/students.js') }}"></script>
 <script>
-    (function() {
-        const currentInstitutionId = '{{ old('institution_id', $student->institution_id) }}';
-        const currentClassId = '{{ old('class_id', $student->class_id) }}';
-        const currentSectionId = '{{ old('section_id', $student->section_id) }}';
-
-        function populateClasses(institutionId) {
-            if (!institutionId) return;
-            $.get('/admin/academic/classes-by-institution/' + institutionId, function(data){
-                let classOptions = '<option value="">Select Class</option>';
-                (data.classes || []).forEach(function (cls) {
-                    const selected = String(cls.id) === String(currentClassId) ? 'selected' : '';
-                    classOptions += `<option value="${cls.id}" ${selected}>${cls.name}</option>`;
-                });
-                $('select[name="class_id"]').html(classOptions);
-
-                if (currentClassId) {
-                    populateSections(currentClassId);
-                }
-            });
-        }
-
-        function populateSections(classId) {
-            if (!classId) return;
-            $.get('/admin/academic/sections-by-class/' + classId, function(data){
-                let sectionOptions = '<option value="">Select Section</option>';
-                (data.sections || data.data || []).forEach(function (sec) {
-                    const id = sec.id;
-                    const name = sec.name;
-                    const selected = String(id) === String(currentSectionId) ? 'selected' : '';
-                    sectionOptions += `<option value="${id}" ${selected}>${name}</option>`;
-                });
-                $('select[name="section_id"]').html(sectionOptions);
-            });
-        }
-
-        // Initial population on page load
-        populateClasses(currentInstitutionId);
-        if (currentClassId) {
-            populateSections(currentClassId);
-        }
-    })();
+    // Pre-populate form with existing student data
+    $(document).ready(function() {
+        var studentData = {
+            institution_id: '{{ old("institution_id", $student->institution_id) }}',
+            class_id: '{{ old("class_id", $student->class_id) }}',
+            section_id: '{{ old("section_id", $student->section_id) }}',
+            teacher_id: '{{ old("teacher_id", $student->teacher_id) }}'
+        };
+        
+        // Populate form after a short delay to ensure students.js is loaded
+        setTimeout(function() {
+            populateStudentForm(studentData);
+        }, 100);
+    });
 </script>
 @endsection

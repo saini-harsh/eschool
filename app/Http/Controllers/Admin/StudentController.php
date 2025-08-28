@@ -26,11 +26,44 @@ class StudentController extends Controller
     }
     public function Create(){
         $institutions = Institution::all();
-        $teachers = Teacher::all();
         $classes = SchoolClass::all(['id','name','institution_id','section_ids']);
-        $sections = Section::all(['id','name']);
+        $sections = collect(); // Start with empty sections
 
-        return view('admin.administration.students.create',compact('institutions','teachers','classes','sections'));
+        return view('admin.administration.students.create',compact('institutions','classes','sections'));
+    }
+
+    // Method to get sections by class ID
+    public function getSectionsByClass($classId)
+    {
+        $class = SchoolClass::find($classId);
+        if (!$class) {
+            return response()->json(['sections' => []]);
+        }
+
+        $sectionIds = $class->section_ids ?? [];
+        $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+        
+        return response()->json(['sections' => $sections]);
+    }
+
+    // Method to get classes by institution ID
+    public function getClassesByInstitution($institutionId)
+    {
+        $classes = SchoolClass::where('institution_id', $institutionId)
+            ->where('status', 1)
+            ->get(['id', 'name', 'institution_id', 'section_ids']);
+        
+        return response()->json(['classes' => $classes]);
+    }
+
+    // Method to get teachers by institution ID
+    public function getTeachersByInstitution($institutionId)
+    {
+        $teachers = Teacher::where('institution_id', $institutionId)
+            ->where('status', 1)
+            ->get(['id', 'first_name', 'last_name', 'institution_id']);
+        
+        return response()->json(['teachers' => $teachers]);
     }
     public function Store(Request $request)
     {
@@ -53,6 +86,14 @@ class StudentController extends Controller
             'password'       => 'required|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
+
+        // Additional validation: ensure section belongs to selected class
+        if ($request->filled('class_id') && $request->filled('section_id')) {
+            $class = SchoolClass::find($request->class_id);
+            if ($class && !in_array($request->section_id, $class->section_ids ?? [])) {
+                return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+            }
+        }
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -109,7 +150,6 @@ class StudentController extends Controller
     public function Edit(Student $student)
     {
         $institutions = Institution::all();
-        $teachers = Teacher::all();
         $classes = SchoolClass::where('institution_id', $student->institution_id)
             ->get(['id','name','institution_id','section_ids']);
         $sections = collect();
@@ -121,12 +161,12 @@ class StudentController extends Controller
             }
         }
 
-        return view('admin.administration.students.edit', compact('student', 'institutions','teachers','classes','sections'));
+        return view('admin.administration.students.edit', compact('student', 'institutions','classes','sections'));
     }
     public function Update(Request $request, Student $student)
     {
         $request->validate([
-            
+            'first_name'     => 'required|string|max:255',
             'middle_name'    => 'nullable|string|max:255',
             'last_name'      => 'required|string|max:255',
             'email'          => 'required|email|unique:students,email,' . $student->id,
@@ -144,9 +184,15 @@ class StudentController extends Controller
             'password'       => 'nullable|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
-    
-        
-        
+
+        // Additional validation: ensure section belongs to selected class
+        if ($request->filled('class_id') && $request->filled('section_id')) {
+            $class = SchoolClass::find($request->class_id);
+            if ($class && !in_array($request->section_id, $class->section_ids ?? [])) {
+                return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+            }
+        }
+
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -194,5 +240,21 @@ class StudentController extends Controller
         $student->delete();
 
         return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully!');
+    }
+
+    /**
+     * Update student status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1'
+        ]);
+
+        $student = Student::findOrFail($id);
+        $student->status = $request->status;
+        $student->save();
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 }
