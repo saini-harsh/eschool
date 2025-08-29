@@ -42,6 +42,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{institution}', [InstitutionController::class, 'Edit'])->name('admin.institutions.edit');
             Route::post('/update/{institution}', [InstitutionController::class, 'Update'])->name('admin.institutions.update');
             Route::post('/delete/{institution}', [InstitutionController::class, 'Delete'])->name('admin.institutions.delete');
+            Route::post('/status/{id}', [InstitutionController::class, 'updateStatus'])->name('admin.institutions.status');
         });
         Route::prefix('teachers')->group(function () {
             Route::get('/index', [TeacherController::class, 'Index'])->name('admin.teachers.index');
@@ -50,6 +51,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('admin.teachers.edit');
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('admin.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
+            Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('admin.teachers.status');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
@@ -58,6 +60,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
             Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
             Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
+            Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('admin.nonworkingstaff.status');
         });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');

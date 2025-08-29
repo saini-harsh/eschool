@@ -157,6 +157,11 @@
                                     <label class="form-label">Password</label>
                                     <input type="password" name="password" class="form-control" placeholder="Leave blank to keep unchanged">
                                 </div>
+                                
+                                {{-- Hidden inputs to store current values for JavaScript --}}
+                                <input type="hidden" id="current_class_id" value="{{ old('class_id', $student->class_id) }}">
+                                <input type="hidden" id="current_section_id" value="{{ old('section_id', $student->section_id) }}">
+                                <input type="hidden" id="current_teacher_id" value="{{ old('teacher_id', $student->teacher_id) }}">
                             </div> {{-- end row --}}
                         </div>
                     </div>
@@ -172,21 +177,31 @@
     </div>
 </div>
 <script src="{{ asset('custom/js/assign-teacher.js') }}"></script>
-<script src="{{ asset('custom/js/students.js') }}"></script>
 <script>
     // Pre-populate form with existing student data
     $(document).ready(function() {
-        var studentData = {
-            institution_id: '{{ old("institution_id", $student->institution_id) }}',
-            class_id: '{{ old("class_id", $student->class_id) }}',
-            section_id: '{{ old("section_id", $student->section_id) }}',
-            teacher_id: '{{ old("teacher_id", $student->teacher_id) }}'
-        };
-        
-        // Populate form after a short delay to ensure students.js is loaded
+        // Wait for students.js to initialize, then pre-populate
         setTimeout(function() {
-            populateStudentForm(studentData);
-        }, 100);
+            var currentClassId = $('#current_class_id').val();
+            var currentSectionId = $('#current_section_id').val();
+            var currentTeacherId = $('#current_teacher_id').val();
+            
+            console.log('Current values:', {
+                classId: currentClassId,
+                sectionId: currentSectionId,
+                teacherId: currentTeacherId
+            });
+            
+            // Set the values in the hidden inputs for the prePopulateEditForm function
+            $('#class_id').val(currentClassId);
+            $('#section_id').val(currentSectionId);
+            $('#teacher_id').val(currentTeacherId);
+            
+            // Trigger the pre-population
+            if (currentClassId || currentSectionId || currentTeacherId) {
+                prePopulateEditForm();
+            }
+        }, 500);
     });
 </script>
 @endsection

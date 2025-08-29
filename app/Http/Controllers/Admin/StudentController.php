@@ -35,15 +35,32 @@ class StudentController extends Controller
     // Method to get sections by class ID
     public function getSectionsByClass($classId)
     {
-        $class = SchoolClass::find($classId);
-        if (!$class) {
-            return response()->json(['sections' => []]);
-        }
+        try {
+            $class = SchoolClass::find($classId);
+            if (!$class) {
+                return response()->json(['sections' => []]);
+            }
 
-        $sectionIds = $class->section_ids ?? [];
-        $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
-        
-        return response()->json(['sections' => $sections]);
+            // Ensure section_ids is properly handled as an array
+            $sectionIds = $class->section_ids ?? [];
+            
+            // If section_ids is a string (JSON), decode it
+            if (is_string($sectionIds)) {
+                $sectionIds = json_decode($sectionIds, true) ?? [];
+            }
+            
+            // Ensure it's an array and not empty
+            if (!is_array($sectionIds) || empty($sectionIds)) {
+                return response()->json(['sections' => []]);
+            }
+            
+            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+            
+            return response()->json(['sections' => $sections]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getSectionsByClass: ' . $e->getMessage());
+            return response()->json(['sections' => [], 'error' => 'An error occurred while fetching sections']);
+        }
     }
 
     // Method to get classes by institution ID
@@ -90,8 +107,17 @@ class StudentController extends Controller
         // Additional validation: ensure section belongs to selected class
         if ($request->filled('class_id') && $request->filled('section_id')) {
             $class = SchoolClass::find($request->class_id);
-            if ($class && !in_array($request->section_id, $class->section_ids ?? [])) {
-                return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
+                    return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+                }
             }
         }
 
@@ -155,9 +181,17 @@ class StudentController extends Controller
         $sections = collect();
         if ($student->class_id) {
             $class = SchoolClass::find($student->class_id);
-            $sectionIds = $class && is_array($class->section_ids) ? $class->section_ids : [];
-            if (!empty($sectionIds)) {
-                $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (is_array($sectionIds) && !empty($sectionIds)) {
+                    $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
+                }
             }
         }
 
@@ -188,8 +222,17 @@ class StudentController extends Controller
         // Additional validation: ensure section belongs to selected class
         if ($request->filled('class_id') && $request->filled('section_id')) {
             $class = SchoolClass::find($request->class_id);
-            if ($class && !in_array($request->section_id, $class->section_ids ?? [])) {
-                return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
+                    return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+                }
             }
         }
 

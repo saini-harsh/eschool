@@ -76,7 +76,7 @@
                             <td>{{ $member->designation }}</td>
                             <td>
                                 <div>
-                                    <select class="select">
+                                    <select class="form-select form-select-sm status-select" data-staff-id="{{ $member->id }}">
                                         <option value="1" {{ $member->status == 1 ? 'selected' : '' }}>Active</option>
                                         <option value="0" {{ $member->status == 0 ? 'selected' : '' }}>Inactive</option>
                                     </select>

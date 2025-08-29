@@ -32,7 +32,7 @@ class SchoolClassSeeder extends Seeder
             foreach ($classNames as $name) {
                 SchoolClass::create([
                     'name' => $name,
-                    'section_ids' => json_encode(['1', '2','3','4','5']), // default sections
+                    'section_ids' => json_encode(['1','2','3','4','5']), // default sections
                     'student_count' => 0,
                     'institution_id' => $institutionId,
                     'admin_id' => 1,

@@ -321,4 +321,9 @@
         </div>
     </div>
 </div>
+
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/schoolclass.js') }}"></script>
+@endpush

@@ -145,6 +145,26 @@ class InstitutionController extends Controller
 
         return redirect()->route('admin.institutions.index')->with('success', 'Institution updated successfully!');
     }
+    
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $institution = Institution::findOrFail($id);
+            $institution->status = $request->status;
+            $institution->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Institution status updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating institution status'
+            ], 500);
+        }
+    }
+    
     public function Delete($id)
     {
         $institution = Institution::findOrFail($id);

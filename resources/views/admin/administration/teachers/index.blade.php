@@ -232,9 +232,9 @@
                         </td>
                         <td>
                             <div>
-                                <select class="select">
-                                <option value="1" {{ $teacher->status === 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $teacher->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                <select class="form-select form-select-sm status-select" data-teacher-id="{{ $teacher->id }}">
+                                    <option value="1" {{ $teacher->status == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ $teacher->status == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                         </td>
