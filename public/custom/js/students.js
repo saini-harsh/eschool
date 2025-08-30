@@ -15,10 +15,16 @@ $(document).ready(function() {
     // Check if we're on a student page
     if ($('#institution_id').length > 0) {
         console.log('Student form detected, initializing...');
-    // Initialize students functionality
-    initStudentsForm();
+        // Initialize students functionality
+        initStudentsForm();
     } else {
         console.log('Student form not found on this page');
+    }
+    
+    // Always initialize status updates if we're on a page with status selects
+    if ($('.status-select').length > 0) {
+        console.log('Status selects found, initializing status updates...');
+        initStudentStatusUpdates();
     }
 });
 
@@ -290,22 +296,32 @@ function initStudentStatusUpdates() {
         var selectElement = $(this);
         var originalValue = selectElement.find('option[selected]').val() || selectElement.val();
 
-        console.log('Student status changed:', studentId, newStatus);
+        console.log('Student status changed:', { studentId, newStatus, originalValue });
+        console.log('Select element:', selectElement);
+        console.log('Data attributes:', selectElement.data());
 
-        console.log('Sending AJAX request to:', '/admin/students/status/' + studentId);
-        console.log('Data:', {
-                status: newStatus,
-                _token: $('meta[name="csrf-token"]').attr('content')
-            });
+        if (!studentId) {
+            console.error('No student ID found in data attributes');
+            return;
+        }
+
+        var url = '/admin/students/status/' + studentId;
+        console.log('Sending AJAX request to:', url);
+        console.log('Request data:', {
+            status: newStatus,
+            _token: csrfToken
+        });
             
         $.ajax({
-            url: '/admin/students/status/' + studentId,
+            url: url,
             type: 'POST',
             data: {
                 status: newStatus,
-                _token: $('meta[name="csrf-token"]').attr('content')
+                _token: csrfToken
             },
+            dataType: 'json',
             success: function(response) {
+                console.log('Success response:', response);
                 if (response.success) {
                     showToast('Status updated successfully!', 'success');
                     // Update the selected attribute
@@ -318,8 +334,19 @@ function initStudentStatusUpdates() {
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error updating student status:', xhr.responseText);
-                showToast('Error updating status!', 'error');
+                console.error('Error updating student status:', { xhr, status, error });
+                console.error('Response text:', xhr.responseText);
+                console.error('Status code:', xhr.status);
+                
+                // Try to parse error response
+                try {
+                    var errorResponse = JSON.parse(xhr.responseText);
+                    console.error('Parsed error response:', errorResponse);
+                    showToast(errorResponse.message || 'Error updating status!', 'error');
+                } catch (e) {
+                    showToast('Error updating status!', 'error');
+                }
+                
                 // Revert the selection on error
                 selectElement.val(originalValue);
             }

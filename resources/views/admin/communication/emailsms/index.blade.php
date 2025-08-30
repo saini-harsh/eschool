@@ -1,6 +1,41 @@
 @extends('layouts.admin')
 @section('title', 'Admin | Send Email/SMS')
 @section('content')
+<style>
+    .individual-recipients-list {
+        border: 1px solid #e3e6f0;
+        border-radius: 0.35rem;
+        padding: 1rem;
+        background-color: #f8f9fc;
+    }
+    
+    .individual-recipients-list .form-check {
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.15s ease-in-out;
+    }
+    
+    .individual-recipients-list .form-check:hover {
+        background-color: #e3e6f0;
+    }
+    
+    .individual-recipients-list .form-check-label {
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+    
+    .badge-soft-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+    
+    .badge-soft-primary {
+        background-color: #cfe2ff;
+        color: #084298;
+        border: 1px solid #b6d4fe;
+    }
+</style>
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
@@ -131,121 +166,143 @@
                             <!-- Individual Tab -->
                             <div class="tab-pane fade show active" id="individual" role="tabpanel" 
                                  aria-labelledby="individual-tab">
-                                <div class="mb-3">
-                                    <label class="form-label">MESSAGE TO *</label>
-                                    <input type="text" id="recipient-search" class="form-control" 
-                                           placeholder="Search recipients...">
+                                
+                                <!-- Information Alert -->
+                                <div class="alert alert-info mb-3">
+                                    <i class="ti ti-info-circle me-2"></i>
+                                    <strong>Individual Selection:</strong> Select an institution first, then choose a role, and finally select specific individuals or all from that role.
                                 </div>
                                 
-                                <div class="recipient-list">
-                                    <h6 class="mb-2">Select Recipients:</h6>
-                                    <div class="recipient-options">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="student" id="recipient_student">
-                                            <label class="form-check-label" for="recipient_student">
-                                                Student
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="parents" id="recipient_parents">
-                                            <label class="form-check-label" for="recipient_parents">
-                                                Parents
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="teacher" id="recipient_teacher">
-                                            <label class="form-check-label" for="recipient_teacher">
-                                                Teacher
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="admin" id="recipient_admin">
-                                            <label class="form-check-label" for="recipient_admin">
-                                                Admin
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="accountant" id="recipient_accountant">
-                                            <label class="form-check-label" for="recipient_accountant">
-                                                Accountant
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="receptionist" id="recipient_receptionist">
-                                            <label class="form-check-label" for="recipient_receptionist">
-                                                Receptionist
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="librarian" id="recipient_librarian">
-                                            <label class="form-check-label" for="recipient_librarian">
-                                                Librarian
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="driver" id="recipient_driver">
-                                            <label class="form-check-label" for="recipient_driver">
-                                                Driver
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="add_role" id="recipient_add_role">
-                                            <label class="form-check-label" for="recipient_add_role">
-                                                Add Role
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="public_relations" id="recipient_public_relations">
-                                            <label class="form-check-label" for="recipient_public_relations">
-                                                Public Relations Officer
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="centre_manager" id="recipient_centre_manager">
-                                            <label class="form-check-label" for="recipient_centre_manager">
-                                                Centre Manager
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="parents_1" id="recipient_parents_1">
-                                            <label class="form-check-label" for="recipient_parents_1">
-                                                Parents -1
-                                            </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input recipient-checkbox" type="checkbox" 
-                                                   value="system_admin" id="recipient_system_admin">
-                                            <label class="form-check-label" for="recipient_system_admin">
-                                                SYSTEM ADMINISTRATOR
-                                            </label>
-                                        </div>
+                                <!-- Institution Selection -->
+                                <div class="mb-3">
+                                    <label class="form-label">Select Institution *</label>
+                                    <select class="form-select" id="individual-institution-select">
+                                        <option value="">Choose an institution...</option>
+                                        <!-- Institutions will be loaded dynamically -->
+                                    </select>
+                                </div>
+                                
+                                <!-- Role Selection -->
+                                <div class="mb-3" id="individual-role-container" style="display: none;">
+                                    <label class="form-label">Select Role *</label>
+                                    <select class="form-select" id="individual-role-select">
+                                        <option value="">Choose a role...</option>
+                                        <option value="students">Students</option>
+                                        <option value="teachers">Teachers</option>
+                                        <option value="parents">Parents</option>
+                                        <option value="non_working_staff">Non-Working Staff</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Individual Selection -->
+                                <div class="mb-3" id="individual-recipient-container" style="display: none;">
+                                    <label class="form-label">Select Recipients *</label>
+                                    
+                                    <!-- Search Box -->
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="individual-search" 
+                                               placeholder="Search individuals..." autocomplete="off">
+                                    </div>
+                                    
+                                    <!-- Select All Option -->
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="select-all-individuals">
+                                        <label class="form-check-label fw-bold" for="select-all-individuals">
+                                            <i class="ti ti-checkbox me-1"></i>Select All
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Individual Recipients List -->
+                                    <div class="individual-recipients-list" id="individual-recipients-list" style="max-height: 300px; overflow-y: auto;">
+                                        <!-- Individual recipients will be loaded here -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Individuals Display -->
+                                <div class="mb-3" id="individual-selected-display" style="display: none;">
+                                    <label class="form-label">Selected Individuals:</label>
+                                    <div id="selected-individuals-display" class="d-flex flex-wrap gap-2">
+                                        <!-- Selected individuals will be displayed here -->
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Group Tab -->
                             <div class="tab-pane fade" id="group" role="tabpanel" aria-labelledby="group-tab">
+                                <!-- Information Alert -->
+                                <div class="alert alert-info mb-3">
+                                    <i class="ti ti-info-circle me-2"></i>
+                                    <strong>Group Selection:</strong> Select an institution first, then choose one or more recipient groups. 
+                                    You can select multiple groups at once for bulk messaging.
+                                </div>
+                                
                                 <div class="mb-3">
-                                    <label class="form-label">Select Group</label>
-                                    <select class="form-select" id="group-select">
-                                        <option value="">Choose a group...</option>
-                                        <option value="all_students">All Students</option>
-                                        <option value="all_teachers">All Teachers</option>
-                                        <option value="all_parents">All Parents</option>
-                                        <option value="all_staff">All Staff</option>
+                                    <label class="form-label">Select Institution *</label>
+                                    <select class="form-select" id="group-institution-select">
+                                        <option value="">Choose an institution...</option>
+                                        <!-- Institutions will be loaded dynamically -->
                                     </select>
+                                </div>
+                                
+                                <div class="mb-3" id="group-recipient-container" style="display: none;">
+                                    <label class="form-label">Select Recipient Groups *</label>
+                                    
+                                    <!-- Select All Option -->
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="select-all-groups">
+                                        <label class="form-check-label fw-bold" for="select-all-groups">
+                                            <i class="ti ti-checkbox me-1"></i>Select All Groups
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="recipient-group-options">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input group-recipient-checkbox" type="checkbox" 
+                                                   value="all_teachers" id="group_recipient_teachers">
+                                            <label class="form-check-label" for="group_recipient_teachers">
+                                                <i class="ti ti-users me-1"></i>All Teachers
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input group-recipient-checkbox" type="checkbox" 
+                                                   value="all_students" id="group_recipient_students">
+                                            <label class="form-check-label" for="group_recipient_students">
+                                                <i class="ti ti-user me-1"></i>All Students
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input group-recipient-checkbox" type="checkbox" 
+                                                   value="all_parents" id="group_recipient_parents">
+                                            <label class="form-check-label" for="group_recipient_parents">
+                                                <i class="ti ti-user-check me-1"></i>All Parents
+                                            </label>
+                                            <small class="form-text text-muted d-block ms-4">
+                                                <i class="ti ti-info-circle me-1"></i>
+                                                Uses student contact information when parent details are not available
+                                            </small>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input group-recipient-checkbox" type="checkbox" 
+                                                   value="all_non_working_staff" id="group_recipient_non_working_staff">
+                                            <label class="form-check-label" for="group_recipient_non_working_staff">
+                                                <i class="ti ti-user-star me-1"></i>All Non-Working Staff
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3" id="group-count-display" style="display: none;">
+                                    <div class="alert alert-info">
+                                        <i class="ti ti-info-circle me-2"></i>
+                                        <span id="recipient-count-text">Selected recipients: 0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3" id="group-selected-groups" style="display: none;">
+                                    <label class="form-label">Selected Groups:</label>
+                                    <div id="selected-groups-display" class="d-flex flex-wrap gap-2">
+                                        <!-- Selected groups will be displayed here -->
+                                    </div>
                                 </div>
                             </div>
 

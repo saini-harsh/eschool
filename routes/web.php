@@ -155,6 +155,13 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{id}', [EmailSmsController::class, 'update'])->name('admin.email-sms.update');
             Route::post('/delete/{id}', [EmailSmsController::class, 'delete'])->name('admin.email-sms.delete');
             Route::post('/{id}/status', [EmailSmsController::class, 'updateStatus'])->name('admin.email-sms.status');
+            
+            // Group selection routes
+            Route::get('/institutions', [EmailSmsController::class, 'getInstitutions'])->name('admin.email-sms.institutions');
+            Route::get('/teachers/{institutionId}', [EmailSmsController::class, 'getTeachersByInstitution'])->name('admin.email-sms.teachers');
+            Route::get('/students/{institutionId}', [EmailSmsController::class, 'getStudentsByInstitution'])->name('admin.email-sms.students');
+            Route::get('/parents/{institutionId}', [EmailSmsController::class, 'getParentsByInstitution'])->name('admin.email-sms.parents');
+            Route::get('/non-working-staff/{institutionId}', [EmailSmsController::class, 'getNonWorkingStaffByInstitution'])->name('admin.email-sms.non-working-staff');
         });
     });
 });
