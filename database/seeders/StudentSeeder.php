@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Student;
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,7 +26,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 13, // Class 1 for Green Valley (ID 13)
+                'class_id' => 1, // Class 1 for Green Valley
                 'section_id' => 2
             ],
             [
@@ -37,7 +38,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 14, // Class 2 for Green Valley (ID 14)
+                'class_id' => 2, // Class 2 for Green Valley
                 'section_id' => 3
             ],
             // Anita's Students (teacher_id = 2)
@@ -50,7 +51,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 2,
                 'institution_id' => 1,
-                'class_id' => 14, // Class 2 for Green Valley (ID 14)
+                'class_id' => 2, // Class 2 for Green Valley
                 'section_id' => 3
             ],
             [
@@ -62,7 +63,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 2,
                 'institution_id' => 1,
-                'class_id' => 15, // Class 3 for Green Valley (ID 15)
+                'class_id' => 3, // Class 3 for Green Valley
                 'section_id' => 4
             ],
 
@@ -77,7 +78,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'teacher_id' => 3,
                 'institution_id' => 2,
-                'class_id' => 25, // Class 1 for Sunrise (ID 25)
+                'class_id' => 13, // Class 1 for Sunrise (13th class created)
                 'section_id' => 2
             ],
             [
@@ -89,7 +90,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'teacher_id' => 3,
                 'institution_id' => 2,
-                'class_id' => 26, // Class 2 for Sunrise (ID 26)
+                'class_id' => 14, // Class 2 for Sunrise (14th class created)
                 'section_id' => 3
             ],
             // Neha's Students (teacher_id = 4)
@@ -102,7 +103,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'teacher_id' => 4,
                 'institution_id' => 2,
-                'class_id' => 25, // Class 1 for Sunrise (ID 25)
+                'class_id' => 13, // Class 1 for Sunrise (13th class created)
                 'section_id' => 2
             ],
             [
@@ -114,7 +115,7 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS002',
                 'teacher_id' => 4,
                 'institution_id' => 2,
-                'class_id' => 26, // Class 2 for Sunrise (ID 26)
+                'class_id' => 14, // Class 2 for Sunrise (14th class created)
                 'section_id' => 3
             ]
         ];

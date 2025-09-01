@@ -27,10 +27,14 @@ $(document).ready(function() {
 
     // Update recipients display
     function updateRecipientsDisplay() {
+        console.log('updateRecipientsDisplay() called');
+        console.log('selectedRecipients array:', selectedRecipients);
+        
         const container = $('#selected-recipients-display');
         container.empty();
         
         if (selectedRecipients.length === 0) {
+            console.log('No recipients selected, showing "No recipients selected" message');
             container.html('<small class="text-muted">No recipients selected</small>');
             return;
         }
@@ -45,7 +49,7 @@ $(document).ready(function() {
                 }
                 groupedRecipients['individual'].push(recipient);
             } else if (recipient.type) {
-                // Handle object recipients (from group tab)
+                // Handle object recipients (from group tab, class tab, etc.)
                 if (!groupedRecipients[recipient.type]) {
                     groupedRecipients[recipient.type] = [];
                 }
@@ -53,10 +57,16 @@ $(document).ready(function() {
             }
         });
         
+        // Debug: Log what's being processed
+        console.log('Selected Recipients:', selectedRecipients);
+        console.log('Grouped Recipients:', groupedRecipients);
+        console.log('Container element:', container);
+        
         // Display grouped recipients
         Object.keys(groupedRecipients).forEach(type => {
             const recipients = groupedRecipients[type];
             const count = recipients.length;
+            console.log(`Processing type: ${type}, count: ${count}`);
             
             if (type === 'individual') {
                 // Display individual recipients
@@ -65,26 +75,60 @@ $(document).ready(function() {
                         .html(`<i class="ti ti-user text-success"></i><br><small>${recipient.name}<br><span class="text-muted">${recipient.email}</span></small>`);
                     container.append(iconElement);
                 });
-            } else {
-                // Display group recipients with count
+            } else if (type === 'class_student') {
+                // Display class students as individual recipients
+                recipients.forEach(recipient => {
+                    const iconElement = $('<div class="d-inline-block me-2 mb-2">')
+                        .html(`<i class="ti ti-user text-success"></i><br><small>${recipient.name}<br><span class="text-muted">${recipient.email}</span></small>`);
+                    container.append(iconElement);
+                });
+            } else if (type === 'class_parent') {
+                // Display class parents as individual recipients
+                recipients.forEach(recipient => {
+                    const iconElement = $('<div class="d-inline-block me-2 mb-2">')
+                        .html(`<i class="ti ti-user-check text-warning"></i><br><small>${recipient.name}<br><span class="text-muted">${recipient.email}</span></small>`);
+                    container.append(iconElement);
+                });
+            } else if (type.startsWith('all_')) {
+                // Display group recipients as individual recipients (for Group tab)
                 const displayName = type.replace('all_', '').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
                 
                 // Check if this group contains student contacts (for parents)
                 const hasStudentContacts = recipients.some(r => r.is_student_contact);
-                let icon = 'ti ti-users text-primary';
+                let icon = 'ti ti-user text-primary';
                 let tooltip = '';
                 
-                if (type === 'all_parents' && hasStudentContacts) {
+                if (type === 'all_teachers') {
+                    icon = 'ti ti-users text-primary';
+                } else if (type === 'all_students') {
+                    icon = 'ti ti-user text-success';
+                } else if (type === 'all_parents') {
                     icon = 'ti ti-user-check text-warning';
                     tooltip = 'title="Using student contact information as parent contacts"';
+                } else if (type === 'all_non_working_staff') {
+                    icon = 'ti ti-user-star text-info';
                 }
                 
-                const groupElement = $('<div class="d-inline-block me-2 mb-2">')
+                console.log(`Displaying ${count} ${type} recipients with icon: ${icon}`);
+                
+                // Display each recipient individually
+                recipients.forEach(recipient => {
+                    const iconElement = $('<div class="d-inline-block me-2 mb-2">')
                     .attr(tooltip)
-                    .html(`<i class="${icon}"></i><br><small>${displayName}<br><strong>${count}</strong></small>`);
+                        .html(`<i class="${icon}"></i><br><small>${recipient.name}<br><span class="text-muted">${recipient.email}</span></small>`);
+                    container.append(iconElement);
+                });
+            } else {
+                // Display other group recipients with count (fallback)
+                const displayName = type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                const groupElement = $('<div class="d-inline-block me-2 mb-2">')
+                    .html(`<i class="ti ti-users text-primary"></i><br><small>${displayName}<br><strong>${count}</strong></small>`);
                 container.append(groupElement);
             }
         });
+        
+        console.log('Final container HTML:', container.html());
     }
 
     // Initialize group tab functionality
@@ -98,10 +142,13 @@ $(document).ready(function() {
         const value = $(this).val();
         const isChecked = $(this).is(':checked');
         
+        console.log('Group checkbox changed:', value, isChecked);
+        
         if (isChecked) {
             // Add to selected recipients if not already present
             if (!selectedRecipients.some(r => r.type === value)) {
                 const institutionId = $('#group-institution-select').val();
+                console.log('Loading recipients for institution:', institutionId, 'type:', value);
                 if (institutionId) {
                     loadRecipientsByType(institutionId, value, true); // true = append mode
                 }
@@ -109,6 +156,7 @@ $(document).ready(function() {
         } else {
             // Remove from selected recipients
             selectedRecipients = selectedRecipients.filter(r => r.type !== value);
+            console.log('Removed recipients of type:', value, 'New total:', selectedRecipients.length);
             updateRecipientsDisplay();
             updateSelectedGroupsDisplay();
         }
@@ -117,22 +165,35 @@ $(document).ready(function() {
         updateSelectAllCheckboxState();
     });
 
+    // Initialize class tab functionality
+    initClassTab();
+
     // Handle class selection
     $('#class-select').on('change', function() {
         const value = $(this).val();
         if (value) {
-            selectedRecipients = [value];
-            updateRecipientsDisplay();
             // Load sections for the selected class
-            loadSections(value);
+            loadSectionsByClass(value);
+        } else {
+            $('#section-container').hide();
+            $('#recipients-container').hide();
+            $('#class-selected-display').hide();
         }
     });
 
-    // Load sections for a class
-    function loadSections(classId) {
-        // This would typically make an AJAX call to load sections
-        $('#section-container').show();
-    }
+    // Handle section selection
+    $('#section-select').on('change', function() {
+        const sectionId = $(this).val();
+        const classId = $('#class-select').val();
+        
+        if (sectionId && classId) {
+            // Load students and parents for the selected class and section
+            loadStudentsAndParentsByClassSection(classId, sectionId === 'all' ? null : sectionId);
+        } else {
+            $('#recipients-container').hide();
+            $('#class-selected-display').hide();
+        }
+    });
 
     // Handle send message
     $('#send-message').on('click', function() {
@@ -281,46 +342,546 @@ $(document).ready(function() {
         });
     });
 
-    // Load classes for class selection
-    function loadClasses() {
+    /**
+     * Initialize Class Tab functionality
+     */
+    function initClassTab() {
+        console.log('Initializing Class Tab functionality...');
+        
+        // Load institutions when class tab is clicked
+        $('#class-tab').on('click', function() {
+            loadInstitutionsForClass();
+        });
+        
+        // Handle institution selection
+        $('#class-institution-select').on('change', function() {
+            const institutionId = $(this).val();
+            if (institutionId) {
+                $('#class-container').show();
+                $('#section-container').hide();
+                $('#recipients-container').hide();
+                $('#class-selected-display').hide();
+                // Reset class selection
+                $('#class-select').val('');
+                selectedRecipients = [];
+                updateRecipientsDisplay();
+                // Load classes for the selected institution
+                loadClassesByInstitution(institutionId);
+            } else {
+                $('#class-container').hide();
+                $('#section-container').hide();
+                $('#recipients-container').hide();
+                $('#class-selected-display').hide();
+            }
+        });
+        
+        // Handle Select All Students checkbox
+        $('#select-all-students').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $('.class-student-checkbox').prop('checked', isChecked);
+            
+            if (isChecked) {
+                // Select all students
+                $('.class-student-checkbox').each(function() {
+                    const recipientId = $(this).val();
+                    const recipientName = $(this).data('name');
+                    const recipientEmail = $(this).data('email');
+                    
+                    if (!selectedRecipients.some(r => r.id === recipientId)) {
+                        selectedRecipients.push({
+                            id: recipientId,
+                            name: recipientName,
+                            email: recipientEmail,
+                            type: 'class_student'
+                        });
+                    }
+                });
+            } else {
+                // Deselect all students
+                selectedRecipients = selectedRecipients.filter(r => r.type !== 'class_student');
+            }
+            
+            updateRecipientsDisplay();
+            updateSelectedClassRecipientsDisplay();
+            updateSelectAllStudentsCheckboxState();
+        });
+        
+        // Handle Select All Parents checkbox
+        $('#select-all-parents').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $('.class-parent-checkbox').prop('checked', isChecked);
+            
+            if (isChecked) {
+                // Select all parents
+                $('.class-parent-checkbox').each(function() {
+                    const recipientId = $(this).val();
+                    const recipientName = $(this).data('name');
+                    const recipientEmail = $(this).data('email');
+                    
+                    if (!selectedRecipients.some(r => r.id === recipientId)) {
+                        selectedRecipients.push({
+                            id: recipientId,
+                            name: recipientName,
+                            email: recipientEmail,
+                            type: 'class_parent'
+                        });
+                    }
+                });
+            } else {
+                // Deselect all parents
+                selectedRecipients = selectedRecipients.filter(r => r.type !== 'class_parent');
+            }
+            
+            updateRecipientsDisplay();
+            updateSelectedClassRecipientsDisplay();
+            updateSelectAllParentsCheckboxState();
+        });
+        
+        // Handle individual student checkbox changes
+        $(document).on('change', '.class-student-checkbox', function() {
+            const recipientId = $(this).val();
+            const recipientName = $(this).data('name');
+            const recipientEmail = $(this).data('email');
+            const isChecked = $(this).is(':checked');
+            
+            if (isChecked) {
+                // Add to selected recipients
+                if (!selectedRecipients.some(r => r.id === recipientId)) {
+                    selectedRecipients.push({
+                        id: recipientId,
+                        name: recipientName,
+                        email: recipientEmail,
+                        type: 'class_student'
+                    });
+                }
+            } else {
+                // Remove from selected recipients
+                selectedRecipients = selectedRecipients.filter(r => r.id !== recipientId);
+            }
+            
+            updateRecipientsDisplay();
+            updateSelectedClassRecipientsDisplay();
+            updateSelectAllStudentsCheckboxState();
+        });
+        
+        // Handle individual parent checkbox changes
+        $(document).on('change', '.class-parent-checkbox', function() {
+            const recipientId = $(this).val();
+            const recipientName = $(this).data('name');
+            const recipientEmail = $(this).data('email');
+            const isChecked = $(this).is(':checked');
+            
+            if (isChecked) {
+                // Add to selected recipients
+                if (!selectedRecipients.some(r => r.id === recipientId)) {
+                    selectedRecipients.push({
+                        id: recipientId,
+                        name: recipientName,
+                        email: recipientEmail,
+                        type: 'class_parent'
+                    });
+                }
+            } else {
+                // Remove from selected recipients
+                selectedRecipients = selectedRecipients.filter(r => r.id !== recipientId);
+            }
+            
+            updateRecipientsDisplay();
+            updateSelectedClassRecipientsDisplay();
+            updateSelectAllParentsCheckboxState();
+        });
+    }
+    
+    /**
+     * Load institutions for class selection
+     */
+    function loadInstitutionsForClass() {
         $.ajax({
-            url: '/admin/classes/list',
+            url: '/admin/email-sms/institutions',
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const $select = $('#class-institution-select');
+                    $select.find('option:not(:first)').remove();
+                    
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(institution => {
+                            $select.append(`<option value="${institution.id}">${institution.name}</option>`);
+                        });
+                    } else {
+                        $select.append('<option value="" disabled>No institutions available</option>');
+                        toastr.warning('No active institutions found');
+                    }
+                } else {
+                    toastr.error(response.message || 'Error loading institutions');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading institutions:', { xhr, status, error });
+                
+                let errorMessage = 'Error loading institutions';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                toastr.error(errorMessage);
+                
+                const $select = $('#class-institution-select');
+                $select.find('option:not(:first)').remove();
+                $select.append('<option value="" disabled>Error loading institutions</option>');
+            }
+        });
+    }
+    
+    /**
+     * Load classes by institution
+     */
+    function loadClassesByInstitution(institutionId) {
+        $.ajax({
+            url: `/admin/email-sms/classes/${institutionId}`,
             type: 'GET',
             success: function(response) {
                 if (response.success) {
                     const $select = $('#class-select');
                     $select.find('option:not(:first)').remove();
                     
+                    if (response.data && response.data.length > 0) {
                     response.data.forEach(cls => {
                         $select.append(`<option value="${cls.id}">${cls.name}</option>`);
                     });
+                    } else {
+                        $select.append('<option value="" disabled>No classes available</option>');
+                        toastr.warning('No classes found for this institution');
+                    }
+                } else {
+                    toastr.error(response.message || 'Error loading classes');
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading classes:', { xhr, status, error });
+                
+                let errorMessage = 'Error loading classes';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                toastr.error(errorMessage);
+                
+                const $select = $('#class-select');
+                $select.find('option:not(:first)').remove();
+                $select.append('<option value="" disabled>Error loading classes</option>');
             }
         });
     }
 
-    // Load sections for a class
-    function loadSections(classId) {
+    /**
+     * Load sections by class
+     */
+    function loadSectionsByClass(classId) {
         $.ajax({
-            url: `/admin/academic/sections-by-class/${classId}`,
+            url: `/admin/email-sms/sections/${classId}`,
             type: 'GET',
             success: function(response) {
                 if (response.success) {
                     const $select = $('#section-select');
                     $select.find('option:not(:first)').remove();
+                    $select.append('<option value="all">All Sections</option>');
                     
+                    if (response.data && response.data.length > 0) {
                     response.data.forEach(section => {
                         $select.append(`<option value="${section.id}">${section.name}</option>`);
                     });
+                    } else {
+                        $select.append('<option value="" disabled>No sections available</option>');
+                        toastr.warning('No sections found for this class');
+                    }
                     
                     $('#section-container').show();
+                } else {
+                    toastr.error(response.message || 'Error loading sections');
                 }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading sections:', { xhr, status, error });
+                
+                let errorMessage = 'Error loading sections';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                toastr.error(errorMessage);
+                
+                const $select = $('#section-select');
+                $select.find('option:not(:first)').remove();
+                $select.append('<option value="" disabled>Error loading sections</option>');
             }
         });
     }
 
-    // Initialize
-    loadClasses();
+    /**
+     * Load students and parents by class and section
+     */
+    function loadStudentsAndParentsByClassSection(classId, sectionId = null) {
+        let url = `/admin/email-sms/class-students-parents/${classId}`;
+        if (sectionId) {
+            url += `/${sectionId}`;
+        }
+        
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const students = response.data.students || [];
+                    const parents = response.data.parents || [];
+                    
+                    displayClassStudents(students);
+                    displayClassParents(parents);
+                    
+                    $('#recipients-container').show();
+                    $('#class-selected-display').show();
+                    
+                    // Show success message
+                    let message = `Loaded ${students.length} students and ${parents.length} parents`;
+                    if (sectionId) {
+                        message += ` for the selected section`;
+                    }
+                    toastr.success(message);
+                    
+                } else {
+                    toastr.error(response.message || 'Error loading students and parents');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading students and parents:', { xhr, status, error });
+                
+                let errorMessage = 'Error loading students and parents';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
+                toastr.error(errorMessage);
+            }
+        });
+    }
+    
+    /**
+     * Display class students in the list
+     */
+    function displayClassStudents(students) {
+        const container = $('#students-list');
+        container.empty();
+        
+        if (students.length === 0) {
+            container.html('<div class="alert alert-warning">No students found for this class.</div>');
+            return;
+        }
+        
+        students.forEach(student => {
+            const checkboxDiv = $(`
+                <div class="form-check">
+                    <input class="form-check-input class-student-checkbox" type="checkbox" 
+                           value="${student.id}" id="class_student_${student.id}"
+                           data-name="${student.name}" data-email="${student.email}">
+                    <label class="form-check-label" for="class_student_${student.id}">
+                        ${student.name} (${student.email})
+                    </label>
+                </div>
+            `);
+            
+            container.append(checkboxDiv);
+        });
+        
+        // Reset select all checkbox
+        $('#select-all-students').prop('checked', false);
+    }
+    
+    /**
+     * Display class parents in the list
+     */
+    function displayClassParents(parents) {
+        const container = $('#parents-list');
+        container.empty();
+        
+        if (parents.length === 0) {
+            container.html('<div class="alert alert-warning">No parents found for this class.</div>');
+            return;
+        }
+        
+        parents.forEach(parent => {
+            const checkboxDiv = $(`
+                <div class="form-check">
+                    <input class="form-check-input class-parent-checkbox" type="checkbox" 
+                           value="${parent.id}" id="class_parent_${parent.id}"
+                           data-name="${parent.name}" data-email="${parent.email}">
+                    <label class="form-check-label" for="class_parent_${parent.id}">
+                        ${parent.name} (${parent.email})
+                    </label>
+                </div>
+            `);
+            
+            container.append(checkboxDiv);
+        });
+        
+        // Reset select all checkbox
+        $('#select-all-parents').prop('checked', false);
+    }
+    
+    /**
+     * Update the selected class recipients display
+     */
+    function updateSelectedClassRecipientsDisplay() {
+        const container = $('#selected-class-recipients-display');
+        container.empty();
+        
+        const classStudents = selectedRecipients.filter(r => r.type === 'class_student');
+        const classParents = selectedRecipients.filter(r => r.type === 'class_parent');
+        
+        if (classStudents.length === 0 && classParents.length === 0) {
+            $('#class-selected-display').hide();
+            $('#selected-students-detail').hide();
+            $('#selected-parents-detail').hide();
+            return;
+        }
+        
+        // Display summary badges
+        if (classStudents.length > 0) {
+            const studentsBadge = $(`<span class="badge badge-soft-primary me-2 mb-2">`)
+                .html(`<i class="ti ti-user me-1"></i>Students: ${classStudents.length}`);
+            container.append(studentsBadge);
+        }
+        
+        if (classParents.length > 0) {
+            const parentsBadge = $(`<span class="badge badge-soft-warning me-2 mb-2">`)
+                .html(`<i class="ti ti-user-check me-1"></i>Parents: ${classParents.length}`);
+            container.append(parentsBadge);
+        }
+        
+        // Update detailed lists
+        updateSelectedStudentsDetail(classStudents);
+        updateSelectedParentsDetail(classParents);
+        
+        $('#class-selected-display').show();
+    }
+    
+    /**
+     * Update the selected students detail list
+     */
+    function updateSelectedStudentsDetail(students) {
+        const container = $('#selected-students-list');
+        container.empty();
+        
+        if (students.length === 0) {
+            $('#selected-students-detail').hide();
+            return;
+        }
+        
+        students.forEach(student => {
+            const studentItem = $(`
+                <div class="d-flex align-items-center justify-content-between p-2 border-bottom selected-recipient-item">
+                    <div>
+                        <i class="ti ti-user text-primary me-2"></i>
+                        <span class="fw-medium">${student.name}</span>
+                        <br>
+                        <small class="text-muted">${student.email}</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            onclick="removeSelectedRecipient('${student.id}', 'class_student')">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+            `);
+            container.append(studentItem);
+        });
+        
+        $('#selected-students-detail').show();
+    }
+    
+    /**
+     * Update the selected parents detail list
+     */
+    function updateSelectedParentsDetail(parents) {
+        const container = $('#selected-parents-list');
+        container.empty();
+        
+        if (parents.length === 0) {
+            $('#selected-parents-detail').hide();
+            return;
+        }
+        
+        parents.forEach(parent => {
+            const parentItem = $(`
+                <div class="d-flex align-items-center justify-content-between p-2 border-bottom selected-recipient-item">
+                    <div>
+                        <i class="ti ti-user-check text-warning me-2"></i>
+                        <span class="fw-medium">${parent.name}</span>
+                        <br>
+                        <small class="text-muted">${parent.email}</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            onclick="removeSelectedRecipient('${parent.id}', 'class_parent')">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+            `);
+            container.append(parentItem);
+        });
+        
+        $('#selected-parents-detail').show();
+    }
+    
+    /**
+     * Remove a selected recipient
+     */
+    function removeSelectedRecipient(recipientId, type) {
+        // Remove from selectedRecipients array
+        selectedRecipients = selectedRecipients.filter(r => r.id !== recipientId);
+        
+        // Uncheck the corresponding checkbox
+        if (type === 'class_student') {
+            $(`.class-student-checkbox[value="${recipientId}"]`).prop('checked', false);
+        } else if (type === 'class_parent') {
+            $(`.class-parent-checkbox[value="${recipientId}"]`).prop('checked', false);
+        }
+        
+        // Update displays
+        updateRecipientsDisplay();
+        updateSelectedClassRecipientsDisplay();
+        updateSelectAllStudentsCheckboxState();
+        updateSelectAllParentsCheckboxState();
+    }
+    
+    /**
+     * Update the select all students checkbox state
+     */
+    function updateSelectAllStudentsCheckboxState() {
+        const totalCheckboxes = $('.class-student-checkbox').length;
+        const checkedCheckboxes = $('.class-student-checkbox:checked').length;
+        
+        if (checkedCheckboxes === 0) {
+            $('#select-all-students').prop('indeterminate', false).prop('checked', false);
+        } else if (checkedCheckboxes === totalCheckboxes) {
+            $('#select-all-students').prop('indeterminate', false).prop('checked', true);
+        } else {
+            $('#select-all-students').prop('indeterminate', true).prop('checked', false);
+        }
+    }
+    
+    /**
+     * Update the select all parents checkbox state
+     */
+    function updateSelectAllParentsCheckboxState() {
+        const totalCheckboxes = $('.class-parent-checkbox').length;
+        const checkedCheckboxes = $('.class-parent-checkbox:checked').length;
+        
+        if (checkedCheckboxes === 0) {
+            $('#select-all-parents').prop('indeterminate', false).prop('checked', false);
+        } else if (checkedCheckboxes === totalCheckboxes) {
+            $('#select-all-parents').prop('indeterminate', false).prop('checked', true);
+        } else {
+            $('#select-all-parents').prop('indeterminate', true).prop('checked', false);
+        }
+    }
     
     /**
      * Initialize Group Tab functionality
@@ -427,6 +988,8 @@ $(document).ready(function() {
      * Load recipients based on institution and type
      */
     function loadRecipientsByType(institutionId, recipientType, appendMode = false) {
+        console.log(`loadRecipientsByType called: institutionId=${institutionId}, recipientType=${recipientType}, appendMode=${appendMode}`);
+        
         let url = '';
         
         switch (recipientType) {
@@ -450,9 +1013,14 @@ $(document).ready(function() {
             url: url,
             type: 'GET',
             success: function(response) {
+                console.log('AJAX response received:', response);
+                
                 if (response.success) {
                     const count = response.count || 0;
                     const recipients = response.data || [];
+                    
+                    console.log(`Processing ${count} recipients for type: ${recipientType}`);
+                    console.log('Raw recipients data:', recipients);
                     
                     if (appendMode) {
                         // Append mode: add new recipients to existing ones
@@ -465,9 +1033,13 @@ $(document).ready(function() {
                             is_student_contact: r.is_student_contact || false
                         }));
                         
+                        console.log('Mapped new recipients:', newRecipients);
+                        
                         // Remove existing recipients of this type and add new ones
                         selectedRecipients = selectedRecipients.filter(r => r.type !== recipientType);
                         selectedRecipients = selectedRecipients.concat(newRecipients);
+                        
+                        console.log('Updated selectedRecipients array:', selectedRecipients);
                         
                         let message = `Added ${count} ${recipientType.replace('all_', '')}`;
                         if (response.message) {
@@ -492,8 +1064,16 @@ $(document).ready(function() {
                         toastr.success(message);
                     }
                     
+                    // Debug: Log what was loaded
+                    if (appendMode) {
+                        console.log(`Loaded ${recipientType}:`, newRecipients);
+                    }
+                    console.log('Total selected recipients:', selectedRecipients);
+                    
                     // Update displays
+                    console.log('Calling updateRecipientsDisplay()...');
                     updateRecipientsDisplay();
+                    console.log('Calling updateSelectedGroupsDisplay()...');
                     updateSelectedGroupsDisplay();
                     
                     // Update count display
@@ -870,4 +1450,23 @@ $(document).ready(function() {
     }
     
     // Old checkbox-based functions removed - now using dropdown-based selection
+    
+    // Make removeSelectedRecipient function globally accessible
+    window.removeSelectedRecipient = function(recipientId, type) {
+        // Remove from selectedRecipients array
+        selectedRecipients = selectedRecipients.filter(r => r.id !== recipientId);
+        
+        // Uncheck the corresponding checkbox
+        if (type === 'class_student') {
+            $(`.class-student-checkbox[value="${recipientId}"]`).prop('checked', false);
+        } else if (type === 'class_parent') {
+            $(`.class-parent-checkbox[value="${recipientId}"]`).prop('checked', false);
+        }
+        
+        // Update displays
+        updateRecipientsDisplay();
+        updateSelectedClassRecipientsDisplay();
+        updateSelectAllStudentsCheckboxState();
+        updateSelectAllParentsCheckboxState();
+    };
 });

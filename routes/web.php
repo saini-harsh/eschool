@@ -162,6 +162,11 @@ Route::middleware('admin')->group(function () {
             Route::get('/students/{institutionId}', [EmailSmsController::class, 'getStudentsByInstitution'])->name('admin.email-sms.students');
             Route::get('/parents/{institutionId}', [EmailSmsController::class, 'getParentsByInstitution'])->name('admin.email-sms.parents');
             Route::get('/non-working-staff/{institutionId}', [EmailSmsController::class, 'getNonWorkingStaffByInstitution'])->name('admin.email-sms.non-working-staff');
+            
+            // Class selection routes
+            Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('admin.email-sms.classes');
+            Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('admin.email-sms.sections');
+            Route::get('/class-students-parents/{classId}/{sectionId?}', [EmailSmsController::class, 'getStudentsAndParentsByClassSection'])->name('admin.email-sms.class-students-parents');
         });
     });
 });

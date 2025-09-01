@@ -8,6 +8,8 @@ use App\Models\Institution;
 use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\NonWorkingStaff;
+use App\Models\SchoolClass;
+use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
@@ -22,6 +24,21 @@ class EmailSmsController extends Controller
     public function index()
     {
         $lists = EmailSms::orderBy('created_at', 'desc')->get();
+        
+        // Ensure all records have valid recipients data for the view
+        $lists->each(function ($item) {
+            if (!is_array($item->recipients)) {
+                // Try to decode if it's a JSON string
+                $decoded = json_decode($item->recipients, true);
+                if (is_array($decoded)) {
+                    $item->recipients = $decoded;
+                } else {
+                    // Set to empty array if invalid
+                    $item->recipients = [];
+                }
+            }
+        });
+        
         return view('admin.communication.emailsms.index', compact('lists'));
     }
 
@@ -425,6 +442,160 @@ class EmailSmsController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching parents',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get classes by institution for class selection
+     */
+    public function getClassesByInstitution($institutionId)
+    {
+        try {
+            $classes = SchoolClass::where('institution_id', $institutionId)
+                ->where('status', 1)
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get();
+
+            if ($classes->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No classes found for this institution',
+                    'data' => []
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $classes
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching classes',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get sections by class for class selection
+     */
+    public function getSectionsByClass($classId)
+    {
+        try {
+            $class = SchoolClass::findOrFail($classId);
+            $sectionIds = json_decode($class->section_ids, true) ?? [];
+            
+            if (empty($sectionIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No sections found for this class',
+                    'data' => []
+                ], 404);
+            }
+            
+            $sections = Section::whereIn('id', $sectionIds)
+            ->where('status', 1)
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $sections
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching sections',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get students and parents by class and section for class selection
+     */
+    public function getStudentsAndParentsByClassSection($classId, $sectionId = null)
+    {
+        try {
+            $query = Student::where('class_id', $classId)
+                ->where('status', 1);
+            
+            if ($sectionId) {
+                $query->where('section_id', $sectionId);
+            }
+            
+            // Debug: Log the query and parameters
+            \Log::info('Student query:', [
+                'class_id' => $classId,
+                'section_id' => $sectionId,
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
+            
+            $students = $query->select('id', 'first_name', 'last_name', 'email', 'phone')
+                ->get();
+            
+            // Debug: Log the results
+            \Log::info('Student query results:', [
+                'count' => $students->count(),
+                'students' => $students->toArray()
+            ]);
+
+
+            if ($students->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No students found for this class' . ($sectionId ? ' and section' : ''),
+                    'data' => [
+                        'students' => [],
+                        'parents' => []
+                    ]
+                ], 404);
+            }
+
+            // Prepare students data
+            $studentsData = $students->map(function($student) {
+                return [
+                    'id' => 'student_' . $student->id,
+                    'name' => $student->first_name . ' ' . $student->last_name,
+                    'email' => $student->email,
+                    'phone' => $student->phone,
+                    'type' => 'student'
+                ];
+            });
+
+            // Prepare parents data (using student contact info as parent contacts)
+            $parentsData = $students->map(function($student) {
+                return [
+                    'id' => 'parent_' . $student->id,
+                    'name' => $student->first_name . ' ' . $student->last_name . ' (Parent)',
+                    'email' => $student->email,
+                    'phone' => $student->phone,
+                    'type' => 'parent',
+                    'is_student_contact' => true
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'students' => $studentsData,
+                    'parents' => $parentsData
+                ],
+                'counts' => [
+                    'students' => $studentsData->count(),
+                    'parents' => $parentsData->count()
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching students and parents',
                 'error' => $e->getMessage()
             ], 500);
         }

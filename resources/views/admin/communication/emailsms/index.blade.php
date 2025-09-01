@@ -35,6 +35,52 @@
         color: #084298;
         border: 1px solid #b6d4fe;
     }
+    
+    .badge-soft-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+        border: 1px solid #ffecb5;
+    }
+    
+    .class-recipients-list {
+        border: 1px solid #e3e6f0;
+        border-radius: 0.35rem;
+        padding: 1rem;
+        background-color: #f8f9fc;
+    }
+    
+    .class-recipients-list .form-check {
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.15s ease-in-out;
+        margin-bottom: 0.5rem;
+    }
+    
+    .class-recipients-list .form-check:hover {
+        background-color: #e3e6f0;
+    }
+    
+    .class-recipients-list .form-check-label {
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+    
+    .selected-recipient-item {
+        transition: all 0.2s ease;
+    }
+    
+    .selected-recipient-item:hover {
+        background-color: #f8f9fc;
+    }
+    
+    .selected-recipient-item .btn-outline-danger {
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+    }
+    
+    .selected-recipient-item:hover .btn-outline-danger {
+        opacity: 1;
+    }
 </style>
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -308,19 +354,117 @@
 
                             <!-- Class Tab -->
                             <div class="tab-pane fade" id="class" role="tabpanel" aria-labelledby="class-tab">
+                                <!-- Information Alert -->
+                                <div class="alert alert-info mb-3">
+                                    <i class="ti ti-info-circle me-2"></i>
+                                    <strong>Class Selection:</strong> Select an institution first, then choose a class, then select a section (optional), and finally select students and/or parents.
+                                </div>
+                                
+                                <!-- Institution Selection -->
                                 <div class="mb-3">
-                                    <label class="form-label">Select Class</label>
+                                    <label class="form-label">Select Institution *</label>
+                                    <select class="form-select" id="class-institution-select">
+                                        <option value="">Choose an institution...</option>
+                                        <!-- Institutions will be loaded dynamically -->
+                                    </select>
+                                </div>
+                                
+                                <!-- Class Selection -->
+                                <div class="mb-3" id="class-container" style="display: none;">
+                                    <label class="form-label">Select Class *</label>
                                     <select class="form-select" id="class-select">
                                         <option value="">Choose a class...</option>
                                         <!-- Classes will be loaded dynamically -->
                                     </select>
                                 </div>
+                                
+                                <!-- Section Selection -->
                                 <div class="mb-3" id="section-container" style="display: none;">
-                                    <label class="form-label">Select Section</label>
+                                    <label class="form-label">Select Section (Optional)</label>
                                     <select class="form-select" id="section-select">
                                         <option value="">Choose a section...</option>
+                                        <option value="all">All Sections</option>
                                         <!-- Sections will be loaded dynamically -->
                                     </select>
+                                </div>
+                                
+                                <!-- Students and Parents Selection -->
+                                <div class="mb-3" id="recipients-container" style="display: none;">
+                                    <label class="form-label">Select Recipients *</label>
+                                    
+                                    <!-- Select All Options -->
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="select-all-students">
+                                                <label class="form-check-label fw-bold" for="select-all-students">
+                                                    <i class="ti ti-user me-1"></i>Select All Students
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="select-all-parents">
+                                                <label class="form-check-label fw-bold" for="select-all-parents">
+                                                    <i class="ti ti-user-check me-1"></i>Select All Parents
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Students List -->
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold text-primary">
+                                            <i class="ti ti-user me-1"></i>Students
+                                        </h6>
+                                        <div class="class-recipients-list" id="students-list" style="max-height: 200px; overflow-y: auto;">
+                                            <!-- Students will be loaded here -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Parents List -->
+                                    <div class="mb-3">
+                                        <h6 class="fw-bold text-warning">
+                                            <i class="ti ti-user-check me-1"></i>Parents
+                                            <small class="text-muted">(Using student contact information)</small>
+                                        </h6>
+                                        <div class="class-recipients-list" id="parents-list" style="max-height: 200px; overflow-y: auto;">
+                                            <!-- Parents will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Recipients Display -->
+                                <div class="mb-3" id="class-selected-display" style="display: none;">
+                                    <label class="form-label">Selected Recipients:</label>
+                                    
+                                    <!-- Summary Badges -->
+                                    <div id="selected-class-recipients-display" class="d-flex flex-wrap gap-2 mb-3">
+                                        <!-- Selected recipients summary will be displayed here -->
+                                    </div>
+                                    
+                                    <!-- Detailed List -->
+                                    <div class="mt-3">
+                                        <!-- Selected Students List -->
+                                        <div id="selected-students-detail" style="display: none;">
+                                            <h6 class="fw-bold text-primary mb-2">
+                                                <i class="ti ti-user me-1"></i>Selected Students:
+                                            </h6>
+                                            <div id="selected-students-list" class="class-recipients-list">
+                                                <!-- Selected students will be listed here -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Selected Parents List -->
+                                        <div id="selected-parents-detail" style="display: none;">
+                                            <h6 class="fw-bold text-warning mb-2">
+                                                <i class="ti ti-user-check me-1"></i>Selected Parents:
+                                            </h6>
+                                            <div id="selected-parents-list" class="class-recipients-list">
+                                                <!-- Selected parents will be listed here -->
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
