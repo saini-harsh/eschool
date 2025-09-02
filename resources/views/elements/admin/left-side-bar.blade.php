@@ -165,12 +165,12 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Exam Management</span></li>
+                <li class="menu-title"><span>Room Management</span></li>
                 <li>
                     <ul>
                         <li class="">
-                            <a href="#">
-                                <i class="ti ti-home"></i><span>Room Management</span>
+                            <a href="{{ route('admin.rooms.index') }}">
+                                <i class="ti ti-home"></i><span>Class Rooms</span>
                             </a>
                         </li>
                         <li class="">

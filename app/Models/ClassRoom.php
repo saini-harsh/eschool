@@ -10,8 +10,8 @@ class ClassRoom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
+        'room_no',
+        'capacity',
         'status',
     ];
 

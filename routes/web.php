@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\NonWorkingStaffController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
+use App\Http\Controllers\Admin\RoomManagement\ClassRoomController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
 
@@ -113,6 +114,18 @@ Route::middleware('admin')->group(function () {
             Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
         });
 
+        // Class Room Routes
+        Route::prefix('rooms')->group(function () {
+            Route::get('/', [ClassRoomController::class, 'index'])->name('admin.rooms.index');
+            Route::post('/store', [ClassRoomController::class, 'store'])->name('admin.rooms.store');
+            // Route::get('/list', [ClassRoomController::class, 'getClassRooms'])->name('admin.rooms.list');
+            // Route::get('/edit/{id}', [ClassRoomController::class, 'edit'])->name('admin.rooms.edit');
+            // Route::post('/update/{id}', [ClassRoomController::class, 'update'])->name('admin.rooms.update');
+            // Route::post('/delete/{id}', [ClassRoomController::class, 'delete'])->name('admin.rooms.delete');
+            // Route::post('/{id}/status', [ClassRoomController::class, 'updateStatus'])->name('admin.rooms.status');
+        });
+
+        // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'index'])->name('admin.academic.calendar.index');
             Route::get('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
