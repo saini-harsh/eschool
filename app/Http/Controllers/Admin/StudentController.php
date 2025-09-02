@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\Section;
+use App\Models\SchoolClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +26,61 @@ class StudentController extends Controller
     }
     public function Create(){
         $institutions = Institution::all();
-        $teachers = Teacher::all();
-        return view('admin.administration.students.create',compact('institutions','teachers'));
+        $classes = SchoolClass::all(['id','name','institution_id','section_ids']);
+        $sections = collect(); // Start with empty sections
+
+        return view('admin.administration.students.create',compact('institutions','classes','sections'));
+    }
+
+    // Method to get sections by class ID
+    public function getSectionsByClass($classId)
+    {
+        try {
+            $class = SchoolClass::find($classId);
+            if (!$class) {
+                return response()->json(['sections' => []]);
+            }
+
+            // Ensure section_ids is properly handled as an array
+            $sectionIds = $class->section_ids ?? [];
+            
+            // If section_ids is a string (JSON), decode it
+            if (is_string($sectionIds)) {
+                $sectionIds = json_decode($sectionIds, true) ?? [];
+            }
+            
+            // Ensure it's an array and not empty
+            if (!is_array($sectionIds) || empty($sectionIds)) {
+                return response()->json(['sections' => []]);
+            }
+            
+            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+            
+            return response()->json(['sections' => $sections]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getSectionsByClass: ' . $e->getMessage());
+            return response()->json(['sections' => [], 'error' => 'An error occurred while fetching sections']);
+        }
+    }
+
+    // Method to get classes by institution ID
+    public function getClassesByInstitution($institutionId)
+    {
+        $classes = SchoolClass::where('institution_id', $institutionId)
+            ->where('status', 1)
+            ->get(['id', 'name', 'institution_id', 'section_ids']);
+        
+        return response()->json(['classes' => $classes]);
+    }
+
+    // Method to get teachers by institution ID
+    public function getTeachersByInstitution($institutionId)
+    {
+        $teachers = Teacher::where('institution_id', $institutionId)
+            ->where('status', 1)
+            ->get(['id', 'first_name', 'last_name', 'institution_id']);
+        
+        return response()->json(['teachers' => $teachers]);
     }
     public function Store(Request $request)
     {
@@ -43,9 +98,28 @@ class StudentController extends Controller
             'district'       => 'required|string|max:255',
             'teacher_id'     => 'nullable|exists:teachers,id',
             'institution_id' => 'required|exists:institutions,id',
+            'class_id'       => 'nullable|exists:classes,id',
+            'section_id'     => 'nullable|exists:sections,id',
             'password'       => 'required|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
+
+        // Additional validation: ensure section belongs to selected class
+        if ($request->filled('class_id') && $request->filled('section_id')) {
+            $class = SchoolClass::find($request->class_id);
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
+                    return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+                }
+            }
+        }
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -82,6 +156,8 @@ class StudentController extends Controller
         $student->institution_code = 'INS' . str_pad($request->institution_id, 3, '0', STR_PAD_LEFT);
         $student->teacher_id     = $request->teacher_id;
         $student->institution_id = $request->institution_id;
+        $student->class_id       = $request->class_id;
+        $student->section_id     = $request->section_id;
         $student->status           = 1;
         $student->admin_id         = auth()->id();
         $student->password       = Hash::make($request->password);
@@ -100,9 +176,26 @@ class StudentController extends Controller
     public function Edit(Student $student)
     {
         $institutions = Institution::all();
-        $teachers = Teacher::all();
+        $classes = SchoolClass::where('institution_id', $student->institution_id)
+            ->get(['id','name','institution_id','section_ids']);
+        $sections = collect();
+        if ($student->class_id) {
+            $class = SchoolClass::find($student->class_id);
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (is_array($sectionIds) && !empty($sectionIds)) {
+                    $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
+                }
+            }
+        }
 
-        return view('admin.administration.students.edit', compact('student', 'institutions','teachers'));
+        return view('admin.administration.students.edit', compact('student', 'institutions','classes','sections'));
     }
     public function Update(Request $request, Student $student)
     {
@@ -120,12 +213,29 @@ class StudentController extends Controller
             'district'       => 'required|string|max:255',
             'teacher_id'     => 'nullable|exists:teachers,id',
             'institution_id' => 'required|exists:institutions,id',
+            'class_id'       => 'nullable|exists:classes,id',
+            'section_id'     => 'nullable|exists:sections,id',
             'password'       => 'nullable|string|min:6',
             'photo'          => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
-    
-        
-        
+
+        // Additional validation: ensure section belongs to selected class
+        if ($request->filled('class_id') && $request->filled('section_id')) {
+            $class = SchoolClass::find($request->class_id);
+            if ($class) {
+                $sectionIds = $class->section_ids ?? [];
+                
+                // If section_ids is a string (JSON), decode it
+                if (is_string($sectionIds)) {
+                    $sectionIds = json_decode($sectionIds, true) ?? [];
+                }
+                
+                if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
+                    return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
+                }
+            }
+        }
+
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -153,6 +263,8 @@ class StudentController extends Controller
         $student->teacher_id     = $request->teacher_id;
         $student->institution_id = $request->institution_id;
         $student->institution_code = 'INS' . str_pad($request->institution_id, 3, '0', STR_PAD_LEFT);
+        $student->class_id       = $request->class_id;
+        $student->section_id     = $request->section_id;
         $student->admin_id       = auth()->id();
     
         // Update password only if provided
@@ -171,5 +283,21 @@ class StudentController extends Controller
         $student->delete();
 
         return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully!');
+    }
+
+    /**
+     * Update student status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:0,1'
+        ]);
+
+        $student = Student::findOrFail($id);
+        $student->status = $request->status;
+        $student->save();
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 }

@@ -26,6 +26,8 @@ class Student extends Authenticatable
         'institution_code',
         'teacher_id',
         'institution_id',
+        'class_id',
+        'section_id',
         'admin_id',
         'password',
         'decrypt_pw',

@@ -195,3 +195,7 @@
 </div>
 
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/nonworkingstaff.js') }}"></script>
+@endpush

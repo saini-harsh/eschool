@@ -157,6 +157,26 @@ class NonWorkingStaffController extends Controller
 
         return redirect()->route('admin.nonworkingstaff.index')->with('success', 'Non-working staff updated successfully!');
     }
+    
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $staff = NonWorkingStaff::findOrFail($id);
+            $staff->status = $request->status;
+            $staff->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Non-working staff status updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating non-working staff status'
+            ], 500);
+        }
+    }
+    
     public function Delete($id)
     {
         $staff = NonWorkingStaff::findOrFail($id);

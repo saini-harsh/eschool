@@ -117,7 +117,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Institution <span class="text-danger">*</span></label>
-                                    <select name="institution_id" class="form-select">
+                                    <select name="institution_id" id="institution_id" class="form-select">
                                         @foreach ($institutions as $institution)
                                             <option value="{{ $institution->id }}" {{ old('institution_id', $student->institution_id) == $institution->id ? 'selected' : '' }}>
                                                 {{ $institution->name }}
@@ -127,14 +127,29 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Class</label>
+                                    <select name="class_id" id="class_id" class="form-select">
+                                        <option value="">Select Class</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Section</label>
+                                    <select name="section_id" id="section_id" class="form-select">
+                                        <option value="">Select Section</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Institution Code</label>
+                                    <input type="text" name="institution_code" class="form-control" value="{{ $student->institution_code }}" readonly>
+                                    <small class="text-muted">Auto-generated based on selected institution</small>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Assign Teacher</label>
-                                    <select name="teacher_id" class="form-select">
+                                    <select name="teacher_id" id="teacher_id" class="form-select">
                                         <option value="">-- None --</option>
-                                        @foreach ($teachers as $teacher)
-                                            <option value="{{ $teacher->id }}" {{ old('teacher_id', $student->teacher_id) == $teacher->id ? 'selected' : '' }}>
-                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                            </option>
-                                        @endforeach
                                     </select>
                                 </div>
 
@@ -142,6 +157,11 @@
                                     <label class="form-label">Password</label>
                                     <input type="password" name="password" class="form-control" placeholder="Leave blank to keep unchanged">
                                 </div>
+                                
+                                {{-- Hidden inputs to store current values for JavaScript --}}
+                                <input type="hidden" id="current_class_id" value="{{ old('class_id', $student->class_id) }}">
+                                <input type="hidden" id="current_section_id" value="{{ old('section_id', $student->section_id) }}">
+                                <input type="hidden" id="current_teacher_id" value="{{ old('teacher_id', $student->teacher_id) }}">
                             </div> {{-- end row --}}
                         </div>
                     </div>
@@ -156,4 +176,36 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('custom/js/assign-teacher.js') }}"></script>
+<script>
+    // Pre-populate form with existing student data
+    $(document).ready(function() {
+        // Wait for students.js to initialize, then pre-populate
+        setTimeout(function() {
+            var currentClassId = $('#current_class_id').val();
+            var currentSectionId = $('#current_section_id').val();
+            var currentTeacherId = $('#current_teacher_id').val();
+            
+            console.log('Current values:', {
+                classId: currentClassId,
+                sectionId: currentSectionId,
+                teacherId: currentTeacherId
+            });
+            
+            // Set the values in the hidden inputs for the prePopulateEditForm function
+            $('#class_id').val(currentClassId);
+            $('#section_id').val(currentSectionId);
+            $('#teacher_id').val(currentTeacherId);
+            
+            // Trigger the pre-population
+            if (currentClassId || currentSectionId || currentTeacherId) {
+                prePopulateEditForm();
+            }
+        }, 500);
+    });
+</script>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/students.js') }}"></script>
+@endpush

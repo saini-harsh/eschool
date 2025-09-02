@@ -157,6 +157,26 @@ class TeacherController extends Controller
 
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher updated successfully!');
     }
+    
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $teacher = Teacher::findOrFail($id);
+            $teacher->status = $request->status;
+            $teacher->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Teacher status updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating teacher status'
+            ], 500);
+        }
+    }
+    
     public function Delete($id)
     {
         $teacher = Teacher::findOrFail($id);

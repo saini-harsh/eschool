@@ -296,3 +296,7 @@
 
     <!-- End Content -->
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/assign-teacher.js') }}"></script>
+@endpush

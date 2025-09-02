@@ -1,0 +1,1 @@
+in console this will come Uncaught ReferenceError: newRecipients is not defined check the all js i need in group tab after select instition then come selct recipts proepr but i will slect all teachers or non working staff so below title not hide No recipients selected and not show selected reciptts

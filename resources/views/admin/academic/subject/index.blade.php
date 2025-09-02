@@ -341,3 +341,7 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/subjects.js') }}"></script>
+@endpush

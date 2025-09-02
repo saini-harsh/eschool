@@ -219,21 +219,33 @@
                         
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-secondary">{{ $student->institution_code }}</span>
+                            <span class="badge badge-soft-secondary">
+                                @if($student->institution)
+                                    {{ $student->institution->name }}
+                                @else
+                                    {{ $student->institution_code }}
+                                @endif
+                            </span>
                         <!-- </a>     -->
 
                         </td>
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-orange">{{ $student->teacher_id }}</span>
+                            <span class="badge badge-soft-orange">
+                                @if($student->teacher)
+                                    {{ $student->teacher->first_name }} {{ $student->teacher->last_name }}
+                                @else
+                                    Not Assigned
+                                @endif
+                            </span>
                         <!-- </a>     -->
 
                         </td>
                         <td>
                             <div>
-                                <select class="select">
-                                <option value="1" {{ $student->status === 1 ? 'selected' : '' }}>Active</option>
-                                <option value="0" {{ $student->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                <select class="form-select form-select-sm status-select" data-student-id="{{ $student->id }}">
+                                    <option value="1" {{ $student->status == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ $student->status == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                         </td>
@@ -241,9 +253,11 @@
                             <div class="d-inline-flex align-items-center">
                                 <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                         class="ti ti-edit"></i></a>
-                                <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $student->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"
-                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                        class="ti ti-trash"></i></a>
+                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-student" 
+                                   data-delete-url="{{ route('admin.students.delete', $student->id) }}"
+                                   data-student-name="{{ $student->first_name }} {{ $student->last_name }}">
+                                    <i class="ti ti-trash"></i>
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -254,7 +268,11 @@
         </div>
 
 </div>
+
+
+
 <script>
+    // Auto-hide existing toast notifications
     setTimeout(() => {
         const toastEl = document.querySelector('.toast');
         if (toastEl) {
@@ -265,3 +283,7 @@
 </script>
 <!-- End Content -->
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/students.js') }}"></script>
+@endpush

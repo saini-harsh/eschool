@@ -229,3 +229,7 @@
     </div>
     <!-- End Content -->
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/institutions.js') }}"></script>
+@endpush

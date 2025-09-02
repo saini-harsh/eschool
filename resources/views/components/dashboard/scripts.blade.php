@@ -52,6 +52,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<<<<<<< HEAD
     <script src="{{ URL::asset('/custom/js/sections.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/subjects.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/schoolclass.js') }}"></script>
@@ -59,3 +60,8 @@
     <script src="{{ URL::asset('/custom/js/events.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/attendance.js') }}"></script>
     <script src="{{ URL::asset('/custom/js/calender.js') }}"></script>
+=======
+
+
+    @stack('scripts')
+>>>>>>> f904f932e82c61e7127f007e766b43e381b74b4a

@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\RoomManagement\ClassRoomController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
+use App\Http\Controllers\Admin\Academic\EventController;
+use App\Http\Controllers\Admin\Academic\CalendarController;
+use App\Http\Controllers\Admin\Communication\EmailSmsController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -40,6 +43,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{institution}', [InstitutionController::class, 'Edit'])->name('admin.institutions.edit');
             Route::post('/update/{institution}', [InstitutionController::class, 'Update'])->name('admin.institutions.update');
             Route::post('/delete/{institution}', [InstitutionController::class, 'Delete'])->name('admin.institutions.delete');
+            Route::post('/status/{id}', [InstitutionController::class, 'updateStatus'])->name('admin.institutions.status');
         });
         Route::prefix('teachers')->group(function () {
             Route::get('/index', [TeacherController::class, 'Index'])->name('admin.teachers.index');
@@ -48,6 +52,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('admin.teachers.edit');
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('admin.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
+            Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('admin.teachers.status');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
@@ -56,6 +61,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
             Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
             Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
+            Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('admin.nonworkingstaff.status');
         });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
@@ -64,6 +70,10 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
+            Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('admin.students.classes');
+            Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
+            Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');
+            Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('admin.students.status');
         });
 
         Route::prefix('attendance')->group(function () {
@@ -127,24 +137,49 @@ Route::middleware('admin')->group(function () {
 
         // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'index'])->name('admin.academic.calendar.index');
-            Route::get('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
-            Route::get('/check-database', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'checkDatabase'])->name('admin.academic.calendar.check-database');
-            Route::post('/events', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'store'])->name('admin.academic.calendar.store');
-            Route::put('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'update'])->name('admin.academic.calendar.update');
-            Route::delete('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'destroy'])->name('admin.academic.calendar.destroy');
-            Route::get('/events/{id}', [App\Http\Controllers\Admin\Academic\CalendarController::class, 'getEvent'])->name('admin.academic.calendar.show');
+            Route::get('/', [CalendarController::class, 'index'])->name('admin.academic.calendar.index');
+            Route::get('/events', [CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
+            Route::get('/check-database', [CalendarController::class, 'checkDatabase'])->name('admin.academic.calendar.check-database');
+            Route::post('/events', [CalendarController::class, 'store'])->name('admin.academic.calendar.store');
+            Route::put('/events/{id}', [CalendarController::class, 'update'])->name('admin.academic.calendar.update');
+            Route::delete('/events/{id}', [CalendarController::class, 'destroy'])->name('admin.academic.calendar.destroy');
+            Route::get('/events/{id}', [CalendarController::class, 'getEvent'])->name('admin.academic.calendar.show');
         });
 
         // Event Management Routes
         Route::prefix('events')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\Academic\EventController::class, 'index'])->name('admin.events.index');
-            Route::post('/', [App\Http\Controllers\Admin\Academic\EventController::class, 'store'])->name('admin.events.store');
-            Route::get('/list', [App\Http\Controllers\Admin\Academic\EventController::class, 'getEvents'])->name('admin.events.list');
-            Route::get('/{id}/edit', [App\Http\Controllers\Admin\Academic\EventController::class, 'edit'])->name('admin.events.edit');
-            Route::put('/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'update'])->name('admin.events.update');
-            Route::post('/delete/{id}', [App\Http\Controllers\Admin\Academic\EventController::class, 'delete'])->name('admin.events.delete');
-            Route::post('/{id}/status', [App\Http\Controllers\Admin\Academic\EventController::class, 'updateStatus'])->name('admin.events.status');
+            Route::get('/', [EventController::class, 'index'])->name('admin.events.index');
+            Route::post('/', [EventController::class, 'store'])->name('admin.events.store');
+            Route::get('/list', [EventController::class, 'getEvents'])->name('admin.events.list');
+            Route::get('/{id}/edit', [EventController::class, 'edit'])->name('admin.events.edit');
+            Route::put('/{id}', [EventController::class, 'update'])->name('admin.events.update');
+            Route::post('/delete/{id}', [EventController::class, 'delete'])->name('admin.events.delete');
+            Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('admin.events.status');
+        });
+
+
+        // Email / Sms Routes
+        Route::prefix('email-sms')->group(function () {
+            Route::get('/', [EmailSmsController::class, 'index'])->name('admin.email-sms.index');
+            Route::get('/index', [EmailSmsController::class, 'index'])->name('admin.email-sms.index');
+            Route::post('/store', [EmailSmsController::class, 'store'])->name('admin.email-sms.store');
+            Route::get('/list', [EmailSmsController::class, 'getEmailSms'])->name('admin.email-sms.list');
+            Route::get('/edit/{id}', [EmailSmsController::class, 'edit'])->name('admin.email-sms.edit');
+            Route::post('/update/{id}', [EmailSmsController::class, 'update'])->name('admin.email-sms.update');
+            Route::post('/delete/{id}', [EmailSmsController::class, 'delete'])->name('admin.email-sms.delete');
+            Route::post('/{id}/status', [EmailSmsController::class, 'updateStatus'])->name('admin.email-sms.status');
+            
+            // Group selection routes
+            Route::get('/institutions', [EmailSmsController::class, 'getInstitutions'])->name('admin.email-sms.institutions');
+            Route::get('/teachers/{institutionId}', [EmailSmsController::class, 'getTeachersByInstitution'])->name('admin.email-sms.teachers');
+            Route::get('/students/{institutionId}', [EmailSmsController::class, 'getStudentsByInstitution'])->name('admin.email-sms.students');
+            Route::get('/parents/{institutionId}', [EmailSmsController::class, 'getParentsByInstitution'])->name('admin.email-sms.parents');
+            Route::get('/non-working-staff/{institutionId}', [EmailSmsController::class, 'getNonWorkingStaffByInstitution'])->name('admin.email-sms.non-working-staff');
+            
+            // Class selection routes
+            Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('admin.email-sms.classes');
+            Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('admin.email-sms.sections');
+            Route::get('/class-students-parents/{classId}/{sectionId?}', [EmailSmsController::class, 'getStudentsAndParentsByClassSection'])->name('admin.email-sms.class-students-parents');
         });
     });
 });
