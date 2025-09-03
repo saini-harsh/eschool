@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\NonWorkingStaffController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
-use App\Http\Controllers\Admin\RoomManagement\ClassRoomController;
+use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Admin\Academic\EventController;
@@ -168,14 +168,14 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{id}', [EmailSmsController::class, 'update'])->name('admin.email-sms.update');
             Route::post('/delete/{id}', [EmailSmsController::class, 'delete'])->name('admin.email-sms.delete');
             Route::post('/{id}/status', [EmailSmsController::class, 'updateStatus'])->name('admin.email-sms.status');
-            
+
             // Group selection routes
             Route::get('/institutions', [EmailSmsController::class, 'getInstitutions'])->name('admin.email-sms.institutions');
             Route::get('/teachers/{institutionId}', [EmailSmsController::class, 'getTeachersByInstitution'])->name('admin.email-sms.teachers');
             Route::get('/students/{institutionId}', [EmailSmsController::class, 'getStudentsByInstitution'])->name('admin.email-sms.students');
             Route::get('/parents/{institutionId}', [EmailSmsController::class, 'getParentsByInstitution'])->name('admin.email-sms.parents');
             Route::get('/non-working-staff/{institutionId}', [EmailSmsController::class, 'getNonWorkingStaffByInstitution'])->name('admin.email-sms.non-working-staff');
-            
+
             // Class selection routes
             Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('admin.email-sms.classes');
             Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('admin.email-sms.sections');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\RoomManagement;
+namespace App\Http\Controllers\Admin\ExamManagement;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassRoom;
