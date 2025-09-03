@@ -165,9 +165,9 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
+<!-- <<<<<<< HEAD -->
                 <li class="menu-title"><span>Room Management</span></li>
-=======
+<!-- ======= -->
                 <li class="menu-title"><span>Communication</span></li>
                 <li>
                     <ul>
@@ -179,7 +179,7 @@
                     </ul>
                 </li>
                 <li class="menu-title"><span>Exam Management</span></li>
->>>>>>> f904f932e82c61e7127f007e766b43e381b74b4a
+<!-- >>>>>>> f904f932e82c61e7127f007e766b43e381b74b4a -->
                 <li>
                     <ul>
                         <li class="">

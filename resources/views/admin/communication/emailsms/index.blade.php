@@ -530,7 +530,7 @@
                                                 </td>
                                                 <td>
                                                     <small class="text-muted">
-                                                        {{ count(json_decode($list->recipients)) }} recipients
+                                                        {{ count($list->recipients) }} recipients
                                                     </small>
                                                 </td>
                                                 <td>

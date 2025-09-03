@@ -13,6 +13,8 @@ use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SmsEmail;
 
 class EmailSmsController extends Controller
 {
@@ -51,7 +53,6 @@ class EmailSmsController extends Controller
                 'send_through' => 'required|in:email,sms',
                 'recipient_type' => 'required|in:group,individual,class',
                 'recipients' => 'required|array',
-                'recipients.*' => 'required|string'
             ]);
 
             if ($validator->fails()) {
@@ -62,7 +63,7 @@ class EmailSmsController extends Controller
                 ], 422);
             }
 
-            // Store the message
+            // Step 1: Store message as pending
             $emailSms = EmailSms::create([
                 'title' => $request->title,
                 'description' => $request->description,
@@ -72,18 +73,25 @@ class EmailSmsController extends Controller
                 'status' => 'pending'
             ]);
 
-            // Send through RapidAPI based on type
+            // Step 2: Try sending
+            $sendStatus = false;
+
             if ($request->send_through === 'email') {
-                $this->sendEmail($request);
+                $sendStatus = $this->sendEmail($request);
             } else {
-                $this->sendSMS($request);
+                $sendStatus = $this->sendSMS($request);
             }
 
+            // Step 3: Update DB status based on result
+            $emailSms->update([
+                'status' => $sendStatus ? 'sent' : 'failed'
+            ]);
+
             return response()->json([
-                'success' => true,
-                'message' => 'Message sent successfully',
+                'success' => $sendStatus,
+                'message' => $sendStatus ? 'Message sent successfully' : 'Message failed to send',
                 'data' => $emailSms
-            ], 201);
+            ], $sendStatus ? 200 : 500);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -94,36 +102,71 @@ class EmailSmsController extends Controller
         }
     }
 
+
     private function sendEmail($request)
     {
-        // RapidAPI Email Service Integration
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => config('services.rapidapi.key'),
-            'X-RapidAPI-Host' => config('services.rapidapi.email_host')
-        ])->post(config('services.rapidapi.email_url'), [
-            'to' => $request->recipients,
-            'subject' => $request->title,
-            'body' => $request->description,
-            'from' => config('mail.from.address')
+        $recipients = is_array($request->recipients) 
+                        ? $request->recipients 
+                        : explode(',', $request->recipients);
+
+        Mail::to($recipients)->send(new SmsEmail($request->title, $request->description));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Email sent successfully',
+            'recipients' => $recipients
         ]);
-
-        return $response->json();
     }
-
     private function sendSMS($request)
     {
-        // RapidAPI SMS Service Integration
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => config('services.rapidapi.key'),
-            'X-RapidAPI-Host' => config('services.rapidapi.sms_host')
-        ])->post(config('services.rapidapi.sms_url'), [
-            'to' => $request->recipients,
-            'message' => $request->description,
-            'from' => config('services.sms.from')
-        ]);
+        try {
+            $recipients = is_array($request->recipients)
+                ? $request->recipients
+                : explode(',', $request->recipients);
 
-        return $response->json();
+            $success = true;
+
+            foreach ($recipients as $recipient) {
+                $response = Http::withHeaders([
+                    'X-RapidAPI-Key' => config('services.rapidapi.key'),
+                    'X-RapidAPI-Host' => config('services.rapidapi.sms_host')
+                ])->post(config('services.rapidapi.sms_url'), [
+                    "to"      => $recipient,
+                    "message" => strip_tags($request->description), // ensure plain text only
+                    "from"    => config('services.sms.from', 'MyApp')
+                ]);
+
+                if ($response->failed()) {
+                    $success = false;
+                    \Log::error('Text SMS sending failed', [
+                        'recipient' => $recipient,
+                        'response'  => $response->body()
+                    ]);
+                }
+            }
+
+            return $success;
+        } catch (\Exception $e) {
+            \Log::error('Text SMS exception: ' . $e->getMessage());
+            return false;
+        }
     }
+
+
+    // private function sendSMS($request)
+    // {
+    //     // RapidAPI SMS Service Integration
+    //     $response = Http::withHeaders([
+    //         'X-RapidAPI-Key' => config('services.rapidapi.key'),
+    //         'X-RapidAPI-Host' => config('services.rapidapi.sms_host')
+    //     ])->post(config('services.rapidapi.sms_url'), [
+    //         'to' => $request->recipients,
+    //         'message' => $request->description,
+    //         'from' => config('services.sms.from')
+    //     ]);
+
+    //     return $response->json();
+    // }
 
     public function getEmailSms()
     {
