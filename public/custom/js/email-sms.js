@@ -114,7 +114,7 @@ $(document).ready(function() {
                 // Display each recipient individually
                 recipients.forEach(recipient => {
                     const iconElement = $('<div class="d-inline-block me-2 mb-2">')
-                    .attr(tooltip)
+                    .attr("title", tooltip || "")
                         .html(`<i class="${icon}"></i><br><small>${recipient.name}<br><span class="text-muted">${recipient.email}</span></small>`);
                     container.append(iconElement);
                 });
@@ -386,12 +386,14 @@ $(document).ready(function() {
                     const recipientId = $(this).val();
                     const recipientName = $(this).data('name');
                     const recipientEmail = $(this).data('email');
+                    const recipientPhone = $(this).data('phone');
                     
                     if (!selectedRecipients.some(r => r.id === recipientId)) {
                         selectedRecipients.push({
                             id: recipientId,
                             name: recipientName,
                             email: recipientEmail,
+                            phone: recipientPhone,
                             type: 'class_student'
                         });
                     }
@@ -417,12 +419,14 @@ $(document).ready(function() {
                     const recipientId = $(this).val();
                     const recipientName = $(this).data('name');
                     const recipientEmail = $(this).data('email');
+                    const recipientPhone = $(this).data('phone');
                     
                     if (!selectedRecipients.some(r => r.id === recipientId)) {
                         selectedRecipients.push({
                             id: recipientId,
                             name: recipientName,
                             email: recipientEmail,
+                            phone: recipientPhone,
                             type: 'class_parent'
                         });
                     }
@@ -442,6 +446,7 @@ $(document).ready(function() {
             const recipientId = $(this).val();
             const recipientName = $(this).data('name');
             const recipientEmail = $(this).data('email');
+            const recipientPhone = $(this).data('phone');
             const isChecked = $(this).is(':checked');
             
             if (isChecked) {
@@ -451,6 +456,7 @@ $(document).ready(function() {
                         id: recipientId,
                         name: recipientName,
                         email: recipientEmail,
+                        phone: recipientPhone,
                         type: 'class_student'
                     });
                 }
@@ -469,6 +475,7 @@ $(document).ready(function() {
             const recipientId = $(this).val();
             const recipientName = $(this).data('name');
             const recipientEmail = $(this).data('email');
+            const recipientPhone = $(this).data('phone');
             const isChecked = $(this).is(':checked');
             
             if (isChecked) {
@@ -478,6 +485,7 @@ $(document).ready(function() {
                         id: recipientId,
                         name: recipientName,
                         email: recipientEmail,
+                        phone: recipientPhone,
                         type: 'class_parent'
                     });
                 }
@@ -682,7 +690,7 @@ $(document).ready(function() {
                 <div class="form-check">
                     <input class="form-check-input class-student-checkbox" type="checkbox" 
                            value="${student.id}" id="class_student_${student.id}"
-                           data-name="${student.name}" data-email="${student.email}">
+                           data-name="${student.name}" data-email="${student.email}" data-phone="${student.phone}">
                     <label class="form-check-label" for="class_student_${student.id}">
                         ${student.name} (${student.email})
                     </label>
@@ -713,7 +721,7 @@ $(document).ready(function() {
                 <div class="form-check">
                     <input class="form-check-input class-parent-checkbox" type="checkbox" 
                            value="${parent.id}" id="class_parent_${parent.id}"
-                           data-name="${parent.name}" data-email="${parent.email}">
+                           data-name="${parent.name}" data-email="${parent.email}" data-phone="${parent.phone}" >
                     <label class="form-check-label" for="class_parent_${parent.id}">
                         ${parent.name} (${parent.email})
                     </label>
@@ -1065,9 +1073,55 @@ $(document).ready(function() {
                     }
                     
                     // Debug: Log what was loaded
+                    // if (appendMode) {
+                    //     console.log(`Loaded ${recipientType}:`, newRecipients);
+                    // }
+                    // ...existing code...
                     if (appendMode) {
+                        // Append mode: add new recipients to existing ones
+                        const newRecipients = recipients.map(r => ({
+                            id: r.id,
+                            type: recipientType,
+                            name: r.first_name ? `${r.first_name} ${r.last_name}` : r.name,
+                            email: r.email,
+                            phone: r.phone,
+                            is_student_contact: r.is_student_contact || false
+                        }));
+
+                        console.log('Mapped new recipients:', newRecipients);
+
+                        // Remove existing recipients of this type and add new ones
+                        selectedRecipients = selectedRecipients.filter(r => r.type !== recipientType);
+                        selectedRecipients = selectedRecipients.concat(newRecipients);
+
+                        console.log('Updated selectedRecipients array:', selectedRecipients);
+
+                        let message = `Added ${count} ${recipientType.replace('all_', '')}`;
+                        if (response.message) {
+                            message += ` - ${response.message}`;
+                        }
+                        toastr.success(message);
+
+                        // Debug: Log what was loaded
                         console.log(`Loaded ${recipientType}:`, newRecipients);
+                    } else {
+                        // Replace mode: replace all recipients
+                        selectedRecipients = recipients.map(r => ({
+                            id: r.id,
+                            type: recipientType,
+                            name: r.first_name ? `${r.first_name} ${r.last_name}` : r.name,
+                            email: r.email,
+                            phone: r.phone,
+                            is_student_contact: r.is_student_contact || false
+                        }));
+
+                        let message = `Loaded ${count} recipients`;
+                        if (response.message) {
+                            message += ` - ${response.message}`;
+                        }
+                        toastr.success(message);
                     }
+                    // ...existing code...
                     console.log('Total selected recipients:', selectedRecipients);
                     
                     // Update displays
@@ -1211,12 +1265,14 @@ $(document).ready(function() {
                     const recipientId = $(this).val();
                     const recipientName = $(this).data('name');
                     const recipientEmail = $(this).data('email');
+                    const recipientPhone = $(this).data('phone');
                     
                     if (!selectedRecipients.some(r => r.id === recipientId)) {
                         selectedRecipients.push({
                             id: recipientId,
                             name: recipientName,
                             email: recipientEmail,
+                            phone: recipientPhone,
                             type: 'individual'
                         });
                     }
@@ -1235,6 +1291,7 @@ $(document).ready(function() {
             const recipientId = $(this).val();
             const recipientName = $(this).data('name');
             const recipientEmail = $(this).data('email');
+            const recipientPhone = $(this).data('phone');
             const isChecked = $(this).is(':checked');
             
             if (isChecked) {
@@ -1244,6 +1301,7 @@ $(document).ready(function() {
                         id: recipientId,
                         name: recipientName,
                         email: recipientEmail,
+                        phone: recipientPhone,
                         type: 'individual'
                     });
                 }
@@ -1411,7 +1469,7 @@ $(document).ready(function() {
                 <div class="form-check mb-2">
                     <input class="form-check-input individual-recipient-checkbox" type="checkbox" 
                            value="${recipient.id}" id="individual_${recipient.id}"
-                           data-name="${name}" data-email="${email}">
+                           data-name="${name}" data-email="${email}" data-phone="${recipient.phone}">
                     <label class="form-check-label" for="individual_${recipient.id}">
                         ${displayText}
                 </label>
