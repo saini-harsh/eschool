@@ -158,6 +158,13 @@
                                             SMS
                                         </label>
                                     </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="send_through" value="whatsapp" 
+                                               id="send_whatsapp">
+                                        <label class="form-check-label" for="send_whatsapp">
+                                            WhatsApp
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -530,7 +537,7 @@
                                                 </td>
                                                 <td>
                                                     <small class="text-muted">
-                                                        {{ count(json_decode($list->recipients)) }} recipients
+                                                        {{ count($list->recipients) }} recipients
                                                     </small>
                                                 </td>
                                                 <td>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->enum('send_through', ['email', 'sms']);
+            $table->enum('send_through', ['email', 'sms', 'whatsapp']);
             $table->enum('recipient_type', ['group', 'individual', 'class']);
             $table->json('recipients');
             $table->enum('status', ['pending', 'sent', 'failed'])->default('pending');

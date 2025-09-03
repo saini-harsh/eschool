@@ -13,6 +13,8 @@ use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SmsEmail;
 
 class EmailSmsController extends Controller
 {
@@ -48,10 +50,9 @@ class EmailSmsController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
-                'send_through' => 'required|in:email,sms',
+                'send_through' => 'required|in:email,sms,whatsapp',
                 'recipient_type' => 'required|in:group,individual,class',
                 'recipients' => 'required|array',
-                'recipients.*' => 'required|string'
             ]);
 
             if ($validator->fails()) {
@@ -62,7 +63,7 @@ class EmailSmsController extends Controller
                 ], 422);
             }
 
-            // Store the message
+            // Step 1: Store message as pending
             $emailSms = EmailSms::create([
                 'title' => $request->title,
                 'description' => $request->description,
@@ -72,18 +73,29 @@ class EmailSmsController extends Controller
                 'status' => 'pending'
             ]);
 
-            // Send through RapidAPI based on type
+            // Step 2: Try sending
+            $sendStatus = false;
+
             if ($request->send_through === 'email') {
-                $this->sendEmail($request);
-            } else {
-                $this->sendSMS($request);
+                $sendStatus = $this->sendEmail($request);
+            }
+             if ($request->send_through === 'sms') {
+                $sendStatus = $this->sendSMS($request);
+            }
+            if ($request->send_through === 'whatsapp') {
+                $sendStatus = $this->sendWhatsApp($request);
             }
 
+            // Step 3: Update DB status based on result
+            $emailSms->update([
+                'status' => $sendStatus ? 'sent' : 'failed'
+            ]);
+
             return response()->json([
-                'success' => true,
-                'message' => 'Message sent successfully',
+                'success' => $sendStatus,
+                'message' => $sendStatus ? 'Message sent successfully' : 'Message failed to send',
                 'data' => $emailSms
-            ], 201);
+            ], $sendStatus ? 200 : 500);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -94,36 +106,118 @@ class EmailSmsController extends Controller
         }
     }
 
+
     private function sendEmail($request)
     {
-        // RapidAPI Email Service Integration
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => config('services.rapidapi.key'),
-            'X-RapidAPI-Host' => config('services.rapidapi.email_host')
-        ])->post(config('services.rapidapi.email_url'), [
-            'to' => $request->recipients,
-            'subject' => $request->title,
-            'body' => $request->description,
-            'from' => config('mail.from.address')
+        $recipients = is_array($request->recipients) 
+                        ? $request->recipients 
+                        : explode(',', $request->recipients);
+        Mail::to($recipients)->send(new SmsEmail($request->title, $request->description));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Email sent successfully',
+            'recipients' => $recipients
         ]);
-
-        return $response->json();
     }
-
+    
     private function sendSMS($request)
     {
-        // RapidAPI SMS Service Integration
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => config('services.rapidapi.key'),
-            'X-RapidAPI-Host' => config('services.rapidapi.sms_host')
-        ])->post(config('services.rapidapi.sms_url'), [
-            'to' => $request->recipients,
-            'message' => $request->description,
-            'from' => config('services.sms.from')
-        ]);
+        try {
+            $recipients = is_array($request->recipients)
+                ? $request->recipients
+                : explode(',', $request->recipients);
 
-        return $response->json();
+            $success = true;
+
+            foreach ($recipients as $recipient) {
+                $response = Http::withHeaders([
+                    'X-RapidAPI-Key'  => config('services.rapidapi.key'),
+                    'X-RapidAPI-Host' => config('services.rapidapi.sms_host'),
+                    'Content-Type'    => 'application/json',
+                ])->post(config('services.rapidapi.sms_url'), [
+                    "data" => [
+                        "phone_number" => "+91".trim($recipient['phone']),
+                        "text"         => strip_tags($request->description),
+                        "api_key"      => config('services.rapidapi.TEXTFLOW_API_KEY'),
+                    ]
+                ]);
+
+                \Log::info('SMS API response', [
+                    'recipient' => $recipient,  
+                    'status'    => $response->status(),
+                    'body'      => $response->body(),
+                ]);
+                
+
+                if ($response->failed()) {
+                    $success = false;
+                    \Log::error('Text SMS sending failed', [
+                        'recipient' => $recipient,
+                        'response'  => $response->body()
+                    ]);
+                }
+            }
+
+            return $success;
+        } catch (\Exception $e) {
+            \Log::error('Text SMS exception: ' . $e->getMessage());
+            return false;
+        }
     }
+
+    private function sendWhatsApp($request)
+    {
+        try {
+            $recipients = is_array($request->recipients)
+                ? $request->recipients
+                : explode(',', $request->recipients);
+
+            $success = true;
+
+            foreach ($recipients as $recipient) {
+                $response = Http::asForm()->withHeaders([
+                    'X-RapidAPI-Key'  => config('services.rapidapi.key'),
+                    'X-RapidAPI-Host' => config('services.rapidapi.whatsapp_host'),
+                ])->post(config('services.rapidapi.whatsapp_url'), [
+                    "account"   => config('services.rapidapi.whatsapp_account'), // 👈 your unique account ID
+                    "recipient" => "+91" . (is_array($recipient) ? $recipient['phone'] : $recipient), // format as E.164
+                    "message"   => strip_tags($request->description),
+                    "type"      => "text", // text / media / document
+                ]);
+                    dd($response->json());
+                if ($response->failed()) {
+                    $success = false;
+                    \Log::error('WhatsApp sending failed', [
+                        'recipient' => $recipient,
+                        'response'  => $response->body()
+                    ]);
+                }
+            }
+
+            return $success;
+        } catch (\Exception $e) {
+            \Log::error('WhatsApp exception: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+
+
+    // private function sendSMS($request)
+    // {
+    //     // RapidAPI SMS Service Integration
+    //     $response = Http::withHeaders([
+    //         'X-RapidAPI-Key' => config('services.rapidapi.key'),
+    //         'X-RapidAPI-Host' => config('services.rapidapi.sms_host')
+    //     ])->post(config('services.rapidapi.sms_url'), [
+    //         'to' => $request->recipients,
+    //         'message' => $request->description,
+    //         'from' => config('services.sms.from')
+    //     ]);
+
+    //     return $response->json();
+    // }
 
     public function getEmailSms()
     {
