@@ -125,6 +125,31 @@
                         </li> -->
                     </ul>
                 </li>
+                <li class="menu-title"><span>Routine</span></li>
+                <li>
+                    <ul>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-report"></i><span>Student Routine</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-report"></i><span>Teacher Routine</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-report"></i><span>Lesson Plan</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#">
+                                <i class="ti ti-report"></i><span>Exam Routine</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="menu-title"><span>Academics</span></li>
                 <li>
                     <ul>
@@ -165,12 +190,9 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
-=======
 <!-- <<<<<<< HEAD -->
-                <li class="menu-title"><span>Room Management</span></li>
+                <!-- <li class="menu-title"><span>Room Management</span></li> -->
 <!-- ======= -->
->>>>>>> c79b91e379295c5cd585865bdc47adf22521fd92
                 <li class="menu-title"><span>Communication</span></li>
                 <li>
                     <ul>
@@ -182,10 +204,7 @@
                     </ul>
                 </li>
                 <li class="menu-title"><span>Exam Management</span></li>
-<<<<<<< HEAD
-=======
 <!-- >>>>>>> f904f932e82c61e7127f007e766b43e381b74b4a -->
->>>>>>> c79b91e379295c5cd585865bdc47adf22521fd92
                 <li>
                     <ul>
                         <li class="">
