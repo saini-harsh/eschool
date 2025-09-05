@@ -3,11 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Admin\StudentController;
-use App\Http\Controllers\Admin\TeacherController;
-use App\Http\Controllers\Admin\AttendanceController;
-use App\Http\Controllers\Admin\InstitutionController;
-use App\Http\Controllers\Admin\NonWorkingStaffController;
+use App\Http\Controllers\Admin\Administration\StudentController;
+use App\Http\Controllers\Admin\Administration\TeacherController;
+use App\Http\Controllers\Admin\Administration\AttendanceController;
+use App\Http\Controllers\Admin\Administration\InstitutionController;
+use App\Http\Controllers\Admin\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
@@ -75,6 +75,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
             Route::get('/create', [StudentController::class, 'Create'])->name('admin.students.create');
             Route::post('/store', [StudentController::class, 'Store'])->name('admin.students.store');
+            Route::get('/show/{student}', [StudentController::class, 'Show'])->name('admin.students.show');
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
@@ -205,9 +206,9 @@ Route::middleware('admin')->group(function () {
             Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('admin.routines.subjects');
             Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('admin.routines.teachers');
             
-            Route::prefix('lesson-plans')->group(function () {
+            // Route::prefix('lesson-plans')->group(function () {
                 
-            });
+            // });
 
 
         });
