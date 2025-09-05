@@ -204,6 +204,12 @@ Route::middleware('admin')->group(function () {
             Route::get('/sections/{classId}', [RoutineController::class, 'getSectionsByClass'])->name('admin.routines.sections');
             Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('admin.routines.subjects');
             Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('admin.routines.teachers');
+            
+            Route::prefix('lesson-plans')->group(function () {
+                
+            });
+
+
         });
     });
 });
