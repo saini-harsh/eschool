@@ -200,11 +200,11 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
-                                <a href="employee-details.html" class="avatar avatar-sm avatar-rounded">
+                                <a href="{{ route('admin.students.show', $student->id) }}" class="avatar avatar-sm avatar-rounded">
                                     <img src="{{ asset($student->photo) }}" alt="img">
                                 </a>
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="employee-details.html">{{ $student->first_name }} {{ $student->last_name }}</a></h6>
+                                    <h6 class="fs-14 mb-0"><a href="{{ route('admin.students.show', $student->id) }}">{{ $student->first_name }} {{ $student->last_name }}</a></h6>
                                 </div>
                             </div>
                         </td>
@@ -251,11 +251,16 @@
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
-                                        class="ti ti-edit"></i></a>
+                                <a href="{{ route('admin.students.show', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0" title="View Details">
+                                    <i class="ti ti-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit">
+                                    <i class="ti ti-edit"></i>
+                                </a>
                                 <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-student" 
                                    data-delete-url="{{ route('admin.students.delete', $student->id) }}"
-                                   data-student-name="{{ $student->first_name }} {{ $student->last_name }}">
+                                   data-student-name="{{ $student->first_name }} {{ $student->last_name }}"
+                                   title="Delete">
                                     <i class="ti ti-trash"></i>
                                 </a>
                             </div>

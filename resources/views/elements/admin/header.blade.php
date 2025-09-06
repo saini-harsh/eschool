@@ -283,7 +283,7 @@
              <!-- Settings -->
              <div class="header-item">
                  <div>
-                     <a href="settings.html" class="btn topbar-link"><i class="ti ti-settings fs-16"></i></a>
+                     <a href="{{ route('admin.settings.index') }}" class="btn topbar-link"><i class="ti ti-settings fs-16"></i></a>
                  </div>
              </div>
 

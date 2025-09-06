@@ -25,6 +25,21 @@ class SchoolClass extends Model
         'section_ids' => 'array', // auto convert JSON to array
     ];
 
+    // Override the accessor to ensure proper array conversion
+    public function getSectionIdsAttribute($value)
+    {
+        if (is_string($value)) {
+            // Handle double-encoded JSON strings
+            $decoded = json_decode($value, true);
+            if (is_string($decoded)) {
+                // If the decoded value is still a string, decode it again
+                $decoded = json_decode($decoded, true);
+            }
+            return is_array($decoded) ? $decoded : [];
+        }
+        return is_array($value) ? $value : [];
+    }
+
     // Optional: fetch sections directly
     public function sections()
     {

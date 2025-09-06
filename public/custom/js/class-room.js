@@ -1,7 +1,19 @@
 $(document).ready(function () {
-    // Add classroom
-    $("#add-class-room").on("click", function (e) {
+    // Prevent multiple initializations
+    if (window.classRoomInitialized) {
+        return;
+    }
+    window.classRoomInitialized = true;
+
+    // Add classroom - unbind existing events first
+    $("#add-class-room").off("click.classroom").on("click.classroom", function (e) {
         e.preventDefault();
+        
+        // Prevent multiple submissions
+        if ($(this).data('submitting')) {
+            return false;
+        }
+        
         const form = $(this).closest("form");
         const formData = new FormData(form[0]);
 
@@ -11,8 +23,12 @@ $(document).ready(function () {
 
         const submitBtn = $(this);
         const originalText = submitBtn.text();
+        
+        // Mark as submitting
+        submitBtn.data('submitting', true);
         submitBtn.prop("disabled", true).text("Saving...");
 
+        console.log('Creating classroom...');
         $.ajax({
             url: "/admin/rooms/store",
             type: "POST",
@@ -37,6 +53,8 @@ $(document).ready(function () {
                 toastr.error(errorMessage);
             },
             complete: function () {
+                // Reset form state
+                submitBtn.data('submitting', false);
                 submitBtn.prop("disabled", false).text(originalText);
             }
         });
@@ -61,8 +79,8 @@ $(document).ready(function () {
         $('html, body').animate({ scrollTop: $("#class_room-form").offset().top - 100 }, 500);
     });
 
-    // Update classroom
-    $("#update-class_room").on("click", function (e) {
+    // Update classroom - unbind existing events first
+    $("#update-class_room").off("click.classroom").on("click.classroom", function (e) {
         e.preventDefault();
         const form = $(this).closest("form");
         const formData = new FormData(form[0]);
@@ -105,8 +123,8 @@ $(document).ready(function () {
         });
     });
 
-    // Cancel edit
-    $("#cancel-edit").on("click", function (e) {
+    // Cancel edit - unbind existing events first
+    $("#cancel-edit").off("click.classroom").on("click.classroom", function (e) {
         e.preventDefault();
         resetForm();
     });
@@ -125,8 +143,8 @@ $(document).ready(function () {
         deleteModal.show();
     });
 
-    // Handle delete form submission
-    $("#deleteForm").on("submit", function (e) {
+    // Handle delete form submission - unbind existing events first
+    $("#deleteForm").off("submit.classroom").on("submit.classroom", function (e) {
         e.preventDefault();
         const form = $(this);
         const submitBtn = form.find('button[type="submit"]');
@@ -161,8 +179,8 @@ $(document).ready(function () {
         });
     });
 
-    // Status change
-    $(document).on("change", ".class-room-status-select", function () {
+    // Status change - unbind existing events first
+    $(document).off("change.classroom", ".class-room-status-select").on("change.classroom", ".class-room-status-select", function () {
         const id = $(this).data("id");
         const status = $(this).val();
 

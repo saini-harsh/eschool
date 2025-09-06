@@ -20,6 +20,7 @@ class Student extends Authenticatable
         'phone',
         'dob',
         'address',
+        'permanent_address',
         'pincode',
         'caste_tribe',
         'district',
@@ -32,6 +33,46 @@ class Student extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
+        // New fields from form
+        'admission_date',
+        'admission_number',
+        'roll_number',
+        'group',
+        'religion',
+        'blood_group',
+        'category',
+        'height',
+        'weight',
+        'father_name',
+        'father_occupation',
+        'father_phone',
+        'father_photo',
+        'mother_name',
+        'mother_occupation',
+        'mother_phone',
+        'mother_photo',
+        'guardian_name',
+        'guardian_relation',
+        'guardian_relation_text',
+        'guardian_email',
+        'guardian_phone',
+        'guardian_occupation',
+        'guardian_address',
+        'guardian_photo',
+        'national_id',
+        'birth_certificate_number',
+        'bank_name',
+        'bank_account_number',
+        'ifsc_code',
+        'additional_notes',
+        'document_01_title',
+        'document_02_title',
+        'document_03_title',
+        'document_04_title',
+        'document_01_file',
+        'document_02_file',
+        'document_03_file',
+        'document_04_file',
     ];
 
     protected $hidden = [
@@ -63,6 +104,14 @@ class Student extends Authenticatable
     public function teacher()
     {
         return $this->belongsTo(Teacher::class);
+    }
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'section_id');
     }
 
 }

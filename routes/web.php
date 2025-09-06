@@ -3,11 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Admin\StudentController;
-use App\Http\Controllers\Admin\TeacherController;
-use App\Http\Controllers\Admin\AttendanceController;
-use App\Http\Controllers\Admin\InstitutionController;
-use App\Http\Controllers\Admin\NonWorkingStaffController;
+use App\Http\Controllers\Admin\Administration\StudentController;
+use App\Http\Controllers\Admin\Administration\TeacherController;
+use App\Http\Controllers\Admin\Administration\AttendanceController;
+use App\Http\Controllers\Admin\Administration\InstitutionController;
+use App\Http\Controllers\Admin\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Admin\Academic\EventController;
 use App\Http\Controllers\Admin\Academic\CalendarController;
 use App\Http\Controllers\Admin\Communication\EmailSmsController;
+use App\Http\Controllers\Admin\Routine\RoutineController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -35,6 +36,13 @@ Route::middleware('admin')->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+        Route::prefix('settings')->group(function () {
+            Route::get('/index', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'index'])->name('admin.settings.index');
+            Route::post('/profile', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'updateProfile'])->name('admin.settings.profile');
+            Route::post('/change-password', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
+            Route::post('/delete-profile-image', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'deleteProfileImage'])->name('admin.settings.delete-profile-image');
+        });
 
         Route::prefix('institutions')->group(function () {
             Route::get('/index', [InstitutionController::class, 'Index'])->name('admin.institutions.index');
@@ -67,6 +75,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
             Route::get('/create', [StudentController::class, 'Create'])->name('admin.students.create');
             Route::post('/store', [StudentController::class, 'Store'])->name('admin.students.store');
+            Route::get('/show/{student}', [StudentController::class, 'Show'])->name('admin.students.show');
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
@@ -180,6 +189,28 @@ Route::middleware('admin')->group(function () {
             Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('admin.email-sms.classes');
             Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('admin.email-sms.sections');
             Route::get('/class-students-parents/{classId}/{sectionId?}', [EmailSmsController::class, 'getStudentsAndParentsByClassSection'])->name('admin.email-sms.class-students-parents');
+        });
+
+        // ROUTINE MANAGEMENT
+        Route::prefix('routines')->group(function () {
+            Route::get('/', [RoutineController::class, 'index'])->name('admin.routines.index');
+            Route::get('/create', [RoutineController::class, 'create'])->name('admin.routines.create');
+            Route::post('/', [RoutineController::class, 'store'])->name('admin.routines.store');
+            Route::get('/report', [RoutineController::class, 'getRoutineReport'])->name('admin.routines.report');
+            Route::post('/{id}/status', [RoutineController::class, 'updateStatus'])->name('admin.routines.status');
+            Route::delete('/{id}', [RoutineController::class, 'destroy'])->name('admin.routines.destroy');
+            
+            // API routes for dynamic dropdowns
+            Route::get('/classes/{institutionId}', [RoutineController::class, 'getClassesByInstitution'])->name('admin.routines.classes');
+            Route::get('/sections/{classId}', [RoutineController::class, 'getSectionsByClass'])->name('admin.routines.sections');
+            Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('admin.routines.subjects');
+            Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('admin.routines.teachers');
+            
+            // Route::prefix('lesson-plans')->group(function () {
+                
+            // });
+
+
         });
     });
 });
