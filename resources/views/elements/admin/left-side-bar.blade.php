@@ -177,11 +177,8 @@
                         </li>
                     </ul>
                 </li>
-<<<<<<< HEAD
-=======
 
                 <!-- <li class="menu-title"><span>Room Management</span></li> -->
->>>>>>> 4f279286d3529ef33816241e299c9add3c2b6a89
                 <li class="menu-title"><span>Communication</span></li>
                 <li>
                     <ul>
@@ -202,8 +199,6 @@
                 </li>
                 
                 <li class="menu-title"><span>Exam Management</span></li>
-<<<<<<< HEAD
-=======
                 <li>
                     <ul>
                         <li class="submenu">
@@ -245,7 +240,6 @@
                     </ul>
                 </li>
                 <li class="menu-title"><span>Settings</span></li>
->>>>>>> 4f279286d3529ef33816241e299c9add3c2b6a89
                 <li>
                     <ul>
                         <li class="">

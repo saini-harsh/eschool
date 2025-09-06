@@ -284,13 +284,13 @@ class StudentSeeder extends Seeder
             Student::create(array_merge($student, [
                 'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
                 'permanent_address' => $student['address'] ?? 'Same as Current Address',
-                'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
-                
+                // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
+
                 // Photo fields (set to null for now)
                 'father_photo' => null,
                 'mother_photo' => null,
                 'guardian_photo' => null,
-                
+
                 // Document Information
                 'document_01_title' => 'Birth Certificate',
                 'document_01_file' => null,
@@ -300,7 +300,7 @@ class StudentSeeder extends Seeder
                 'document_03_file' => null,
                 'document_04_title' => 'Medical Certificate',
                 'document_04_file' => null,
-                
+
                 'admin_id' => 1,
                 'password' => Hash::make('student123'),
                 'decrypt_pw' => 'student123',
