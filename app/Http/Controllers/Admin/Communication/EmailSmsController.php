@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Admin\Communication;
 
-use App\Http\Controllers\Controller;
+use Log;
+use App\Mail\SmsEmail;
+use App\Models\Section;
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\EmailSms;
 use App\Models\Institution;
-use App\Models\Teacher;
-use App\Models\Student;
-use App\Models\NonWorkingStaff;
 use App\Models\SchoolClass;
-use App\Models\Section;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\NonWorkingStaff;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SmsEmail;
+use Illuminate\Support\Facades\Validator;
 
 class EmailSmsController extends Controller
 {
@@ -26,7 +27,7 @@ class EmailSmsController extends Controller
     public function index()
     {
         $lists = EmailSms::orderBy('created_at', 'desc')->get();
-        
+
         // Ensure all records have valid recipients data for the view
         $lists->each(function ($item) {
             if (!is_array($item->recipients)) {
@@ -40,7 +41,7 @@ class EmailSmsController extends Controller
                 }
             }
         });
-        
+
         return view('admin.communication.emailsms.index', compact('lists'));
     }
 
@@ -109,8 +110,8 @@ class EmailSmsController extends Controller
 
     private function sendEmail($request)
     {
-        $recipients = is_array($request->recipients) 
-                        ? $request->recipients 
+        $recipients = is_array($request->recipients)
+                        ? $request->recipients
                         : explode(',', $request->recipients);
         Mail::to($recipients)->send(new SmsEmail($request->title, $request->description));
 
@@ -120,7 +121,7 @@ class EmailSmsController extends Controller
             'recipients' => $recipients
         ]);
     }
-    
+
     private function sendSMS($request)
     {
         try {
@@ -144,11 +145,11 @@ class EmailSmsController extends Controller
                 ]);
 
                 \Log::info('SMS API response', [
-                    'recipient' => $recipient,  
+                    'recipient' => $recipient,
                     'status'    => $response->status(),
                     'body'      => $response->body(),
                 ]);
-                
+
 
                 if ($response->failed()) {
                     $success = false;
@@ -240,7 +241,7 @@ class EmailSmsController extends Controller
     {
         try {
             $emailSms = EmailSms::findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $emailSms
@@ -478,11 +479,11 @@ class EmailSmsController extends Controller
             // First, check if parent fields exist in the students table
             $student = Student::first();
             $hasParentFields = $student && (
-                property_exists($student, 'parent_name') || 
-                property_exists($student, 'parent_phone') || 
+                property_exists($student, 'parent_name') ||
+                property_exists($student, 'parent_phone') ||
                 property_exists($student, 'parent_email')
             );
-            
+
             if (!$hasParentFields) {
                 // If parent fields don't exist, return students as parents (using student contact info)
                 $students = Student::where('institution_id', $institutionId)
@@ -582,7 +583,7 @@ class EmailSmsController extends Controller
         try {
             $class = SchoolClass::findOrFail($classId);
             $sectionIds = json_decode($class->section_ids, true) ?? [];
-            
+
             if (empty($sectionIds)) {
                 return response()->json([
                     'success' => false,
@@ -590,7 +591,7 @@ class EmailSmsController extends Controller
                     'data' => []
                 ], 404);
             }
-            
+
             $sections = Section::whereIn('id', $sectionIds)
             ->where('status', 1)
             ->select('id', 'name')
@@ -618,11 +619,11 @@ class EmailSmsController extends Controller
         try {
             $query = Student::where('class_id', $classId)
                 ->where('status', 1);
-            
+
             if ($sectionId) {
                 $query->where('section_id', $sectionId);
             }
-            
+
             // Debug: Log the query and parameters
             \Log::info('Student query:', [
                 'class_id' => $classId,
@@ -630,10 +631,10 @@ class EmailSmsController extends Controller
                 'sql' => $query->toSql(),
                 'bindings' => $query->getBindings()
             ]);
-            
+
             $students = $query->select('id', 'first_name', 'last_name', 'email', 'phone')
                 ->get();
-            
+
             // Debug: Log the results
             \Log::info('Student query results:', [
                 'count' => $students->count(),
