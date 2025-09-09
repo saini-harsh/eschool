@@ -90,6 +90,66 @@
                         </li>
                     </ul>
                 </li>
+                 <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.email-sms*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-layout-dashboard"></i><span>Communication</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.email-sms*') ? 'active' : '' }}" href="{{ route('institution.email-sms.index') }}">
+                                        <i class="ti ti-menu-2"></i><span>Email / Sms</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.classes*') || request()->routeIs('institution.sections*') || request()->routeIs('institution.subjects*') || request()->routeIs('institution.academic.assign-teacher*') || request()->routeIs('institution.academic.calendar*') || request()->routeIs('institution.events*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-layout-dashboard"></i><span>Academics</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                
+                            <li class="">
+                                <a class="{{ request()->routeIs('institution.classes*') ? 'active' : '' }}" href="{{ route('institution.classes.index')}}">
+                                    <i class="ti ti-report"></i><span>Class</span>
+                                </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.sections*') ? 'active' : '' }}" href="{{ route('institution.sections.index') }}">
+                                        <i class="ti ti-menu-2"></i><span>Section</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.subjects*') ? 'active' : '' }}" href="{{ route('institution.subjects.index') }}">
+                                        <i class="ti ti-book"></i><span>Subject</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.academic.assign-teacher*') ? 'active' : '' }}" href="{{ route('institution.academic.assign-teacher.index') }}">
+                                        <i class="ti ti-user"></i><span>Assign Class Teacher</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.academic.calendar*') ? 'active' : '' }}" href="{{ route('institution.academic.calendar.index') }}">
+                                        <i class="ti ti-calendar"></i><span>Calendar</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.events*') ? 'active' : '' }}" href="{{ route('institution.events.index') }}">
+                                        <i class="ti ti-list"></i><span>Event Management</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
               
             </ul>
         </div>
