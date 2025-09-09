@@ -343,5 +343,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/subjects.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/subjects.js') }}"></script>
 @endpush

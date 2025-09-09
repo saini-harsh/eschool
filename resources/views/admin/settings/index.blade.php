@@ -192,5 +192,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('custom/js/settings.js') }}"></script>
+<script src="{{ asset('custom/js/admin/settings.js') }}"></script>
 @endpush

@@ -268,5 +268,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/teachers.js') }}"></script>
-@endpush
+    <script src="{{ asset('custom/js/admin/teachers.js') }}"></script>
+@endpush    

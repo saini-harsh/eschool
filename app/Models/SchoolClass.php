@@ -45,4 +45,9 @@ class SchoolClass extends Model
     {
         return Section::whereIn('id', $this->section_ids ?? [])->get();
     }
+
+    public function assignClassTeachers()
+    {
+        return $this->hasMany(AssignClassTeacher::class, 'class_id');
+    }
 }

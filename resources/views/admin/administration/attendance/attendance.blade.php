@@ -279,5 +279,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/attendance.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/attendance.js') }}"></script>
 @endpush

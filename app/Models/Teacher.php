@@ -54,4 +54,9 @@ class Teacher extends Authenticatable
     {
         return $this->belongsTo(Admin::class);
     }
+
+    public function assignClassTeachers()
+    {
+        return $this->hasMany(AssignClassTeacher::class);
+    }
 }

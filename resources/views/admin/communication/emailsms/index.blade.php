@@ -604,5 +604,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('custom/js/email-sms.js') }}"></script>
+<script src="{{ asset('custom/js/admin/email-sms.js') }}"></script>
 @endpush

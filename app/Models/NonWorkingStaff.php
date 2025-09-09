@@ -12,19 +12,33 @@ class NonWorkingStaff extends Model
     protected $table = 'non_working_staff';
 
     protected $fillable = [
-        'institution_id',
-        'name',
+        'first_name',
+        'middle_name',
+        'last_name',
+        'dob',
         'email',
         'phone',
-        'profile_photo',
+        'profile_image',
+        'address',
+        'pincode',
+        'institution_code',
+        'gender',
+        'caste_tribe',
+        'date_of_joining',
+        'institution_id',
+        'admin_id',
+        'password',
+        'decrypt_pw',
+        'status',
         'employee_id',
         'designation',
-        'department',
-        'status'
+        'department'
     ];
 
     protected $casts = [
-        'status' => 'string'
+        'dob' => 'date',
+        'date_of_joining' => 'date',
+        'status' => 'boolean'
     ];
 
     // Relationships
@@ -53,7 +67,7 @@ class NonWorkingStaff extends Model
     // Methods
     public function getFullNameAttribute()
     {
-        return $this->name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function getRoleDisplayAttribute()

@@ -119,5 +119,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/nonworkingstaff.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/nonworkingstaff.js') }}"></script>
 @endpush

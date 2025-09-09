@@ -290,5 +290,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/students.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/students.js') }}"></script>
 @endpush

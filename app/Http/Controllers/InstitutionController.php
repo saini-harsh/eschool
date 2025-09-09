@@ -7,15 +7,10 @@ use Illuminate\Support\Facades\Auth;
 
 class InstitutionController extends Controller
 {
-
-    //
     public function dashboard()
     {
-        dd('Insttutions dashboard');
-    }
-
-    public function logout()
-    {
-        Auth::guard('institution')->logout();
+        $institution = Auth::guard('institution')->user();
+        
+        return view('institution.index', compact('institution'));
     }
 }

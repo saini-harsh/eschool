@@ -63,7 +63,6 @@
     <!-- End Main Wrapper -->
     <!-- jQuery -->
     @include('components.dashboard.scripts')
-    @stack('scripts')
 </body>
 
 </html>

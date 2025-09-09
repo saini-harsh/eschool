@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\Academic\EventController;
 use App\Http\Controllers\Admin\Academic\CalendarController;
 use App\Http\Controllers\Admin\Communication\EmailSmsController;
 use App\Http\Controllers\Admin\Routine\RoutineController;
+use App\Http\Controllers\Admin\Routine\LessonPlanController;
+use App\Http\Controllers\Admin\Setting\SettingsController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -38,10 +40,10 @@ Route::middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
         Route::prefix('settings')->group(function () {
-            Route::get('/index', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'index'])->name('admin.settings.index');
-            Route::post('/profile', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'updateProfile'])->name('admin.settings.profile');
-            Route::post('/change-password', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
-            Route::post('/delete-profile-image', [\App\Http\Controllers\Admin\Setting\SettingsController::class, 'deleteProfileImage'])->name('admin.settings.delete-profile-image');
+            Route::get('/index', [SettingsController::class, 'index'])->name('admin.settings.index');
+            Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.profile');
+            Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('admin.settings.change-password');
+            Route::post('/delete-profile-image', [SettingsController::class, 'deleteProfileImage'])->name('admin.settings.delete-profile-image');
         });
 
         Route::prefix('institutions')->group(function () {
@@ -62,15 +64,6 @@ Route::middleware('admin')->group(function () {
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
             Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('admin.teachers.status');
         });
-        Route::prefix('nonworkingstaff')->group(function () {
-            Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
-            Route::get('/create', [NonWorkingStaffController::class, 'Create'])->name('admin.nonworkingstaff.create');
-            Route::post('/store', [NonWorkingStaffController::class, 'Store'])->name('admin.nonworkingstaff.store');
-            Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
-            Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
-            Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
-            Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('admin.nonworkingstaff.status');
-        });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
             Route::get('/create', [StudentController::class, 'Create'])->name('admin.students.create');
@@ -83,6 +76,15 @@ Route::middleware('admin')->group(function () {
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('admin.students.status');
+        });
+        Route::prefix('nonworkingstaff')->group(function () {
+            Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
+            Route::get('/create', [NonWorkingStaffController::class, 'Create'])->name('admin.nonworkingstaff.create');
+            Route::post('/store', [NonWorkingStaffController::class, 'Store'])->name('admin.nonworkingstaff.store');
+            Route::get('/edit/{nonworkingstaff}', [NonWorkingStaffController::class, 'Edit'])->name('admin.nonworkingstaff.edit');
+            Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
+            Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
+            Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('admin.nonworkingstaff.status');
         });
 
         Route::prefix('attendance')->group(function () {
@@ -206,12 +208,25 @@ Route::middleware('admin')->group(function () {
             Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('admin.routines.subjects');
             Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('admin.routines.teachers');
             
-            // Route::prefix('lesson-plans')->group(function () {
-                
-            // });
-
-
+            
+            
         });
+            // LESSON PLANS
+            Route::prefix('lesson-plans')->group(function () {
+                Route::get('/', [LessonPlanController::class, 'index'])->name('admin.lesson-plans.index');
+                Route::post('/', [LessonPlanController::class, 'store'])->name('admin.lesson-plans.store');
+                Route::get('/{id}/edit', [LessonPlanController::class, 'edit'])->name('admin.lesson-plans.edit');
+                Route::POST('/{id}', [LessonPlanController::class, 'update'])->name('admin.lesson-plans.update');
+                Route::delete('/{id}', [LessonPlanController::class, 'destroy'])->name('admin.lesson-plans.destroy');
+                Route::post('/{id}/status', [LessonPlanController::class, 'updateStatus'])->name('admin.lesson-plans.status');
+                Route::get('/{id}/download', [LessonPlanController::class, 'download'])->name('admin.lesson-plans.download');
+                
+                // API routes for dynamic dropdowns
+                Route::get('/teachers/{institutionId}', [LessonPlanController::class, 'getTeachersByInstitution'])->name('admin.lesson-plans.teachers');
+                Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('admin.lesson-plans.classes');
+                Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('admin.lesson-plans.classes-by-teacher');
+                Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('admin.lesson-plans.subjects');
+            });
     });
 });
 

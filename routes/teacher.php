@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\Teacher\TeacherController;
 
 Route::middleware('teacher')->group(function () {
     Route::prefix('teacher')->group(function () {

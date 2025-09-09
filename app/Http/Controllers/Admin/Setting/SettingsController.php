@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
 
 class SettingsController extends Controller
 {
@@ -59,12 +60,21 @@ class SettingsController extends Controller
             // Handle logo upload
             if ($request->hasFile('logo')) {
                 // Delete old logo if exists
-                if ($admin->logo && Storage::disk('public')->exists($admin->logo)) {
-                    Storage::disk('public')->delete($admin->logo);
+                if ($admin->logo && File::exists(public_path($admin->logo))) {
+                    File::delete(public_path($admin->logo));
                 }
 
-                $logoPath = $request->file('logo')->store('admin/logos', 'public');
-                $admin->logo = $logoPath;
+                $file = $request->file('logo');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $uploadPath = public_path('admin/uploads/admin');
+                
+                // Create directory if it doesn't exist
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+                
+                $file->move($uploadPath, $fileName);
+                $admin->logo = 'admin/uploads/admin/' . $fileName;
             }
 
             // Update admin data
@@ -163,8 +173,8 @@ class SettingsController extends Controller
                 ], 404);
             }
 
-            if ($admin->logo && Storage::disk('public')->exists($admin->logo)) {
-                Storage::disk('public')->delete($admin->logo);
+            if ($admin->logo && File::exists(public_path($admin->logo))) {
+                File::delete(public_path($admin->logo));
                 $admin->logo = null;
                 $admin->save();
             }

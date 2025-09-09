@@ -241,7 +241,8 @@ $(document).ready(function () {
     function initializeSelect2() {
         // Check if Select2 is available
         if (typeof $.fn.select2 !== "undefined") {
-            $(".status-select").select2({
+            // Only initialize Select2 for subject status selects
+            $(".status-select[data-subject-id]").select2({
                 minimumResultsForSearch: Infinity, // Disable search
                 width: "100%", // Changed from "auto" to "100%"
             });
@@ -251,9 +252,10 @@ $(document).ready(function () {
     // Function to add event listeners for status changes
     function addStatusChangeListeners() {
         // Remove any existing listeners to prevent conflicts
-        $(".status-select").off("change");
+        $(".status-select").off("change.subjects");
         
-        $(".status-select").on("change", function () {
+        // Only listen for status selects that have subject-id data attribute
+        $(".status-select[data-subject-id]").on("change.subjects", function () {
             const subjectId = $(this).data("subject-id");
             const newStatus = $(this).val();
 

@@ -129,5 +129,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('custom/js/routines.js') }}"></script>
+<script src="{{ asset('custom/js/admin/routines.js') }}"></script>
 @endpush

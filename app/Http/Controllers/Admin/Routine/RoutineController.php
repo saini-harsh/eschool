@@ -30,7 +30,7 @@ class RoutineController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        return view('admin.routines.index', compact('routines'));
+        return view('admin.routines.class-routine.index', compact('routines'));
     }
 
     /**
@@ -45,7 +45,7 @@ class RoutineController extends Controller
         $teachers = collect();
         $classRooms = ClassRoom::where('status', 1)->get();
 
-        return view('admin.routines.create', compact('institutions', 'classes', 'sections', 'subjects', 'teachers', 'classRooms'));
+        return view('admin.routines.class-routine.create', compact('institutions', 'classes', 'sections', 'subjects', 'teachers', 'classRooms'));
     }
 
     /**

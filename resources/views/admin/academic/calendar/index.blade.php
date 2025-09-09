@@ -261,7 +261,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('custom/js/calender.js') }}"></script>
+<script src="{{ asset('custom/js/admin/calender.js') }}"></script>
 @endpush
 
 

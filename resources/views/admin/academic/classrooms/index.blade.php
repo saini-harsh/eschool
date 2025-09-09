@@ -315,5 +315,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ URL::asset('custom/js/class-room.js') }}"></script>
+    <script src="{{ URL::asset('custom/js/admin/class-room.js') }}"></script>
 @endpush

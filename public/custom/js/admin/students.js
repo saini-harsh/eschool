@@ -26,6 +26,9 @@ $(document).ready(function() {
         console.log('Status selects found, initializing status updates...');
         initStudentStatusUpdates();
     }
+    
+    // Initialize admin student pages
+    initAdminStudentPages();
 });
 
 function initStudentsForm() {
@@ -463,5 +466,280 @@ function populateStudentForm(studentData) {
         setTimeout(function() {
             $('#teacher_id').val(studentData.teacher_id);
         }, 500);
+    }
+}
+
+/**
+ * Initialize admin student pages functionality
+ */
+function initAdminStudentPages() {
+    console.log('Initializing admin student pages...');
+    
+    // Initialize photo preview functions
+    initPhotoPreviewFunctions();
+    
+    // Initialize file selection handlers
+    initFileSelectionHandlers();
+    
+    // Initialize toast auto-hide
+    initToastAutoHide();
+}
+
+/**
+ * Initialize photo preview functions
+ */
+function initPhotoPreviewFunctions() {
+    // Make functions globally available
+    window.previewPhoto = function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('photoPreview').src = e.target.result;
+                document.getElementById('photoPreviewContainer').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.removePhoto = function() {
+        document.getElementById('photo').value = '';
+        document.getElementById('photoPreview').src = '';
+        document.getElementById('photoPreviewContainer').style.display = 'none';
+    };
+
+    // Father photo functions
+    window.previewFatherPhoto = function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('fatherPhotoPreview').src = e.target.result;
+                document.getElementById('fatherPhotoPreviewContainer').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.removeFatherPhoto = function() {
+        document.getElementById('father_photo').value = '';
+        document.getElementById('fatherPhotoPreview').src = '';
+        document.getElementById('fatherPhotoPreviewContainer').style.display = 'none';
+    };
+
+    // Mother photo functions
+    window.previewMotherPhoto = function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('motherPhotoPreview').src = e.target.result;
+                document.getElementById('motherPhotoPreviewContainer').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.removeMotherPhoto = function() {
+        document.getElementById('mother_photo').value = '';
+        document.getElementById('motherPhotoPreview').src = '';
+        document.getElementById('motherPhotoPreviewContainer').style.display = 'none';
+    };
+
+    // Guardian photo functions
+    window.previewGuardianPhoto = function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('guardianPhotoPreview').src = e.target.result;
+                document.getElementById('guardianPhotoPreviewContainer').style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window.removeGuardianPhoto = function() {
+        document.getElementById('guardian_photo').value = '';
+        document.getElementById('guardianPhotoPreview').src = '';
+        document.getElementById('guardianPhotoPreviewContainer').style.display = 'none';
+    };
+
+    // Document preview functions
+    initDocumentPreviewFunctions();
+
+    // Guardian relation toggle function
+    window.toggleGuardianRelationText = function(value) {
+        const textDiv = document.getElementById('guardian_relation_text_div');
+        if (textDiv) {
+            if (value === 'Other') {
+                textDiv.style.display = 'block';
+            } else {
+                textDiv.style.display = 'none';
+            }
+        }
+    };
+}
+
+/**
+ * Initialize document preview functions
+ */
+function initDocumentPreviewFunctions() {
+    const documents = ['01', '02', '03', '04'];
+    
+    documents.forEach(docNum => {
+        window[`previewDocument${docNum}`] = function(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(`document${docNum}Preview`).src = e.target.result;
+                    document.getElementById(`document${docNum}PreviewContainer`).style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window[`removeDocument${docNum}`] = function() {
+            document.getElementById(`document_${docNum}_file`).value = '';
+            document.getElementById(`document${docNum}Preview`).src = '';
+            document.getElementById(`document${docNum}PreviewContainer`).style.display = 'none';
+        };
+    });
+}
+
+/**
+ * Initialize file selection handlers
+ */
+function initFileSelectionHandlers() {
+    // Father photo handler
+    const fatherPhoto = document.getElementById('father_photo');
+    if (fatherPhoto) {
+        fatherPhoto.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            const nameElement = document.getElementById('father_photo_name');
+            const infoElement = document.getElementById('father_photo_info');
+            if (nameElement) nameElement.textContent = fileName;
+            if (infoElement) infoElement.style.display = fileName ? 'block' : 'none';
+        });
+    }
+
+    // Mother photo handler
+    const motherPhoto = document.getElementById('mother_photo');
+    if (motherPhoto) {
+        motherPhoto.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            const nameElement = document.getElementById('mother_photo_name');
+            const infoElement = document.getElementById('mother_photo_info');
+            if (nameElement) nameElement.textContent = fileName;
+            if (infoElement) infoElement.style.display = fileName ? 'block' : 'none';
+        });
+    }
+
+    // Guardian photo handler
+    const guardianPhoto = document.getElementById('guardian_photo');
+    if (guardianPhoto) {
+        guardianPhoto.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            const nameElement = document.getElementById('guardian_photo_name');
+            const infoElement = document.getElementById('guardian_photo_info');
+            if (nameElement) nameElement.textContent = fileName;
+            if (infoElement) infoElement.style.display = fileName ? 'block' : 'none';
+        });
+    }
+
+    // Document file handlers
+    initDocumentHandlers();
+}
+
+/**
+ * Initialize document file handlers
+ */
+function initDocumentHandlers() {
+    const documentFields = [
+        'document_01_file', 'document_02_file', 'document_03_file', 'document_04_file'
+    ];
+
+    documentFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : '';
+                const nameElement = document.getElementById(fieldId.replace('_file', '_name'));
+                const infoElement = document.getElementById(fieldId.replace('_file', '_info'));
+                if (nameElement) nameElement.textContent = fileName;
+                if (infoElement) infoElement.style.display = fileName ? 'block' : 'none';
+            });
+        }
+    });
+}
+
+/**
+ * Initialize toast auto-hide functionality
+ */
+function initToastAutoHide() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.hide();
+            }, 5000);
+        });
+    });
+}
+
+/**
+ * Load classes by institution (admin version)
+ */
+function loadClasses(institutionId) {
+    if (institutionId) {
+        fetch(`/admin/students/classes/${institutionId}`)
+            .then(response => response.json())
+            .then(data => {
+                const classSelect = document.getElementById('class_id');
+                if (classSelect) {
+                    classSelect.innerHTML = '<option value="">Class</option>';
+                    data.classes.forEach(classItem => {
+                        classSelect.innerHTML += `<option value="${classItem.id}">${classItem.name}</option>`;
+                    });
+                }
+            });
+        
+        // Also load teachers
+        loadTeachers(institutionId);
+    }
+}
+
+/**
+ * Load sections by class (admin version)
+ */
+function loadSections(classId) {
+    if (classId) {
+        fetch(`/admin/students/sections/${classId}`)
+            .then(response => response.json())
+            .then(data => {
+                const sectionSelect = document.getElementById('section_id');
+                if (sectionSelect) {
+                    sectionSelect.innerHTML = '<option value="">Section</option>';
+                    data.sections.forEach(section => {
+                        sectionSelect.innerHTML += `<option value="${section.id}">${section.name}</option>`;
+                    });
+                }
+            });
+    }
+}
+
+/**
+ * Load teachers by institution (admin version)
+ */
+function loadTeachers(institutionId) {
+    if (institutionId) {
+        fetch(`/admin/students/teachers/${institutionId}`)
+            .then(response => response.json())
+            .then(data => {
+                const teacherSelect = document.getElementById('teacher_id');
+                if (teacherSelect) {
+                    teacherSelect.innerHTML = '<option value="">Select Teacher</option>';
+                    data.teachers.forEach(teacher => {
+                        teacherSelect.innerHTML += `<option value="${teacher.id}">${teacher.first_name} ${teacher.last_name}</option>`;
+                    });
+                }
+            });
     }
 }

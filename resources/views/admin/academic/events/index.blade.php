@@ -407,6 +407,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/events.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/events.js') }}"></script>
 @endpush
 

@@ -4,7 +4,7 @@
          <div class="d-flex align-items-center gap-2">
 
              <!-- Logo -->
-             <a href="index.html" class="logo">
+             <a href="{{ route('admin.dashboard') }}" class="logo">
 
                  <!-- Logo Normal -->
                  <span class="logo-light">
@@ -107,7 +107,7 @@
              <!-- Calendar -->
              <div class="header-item">
                  <div class="me-2">
-                     <a href="report-calendar.html" class="btn topbar-link"><i
+                     <a href="{{ route('admin.events.index') }}" class="btn topbar-link"><i
                              class="ti ti-calendar-star fs-16"></i></a>
                  </div>
              </div>

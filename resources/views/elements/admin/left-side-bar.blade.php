@@ -9,17 +9,17 @@
     <div class="sidebar-logo">
         <div>
             <!-- Logo Normal -->
-            <a href="index.html" class="logo logo-normal">
+            <a href="{{ route('admin.dashboard') }}" class="logo logo-normal">
                 <img src="{{ asset('/adminpanel/img/logo.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Small -->
-            <a href="index.html" class="logo-small">
+            <a href="{{ route('admin.dashboard') }}" class="logo-small">
                 <img src="{{ asset('/adminpanel/img/logo-small.png') }}" alt="Logo">
             </a>
 
             <!-- Logo Dark -->
-            <a href="index.html" class="dark-logo">
+            <a href="{{ route('admin.dashboard') }}" class="dark-logo">
                 <img src="{{ asset('/adminpanel/img/logo-white.svg') }}" alt="Logo">
             </a>
         </div>
@@ -38,7 +38,6 @@
     <div class="sidebar-inner" data-simplebar>
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
-                <li class="menu-title"><span>Main Menu</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
@@ -89,7 +88,6 @@
                         </li> -->
                     </ul>
                 </li>
-                <li class="menu-title"><span>Administration</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
@@ -128,7 +126,6 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Academics</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
@@ -179,7 +176,6 @@
                 </li>
 
                 <!-- <li class="menu-title"><span>Room Management</span></li> -->
-                <li class="menu-title"><span>Communication</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
@@ -198,7 +194,6 @@
                     </ul>
                 </li>
                 
-                <li class="menu-title"><span>Exam Management</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
@@ -221,11 +216,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Routine</span></li>
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.routines*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.routines*') || request()->routeIs('admin.lesson-plans*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Routine</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -235,11 +229,15 @@
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('admin.lesson-plans*') ? 'active' : '' }}" href="{{ route('admin.lesson-plans.index') }}">
+                                        <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="menu-title"><span>Settings</span></li>
                 <li>
                     <ul>
                         <li class="">
@@ -476,7 +474,7 @@
         <div class="sidebar-footer">
             <div class="bg-light p-2 rounded d-flex align-items-center">
                 <a href="#" class="avatar avatar-md me-2"><img
-                        src="{{ $admin->logo ?? '' }}" alt=""></a>
+                        src="{{ $admin->logo ? asset($admin->logo) : '' }}" alt=""></a>
                 <div>
                     <h6 class="fs-14 fw-semibold mb-1"><a href="#">{{ $admin->name }}</a></h6>
                     <p class="fs-13 mb-0"><a href="mailto:{{ $admin->email }}"

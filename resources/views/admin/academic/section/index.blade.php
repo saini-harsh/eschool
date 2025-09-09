@@ -293,5 +293,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('custom/js/sections.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/sections.js') }}"></script>
 @endpush
