@@ -1,24 +1,26 @@
 <?php
 
+use App\Models\Exam;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Admin\Administration\StudentController;
-use App\Http\Controllers\Admin\Administration\TeacherController;
-use App\Http\Controllers\Admin\Administration\AttendanceController;
-use App\Http\Controllers\Admin\Administration\InstitutionController;
-use App\Http\Controllers\Admin\Administration\NonWorkingStaffController;
+use App\Http\Controllers\Admin\Academic\EventController;
+use App\Http\Controllers\Admin\Routine\RoutineController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
-use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
-use App\Http\Controllers\Admin\Academic\SchoolClassController;
-use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
-use App\Http\Controllers\Admin\Academic\EventController;
-use App\Http\Controllers\Admin\Academic\CalendarController;
-use App\Http\Controllers\Admin\Communication\EmailSmsController;
-use App\Http\Controllers\Admin\Routine\RoutineController;
-use App\Http\Controllers\Admin\Routine\LessonPlanController;
 use App\Http\Controllers\Admin\Setting\SettingsController;
+use App\Http\Controllers\Admin\Academic\CalendarController;
+use App\Http\Controllers\Admin\Routine\LessonPlanController;
+use App\Http\Controllers\Admin\Academic\SchoolClassController;
+use App\Http\Controllers\Admin\Administration\StudentController;
+use App\Http\Controllers\Admin\Administration\TeacherController;
+use App\Http\Controllers\Admin\Communication\EmailSmsController;
+use App\Http\Controllers\Admin\ExamManagement\ExamTypeController;
+use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
+use App\Http\Controllers\Admin\Administration\AttendanceController;
+use App\Http\Controllers\Admin\Administration\InstitutionController;
+use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
+use App\Http\Controllers\Admin\Administration\NonWorkingStaffController;
 
 Route::get('/', function () {
     return view('frontend.index');
@@ -146,6 +148,13 @@ Route::middleware('admin')->group(function () {
             // Route::post('/{id}/status', [ClassRoomController::class, 'updateStatus'])->name('admin.rooms.status');
         });
 
+        // EXAM MANAGEMENT
+        Route::prefix('exam-management')->group(function () {
+            // Future exam management routes can be added here
+            Route::get('/exam-type',[ExamTypeController::class,'index'])->name('admin.exam-management.exam-type');
+            Route::post('/exam-type/store',[ExamTypeController::class,'store'])->name('admin.exam-management.exam-type.store');
+        });
+
         // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {
             Route::get('/', [CalendarController::class, 'index'])->name('admin.academic.calendar.index');
@@ -201,15 +210,15 @@ Route::middleware('admin')->group(function () {
             Route::get('/report', [RoutineController::class, 'getRoutineReport'])->name('admin.routines.report');
             Route::post('/{id}/status', [RoutineController::class, 'updateStatus'])->name('admin.routines.status');
             Route::delete('/{id}', [RoutineController::class, 'destroy'])->name('admin.routines.destroy');
-            
+
             // API routes for dynamic dropdowns
             Route::get('/classes/{institutionId}', [RoutineController::class, 'getClassesByInstitution'])->name('admin.routines.classes');
             Route::get('/sections/{classId}', [RoutineController::class, 'getSectionsByClass'])->name('admin.routines.sections');
             Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('admin.routines.subjects');
             Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('admin.routines.teachers');
-            
-            
-            
+
+
+
         });
             // LESSON PLANS
             Route::prefix('lesson-plans')->group(function () {
@@ -220,7 +229,7 @@ Route::middleware('admin')->group(function () {
                 Route::delete('/{id}', [LessonPlanController::class, 'destroy'])->name('admin.lesson-plans.destroy');
                 Route::post('/{id}/status', [LessonPlanController::class, 'updateStatus'])->name('admin.lesson-plans.status');
                 Route::get('/{id}/download', [LessonPlanController::class, 'download'])->name('admin.lesson-plans.download');
-                
+
                 // API routes for dynamic dropdowns
                 Route::get('/teachers/{institutionId}', [LessonPlanController::class, 'getTeachersByInstitution'])->name('admin.lesson-plans.teachers');
                 Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('admin.lesson-plans.classes');
@@ -232,6 +241,6 @@ Route::middleware('admin')->group(function () {
 
 
 
-require_once __DIR__ . '/institution.php';
+// require_once __DIR__ . '/institution.php';
 require_once __DIR__ . '/teacher.php';
 require_once __DIR__ . '/student.php';

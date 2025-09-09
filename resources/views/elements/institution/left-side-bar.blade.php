@@ -85,12 +85,12 @@
                                         <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                                     </a>
                                 </li>
-                                
+
                             </ul>
                         </li>
                     </ul>
                 </li>
-                 <li>
+                 {{-- <li>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);" class="{{ request()->routeIs('institution.email-sms*') ? 'active subdrop' : '' }}">
@@ -106,7 +106,7 @@
                             </ul>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 <li>
                     <ul>
                         <li class="submenu">
@@ -115,7 +115,7 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                
+
                             <li class="">
                                 <a class="{{ request()->routeIs('institution.classes*') ? 'active' : '' }}" href="{{ route('institution.classes.index')}}">
                                     <i class="ti ti-report"></i><span>Class</span>
@@ -150,7 +150,7 @@
                         </li>
                     </ul>
                 </li>
-              
+
             </ul>
         </div>
         <div class="sidebar-footer">

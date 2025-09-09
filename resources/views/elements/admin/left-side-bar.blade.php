@@ -96,7 +96,7 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                
+
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.institutions*') ? 'active' : '' }}" href="{{ route('admin.institutions.index') }}">
                                         <i class="ti ti-building-community"></i><span>Insitutions</span>
@@ -134,7 +134,7 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                
+
                             <li class="">
                                 <a class="{{ request()->routeIs('admin.classes*') ? 'active' : '' }}" href="{{ route('admin.classes.index')}}">
                                     <i class="ti ti-report"></i><span>Class</span>
@@ -193,15 +193,25 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.rooms*') || request()->routeIs('admin.invigilators*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.rooms*') || request()->routeIs('admin.invigilators*') || request()->routeIs('admin.exam-management*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Exam Management</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('admin.exam-management*') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-type') }}">
+                                        <i class="ti ti-home"></i><span>Exam Type</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-home"></i><span>Exam Setup</span>
+                                    </a>
+                                </li>
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.rooms*') ? 'active' : '' }}" href="{{ route('admin.rooms.index') }}">
                                         <i class="ti ti-home"></i><span>Class Rooms</span>
