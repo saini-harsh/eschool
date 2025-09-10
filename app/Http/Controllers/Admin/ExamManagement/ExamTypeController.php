@@ -43,4 +43,25 @@ class ExamTypeController extends Controller
 
         return response()->json(['success' => 'Exam Type created successfully.']);
     }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer|exists:exam_types,id',
+            'institution_id' => 'required|integer|min:1',
+            'title' => 'required|string|max:255',
+            'code' => 'required|string|max:55|unique:exam_types,code,' . $request->id,
+            'status' => 'required|boolean',
+        ]);
+
+        $examType = ExamType::findOrFail($request->id);
+        $examType->institution_id = $request->institution_id;
+        $examType->title = $request->title;
+        $examType->code = $request->code;
+        $examType->description = $request->description;
+        $examType->status = $request->status;
+        $examType->save();
+
+        return response()->json(['success' => 'Exam Type updated successfully.']);
+    }
 }

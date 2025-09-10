@@ -8,16 +8,17 @@ use App\Http\Controllers\Admin\Academic\EventController;
 use App\Http\Controllers\Admin\Routine\RoutineController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
-use App\Http\Controllers\Admin\Academic\AssignSubjectController;
 use App\Http\Controllers\Admin\Setting\SettingsController;
 use App\Http\Controllers\Admin\Academic\CalendarController;
 use App\Http\Controllers\Admin\Routine\LessonPlanController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
+use App\Http\Controllers\Admin\Academic\AssignSubjectController;
 use App\Http\Controllers\Admin\Administration\StudentController;
 use App\Http\Controllers\Admin\Administration\TeacherController;
 use App\Http\Controllers\Admin\Communication\EmailSmsController;
 use App\Http\Controllers\Admin\ExamManagement\ExamTypeController;
 use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
+use App\Http\Controllers\Admin\ExamManagement\ExamSetupController;
 use App\Http\Controllers\Admin\Administration\AttendanceController;
 use App\Http\Controllers\Admin\Administration\InstitutionController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
@@ -127,7 +128,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
             Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
             Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
-            
+
             // AJAX routes for dynamic dropdowns
             Route::get('/classes/{institutionId}', [SubjectController::class, 'getClassesByInstitution'])->name('admin.subjects.classes');
         });
@@ -157,13 +158,13 @@ Route::middleware('admin')->group(function () {
             Route::get('/', [AssignSubjectController::class, 'index'])->name('admin.assign-subject.index');
             Route::post('/', [AssignSubjectController::class, 'store'])->name('admin.assign-subject.store');
             Route::get('/list', [AssignSubjectController::class, 'getAssignments'])->name('admin.assign-subject.list');
-            
+
             // AJAX routes for dynamic dropdowns (must come before parameterized routes)
             Route::get('/classes/{institutionId}', [AssignSubjectController::class, 'getClassesByInstitution']);
             Route::get('/teachers/{institutionId}', [AssignSubjectController::class, 'getTeachersByInstitution']);
             Route::get('/subjects/{institutionId}/{classId}', [AssignSubjectController::class, 'getSubjectsByInstitutionClass']);
             Route::get('/sections/{classId}', [AssignSubjectController::class, 'getSectionsByClass']);
-            
+
             // Parameterized routes (must come after specific routes)
             Route::get('/{id}/edit', [AssignSubjectController::class, 'edit'])->name('admin.assign-subject.edit');
             Route::post('/{id}', [AssignSubjectController::class, 'update'])->name('admin.assign-subject.update');
@@ -187,6 +188,10 @@ Route::middleware('admin')->group(function () {
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('admin.exam-management.exam-type');
             Route::post('/exam-type/store',[ExamTypeController::class,'store'])->name('admin.exam-management.exam-type.store');
+            Route::post('/exam-type/update',[ExamTypeController::class,'update'])->name('admin.exam-management.exam-type.update');
+
+            Route::get('/exam-setup',[ExamSetupController::class,'index'])->name('admin.exam-management.exam-setup');
+
         });
 
         // Academic Calendar Routes

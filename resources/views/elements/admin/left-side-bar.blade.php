@@ -203,12 +203,12 @@
                             </a>
                             <ul>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.exam-management*') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-type') }}">
+                                    <a class="{{ request()->routeIs('admin.exam-management.exam-type') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-type') }}">
                                         <i class="ti ti-home"></i><span>Exam Type</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="">
+                                    <a class="{{ request()->routeIs('admin.exam-management.exam-setup') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-setup') }}">
                                         <i class="ti ti-home"></i><span>Exam Setup</span>
                                     </a>
                                 </li>

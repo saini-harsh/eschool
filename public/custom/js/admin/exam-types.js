@@ -28,8 +28,8 @@ $(document).ready(function () {
         let formData = form.serialize();
 
         $.ajax({
-            url: '/admin/exam-types/' + id, // Update this to your actual route
-            type: 'PUT',
+            url: '/admin/exam-management/exam-type/update', // Update this to your actual route
+            type: 'POST',
             data: formData,
             success: function (response) {
                 location.reload();
@@ -40,5 +40,38 @@ $(document).ready(function () {
         });
     });
 
-    // Optional: Handle Edit and Cancel buttons here
+    // Handle Edit Exam Type
+    $('.edit-exam-type').on('click', function () {
+        let row = $(this).closest('tr');
+        let id = row.data('exam-type-id');
+        let code = row.find('td:eq(0) h6').text().trim();
+        let title = row.find('td:eq(1) h6').text().trim();
+        let institutionName = row.find('td:eq(2)').text().trim();
+        let description = row.find('td:eq(3)').text().trim();
+        let status = row.find('.exam-type-status-select').val();
+
+        // Set form values
+        $('#exam-type-id').val(id);
+        $('#code').val(code);
+        $('#title').val(title);
+        $('#description').val(description === 'N/A' ? '' : description);
+        $('#institution_id option').filter(function() {
+            return $(this).text().trim() === institutionName;
+        }).prop('selected', true);
+        $('#exam-type-status').prop('checked', status == 1);
+
+        // Switch buttons
+        $('#add-exam-type').addClass('d-none');
+        $('#update-exam-type').removeClass('d-none');
+        $('#cancel-edit').removeClass('d-none');
+    });
+
+    // Handle Cancel Edit
+    $('#cancel-edit').on('click', function () {
+        $('#exam-type-form')[0].reset();
+        $('#exam-type-id').val('');
+        $('#add-exam-type').removeClass('d-none');
+        $('#update-exam-type').addClass('d-none');
+        $('#cancel-edit').addClass('d-none');
+    });
 });
