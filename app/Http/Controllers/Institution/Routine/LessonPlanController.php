@@ -34,7 +34,7 @@ class LessonPlanController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        // Only show current institution
+        // Show only the currently logged-in institution
         $institutions = collect([$currentInstitution]);
         
         return view('institution.routines.lesson-plans.index', compact('lessonPlans', 'institutions'));

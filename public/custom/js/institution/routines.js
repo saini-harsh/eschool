@@ -19,8 +19,7 @@ $(document).ready(function() {
         }
     });
 
-    // Load current institution on page load
-    loadCurrentInstitution();
+    // No auto-loading - user must select institution manually
 
     // Institution change handler - unbind existing events first
     $('#institution_id').off('change.routines').on('change.routines', function() {
@@ -489,23 +488,4 @@ $(document).ready(function() {
         }, 5000);
     }
 
-    /**
-     * Load current institution and auto-select it
-     */
-    function loadCurrentInstitution() {
-        // Get current institution from the page (it should be set by the controller)
-        const institutionSelect = $('#institution_id');
-        if (institutionSelect.length > 0) {
-            // If there's only one option (current institution), auto-select it
-            const options = institutionSelect.find('option');
-            if (options.length === 2) { // One default + one institution
-                const institutionOption = options.eq(1);
-                institutionSelect.val(institutionOption.val());
-                currentInstitutionId = institutionOption.val();
-                
-                // Trigger change event to load classes and teachers
-                institutionSelect.trigger('change');
-            }
-        }
-    }
 });

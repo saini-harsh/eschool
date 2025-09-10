@@ -108,7 +108,7 @@ class RoutineController extends Controller
                 'end_time' => $request->end_time,
                 'is_break' => $request->boolean('is_break'),
                 'is_other_day' => $request->boolean('is_other_day'),
-                'admin_id' => Auth::guard('admin')->id(),
+                'admin_id' => $currentInstitution->admin_id,
             ]);
 
             return response()->json([

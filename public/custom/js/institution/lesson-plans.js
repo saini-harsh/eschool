@@ -47,8 +47,7 @@ function initLessonPlanForm() {
         }
     });
 
-    // Load current institution on page load
-    loadCurrentInstitution();
+    // No auto-selection - user must manually select institution
 
     // Institution change handler
     $('#institution_id').off('change.lessonPlans').on('change.lessonPlans', function(e) {
@@ -149,26 +148,8 @@ function initLessonPlanForm() {
         setupEditForm();
     }
 
-    /**
-     * Load current institution and auto-select it
-     */
-    function loadCurrentInstitution() {
-        // Get current institution from the page (it should be set by the controller)
-        const institutionSelect = $('#institution_id');
-        if (institutionSelect.length > 0) {
-            // If there's only one option (current institution), auto-select it
-            const options = institutionSelect.find('option');
-            if (options.length === 2) { // One default + one institution
-                const institutionOption = options.eq(1);
-                institutionSelect.val(institutionOption.val());
-                currentInstitutionId = institutionOption.val();
-                
-                // Trigger change event to load teachers
-                institutionSelect.trigger('change.lessonPlans');
-            }
-        }
-    }
 }
+
 
 function loadTeachersByInstitution(institutionId) {
     const teacherSelect = $('#teacher_id');
