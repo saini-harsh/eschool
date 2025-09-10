@@ -112,7 +112,21 @@ class AssignClassTeacherController extends Controller
             return response()->json(['success' => false, 'message' => 'Teacher does not belong to your institution'], 422);
         }
 
-        AssignClassTeacher::create([
+        // Check if assignment already exists
+        $existingAssignment = AssignClassTeacher::where('institution_id', $currentInstitution->id)
+            ->where('class_id', $request->class_id)
+            ->where('section_id', $request->section_id)
+            ->where('teacher_id', $request->teacher_id)
+            ->first();
+
+        if ($existingAssignment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This teacher assignment already exists for the selected class and section.'
+            ], 422);
+        }
+
+        $assignClassTeacher = AssignClassTeacher::create([
             'institution_id' => $currentInstitution->id, // Force current institution
             'class_id' => $request->class_id,
             'section_id' => $request->section_id,
@@ -120,6 +134,165 @@ class AssignClassTeacherController extends Controller
             'status' => $request->status ? 1 : 0,
         ]);
 
-        return response()->json(['success' => true]);
+        // Load relationships for response
+        $assignClassTeacher->load(['institution', 'class', 'section', 'teacher']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Class teacher assigned successfully!',
+            'data' => $assignClassTeacher
+        ]);
+    }
+
+    public function edit($id)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            $assignClassTeacher = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
+                ->where('institution_id', $currentInstitution->id)
+                ->findOrFail($id);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $assignClassTeacher
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assignment not found'
+            ], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            $request->validate([
+                'class_id' => 'required|exists:classes,id',
+                'section_id' => 'required|exists:sections,id',
+                'teacher_id' => 'required|exists:teachers,id',
+                'status' => 'nullable|boolean',
+            ]);
+
+            $assignClassTeacher = AssignClassTeacher::where('institution_id', $currentInstitution->id)
+                ->findOrFail($id);
+
+            // Validate that class, teacher belong to current institution
+            $class = SchoolClass::where('id', $request->class_id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
+            if (!$class) {
+                return response()->json(['success' => false, 'message' => 'Class does not belong to your institution'], 422);
+            }
+
+            $teacher = Teacher::where('id', $request->teacher_id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
+            if (!$teacher) {
+                return response()->json(['success' => false, 'message' => 'Teacher does not belong to your institution'], 422);
+            }
+
+            // Check if assignment already exists (excluding current record)
+            $existingAssignment = AssignClassTeacher::where('institution_id', $currentInstitution->id)
+                ->where('class_id', $request->class_id)
+                ->where('section_id', $request->section_id)
+                ->where('teacher_id', $request->teacher_id)
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($existingAssignment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This teacher assignment already exists for the selected class and section.'
+                ], 422);
+            }
+
+            $assignClassTeacher->update([
+                'class_id' => $request->class_id,
+                'section_id' => $request->section_id,
+                'teacher_id' => $request->teacher_id,
+                'status' => $request->status ? 1 : 0,
+            ]);
+
+            // Load relationships for response
+            $assignClassTeacher->load(['institution', 'class', 'section', 'teacher']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Class teacher assignment updated successfully!',
+                'data' => $assignClassTeacher
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating assignment'
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            $assignClassTeacher = AssignClassTeacher::where('institution_id', $currentInstitution->id)
+                ->findOrFail($id);
+            $assignClassTeacher->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Class teacher assignment deleted successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting assignment'
+            ], 500);
+        }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            $assignClassTeacher = AssignClassTeacher::where('institution_id', $currentInstitution->id)
+                ->findOrFail($id);
+            $assignClassTeacher->update(['status' => $request->status ? 1 : 0]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating status'
+            ], 500);
+        }
+    }
+
+    public function getAssignments()
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            $assignments = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
+                ->where('institution_id', $currentInstitution->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return response()->json([
+                'success' => true,
+                'data' => $assignments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching assignments'
+            ], 500);
+        }
     }
 }

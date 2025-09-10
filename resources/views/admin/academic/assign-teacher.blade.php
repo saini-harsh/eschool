@@ -41,11 +41,12 @@
                     <div class="card-body">
                         <form action="" method="post" id="assign-teacher-form">
                             @csrf
+                            <input type="hidden" name="id" id="assign-teacher-id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Institutions</label>
-                                        <select class="form-select" name="institution_id">
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
                                             <option value="">Select Institution</option>
                                             @if (isset($institutions) && !empty($institutions))
                                                 @foreach ($institutions as $institution)
@@ -58,7 +59,7 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Class</label>
-                                        <select class="form-select" name="class_id">
+                                        <select class="form-select" name="class_id" id="class_id" disabled required>
                                             <option value="">Select Class</option>
                                         </select>
                                     </div>
@@ -66,7 +67,7 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Section</label>
-                                        <select class="form-select" name="section_id">
+                                        <select class="form-select" name="section_id" id="section_id" disabled required>
                                             <option value="">Select Section</option>
                                         </select>
                                     </div>
@@ -74,7 +75,7 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Teacher</label>
-                                        <select class="form-select" name="teacher_id">
+                                        <select class="form-select" name="teacher_id" id="teacher_id" disabled required>
                                             <option value="">Select Teacher</option>
                                         </select>
                                     </div>
@@ -91,7 +92,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" type="button" id="assign-teacher">Submit</button>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" type="button" id="assign-teacher">Submit</button>
+                                <button class="btn btn-success d-none" type="button" id="update-assign-teacher">Update</button>
+                                <button class="btn btn-secondary d-none" type="button" id="cancel-edit">Cancel</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -264,22 +269,21 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="select">
-                                                    <option value="1" {{ $list->status == 1 ? 'active' : '' }}>Active
+                                                <select class="select status-toggle" data-assignment-id="{{ $list->id }}">
+                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active
                                                     </option>
-                                                    <option value="0" {{ $list->status == 2 ? 'active' : '' }}>
+                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>
                                                         Inactive</option>
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
-                                                <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject"><i
+                                                <a href="javascript:void(0);" data-assignment-id="{{ $list->id }}"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-teacher"><i
                                                         class="ti ti-edit"></i></a>
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
+                                                <a href="javascript:void(0);" data-assignment-id="{{ $list->id }}"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-teacher"><i
                                                         class="ti ti-trash"></i></a>
                                             </div>
                                         </td>

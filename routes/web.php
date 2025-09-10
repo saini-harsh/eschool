@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Academic\EventController;
 use App\Http\Controllers\Admin\Routine\RoutineController;
 use App\Http\Controllers\Admin\Academic\SectionController;
 use App\Http\Controllers\Admin\Academic\SubjectController;
+use App\Http\Controllers\Admin\Academic\AssignSubjectController;
 use App\Http\Controllers\Admin\Setting\SettingsController;
 use App\Http\Controllers\Admin\Academic\CalendarController;
 use App\Http\Controllers\Admin\Routine\LessonPlanController;
@@ -126,15 +127,48 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
             Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
             Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
+            
+            // AJAX routes for dynamic dropdowns
+            Route::get('/classes/{institutionId}', [SubjectController::class, 'getClassesByInstitution'])->name('admin.subjects.classes');
         });
 
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
-            Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
-            Route::get('/classes-by-institution/{id}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
-            Route::get('/teachers-by-institution/{id}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
-            Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
-            Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
+            Route::prefix('assign-class-teacher')->group(function () {
+                Route::get('/', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
+                Route::post('/', [AssignClassTeacherController::class, 'store'])->name('admin.assign-class-teacher.store');
+                Route::get('/list', [AssignClassTeacherController::class, 'getAssignments'])->name('admin.assign-class-teacher.list');
+
+                // AJAX routes for dynamic dropdowns (must come before parameterized routes)
+                Route::get('/classes/{institutionId}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
+                Route::get('/teachers/{institutionId}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
+                Route::get('/sections/{classId}', [AssignClassTeacherController::class, 'getSectionsByClass']);
+
+                // Parameterized routes (must come after specific routes)
+                Route::get('/{id}/edit', [AssignClassTeacherController::class, 'edit'])->name('admin.assign-class-teacher.edit');
+                Route::post('/{id}', [AssignClassTeacherController::class, 'update'])->name('admin.assign-class-teacher.update');
+                Route::delete('/{id}', [AssignClassTeacherController::class, 'destroy'])->name('admin.assign-class-teacher.destroy');
+                Route::post('/{id}/status', [AssignClassTeacherController::class, 'updateStatus'])->name('admin.assign-class-teacher.status');
+            });
+        });
+
+        // ASSIGN SUBJECT
+        Route::prefix('assign-subject')->group(function () {
+            Route::get('/', [AssignSubjectController::class, 'index'])->name('admin.assign-subject.index');
+            Route::post('/', [AssignSubjectController::class, 'store'])->name('admin.assign-subject.store');
+            Route::get('/list', [AssignSubjectController::class, 'getAssignments'])->name('admin.assign-subject.list');
+            
+            // AJAX routes for dynamic dropdowns (must come before parameterized routes)
+            Route::get('/classes/{institutionId}', [AssignSubjectController::class, 'getClassesByInstitution']);
+            Route::get('/teachers/{institutionId}', [AssignSubjectController::class, 'getTeachersByInstitution']);
+            Route::get('/subjects/{institutionId}/{classId}', [AssignSubjectController::class, 'getSubjectsByInstitutionClass']);
+            Route::get('/sections/{classId}', [AssignSubjectController::class, 'getSectionsByClass']);
+            
+            // Parameterized routes (must come after specific routes)
+            Route::get('/{id}/edit', [AssignSubjectController::class, 'edit'])->name('admin.assign-subject.edit');
+            Route::post('/{id}', [AssignSubjectController::class, 'update'])->name('admin.assign-subject.update');
+            Route::delete('/{id}', [AssignSubjectController::class, 'destroy'])->name('admin.assign-subject.destroy');
+            Route::post('/{id}/status', [AssignSubjectController::class, 'updateStatus'])->name('admin.assign-subject.status');
         });
 
         // Class Room Routes

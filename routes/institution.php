@@ -10,6 +10,7 @@ use App\Http\Controllers\Institution\Academic\SchoolClassController;
 use App\Http\Controllers\Institution\Academic\SectionController;
 use App\Http\Controllers\Institution\Academic\SubjectController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
+use App\Http\Controllers\Institution\Academic\AssignSubjectController;
 use App\Http\Controllers\Institution\Academic\CalendarController;
 use App\Http\Controllers\Institution\Academic\EventController;
 use App\Http\Controllers\Institution\Communication\EmailSmsController;
@@ -95,12 +96,25 @@ Route::middleware('institution')->group(function () {
 
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
-            Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('institution.academic.assign-teacher.index');
-            Route::get('/classes-by-institution/{id}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
-            Route::get('/teachers-by-institution/{id}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
-            Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
-            Route::post('/assign-class-teacher', [AssignClassTeacherController::class, 'store'])->name('assign-class-teacher.store');
+            Route::prefix('assign-class-teacher')->group(function () {
+                Route::get('/', [AssignClassTeacherController::class, 'index'])->name('institution.academic.assign-teacher.index');
+                Route::post('/', [AssignClassTeacherController::class, 'store'])->name('institution.assign-class-teacher.store');
+                Route::get('/list', [AssignClassTeacherController::class, 'getAssignments'])->name('institution.assign-class-teacher.list');
+
+                // AJAX routes for dynamic dropdowns (must come before parameterized routes)
+                Route::get('/classes/{institutionId}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
+                Route::get('/teachers/{institutionId}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
+                Route::get('/sections/{classId}', [AssignClassTeacherController::class, 'getSectionsByClass']);
+
+                // Parameterized routes (must come after specific routes)
+                Route::get('/{id}/edit', [AssignClassTeacherController::class, 'edit'])->name('institution.assign-class-teacher.edit');
+                Route::post('/{id}', [AssignClassTeacherController::class, 'update'])->name('institution.assign-class-teacher.update');
+                Route::delete('/{id}', [AssignClassTeacherController::class, 'destroy'])->name('institution.assign-class-teacher.destroy');
+                Route::post('/{id}/status', [AssignClassTeacherController::class, 'updateStatus'])->name('institution.assign-class-teacher.status');
+            });
         });
+
+        
 
         // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {

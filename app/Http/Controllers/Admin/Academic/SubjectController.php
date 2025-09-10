@@ -20,8 +20,8 @@ class SubjectController extends Controller
     {
         // Logic to retrieve and display subjects
         $lists = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
-        $institutions = Institution::all();
-        $classes = SchoolClass::where('status', 1)->get(); // Get only active classes
+        $institutions = Institution::where('status', 1)->get();
+        $classes = collect(); // Empty collection - classes will be loaded via AJAX
         
         return view('admin.academic.subject.index', compact('lists', 'institutions', 'classes'));
     }
@@ -180,6 +180,22 @@ class SubjectController extends Controller
                 'success' => false,
                 'message' => 'Error deleting subject'
             ], 500);
+        }
+    }
+
+    /**
+     * Get classes by institution (AJAX)
+     */
+    public function getClassesByInstitution($institutionId)
+    {
+        try {
+            $classes = SchoolClass::where('institution_id', $institutionId)
+                ->where('status', 1)
+                ->get(['id', 'name']);
+
+            return response()->json(['classes' => $classes]);
+        } catch (\Exception $e) {
+            return response()->json(['classes' => []]);
         }
     }
 }

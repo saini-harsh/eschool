@@ -1,5 +1,5 @@
-@extends('layouts.institution')
-@section('title', 'Admin | Assign Class Teacher Management')
+@extends('layouts.admin')
+@section('title', 'Admin | Assign Subject Management')
 @section('content')
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -21,12 +21,12 @@
         <!-- Page Header -->
         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
             <div class="flex-grow-1">
-                <h5 class="fw-bold">Assign Class Teacher</h5>
+                <h5 class="fw-bold">Assign Subject</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('institution.dashboard') }}"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="index.html"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Assign Class Teacher</li>
+                        <li class="breadcrumb-item active" aria-current="page">Assign Subject</li>
                     </ol>
                 </nav>
             </div>
@@ -36,46 +36,54 @@
             <div class="col-3">
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="fw-bold">Assign Class Teacher</h6>
+                        <h6 class="fw-bold">Assign Subject</h6>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post" id="assign-teacher-form">
+                        <form action="" method="post" id="assign-subject-form">
                             @csrf
-                            <input type="hidden" name="id" id="assign-teacher-id">
+                            <input type="hidden" name="id" id="assign-subject-id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Institution</label>
-                                        <select class="form-select" name="institution_id" id="institution_id" readonly disabled>
+                                        <label class="form-label">Institution <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
+                                            <option value="">Select Institution</option>
                                             @if (isset($institutions) && !empty($institutions))
                                                 @foreach ($institutions as $institution)
-                                                    <option value="{{ $institution->id }}" selected>{{ $institution->name }}</option>
+                                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
                                                 @endforeach
                                             @endif
                                         </select>
-                                        <input type="hidden" name="institution_id" value="{{ $institutions->first()->id ?? '' }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Class</label>
-                                        <select class="form-select" name="class_id" id="class_id" disabled required>
+                                        <label class="form-label">Class <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="class_id" id="class_id" required disabled>
                                             <option value="">Select Class</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Section</label>
-                                        <select class="form-select" name="section_id" id="section_id" disabled required>
+                                        <label class="form-label">Section <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="section_id" id="section_id" required disabled>
                                             <option value="">Select Section</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Teacher</label>
-                                        <select class="form-select" name="teacher_id" id="teacher_id" disabled required>
+                                        <label class="form-label">Subject <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="subject_id" id="subject_id" required disabled>
+                                            <option value="">Select Subject</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Teacher <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="teacher_id" id="teacher_id" required disabled>
                                             <option value="">Select Teacher</option>
                                         </select>
                                     </div>
@@ -84,19 +92,17 @@
                                     <div class="mb-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="status" value="1"
-                                                id="subject-status" checked>
-                                            <label class="form-check-label" for="subject-status">
+                                                id="assign-subject-status" checked>
+                                            <label class="form-check-label" for="assign-subject-status">
                                                 Active
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary" type="button" id="assign-teacher">Submit</button>
-                                <button class="btn btn-success d-none" type="button" id="update-assign-teacher">Update</button>
-                                <button class="btn btn-secondary d-none" type="button" id="cancel-edit">Cancel</button>
-                            </div>
+                            <button class="btn btn-primary" type="button" id="add-assign-subject">Submit</button>
+                            <button class="btn btn-primary d-none" type="button" id="update-assign-subject">Update</button>
+                            <button class="btn btn-secondary d-none" type="button" id="cancel-edit">Cancel</button>
                         </form>
                     </div>
                 </div>
@@ -129,7 +135,7 @@
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Name</label>
+                                                    <label class="form-label">Institution</label>
                                                     <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
@@ -225,12 +231,13 @@
 
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
-                        <thead class="thead-ight">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Teacher</th>
                                 <th>Institution</th>
                                 <th>Class</th>
                                 <th>Section</th>
+                                <th>Subject</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
@@ -238,53 +245,66 @@
                         <tbody>
                             @if (isset($lists) && !empty($lists))
                                 @foreach ($lists as $list)
-                                    <tr>
+                                    <tr data-assign-subject-id="{{ $list->id }}">
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->teacher->first_name .' '. $list->teacher->last_name }}</h6>
+                                                    <h6 class="fs-14 mb-0">
+                                                        {{ $list->teacher->first_name ?? '' }} 
+                                                        {{ $list->teacher->middle_name ?? '' }} 
+                                                        {{ $list->teacher->last_name ?? '' }}
+                                                    </h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->institution->name }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ $list->institution->name ?? 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ ucfirst($list->class->name) }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ $list->schoolClass->name ?? 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->section->name }}</h6>
+                                                    <h6 class="fs-14 mb-0">{{ $list->section->name ?? 'N/A' }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="ms-2">
+                                                    <h6 class="fs-14 mb-0">{{ $list->subject->name ?? 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="select status-toggle" data-assignment-id="{{ $list->id }}">
-                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active
-                                                    </option>
-                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>
-                                                        Inactive</option>
+                                                <select class="form-select status-select assign-subject-status-select" data-assign-subject-id="{{ $list->id }}" data-original-value="{{ $list->status }}">
+                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
+                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
-                                                <a href="javascript:void(0);" data-assignment-id="{{ $list->id }}"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-teacher"><i
-                                                        class="ti ti-edit"></i></a>
-                                                <a href="javascript:void(0);" data-assignment-id="{{ $list->id }}"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-teacher"><i
-                                                        class="ti ti-trash"></i></a>
+                                                <a href="javascript:void(0);" data-assign-subject-id="{{ $list->id }}"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-subject">
+                                                    <i class="ti ti-edit"></i>
+                                                </a>
+                                                <a href="javascript:void(0);" data-assign-subject-id="{{ $list->id }}"
+                                                    data-teacher-name="{{ $list->teacher->first_name ?? '' }} {{ $list->teacher->last_name ?? '' }}"
+                                                    data-subject-name="{{ $list->subject->name ?? '' }}"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-subject">
+                                                    <i class="ti ti-trash"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
@@ -299,8 +319,31 @@
     </div>
 
     <!-- End Content -->
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Subject Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Delete Subject Assignment</h6>
+                    <p>Are you sure you want to delete this subject assignment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/institution/assign-teacher.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/assign-subject.js') }}"></script>
 @endpush

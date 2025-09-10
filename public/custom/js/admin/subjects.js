@@ -6,6 +6,9 @@ $(document).ready(function () {
         
         // Add event listeners for status changes on page load
         addStatusChangeListeners();
+        
+        // Initialize institution-class cascading dropdowns
+        initInstitutionClassDropdowns();
     }
 
     // Add subject form submission
@@ -489,3 +492,54 @@ $(document).ready(function () {
     initializeSelect2(); // Initialize Select2 for existing dropdowns
     addStatusChangeListeners(); // Add event listeners for status changes
 });
+
+/**
+ * Initialize institution-class cascading dropdowns
+ */
+function initInstitutionClassDropdowns() {
+    // Institution change handler
+    $('#institution_id').off('change.subjects').on('change.subjects', function() {
+        const institutionId = $(this).val();
+        const classSelect = $('#class_id');
+        
+        // Clear validation errors for institution field
+        $(this).removeClass('is-invalid');
+        $(this).siblings('.invalid-feedback').text('');
+        
+        if (institutionId) {
+            loadClassesByInstitution(institutionId);
+        } else {
+            // Reset class dropdown
+            classSelect.html('<option value="">Select Class</option>').prop('disabled', true);
+        }
+    });
+}
+
+/**
+ * Load classes by institution via AJAX
+ */
+function loadClassesByInstitution(institutionId) {
+    const classSelect = $('#class_id');
+    classSelect.prop('disabled', true).html('<option value="">Loading classes...</option>');
+    
+    $.ajax({
+        url: `/admin/subjects/classes/${institutionId}`,
+        type: 'GET',
+        success: function(response) {
+            let options = '<option value="">Select Class</option>';
+            response.classes.forEach(function(cls) {
+                options += `<option value="${cls.id}">${cls.name}</option>`;
+            });
+            
+            classSelect.html(options).prop('disabled', false);
+            
+            // Clear validation errors for class field
+            classSelect.removeClass('is-invalid');
+            classSelect.siblings('.invalid-feedback').text('');
+        },
+        error: function(xhr, status, error) {
+            classSelect.html('<option value="">Error loading classes</option>').prop('disabled', false);
+            showToast('error', 'Failed to load classes');
+        }
+    });
+}

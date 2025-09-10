@@ -45,8 +45,8 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Institutions</label>
-                                        <select class="form-select" name="institution_id">
+                                        <label class="form-label">Institutions <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
                                             <option value="">Select Institution</option>
                                             @if (isset($institutions) && !empty($institutions))
                                                 @foreach ($institutions as $institution)
@@ -60,7 +60,7 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Class</label>
-                                        <select class="form-select" name="class_id">
+                                        <select class="form-select" name="class_id" id="class_id" disabled>
                                             <option value="">Select Class</option>
                                             @if (isset($classes) && !empty($classes))
                                                 @foreach ($classes as $class)
