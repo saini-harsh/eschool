@@ -90,23 +90,6 @@
                         </li>
                     </ul>
                 </li>
-                 {{-- <li>
-                    <ul>
-                        <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.email-sms*') ? 'active subdrop' : '' }}">
-                                <i class="ti ti-layout-dashboard"></i><span>Communication</span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <ul>
-                                <li class="">
-                                    <a class="{{ request()->routeIs('institution.email-sms*') ? 'active' : '' }}" href="{{ route('institution.email-sms.index') }}">
-                                        <i class="ti ti-menu-2"></i><span>Email / Sms</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li> --}}
                 <li>
                     <ul>
                         <li class="submenu">
@@ -147,6 +130,54 @@
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.email-sms*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-layout-dashboard"></i><span>Communication</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.email-sms*') ? 'active' : '' }}" href="{{ route('institution.email-sms.index') }}">
+                                        <i class="ti ti-menu-2"></i><span>Email / Sms</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.routines*') || request()->routeIs('institution.lesson-plans*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-layout-dashboard"></i><span>Routine</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.routines*') ? 'active' : '' }}" href="{{ route('institution.routines.index') }}">
+                                        <i class="ti ti-calendar-event"></i><span>Class Routine</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.lesson-plans*') ? 'active' : '' }}" href="{{ route('institution.lesson-plans.index') }}">
+                                        <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="">
+                            <a class="{{ request()->routeIs('institution.settings*') ? 'active' : '' }}" href="{{ route('institution.settings.index') }}">
+                                <i class="ti ti-settings"></i><span>Settings</span>
+                            </a>
                         </li>
                     </ul>
                 </li>

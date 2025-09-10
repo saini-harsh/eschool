@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Academic;
+namespace App\Http\Controllers\Institution\Academic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,29 +14,33 @@ class EventController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        $this->middleware('auth:institution');
     }
 
     public function index()
     {
+        $currentInstitution = auth('institution')->user();
+        
         $events = DB::table('academic_events')
             ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
             ->select('academic_events.*', 'institutions.name as institution_name')
             ->where('academic_events.status', 1)
+            ->where('academic_events.institution_id', $currentInstitution->id)
             ->orderBy('academic_events.created_at', 'desc')
             ->get();
 
-        return view('admin.academic.events.index', compact('events'));
+        return view('institution.academic.events.index', compact('events'));
     }
 
     public function store(Request $request)
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'role' => 'required|string|in:teacher,student,nonworkingstaff',
                 'category' => 'required|string|max:100',
-                'institution_id' => 'required|exists:institutions,id',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
@@ -78,7 +82,7 @@ class EventController extends Controller
                 'title' => $request->title,
                 'role' => $request->role,
                 'category' => $request->category,
-                'institution_id' => $request->institution_id,
+                'institution_id' => $currentInstitution->id, // Force current institution
                 'location' => $request->location,
                 'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
                 'start_time' => $request->start_time,
@@ -111,10 +115,13 @@ class EventController extends Controller
     public function getEvents()
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             $events = DB::table('academic_events')
                 ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
                 ->select('academic_events.*', 'institutions.name as institution_name')
                 ->where('academic_events.status', 1)
+                ->where('academic_events.institution_id', $currentInstitution->id)
                 ->orderBy('academic_events.created_at', 'desc')
                 ->get();
 
@@ -133,7 +140,11 @@ class EventController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
-            $event = DB::table('academic_events')->where('id', $id)->first();
+            $currentInstitution = auth('institution')->user();
+            $event = DB::table('academic_events')
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
             
             if (!$event) {
                 return response()->json([
@@ -144,6 +155,7 @@ class EventController extends Controller
 
             DB::table('academic_events')
                 ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
                 ->update(['status' => $request->status]);
 
             return response()->json([
@@ -161,7 +173,11 @@ class EventController extends Controller
     public function edit($id)
     {
         try {
-            $event = DB::table('academic_events')->where('id', $id)->first();
+            $currentInstitution = auth('institution')->user();
+            $event = DB::table('academic_events')
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
             
             if (!$event) {
                 return response()->json([
@@ -185,11 +201,11 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $currentInstitution = auth('institution')->user();
             
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'role' => 'required|string|in:teacher,student,nonworkingstaff',
-                'institution_id' => 'required|exists:institutions,id',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|string',
                 'start_time' => 'nullable|date_format:H:i',
@@ -220,7 +236,10 @@ class EventController extends Controller
                 ], 422);
             }
 
-            $event = DB::table('academic_events')->where('id', $id)->first();
+            $event = DB::table('academic_events')
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
             
             if (!$event) {
                 return response()->json([
@@ -244,10 +263,10 @@ class EventController extends Controller
 
             DB::table('academic_events')
                 ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
                 ->update([
                     'title' => $request->title,
                     'role' => $request->role,
-                    'institution_id' => $request->institution_id,
                     'location' => $request->location,
                     'start_date' => \Carbon\Carbon::createFromFormat('d M, Y', $request->start_date)->format('Y-m-d'),
                     'start_time' => $request->start_time,
@@ -280,7 +299,11 @@ class EventController extends Controller
     public function delete($id)
     {
         try {
-            $event = DB::table('academic_events')->where('id', $id)->first();
+            $currentInstitution = auth('institution')->user();
+            $event = DB::table('academic_events')
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->first();
             
             if (!$event) {
                 return response()->json([
@@ -296,6 +319,7 @@ class EventController extends Controller
 
             DB::table('academic_events')
                 ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
                 ->update(['status' => 0]);
 
             return response()->json([

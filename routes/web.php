@@ -220,27 +220,27 @@ Route::middleware('admin')->group(function () {
 
 
         });
-            // LESSON PLANS
-            Route::prefix('lesson-plans')->group(function () {
-                Route::get('/', [LessonPlanController::class, 'index'])->name('admin.lesson-plans.index');
-                Route::post('/', [LessonPlanController::class, 'store'])->name('admin.lesson-plans.store');
-                Route::get('/{id}/edit', [LessonPlanController::class, 'edit'])->name('admin.lesson-plans.edit');
-                Route::POST('/{id}', [LessonPlanController::class, 'update'])->name('admin.lesson-plans.update');
-                Route::delete('/{id}', [LessonPlanController::class, 'destroy'])->name('admin.lesson-plans.destroy');
-                Route::post('/{id}/status', [LessonPlanController::class, 'updateStatus'])->name('admin.lesson-plans.status');
-                Route::get('/{id}/download', [LessonPlanController::class, 'download'])->name('admin.lesson-plans.download');
+        // LESSON PLANS
+        Route::prefix('lesson-plans')->group(function () {
+            Route::get('/', [LessonPlanController::class, 'index'])->name('admin.lesson-plans.index');
+            Route::post('/', [LessonPlanController::class, 'store'])->name('admin.lesson-plans.store');
+            Route::get('/{id}/edit', [LessonPlanController::class, 'edit'])->name('admin.lesson-plans.edit');
+            Route::POST('/{id}', [LessonPlanController::class, 'update'])->name('admin.lesson-plans.update');
+            Route::delete('/{id}', [LessonPlanController::class, 'destroy'])->name('admin.lesson-plans.destroy');
+            Route::post('/{id}/status', [LessonPlanController::class, 'updateStatus'])->name('admin.lesson-plans.status');
+            Route::get('/{id}/download', [LessonPlanController::class, 'download'])->name('admin.lesson-plans.download');
 
-                // API routes for dynamic dropdowns
-                Route::get('/teachers/{institutionId}', [LessonPlanController::class, 'getTeachersByInstitution'])->name('admin.lesson-plans.teachers');
-                Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('admin.lesson-plans.classes');
-                Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('admin.lesson-plans.classes-by-teacher');
-                Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('admin.lesson-plans.subjects');
-            });
+            // API routes for dynamic dropdowns
+            Route::get('/teachers/{institutionId}', [LessonPlanController::class, 'getTeachersByInstitution'])->name('admin.lesson-plans.teachers');
+            Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('admin.lesson-plans.classes');
+            Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('admin.lesson-plans.classes-by-teacher');
+            Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('admin.lesson-plans.subjects');
+        });
     });
 });
 
 
 
-// require_once __DIR__ . '/institution.php';
+require_once __DIR__ . '/institution.php';
 require_once __DIR__ . '/teacher.php';
 require_once __DIR__ . '/student.php';

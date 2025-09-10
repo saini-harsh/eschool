@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Academic;
+namespace App\Http\Controllers\Institution\Academic;
 
 use App\Models\Subject;
 use App\Models\Institution;
@@ -13,28 +13,36 @@ class SubjectController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        $this->middleware('auth:institution');
     }
 
     public function Index()
     {
-        // Logic to retrieve and display subjects
-        $lists = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
-        $institutions = Institution::all();
-        $classes = SchoolClass::where('status', 1)->get(); // Get only active classes
+        $currentInstitution = auth('institution')->user();
         
-        return view('admin.academic.subject.index', compact('lists', 'institutions', 'classes'));
+        // Logic to retrieve and display subjects for current institution only
+        $lists = Subject::with(['institution', 'schoolClass'])
+            ->where('institution_id', $currentInstitution->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $institutions = collect([$currentInstitution]); // Only show current institution
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)
+            ->where('status', 1)
+            ->get(); // Get only active classes for current institution
+        
+        return view('institution.academic.subject.index', compact('lists', 'institutions', 'classes'));
     }
 
     public function store(Request $request)
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255|unique:subjects,name',
                 'code' => 'required|string|max:255|unique:subjects,code',
                 'type' => 'required|string|max:255',
                 'status' => 'nullable|boolean',
-                'institution_id' => 'required|exists:institutions,id',
                 'class_id' => 'nullable|exists:classes,id',
             ]);
 
@@ -46,12 +54,25 @@ class SubjectController extends Controller
                 ], 422);
             }
 
+            // Validate that class belongs to current institution if provided
+            if ($request->class_id) {
+                $class = SchoolClass::where('id', $request->class_id)
+                    ->where('institution_id', $currentInstitution->id)
+                    ->first();
+                if (!$class) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected class does not belong to your institution'
+                    ], 422);
+                }
+            }
+
             $subject = Subject::create([
                 'name' => $request->name,
                 'code' => $request->code,
                 'type' => $request->type,
                 'status' => $request->status ?? true,
-                'institution_id' => $request->institution_id,
+                'institution_id' => $currentInstitution->id, // Force current institution
                 'class_id' => $request->class_id,
             ])->fresh();
 
@@ -73,7 +94,11 @@ class SubjectController extends Controller
     public function getSubjects()
     {
         try {
-            $subjects = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
+            $currentInstitution = auth('institution')->user();
+            $subjects = Subject::with(['institution', 'schoolClass'])
+                ->where('institution_id', $currentInstitution->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
@@ -90,7 +115,12 @@ class SubjectController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
-            $subject = Subject::with(['institution', 'schoolClass'])->findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $subject = Subject::with(['institution', 'schoolClass'])
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             $subject->update(['status' => $request->status]);
 
             return response()->json([
@@ -108,7 +138,12 @@ class SubjectController extends Controller
     public function edit($id)
     {
         try {
-            $subject = Subject::with(['institution', 'schoolClass'])->findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $subject = Subject::with(['institution', 'schoolClass'])
+                ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             return response()->json([
                 'success' => true,
                 'data' => $subject
@@ -124,12 +159,13 @@ class SubjectController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255|unique:subjects,name,' . $id,
                 'code' => 'required|string|max:255|unique:subjects,code,' . $id,
                 'type' => 'required|string|max:255',
                 'status' => 'nullable|boolean',
-                'institution_id' => 'required|exists:institutions,id',
                 'class_id' => 'nullable|exists:classes,id',
             ]);
 
@@ -141,13 +177,28 @@ class SubjectController extends Controller
                 ], 422);
             }
 
-            $subject = Subject::findOrFail($id);
+            // Validate that class belongs to current institution if provided
+            if ($request->class_id) {
+                $class = SchoolClass::where('id', $request->class_id)
+                    ->where('institution_id', $currentInstitution->id)
+                    ->first();
+                if (!$class) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected class does not belong to your institution'
+                    ], 422);
+                }
+            }
+
+            $subject = Subject::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             $subject->update([
                 'name' => $request->name,
                 'code' => $request->code,
                 'type' => $request->type,
                 'status' => $request->status ?? true,
-                'institution_id' => $request->institution_id,
                 'class_id' => $request->class_id,
             ]);
 
@@ -168,7 +219,11 @@ class SubjectController extends Controller
     public function delete($id)
     {
         try {
-            $subject = Subject::findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $subject = Subject::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             $subject->delete();
 
             return response()->json([

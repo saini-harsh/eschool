@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Academic;
+namespace App\Http\Controllers\Institution\Academic;
 
 use App\Http\Controllers\Controller;
 use App\Models\Section;
@@ -11,12 +11,16 @@ class SectionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:admin');
+        $this->middleware('auth:institution');
     }
 
     public function index(){
+        $currentInstitution = auth('institution')->user();
+        
+        // Sections are global, but we can filter by institution if needed
+        // For now, showing all sections as they might be shared across institutions
         $lists = Section::orderBy('created_at', 'desc')->get();
-        return view('admin.academic.section.index', compact('lists'));
+        return view('institution.academic.section.index', compact('lists'));
     }
 
     public function store(Request $request)

@@ -12,6 +12,9 @@ use App\Http\Controllers\Institution\Academic\SubjectController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Academic\CalendarController;
 use App\Http\Controllers\Institution\Academic\EventController;
+use App\Http\Controllers\Institution\Communication\EmailSmsController;
+use App\Http\Controllers\Institution\Routine\RoutineController;
+use App\Http\Controllers\Institution\Routine\LessonPlanController;
 
 Route::middleware('institution')->group(function () {
    
@@ -59,40 +62,40 @@ Route::middleware('institution')->group(function () {
 
          // Classes
          Route::prefix('classes')->group(function () {
-            Route::get('/',[SchoolClassController::class,'index'])->name('admin.classes.index');
-            Route::post('/store',[SchoolClassController::class,'store'])->name('admin.classes.store');
-            Route::get('/list',[SchoolClassController::class,'getSchoolClasses'])->name('admin.classes.list');
-            Route::get('/edit/{id}', [SchoolClassController::class, 'edit'])->name('admin.classes.edit');
-            Route::post('/update/{id}', [SchoolClassController::class, 'update'])->name('admin.classes.update');
-            Route::post('/delete/{id}', [SchoolClassController::class, 'delete'])->name('admin.classes.delete');
-            Route::post('/{id}/status',[SchoolClassController::class,'updateStatus'])->name('admin.classes.status');
+            Route::get('/',[SchoolClassController::class,'index'])->name('institution.classes.index');
+            Route::post('/store',[SchoolClassController::class,'store'])->name('institution.classes.store');
+            Route::get('/list',[SchoolClassController::class,'getSchoolClasses'])->name('institution.classes.list');
+            Route::get('/edit/{id}', [SchoolClassController::class, 'edit'])->name('institution.classes.edit');
+            Route::post('/update/{id}', [SchoolClassController::class, 'update'])->name('institution.classes.update');
+            Route::post('/delete/{id}', [SchoolClassController::class, 'delete'])->name('institution.classes.delete');
+            Route::post('/{id}/status',[SchoolClassController::class,'updateStatus'])->name('institution.classes.status');
         });
 
         // SECTIONS
         Route::prefix('sections')->group(function(){
-            Route::get('/',[SectionController::class,'index'])->name('admin.sections.index');
-            Route::post('/store',[SectionController::class,'store'])->name('admin.sections.store');
-            Route::get('/list',[SectionController::class,'getSections'])->name('admin.sections.list');
-            Route::get('/edit/{id}', [SectionController::class, 'edit'])->name('admin.sections.edit');
-            Route::post('/update/{id}', [SectionController::class, 'update'])->name('admin.sections.update');
-            Route::post('/delete/{id}', [SectionController::class, 'delete'])->name('admin.sections.delete');
-            Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('admin.sections.status');
+            Route::get('/',[SectionController::class,'index'])->name('institution.sections.index');
+            Route::post('/store',[SectionController::class,'store'])->name('institution.sections.store');
+            Route::get('/list',[SectionController::class,'getSections'])->name('institution.sections.list');
+            Route::get('/edit/{id}', [SectionController::class, 'edit'])->name('institution.sections.edit');
+            Route::post('/update/{id}', [SectionController::class, 'update'])->name('institution.sections.update');
+            Route::post('/delete/{id}', [SectionController::class, 'delete'])->name('institution.sections.delete');
+            Route::post('/{id}/status',[SectionController::class,'updateStatus'])->name('institution.sections.status');
         });
 
         // SUBJECTS
         Route::prefix('subjects')->group(function () {
-            Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
-            Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
-            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
-            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
-            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
-            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');
-            Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('admin.subjects.delete');
+            Route::get('/', [SubjectController::class, 'Index'])->name('institution.subjects.index');
+            Route::post('/store', [SubjectController::class, 'store'])->name('institution.subjects.store');
+            Route::get('/list', [SubjectController::class, 'getSubjects'])->name('institution.subjects.list');
+            Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('institution.subjects.status');
+            Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('institution.subjects.edit');
+            Route::post('/update/{id}', [SubjectController::class, 'update'])->name('institution.subjects.update');
+            Route::post('/delete/{id}', [SubjectController::class, 'delete'])->name('institution.subjects.delete');
         });
 
         // ASSIGN CLASS TEACHER
         Route::prefix('academic')->group(function () {
-            Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('admin.academic.assign-teacher.index');
+            Route::get('/assign-teacher', [AssignClassTeacherController::class, 'index'])->name('institution.academic.assign-teacher.index');
             Route::get('/classes-by-institution/{id}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
             Route::get('/teachers-by-institution/{id}', [AssignClassTeacherController::class, 'getTeachersByInstitution']);
             Route::get('/sections-by-class/{id}', [AssignClassTeacherController::class, 'getSectionsByClass']);
@@ -101,24 +104,83 @@ Route::middleware('institution')->group(function () {
 
         // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {
-            Route::get('/', [CalendarController::class, 'index'])->name('admin.academic.calendar.index');
-            Route::get('/events', [CalendarController::class, 'getEvents'])->name('admin.academic.calendar.events');
-            Route::get('/check-database', [CalendarController::class, 'checkDatabase'])->name('admin.academic.calendar.check-database');
-            Route::post('/events', [CalendarController::class, 'store'])->name('admin.academic.calendar.store');
-            Route::put('/events/{id}', [CalendarController::class, 'update'])->name('admin.academic.calendar.update');
-            Route::delete('/events/{id}', [CalendarController::class, 'destroy'])->name('admin.academic.calendar.destroy');
-            Route::get('/events/{id}', [CalendarController::class, 'getEvent'])->name('admin.academic.calendar.show');
+            Route::get('/', [CalendarController::class, 'index'])->name('institution.academic.calendar.index');
+            Route::get('/events', [CalendarController::class, 'getEvents'])->name('institution.academic.calendar.events');
+            Route::get('/check-database', [CalendarController::class, 'checkDatabase'])->name('institution.academic.calendar.check-database');
+            Route::post('/events', [CalendarController::class, 'store'])->name('institution.academic.calendar.store');
+            Route::put('/events/{id}', [CalendarController::class, 'update'])->name('institution.academic.calendar.update');
+            Route::delete('/events/{id}', [CalendarController::class, 'destroy'])->name('institution.academic.calendar.destroy');
+            Route::get('/events/{id}', [CalendarController::class, 'getEvent'])->name('institution.academic.calendar.show');
         });
 
         // Event Management Routes
         Route::prefix('events')->group(function () {
-            Route::get('/', [EventController::class, 'index'])->name('admin.events.index');
-            Route::post('/', [EventController::class, 'store'])->name('admin.events.store');
-            Route::get('/list', [EventController::class, 'getEvents'])->name('admin.events.list');
-            Route::get('/{id}/edit', [EventController::class, 'edit'])->name('admin.events.edit');
-            Route::put('/{id}', [EventController::class, 'update'])->name('admin.events.update');
-            Route::post('/delete/{id}', [EventController::class, 'delete'])->name('admin.events.delete');
-            Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('admin.events.status');
+            Route::get('/', [EventController::class, 'index'])->name('institution.events.index');
+            Route::post('/', [EventController::class, 'store'])->name('institution.events.store');
+            Route::get('/list', [EventController::class, 'getEvents'])->name('institution.events.list');
+            Route::get('/{id}/edit', [EventController::class, 'edit'])->name('institution.events.edit');
+            Route::put('/{id}', [EventController::class, 'update'])->name('institution.events.update');
+            Route::post('/delete/{id}', [EventController::class, 'delete'])->name('institution.events.delete');
+            Route::post('/{id}/status', [EventController::class, 'updateStatus'])->name('institution.events.status');
+        });
+
+        // Email / Sms Routes
+        Route::prefix('email-sms')->group(function () {
+            Route::get('/', [EmailSmsController::class, 'index'])->name('institution.email-sms.index');
+            Route::get('/index', [EmailSmsController::class, 'index'])->name('institution.email-sms.index');
+            Route::post('/store', [EmailSmsController::class, 'store'])->name('institution.email-sms.store');
+            Route::get('/list', [EmailSmsController::class, 'getEmailSms'])->name('institution.email-sms.list');
+            Route::get('/edit/{id}', [EmailSmsController::class, 'edit'])->name('institution.email-sms.edit');
+            Route::post('/update/{id}', [EmailSmsController::class, 'update'])->name('institution.email-sms.update');
+            Route::post('/delete/{id}', [EmailSmsController::class, 'delete'])->name('institution.email-sms.delete');
+            Route::post('/{id}/status', [EmailSmsController::class, 'updateStatus'])->name('institution.email-sms.status');
+
+            // Group selection routes
+            Route::get('/institutions', [EmailSmsController::class, 'getInstitutions'])->name('institution.email-sms.institutions');
+            Route::get('/teachers/{institutionId}', [EmailSmsController::class, 'getTeachersByInstitution'])->name('institution.email-sms.teachers');
+            Route::get('/students/{institutionId}', [EmailSmsController::class, 'getStudentsByInstitution'])->name('institution.email-sms.students');
+            Route::get('/parents/{institutionId}', [EmailSmsController::class, 'getParentsByInstitution'])->name('institution.email-sms.parents');
+            Route::get('/non-working-staff/{institutionId}', [EmailSmsController::class, 'getNonWorkingStaffByInstitution'])->name('institution.email-sms.non-working-staff');
+
+            // Class selection routes
+            Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('institution.email-sms.classes');
+            Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('institution.email-sms.sections');
+            Route::get('/class-students-parents/{classId}/{sectionId?}', [EmailSmsController::class, 'getStudentsAndParentsByClassSection'])->name('institution.email-sms.class-students-parents');
+        });
+
+        // ROUTINE MANAGEMENT
+        Route::prefix('routines')->group(function () {
+            Route::get('/', [RoutineController::class, 'index'])->name('institution.routines.index');
+            Route::get('/create', [RoutineController::class, 'create'])->name('institution.routines.create');
+            Route::post('/', [RoutineController::class, 'store'])->name('institution.routines.store');
+            Route::get('/report', [RoutineController::class, 'getRoutineReport'])->name('institution.routines.report');
+            Route::post('/{id}/status', [RoutineController::class, 'updateStatus'])->name('institution.routines.status');
+            Route::delete('/{id}', [RoutineController::class, 'destroy'])->name('institution.routines.destroy');
+
+            // API routes for dynamic dropdowns
+            Route::get('/classes/{institutionId}', [RoutineController::class, 'getClassesByInstitution'])->name('institution.routines.classes');
+            Route::get('/sections/{classId}', [RoutineController::class, 'getSectionsByClass'])->name('institution.routines.sections');
+            Route::get('/subjects/{institutionId}/{classId}', [RoutineController::class, 'getSubjectsByInstitutionClass'])->name('institution.routines.subjects');
+            Route::get('/teachers/{institutionId}', [RoutineController::class, 'getTeachersByInstitution'])->name('institution.routines.teachers');
+
+
+
+        });
+        // LESSON PLANS
+        Route::prefix('lesson-plans')->group(function () {
+            Route::get('/', [LessonPlanController::class, 'index'])->name('institution.lesson-plans.index');
+            Route::post('/', [LessonPlanController::class, 'store'])->name('institution.lesson-plans.store');
+            Route::get('/{id}/edit', [LessonPlanController::class, 'edit'])->name('institution.lesson-plans.edit');
+            Route::POST('/{id}', [LessonPlanController::class, 'update'])->name('institution.lesson-plans.update');
+            Route::delete('/{id}', [LessonPlanController::class, 'destroy'])->name('institution.lesson-plans.destroy');
+            Route::post('/{id}/status', [LessonPlanController::class, 'updateStatus'])->name('institution.lesson-plans.status');
+            Route::get('/{id}/download', [LessonPlanController::class, 'download'])->name('institution.lesson-plans.download');
+
+            // API routes for dynamic dropdowns
+            Route::get('/teachers/{institutionId}', [LessonPlanController::class, 'getTeachersByInstitution'])->name('institution.lesson-plans.teachers');
+            Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('institution.lesson-plans.classes');
+            Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('institution.lesson-plans.classes-by-teacher');
+            Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('institution.lesson-plans.subjects');
         });
     });
     

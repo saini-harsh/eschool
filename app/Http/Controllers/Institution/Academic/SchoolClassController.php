@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Academic;
+namespace App\Http\Controllers\Institution\Academic;
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\SchoolClass;
@@ -12,24 +12,33 @@ use Illuminate\Support\Facades\Validator;
 class SchoolClassController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth:institution');
+    }
     // Removed duplicate middleware since it's already applied in the route group
 
     public function index()
     {
-        $classes = SchoolClass::orderBy('created_at', 'desc')->get();
+        $currentInstitution = auth('institution')->user();
+        
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
         $sections = Section::where('status', 1)->get();
-        $institutions = Institution::where('status', 1)->get();
+        $institutions = collect([$currentInstitution]); // Only show current institution
 
-        return view('admin.academic.classes.index', compact('classes', 'sections','institutions'));
+        return view('institution.academic.classes.index', compact('classes', 'sections','institutions'));
     }
 
     public function store(Request $request)
     {
+        $currentInstitution = auth('institution')->user();
+        
         $validator = Validator::make($request->all(), [
             'name'          => 'required|string|max:255|unique:classes,name',
             'section_ids'   => 'required|array',
             'section_ids.*' => 'exists:sections,id',
-            'institution_id'=> 'required|exists:institutions,id',
             'status'        => 'nullable|boolean'
         ]);
 
@@ -44,8 +53,8 @@ class SchoolClassController extends Controller
         $class = SchoolClass::create([
             'name'           => $request->name,
             'section_ids'    => $request->section_ids, // will be auto-casted to JSON
-            'institution_id' => $request->institution_id,
-            'admin_id'       => auth('admin')->id(),
+            'institution_id' => $currentInstitution->id, // Force current institution
+            'admin_id'       => $currentInstitution->admin_id,
             'status'         => $request->status ?? 1,
         ]);
 
@@ -58,7 +67,11 @@ class SchoolClassController extends Controller
 
     public function getSchoolClasses()
     {
-        $classes = SchoolClass::orderBy('created_at','desc')->get();
+        $currentInstitution = auth('institution')->user();
+        
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)
+            ->orderBy('created_at','desc')
+            ->get();
         
         // Load section names for each class
         $classes->each(function($class) {
@@ -80,7 +93,11 @@ class SchoolClassController extends Controller
         Log::info('Status update request received', ['id' => $id, 'status' => $request->status]);
         
         try {
-            $class = SchoolClass::findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $class = SchoolClass::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             $class->update(['status' => $request->status]);
 
             Log::info('Status updated successfully', ['id' => $id, 'new_status' => $class->status]);
@@ -88,7 +105,7 @@ class SchoolClassController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Status updated successfully',
-                'redirect_url' => route('admin.classes.index')
+                'redirect_url' => route('institution.classes.index')
             ]);
         } catch (\Exception $e) {
             Log::error('Error updating status', ['id' => $id, 'error' => $e->getMessage()]);
@@ -103,7 +120,10 @@ class SchoolClassController extends Controller
     public function edit($id)
     {
         try {
-            $class = SchoolClass::findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $class = SchoolClass::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
             
             // Load sections for this class
             if ($class->section_ids) {
@@ -126,11 +146,12 @@ class SchoolClassController extends Controller
 
     public function update(Request $request, $id)
     {
+        $currentInstitution = auth('institution')->user();
+        
         $validator = Validator::make($request->all(), [
             'name'          => 'required|string|max:255|unique:classes,name,' . $id,
             'section_ids'   => 'required|array',
             'section_ids.*' => 'exists:sections,id',
-            'institution_id'=> 'required|exists:institutions,id',
             'status'        => 'nullable|boolean'
         ]);
 
@@ -143,11 +164,13 @@ class SchoolClassController extends Controller
         }
 
         try {
-            $class = SchoolClass::findOrFail($id);
+            $class = SchoolClass::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
+                
             $class->update([
                 'name'           => $request->name,
                 'section_ids'    => $request->section_ids,
-                'institution_id' => $request->institution_id,
                 'status'         => $request->status ?? 1,
             ]);
 
@@ -168,7 +191,10 @@ class SchoolClassController extends Controller
     public function delete($id)
     {
         try {
-            $class = SchoolClass::findOrFail($id);
+            $currentInstitution = auth('institution')->user();
+            $class = SchoolClass::where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
+                ->firstOrFail();
             
             // Check if class has any students (you can add this validation if needed)
             // if ($class->students()->count() > 0) {

@@ -20,6 +20,19 @@ class InstitutionMiddleware
             return redirect()->route('login');
         }
 
+        // Get the authenticated institution
+        $institution = Auth::guard('institution')->user();
+        
+        // Check if institution is active
+        if (!$institution->status) {
+            Auth::guard('institution')->logout();
+            return redirect()->route('login')->with('error', 'Your institution account has been deactivated.');
+        }
+
+        // Share the institution data with all views and controllers
+        view()->share('currentInstitution', $institution);
+        $request->merge(['current_institution_id' => $institution->id]);
+
         return $next($request);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Academic;
+namespace App\Http\Controllers\Institution\Academic;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,18 +9,26 @@ use Illuminate\Support\Facades\Validator;
 
 class CalendarController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:institution');
+    }
+
     public function index()
     {
-        return view('admin.academic.calendar.index');
+        return view('institution.academic.calendar.index');
     }
 
     public function getEvents()
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             $events = DB::table('academic_events')
                 ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
                 ->select('academic_events.id', 'academic_events.title', 'academic_events.start_date', 'academic_events.end_date', 'academic_events.start_time', 'academic_events.end_time', 'academic_events.description', 'academic_events.category', 'academic_events.color', 'academic_events.location', 'academic_events.role', 'academic_events.institution_id', 'institutions.name as institution_name')
                 ->where('academic_events.status', 1)
+                ->where('academic_events.institution_id', $currentInstitution->id)
                 ->get();
             
             $formattedEvents = $events->map(function ($event) {
@@ -74,11 +82,12 @@ class CalendarController extends Controller
 
     public function store(Request $request)
     {
+        $currentInstitution = auth('institution')->user();
+        
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'role' => 'required|string|in:teacher,student,nonworkingstaff',
             'category' => 'required|string|max:100',
-            'institution_id' => 'required|exists:institutions,id',
             'location' => 'required|string|max:255',
             'start_date' => 'required|string', // Changed to string for custom format validation
             'start_time' => 'nullable|date_format:H:i',
@@ -120,7 +129,7 @@ class CalendarController extends Controller
                 'title' => $request->title,
                 'role' => $request->role,
                 'category' => $request->category,
-                'institution_id' => $request->institution_id,
+                'institution_id' => $currentInstitution->id, // Force current institution
                 'location' => $request->location,
                 'start_date' => $startDate->format('Y-m-d'),
                 'start_time' => $request->start_time,
@@ -162,6 +171,8 @@ class CalendarController extends Controller
 
     public function update(Request $request, $id)
     {
+        $currentInstitution = auth('institution')->user();
+        
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'start_date' => 'required|date',
@@ -184,6 +195,7 @@ class CalendarController extends Controller
         try {
             DB::table('academic_events')
                 ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
                 ->update([
                     'title' => $request->title,
                     'start_date' => $request->start_date,
@@ -212,8 +224,11 @@ class CalendarController extends Controller
     public function destroy($id)
     {
         try {
+            $currentInstitution = auth('institution')->user();
+            
             DB::table('academic_events')
                 ->where('id', $id)
+                ->where('institution_id', $currentInstitution->id)
                 ->update(['status' => 0]);
 
             return response()->json([
@@ -231,8 +246,11 @@ class CalendarController extends Controller
 
     public function getEvent($id)
     {
+        $currentInstitution = auth('institution')->user();
+        
         $event = DB::table('academic_events')
             ->where('id', $id)
+            ->where('institution_id', $currentInstitution->id)
             ->where('status', 1)
             ->first();
 

@@ -15,6 +15,7 @@ class EmailSms extends Model
         'send_through',
         'recipient_type',
         'recipients',
+        'institution_id',
         'status',
         'sent_at'
     ];
@@ -37,5 +38,13 @@ class EmailSms extends Model
     public function scopeFailed($query)
     {
         return $query->where('status', 'failed');
+    }
+
+    /**
+     * Get the institution that owns the email/sms.
+     */
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
     }
 }
