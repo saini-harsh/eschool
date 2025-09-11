@@ -93,7 +93,7 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.classes*') || request()->routeIs('institution.sections*') || request()->routeIs('institution.subjects*') || request()->routeIs('institution.academic.assign-teacher*') || request()->routeIs('institution.academic.calendar*') || request()->routeIs('institution.events*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('institution.classes*') || request()->routeIs('institution.sections*') || request()->routeIs('institution.subjects*') || request()->routeIs('institution.academic.assign-teacher*') || request()->routeIs('institution.assign-subject*') || request()->routeIs('institution.academic.calendar*') || request()->routeIs('institution.events*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -117,6 +117,11 @@
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.academic.assign-teacher*') ? 'active' : '' }}" href="{{ route('institution.academic.assign-teacher.index') }}">
                                         <i class="ti ti-user"></i><span>Assign Class Teacher</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.assign-subject*') ? 'active' : '' }}" href="{{ route('institution.assign-subject.index') }}">
+                                        <i class="ti ti-checks"></i><span>Assign Subject</span>
                                     </a>
                                 </li>
                                 <li class="">

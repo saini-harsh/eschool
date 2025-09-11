@@ -23,9 +23,7 @@ class AssignClassTeacherController extends Controller
         $institutions = collect([$currentInstitution]); // Only show current institution
         $teachers = Teacher::where('institution_id', $currentInstitution->id)->get();
         $classes = SchoolClass::where('institution_id', $currentInstitution->id)->get();
-        $lists = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
-            ->where('institution_id', $currentInstitution->id)
-            ->get();
+        $lists = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])->where('institution_id', $currentInstitution->id)->get();
         return view('institution.academic.assign-teacher', compact('teachers', 'classes', 'institutions','lists'));
     }
 

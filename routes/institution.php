@@ -114,6 +114,25 @@ Route::middleware('institution')->group(function () {
             });
         });
 
+        // ASSIGN SUBJECT
+        Route::prefix('assign-subject')->group(function () {
+            Route::get('/', [AssignSubjectController::class, 'index'])->name('institution.assign-subject.index');
+            Route::post('/', [AssignSubjectController::class, 'store'])->name('institution.assign-subject.store');
+            Route::get('/list', [AssignSubjectController::class, 'getAssignments'])->name('institution.assign-subject.list');
+
+            // AJAX routes for dynamic dropdowns (must come before parameterized routes)
+            Route::get('/classes/{institutionId}', [AssignSubjectController::class, 'getClassesByInstitution']);
+            Route::get('/teachers/{institutionId}', [AssignSubjectController::class, 'getTeachersByInstitution']);
+            Route::get('/subjects/{institutionId}/{classId}', [AssignSubjectController::class, 'getSubjectsByInstitutionClass']);
+            Route::get('/sections/{classId}', [AssignSubjectController::class, 'getSectionsByClass']);
+
+            // Parameterized routes (must come after specific routes)
+            Route::get('/{id}/edit', [AssignSubjectController::class, 'edit'])->name('institution.assign-subject.edit');
+            Route::post('/{id}', [AssignSubjectController::class, 'update'])->name('institution.assign-subject.update');
+            Route::delete('/{id}', [AssignSubjectController::class, 'destroy'])->name('institution.assign-subject.destroy');
+            Route::post('/{id}/status', [AssignSubjectController::class, 'updateStatus'])->name('institution.assign-subject.status');
+        });
+
         
 
         // Academic Calendar Routes
