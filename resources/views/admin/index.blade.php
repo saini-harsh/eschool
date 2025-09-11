@@ -35,7 +35,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="avatar avtar-lg bg-teal mb-2"><img
-                                                src="{{ asset('admin/img/icons/dashboard-card-icon-01.svg') }}"
+                                                src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
                                         <h6 class="fs-14 fw-semibold mb-0">Employees</h6>
                                     </div>
@@ -51,7 +51,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="avatar avtar-lg bg-warning mb-2"><img
-                                                src="{{ asset('admin/img/icons/dashboard-card-icon-01.svg') }}"
+                                                src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
                                         <h6 class="fs-14 fw-semibold mb-0">Companies</h6>
                                     </div>
@@ -67,7 +67,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="avatar avtar-lg bg-orange mb-2"><img
-                                                src="{{ asset('admin/img/icons/dashboard-card-icon-01.svg') }}"
+                                                src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
                                         <h6 class="fs-14 fw-semibold mb-0">Leaves</h6>
                                     </div>
@@ -83,7 +83,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="avatar avtar-lg bg-teal mb-2"><img
-                                                src="{{ asset('admin/img/icons/dashboard-card-icon-01.svg') }}"
+                                                src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
                                         <h6 class="fs-14 fw-semibold mb-0">Salary</h6>
                                     </div>
@@ -162,7 +162,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="index-profile text-center">
-                            <img src="{{ asset('admin/img/users/user-05.jpg') }}" alt="img"
+                            <img src="{{ asset('adminpanel/img/users/user-05.jpg') }}" alt="img"
                                 class="avatar avatar-xxl rounded-circle shadow">
                             <div class="text-center mb-0">
                                 <h5 class="fw-bold mb-1">Welcome Admin</h5>
@@ -298,7 +298,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-01.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-01.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">John Carter</a></h6>
@@ -311,7 +311,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-02.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-02.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">Sophia White</a></h6>
@@ -324,7 +324,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-03.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-03.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">Michael Johnson</a></h6>
@@ -337,7 +337,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-04.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-04.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">Emily Clark</a></h6>
@@ -350,7 +350,7 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-05.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-05.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">David Anderson</a></h6>
@@ -363,7 +363,7 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center">
                                     <a href="employee-details.html" class="avatar avatar-sm avatar-rounded flex-shrink-0">
-                                        <img src="{{ asset('admin/img/employees/employee-06.jpg') }}" alt="img">
+                                        <img src="{{ asset('adminpanel/img/employees/employee-06.jpg') }}" alt="img">
                                     </a>
                                     <div class="ms-2">
                                         <h6 class="fs-14 mb-1"><a href="employee-details.html">Olivia Haris</a></h6>
@@ -399,7 +399,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-03.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-03.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -419,7 +419,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-06.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-06.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -439,7 +439,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/managers/manager-07.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/managers/manager-07.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -458,7 +458,7 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <a href="javascript:void(0);" class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-08.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-08.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -478,7 +478,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/managers/manager-05.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/managers/manager-05.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -522,7 +522,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-09.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-09.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -539,7 +539,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-04.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-04.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -556,7 +556,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/managers/manager-03.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/managers/manager-03.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -572,7 +572,7 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <a href="javascript:void(0);" class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/employees/employee-02.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/employees/employee-02.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -589,7 +589,7 @@
                                             <div class="d-flex align-items-center">
                                                 <a href="employee-details.html"
                                                     class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/managers/manager-09.jpg') }}"
+                                                    <img src="{{ asset('adminpanel/img/managers/manager-09.jpg') }}"
                                                         alt="img">
                                                 </a>
                                                 <div class="ms-2">
@@ -625,7 +625,7 @@
                                 <p class="mb-0">Daniel Martinz’s Birthday</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/employees/employee-10.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/employees/employee-10.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div class="d-flex align-items-center">
@@ -636,7 +636,7 @@
                                 <p class="mb-0">Amelia Curr’s Birthday</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/employees/employee-09.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/employees/employee-09.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div class="d-flex align-items-center">
@@ -647,7 +647,7 @@
                                 <p class="mb-0">Emma Lewis’s Birthday</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/employees/employee-08.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/employees/employee-08.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div class="d-flex align-items-center">
@@ -658,7 +658,7 @@
                                 <p class="mb-0">Madison Andrew is off sick today</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/managers/manager-09.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/managers/manager-09.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div class="d-flex align-items-center">
@@ -669,7 +669,7 @@
                                 <p class="mb-0">Victoria Celestie is off sick today</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/managers/manager-10.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/managers/manager-10.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <div class="d-flex align-items-center">
@@ -680,7 +680,7 @@
                                 <p class="mb-0">Daniel Patrick is off sick today</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/managers/manager-03.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/managers/manager-03.jpg') }}" alt=""></span>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
@@ -691,7 +691,7 @@
                                 <p class="mb-0">Jessica Renee is off sick today</p>
                             </div>
                             <span class="avatar avatar-sm avatar-rounded"><img
-                                    src="{{ asset('admin/img/managers/manager-06.jpg') }}" alt=""></span>
+                                    src="{{ asset('adminpanel/img/managers/manager-06.jpg') }}" alt=""></span>
                         </div>
                     </div>
                 </div>
@@ -798,3 +798,4 @@
 
        
 @endsection
+

@@ -8,13 +8,13 @@
 
                  <!-- Logo Normal -->
                  <span class="logo-light">
-                     <span class="logo-lg"><img src="{{ asset('/admin/img/logo.svg') }}" alt="logo"></span>
-                     <span class="logo-sm"><img src="{{ asset('/admin/img/logo-small.svg') }}" alt="small logo"></span>
+                     <span class="logo-lg"><img src="{{ asset('/adminpanel/img/logo.svg') }}" alt="logo"></span>
+                     <span class="logo-sm"><img src="{{ asset('/adminpanel/img/logo-small.svg') }}" alt="small logo"></span>
                  </span>
 
                  <!-- Logo Dark -->
                  <span class="logo-dark">
-                     <span class="logo-lg"><img src="{{ asset('/admin/img/logo-white.svg') }}" alt="dark logo"></span>
+                     <span class="logo-lg"><img src="{{ asset('/adminpanel/img/logo-white.svg') }}" alt="dark logo"></span>
                  </span>
              </a>
 
@@ -56,32 +56,32 @@
                  <div class="dropdown me-2">
                      <button class="topbar-link btn" data-bs-toggle="dropdown" data-bs-offset="0,24" type="button"
                          aria-haspopup="false" aria-expanded="false">
-                         <img src="{{ asset('/admin/img/flags/us.svg') }}" alt="Language" height="16">
+                         <img src="{{ asset('/adminpanel/img/flags/us.svg') }}" alt="Language" height="16">
                      </button>
 
                      <div class="dropdown-menu dropdown-menu-end">
 
                          <!-- item-->
                          <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/admin/img/flags/us.svg') }}" alt="" class="me-1"
+                             <img src="{{ asset('/adminpanel/img/flags/us.svg') }}" alt="" class="me-1"
                                  height="16"> <span class="align-middle">English</span>
                          </a>
 
                          <!-- item-->
                          <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/admin/img/flags/de.svg') }}" alt="" class="me-1"
+                             <img src="{{ asset('/adminpanel/img/flags/de.svg') }}" alt="" class="me-1"
                                  height="16"> <span class="align-middle">German</span>
                          </a>
 
                          <!-- item-->
                          <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/admin/img/flags/fr.svg') }}" alt="" class="me-1"
+                             <img src="{{ asset('/adminpanel/img/flags/fr.svg') }}" alt="" class="me-1"
                                  height="16"> <span class="align-middle">French</span>
                          </a>
 
                          <!-- item-->
                          <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/admin/img/flags/ae.svg') }}" alt="" class="me-1"
+                             <img src="{{ asset('/adminpanel/img/flags/ae.svg') }}" alt="" class="me-1"
                                  height="16"> <span class="align-middle">Arabic</span>
                          </a>
 
@@ -141,7 +141,7 @@
                                  id="notification-1">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/admin/img/users/avatar-2.jpg') }}"
+                                         <img src="{{ asset('/adminpanel/img/users/avatar-2.jpg') }}"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -174,7 +174,7 @@
                                  id="notification-2">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/admin/img/users/user-02.jpg') }}"
+                                         <img src="{{ asset('/adminpanel/img/users/user-02.jpg') }}"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -207,7 +207,7 @@
                                  id="notification-3">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/admin/img/users/user-04.jpg') }}"
+                                         <img src="{{ asset('/adminpanel/img/users/user-04.jpg') }}"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -239,7 +239,7 @@
                              <div class="dropdown-item notification-item py-3 text-wrap" id="notification-4">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/admin/img/users/user-24.jpg') }}"
+                                         <img src="{{ asset('/adminpanel/img/users/user-24.jpg') }}"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
