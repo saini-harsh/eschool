@@ -93,9 +93,6 @@
                                 <div class="card rounded-0 shadow flex-fill mb-0">
                                     <div class="card-header d-flex align-items-center justify-content-between">
                                         <h6 class="mb-0 fw-bold">Contact Details</h6>
-                                        <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                            <i class="ti ti-edit"></i>
-                                        </a>
                                     </div>
                                     <div class="card-body">
                                         <div>
@@ -142,13 +139,6 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,13 +159,6 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -193,13 +176,6 @@
                                                 <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
                                                     {{ $student->section->name ?? 'N/A' }}
                                                 </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -230,13 +206,6 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -258,9 +227,6 @@
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -402,9 +368,6 @@
                         <div class="card rounded-0 mb-0">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h6 class="fw-bold mb-0">Documents</h6>
-                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn btn-primary fs-12 py-1">
-                                    <i class="ti ti-circle-plus me-1"></i>Edit Documents
-                                </a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -614,9 +577,6 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="d-grid gap-2">
-                                            <a href="{{ route('teacher.students.edit', $student->id) }}" class="btn btn-primary">
-                                                <i class="ti ti-edit me-1"></i>Edit Student
-                                            </a>
                                             <a href="{{ route('teacher.students.index') }}" class="btn btn-outline-secondary">
                                                 <i class="ti ti-arrow-left me-1"></i>Back to List
                                             </a>

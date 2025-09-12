@@ -23,269 +23,80 @@
                 <h5 class="fw-bold">Students</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('teacher.dashboard') }}"><i
-                                    class="ti ti-home me-1"></i>Dashboard</a></li>
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('teacher.students.index') }}"><i
+                                    class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Students</li>
                     </ol>
                 </nav>
             </div>
-            <div>
-                <a href="{{ route('teacher.students.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Student</a>
-            </div>
         </div>
         <!-- End Page Header -->
 
-        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
-            <div class="datatable-search">
-                <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+        <!-- Class and Section Selection -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="fw-bold mb-0">Select Class and Section</h6>
             </div>
-            <div class="d-flex align-items-center">
-                <div class="d-flex align-items-center border rounded table-grid me-2">
-                    <a href="employees.html" class="btn p-1 btn-primary"><i class="ti ti-list"></i></a>
-                    <a href="employees-grid.html" class="btn p-1"><i class="ti ti-layout-grid"></i></a>
-                </div>
-                <div class="dropdown me-2">
-                    <a href="javascript:void(0);"
-                        class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                        data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                        <i class="ti ti-filter me-1"></i>Filter
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
-                        <div class="card mb-0">
-                            <div class="card-header">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h6 class="fw-bold mb-0">Filter</h6>
-                                    <div class="d-flex align-items-center">
-                                        <a href="javascript:void(0);"
-                                            class="link-danger text-decoration-underline">Clear All</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <form action="#">
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <label class="form-label">Name</label>
-                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a href="javascript:void(0);"
-                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                aria-expanded="true">
-                                                Select
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100">
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        John Carter
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Sophia White
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Michael Johnson
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Emily Clark
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        David Anderson
-                                                    </label>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <label class="form-label">Status</label>
-                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                        </div>
-                                        <div class="dropdown">
-                                            <a href="javascript:void(0);"
-                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                aria-expanded="true">
-                                                Select
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100">
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Active
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Inactive
-                                                    </label>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-end">
-                                    <button type="button" class="btn btn-outline-white me-2"
-                                        id="close-filter">Close</button>
-                                    <button type="submit" class="btn btn-primary">Filter</button>
-                                </div>
-                            </form>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="class_id" class="form-label">Class</label>
+                            <select class="form-select" id="class_id" name="class_id">
+                                <option value="">Select Class</option>
+                                @foreach($classes as $class)
+                                    <option value="{{ $class->id }}" {{ request('class_id') == $class->id ? 'selected' : '' }}>
+                                        {{ $class->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
-                </div>
-                <div class="dropdown">
-                    <a href="javascript:void(0);"
-                        class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                        data-bs-toggle="dropdown">
-                        <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end p-1">
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                        </li>
-                    </ul>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="section_id" class="form-label">Section</label>
+                            <select class="form-select" id="section_id" name="section_id">
+                                <option value="">Select Section</option>
+                                @foreach($sections as $section)
+                                    <option value="{{ $section->id }}" {{ request('section_id') == $section->id ? 'selected' : '' }}>
+                                        {{ $section->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="viewStudentsBtn" class="btn btn-primary" disabled>
+                                    <i class="ti ti-search me-1"></i>View Students
+                                </button>
+                                <button type="button" id="resetBtn" class="btn btn-outline-secondary">
+                                    <i class="ti ti-refresh me-1"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-nowrap datatable">
-                <thead class="thead-ight">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Insitution</th>
-                        <th>Teacher</th>
-                        <th>Status</th>
-                        <th class="no-sort">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @if (isset($students) && !empty($students))
-                @foreach ($students as $student)
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <a href="{{ route('teacher.students.show', $student->id) }}" class="avatar avatar-sm avatar-rounded">
-                                    <img src="{{ asset($student->photo) }}" alt="img">
-                                </a>
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="{{ route('teacher.students.show', $student->id) }}">{{ $student->first_name }} {{ $student->last_name }}</a></h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="javascript:void(0);">{{ $student->email }}</a></h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ $student->phone }}</td>
-                        
-                        <td>
-                        <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-secondary">
-                                @if($student->institution)
-                                    {{ $student->institution->name }}
-                                @else
-                                    {{ $student->institution_code }}
-                                @endif
-                            </span>
-                        <!-- </a>     -->
-
-                        </td>
-                        <td>
-                        <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge badge-soft-orange">
-                                @if($student->teacher)
-                                    {{ $student->teacher->first_name }} {{ $student->teacher->last_name }}
-                                @else
-                                    Not Assigned
-                                @endif
-                            </span>
-                        <!-- </a>     -->
-
-                        </td>
-                        <td>
-                            <div>
-                                <select class="form-select form-select-sm status-select" data-student-id="{{ $student->id }}">
-                                    <option value="1" {{ $student->status == 1 ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ $student->status == 0 ? 'selected' : '' }}>Inactive</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-inline-flex align-items-center">
-                                <a href="{{ route('teacher.students.show', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0" title="View Details">
-                                    <i class="ti ti-eye"></i>
-                                </a>
-                                <a href="{{ route('teacher.students.edit', $student->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit">
-                                    <i class="ti ti-edit"></i>
-                                </a>
-                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-student" 
-                                   data-delete-url="{{ route('teacher.students.delete', $student->id) }}"
-                                   data-student-name="{{ $student->first_name }} {{ $student->last_name }}"
-                                   title="Delete">
-                                    <i class="ti ti-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                    @endif
-                </tbody>
-            </table>
+        <!-- Students Table Container -->
+        <div id="studentsTableContainer">
+            <div class="text-center py-5">
+                <div class="text-muted">
+                    <i class="ti ti-filter fs-48 mb-3 d-block"></i>
+                    <h5 class="mb-2">Select Class and Section</h5>
+                    <p class="mb-0">Please select a class and section to view students.</p>
+                </div>
+            </div>
         </div>
 
 </div>
 
 
 
-<script>
-    // Auto-hide existing toast notifications
-    setTimeout(() => {
-        const toastEl = document.querySelector('.toast');
-        if (toastEl) {
-            const bsToast = bootstrap.Toast.getOrCreateInstance(toastEl);
-            bsToast.hide();
-        }
-    }, 3000); // Hide after 3 seconds
-</script>
 <!-- End Content -->
 @endsection
 
