@@ -75,6 +75,16 @@
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-file"></i><span>Attendance</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-files"></i><span>Classes</span>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>
@@ -84,7 +94,7 @@
                     <ul>
                         <li class="submenu">
                         <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') ? 'active subdrop' : '' }}">
-                                <i class="ti ti-layout-dashboard"></i><span>Routine</span>
+                                <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
@@ -107,7 +117,29 @@
                         </li>
                     </ul>
                 </li>
-              
+                <li>
+                    <ul>
+                        <li class="submenu">
+                        <a href="javascript:void(0);" class="">
+                                <i class="ti ti-layout-dashboard"></i><span>Exams</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-calendar-event"></i><span>Marks Entry</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-calendar-event"></i><span>Results</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
                 <li>
                     <ul>
                         <li class="">

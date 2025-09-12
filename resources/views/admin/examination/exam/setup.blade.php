@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Admin | Exam Management | Exam Type')
+@section('title', 'Admin | Exam Management | Exam Setup')
 @section('content')
 
 @if (session('success'))
@@ -22,12 +22,12 @@
     <!-- Page Header -->
     <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
         <div class="flex-grow-1">
-            <h5 class="fw-bold">Exam Type</h5>
+            <h5 class="fw-bold">Exam Setup</h5>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                     <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.dashboard') }}"><i
                                 class="ti ti-home me-1"></i>Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Exam Type</li>
+                    <li class="breadcrumb-item active" aria-current="page">Exam Setup</li>
                 </ol>
             </nav>
         </div>
@@ -39,7 +39,7 @@
         <div class="col-3">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="fw-bold">Add Exam Type</h6>
+                    <h6 class="fw-bold">Add Exam</h6>
                 </div>
                 <div class="card-body">
                     <form action="" method="post" id="exam-type-form" >
@@ -54,6 +54,15 @@
                                         <option value="{{ $institution->id }}">{{ $institution->name }}</option>
                                     @endforeach
                                 @endif
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Exam Type <span class="text-danger">*</span></label>
+                            <select name="exam_type" id="exam_type" class="form-select" required>
+                                <option value="">Select Exam Type</option>
+                                <option value="">Monthly Test</option>
+                                <option value="">Half Yearly Exam</option>
+                                <option value="">Final Exam</option>
                             </select>
                         </div>
                         <div class="mb-3">
