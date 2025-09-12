@@ -81,7 +81,7 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="">
+                                    <a class="{{ request()->routeIs('teacher.classes*') ? 'active' : '' }}" href="{{ route('teacher.classes.index') }}">
                                         <i class="ti ti-files"></i><span>Classes</span>
                                     </a>
                                 </li>

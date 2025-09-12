@@ -7,6 +7,7 @@ use App\Http\Controllers\Teacher\Administration\StudentController;
 use App\Http\Controllers\Teacher\Routine\LessonPlanController;
 use App\Http\Controllers\Teacher\Routine\AssignmentController;
 use App\Http\Controllers\Teacher\Routine\RoutineController;
+use App\Http\Controllers\Teacher\Academic\SchoolClassController;
 
 
 Route::middleware('teacher')->group(function () {
@@ -27,6 +28,10 @@ Route::middleware('teacher')->group(function () {
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('teacher.students.sections');
             Route::post('/get-by-class-section', [StudentController::class, 'getStudentsByClassSection'])->name('teacher.students.get-by-class-section');
         });
+          // Classes
+          Route::prefix('classes')->group(function () {
+             Route::get('/',[SchoolClassController::class,'index'])->name('teacher.classes.index');
+         });
         // ROUTINE MANAGEMENT
         Route::prefix('routines')->group(function () {
             Route::get('/', [RoutineController::class, 'index'])->name('teacher.routines.index');
