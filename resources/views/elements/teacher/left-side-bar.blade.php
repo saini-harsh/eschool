@@ -75,7 +75,21 @@
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
-                                <li class="">
+
+
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') || request()->routeIs('teacher.classes*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-layout-dashboard"></i><span>Academics</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                            <li class="">
                                     <a class="" href="">
                                         <i class="ti ti-file"></i><span>Attendance</span>
                                     </a>
@@ -85,19 +99,6 @@
                                         <i class="ti ti-files"></i><span>Classes</span>
                                     </a>
                                 </li>
-
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <ul>
-                        <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') ? 'active subdrop' : '' }}">
-                                <i class="ti ti-layout-dashboard"></i><span>Academics</span>
-                                <span class="menu-arrow"></span>
-                            </a>
-                            <ul>
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.routines*') ? 'active' : '' }}" href="{{ route('teacher.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
