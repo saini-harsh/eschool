@@ -84,14 +84,14 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') || request()->routeIs('teacher.classes*') ? 'active subdrop' : '' }}">
+                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') || request()->routeIs('teacher.classes*') || request()->routeIs('teacher.attendance*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                            <li class="">
-                                    <a class="" href="">
-                                        <i class="ti ti-file"></i><span>Attendance</span>
+                              <li class="">
+                                    <a class="{{ request()->routeIs('teacher.attendance*') ? 'active' : '' }}" href="{{ route('teacher.attendance') }}">
+                                        <i class="ti ti-activity"></i><span>Attendance</span>
                                     </a>
                                 </li>
                                 <li class="">

@@ -9,18 +9,10 @@ $(document).ready(function() {
     $('#role').on('change', function() {
         const role = $(this).val();
         if (role === 'student') {
-            $('#class-field, #section-field').show();
+            $('#class-field, #section-field, #teacher-field').show();
         } else {
-            $('#class-field, #section-field').hide();
-            $('#class, #section').val('').trigger('change');
-        }
-    });
-
-    // Institution change handler for filter form
-    $('#institution').on('change', function() {
-        const institutionId = $(this).val();
-        if (institutionId && $('#role').val() === 'student') {
-            loadClasses(institutionId, '#class');
+            $('#class-field, #section-field, #teacher-field').hide();
+            $('#class, #section, #teacher').val('').trigger('change');
         }
     });
 
@@ -29,6 +21,16 @@ $(document).ready(function() {
         const classId = $(this).val();
         if (classId) {
             loadSections(classId, '#section');
+            loadTeachers(classId, '#section', '#teacher');
+        }
+    });
+
+    // Section change handler for filter form
+    $('#section').on('change', function() {
+        const classId = $('#class').val();
+        const sectionId = $(this).val();
+        if (classId && sectionId) {
+            loadTeachers(classId, sectionId, '#teacher');
         }
     });
 
@@ -36,18 +38,10 @@ $(document).ready(function() {
     $('#modal-role').on('change', function() {
         const role = $(this).val();
         if (role === 'student') {
-            $('#modal-class-field, #modal-section-field').show();
+            $('#modal-class-field, #modal-section-field, #modal-teacher-field').show();
         } else {
-            $('#modal-class-field, #modal-section-field').hide();
-            $('#modal-class, #modal-section').val('').trigger('change');
-        }
-    });
-
-    // Modal institution change handler
-    $('#modal-institution').on('change', function() {
-        const institutionId = $(this).val();
-        if (institutionId && $('#modal-role').val() === 'student') {
-            loadClasses(institutionId, '#modal-class');
+            $('#modal-class-field, #modal-section-field, #modal-teacher-field').hide();
+            $('#modal-class, #modal-section, #modal-teacher').val('').trigger('change');
         }
     });
 
@@ -56,6 +50,16 @@ $(document).ready(function() {
         const classId = $(this).val();
         if (classId) {
             loadSections(classId, '#modal-section');
+            loadTeachers(classId, '#modal-section', '#modal-teacher');
+        }
+    });
+
+    // Modal section change handler
+    $('#modal-section').on('change', function() {
+        const classId = $('#modal-class').val();
+        const sectionId = $(this).val();
+        if (classId && sectionId) {
+            loadTeachers(classId, sectionId, '#modal-teacher');
         }
     });
 
@@ -77,15 +81,15 @@ $(document).ready(function() {
     // Load attendance records
     function loadAttendanceRecords() {
         const formData = {
-            institution: $('#institution').val(),
             role: $('#role').val(),
             class: $('#class').val(),
             section: $('#section').val(),
+            teacher: $('#teacher').val(),
             date: $('#date').val()
         };
 
         $.ajax({
-            url: '/admin/attendance/filter',
+            url: '/institution/attendance/filter',
             type: 'GET',
             data: formData,
             success: function(response) {
@@ -112,7 +116,6 @@ $(document).ready(function() {
                                     </div>
                                 </td>
                                 <td><span class="badge bg-primary">${record.role.charAt(0).toUpperCase() + record.role.slice(1)}</span></td>
-                                <td>${record.institution ? record.institution.name : 'N/A'}</td>
                                 <td>${getClassSectionText(record)}</td>
                                 <td>${moment(record.date).format('MMM DD, YYYY')}</td>
                                 <td>${statusBadge}</td>
@@ -139,7 +142,7 @@ $(document).ready(function() {
                 } else {
                     tbody = `
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <div class="mb-3">
                                     <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
                                 </div>
@@ -157,28 +160,10 @@ $(document).ready(function() {
         });
     }
 
-    // Load classes by institution
-    function loadClasses(institutionId, targetSelector) {
-        $.ajax({
-            url: `/admin/attendance/classes/${institutionId}`,
-            type: 'GET',
-            success: function(response) {
-                let options = '<option value="">Select Class</option>';
-                response.forEach(function(cls) {
-                    options += `<option value="${cls.id}">${cls.name}</option>`;
-                });
-                $(targetSelector).html(options);
-            },
-            error: function() {
-                showAlert('Failed to load classes.', 'error');
-            }
-        });
-    }
-
     // Load sections by class
     function loadSections(classId, targetSelector) {
         $.ajax({
-            url: `/admin/attendance/sections/${classId}`,
+            url: `/institution/attendance/sections/${classId}`,
             type: 'GET',
             success: function(response) {
                 let options = '<option value="">Select Section</option>';
@@ -193,15 +178,37 @@ $(document).ready(function() {
         });
     }
 
+    // Load teachers by class and section
+    function loadTeachers(classId, sectionId, targetSelector) {
+        $.ajax({
+            url: '/institution/attendance/teachers',
+            type: 'GET',
+            data: {
+                class_id: classId,
+                section_id: sectionId
+            },
+            success: function(response) {
+                let options = '<option value="">Select Teacher</option>';
+                response.forEach(function(teacher) {
+                    options += `<option value="${teacher.id}">${teacher.first_name} ${teacher.last_name}</option>`;
+                });
+                $(targetSelector).html(options);
+            },
+            error: function() {
+                showAlert('Failed to load teachers.', 'error');
+            }
+        });
+    }
+
     // Load users for attendance marking
     function loadUsersForAttendance() {
-        const institutionId = $('#modal-institution').val();
         const role = $('#modal-role').val();
         const classId = $('#modal-class').val();
         const sectionId = $('#modal-section').val();
+        const teacherId = $('#modal-teacher').val();
 
-        if (!institutionId || !role) {
-            showAlert('Please select institution and role.', 'warning');
+        if (!role) {
+            showAlert('Please select role.', 'warning');
             return;
         }
 
@@ -214,16 +221,15 @@ $(document).ready(function() {
         let data = {};
 
         if (role === 'student') {
-            url = '/admin/attendance/students';
+            url = '/institution/attendance/students';
             data = {
-                institution_id: institutionId,
                 class_id: classId,
                 section_id: sectionId
             };
         } else if (role === 'teacher') {
-            url = `/admin/attendance/teachers/${institutionId}`;
+            url = '/institution/attendance/institution-teachers';
         } else if (role === 'nonworkingstaff') {
-            url = `/admin/attendance/staff/${institutionId}`;
+            url = '/institution/attendance/institution-staff';
         }
 
         $.ajax({
@@ -268,10 +274,10 @@ $(document).ready(function() {
     // Save attendance
     function saveAttendance() {
         const formData = {
-            institution_id: $('#modal-institution').val(),
             role: $('#modal-role').val(),
             class_id: $('#modal-class').val(),
             section_id: $('#modal-section').val(),
+            teacher_id: $('#modal-teacher').val(),
             date: $('#modal-date').val(),
             attendance_data: []
         };
@@ -291,7 +297,7 @@ $(document).ready(function() {
         });
 
         $.ajax({
-            url: '/admin/attendance/mark',
+            url: '/institution/attendance/mark',
             type: 'POST',
             data: formData,
             headers: {
@@ -323,7 +329,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: `/admin/attendance/${attendanceId}`,
+            url: `/institution/attendance/${attendanceId}`,
             type: 'PUT',
             data: formData,
             headers: {
@@ -349,7 +355,7 @@ $(document).ready(function() {
     window.deleteAttendance = function(id) {
         if (confirm('Are you sure you want to delete this attendance record?')) {
             $.ajax({
-                url: `/admin/attendance/${id}`,
+                url: `/institution/attendance/${id}`,
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -415,7 +421,7 @@ $(document).ready(function() {
 
     function resetMarkAttendanceForm() {
         $('#mark-attendance-form')[0].reset();
-        $('#modal-class-field, #modal-section-field').hide();
+        $('#modal-class-field, #modal-section-field, #modal-teacher-field').hide();
         $('#users-list').hide();
         $('#save-attendance-btn').hide();
     }

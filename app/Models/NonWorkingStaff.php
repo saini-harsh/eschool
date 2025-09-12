@@ -49,8 +49,12 @@ class NonWorkingStaff extends Model
 
     public function attendance()
     {
-        return $this->hasMany(Attendance::class, 'role_id')
-            ->where('role_type', 'nonworkingstaff');
+        return $this->hasMany(Attendance::class, 'user_id')->where('role', 'nonworkingstaff');
+    }
+
+    public function attendanceByDate($date)
+    {
+        return $this->attendance()->whereDate('date', $date)->first();
     }
 
     // Scopes
