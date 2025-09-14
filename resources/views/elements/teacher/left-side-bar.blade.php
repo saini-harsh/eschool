@@ -93,11 +93,21 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') ? 'active subdrop' : '' }}">
+                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.routines*') || request()->routeIs('teacher.lesson-plans*') || request()->routeIs('teacher.assignments*') || request()->routeIs('teacher.classes*') || request()->routeIs('teacher.attendance*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                              <li class="">
+                                    <a class="{{ request()->routeIs('teacher.attendance*') ? 'active' : '' }}" href="{{ route('teacher.attendance') }}">
+                                        <i class="ti ti-activity"></i><span>Attendance</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('teacher.classes*') ? 'active' : '' }}" href="{{ route('teacher.classes.index') }}">
+                                        <i class="ti ti-files"></i><span>Classes</span>
+                                    </a>
+                                </li>
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.routines*') ? 'active' : '' }}" href="{{ route('teacher.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>

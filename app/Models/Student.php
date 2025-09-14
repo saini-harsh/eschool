@@ -114,4 +114,14 @@ class Student extends Authenticatable
         return $this->belongsTo(Section::class, 'section_id');
     }
 
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'user_id')->where('role', 'student');
+    }
+
+    public function attendanceByDate($date)
+    {
+        return $this->attendance()->whereDate('date', $date)->first();
+    }
+
 }

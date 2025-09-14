@@ -8,6 +8,7 @@ use App\Http\Controllers\Teacher\Administration\StudentController;
 use App\Http\Controllers\Teacher\Routine\LessonPlanController;
 use App\Http\Controllers\Teacher\Routine\AssignmentController;
 use App\Http\Controllers\Teacher\Routine\RoutineController;
+use App\Http\Controllers\Teacher\Academic\SchoolClassController;
 
 
 Route::middleware('teacher')->group(function () {
@@ -28,6 +29,23 @@ Route::middleware('teacher')->group(function () {
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('teacher.students.sections');
             Route::post('/get-by-class-section', [StudentController::class, 'getStudentsByClassSection'])->name('teacher.students.get-by-class-section');
         });
+
+        Route::prefix('attendance')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'index'])->name('teacher.attendance');
+            Route::get('/filter', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'filter']);
+            Route::post('/mark', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'markAttendance'])->name('teacher.attendance.mark');
+            Route::put('/{id}', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'updateAttendance'])->name('teacher.attendance.update');
+            Route::get('/my-attendance', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getMyAttendance'])->name('teacher.attendance.my');
+            Route::post('/mark-my-attendance', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'markMyAttendance'])->name('teacher.attendance.mark-my');
+            
+            // AJAX routes for dynamic dropdowns
+            Route::get('/sections/{classId}', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getSectionsByClass']);
+            Route::get('/students', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getStudentsByClassSection']);
+        });
+          // Classes
+          Route::prefix('classes')->group(function () {
+             Route::get('/',[SchoolClassController::class,'index'])->name('teacher.classes.index');
+         });
         // ROUTINE MANAGEMENT
         Route::prefix('routines')->group(function () {
             Route::get('/', [RoutineController::class, 'index'])->name('teacher.routines.index');

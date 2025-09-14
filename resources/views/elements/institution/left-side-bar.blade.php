@@ -85,6 +85,11 @@
                                         <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.attendance*') ? 'active' : '' }}" href="{{ route('institution.attendance') }}">
+                                        <i class="ti ti-activity"></i><span>Attendance</span>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>

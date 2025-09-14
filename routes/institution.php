@@ -61,6 +61,21 @@ Route::middleware('institution')->group(function () {
             Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('institution.nonworkingstaff.status');
         });
 
+        Route::prefix('attendance')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'index'])->name('institution.attendance');
+            Route::get('/filter', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'filter']);
+            Route::post('/mark', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'markAttendance'])->name('institution.attendance.mark');
+            Route::put('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'updateAttendance'])->name('institution.attendance.update');
+            Route::delete('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'deleteAttendance'])->name('institution.attendance.delete');
+            
+            // AJAX routes for dynamic dropdowns
+            Route::get('/sections/{classId}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getSectionsByClass']);
+            Route::get('/teachers', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getTeachersByClassSection']);
+            Route::get('/students', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getStudentsByClassSection']);
+            Route::get('/institution-teachers', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getTeachersByInstitution']);
+            Route::get('/institution-staff', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getStaffByInstitution']);
+        });
+
          // Classes
          Route::prefix('classes')->group(function () {
             Route::get('/',[SchoolClassController::class,'index'])->name('institution.classes.index');

@@ -59,4 +59,24 @@ class Teacher extends Authenticatable
     {
         return $this->hasMany(AssignClassTeacher::class);
     }
+
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'user_id')->where('role', 'teacher');
+    }
+
+    public function attendanceByDate($date)
+    {
+        return $this->attendance()->whereDate('date', $date)->first();
+    }
+
+    public function markedAttendance()
+    {
+        return $this->hasMany(Attendance::class, 'marked_by');
+    }
+
+    public function confirmedAttendance()
+    {
+        return $this->hasMany(Attendance::class, 'confirmed_by');
+    }
 }

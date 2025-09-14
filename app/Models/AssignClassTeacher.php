@@ -22,6 +22,11 @@ class AssignClassTeacher extends Model
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
+
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');

@@ -1,5 +1,5 @@
-@extends('layouts.admin')
-@section('title', 'Admin Dashboard | Attendance Management')
+@extends('layouts.institution')
+@section('title', 'Institution Dashboard | Attendance Management')
 
 @section('content')
     <!-- Start Content -->
@@ -30,21 +30,6 @@
             <div class="card-body">
                 <h6 class="card-title mb-3">Filter Attendance Records</h6>
                 <form id="attendance-filter-form" class="row g-3 align-items-end">
-                    <!-- Institution Dropdown -->
-                    <div class="col-md-2">
-                        <label for="institution" class="form-label">Institution</label>
-                        <select class="form-select" id="institution" name="institution">
-                            <option value="">Select Institution</option>
-                            @if(isset($institutions) && count($institutions) > 0)
-                                @foreach ($institutions as $institution)
-                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                @endforeach
-                            @else
-                                <option value="">No institutions found</option>
-                            @endif
-                        </select>
-                    </div>
-
                     <!-- Role Dropdown -->
                     <div class="col-md-2">
                         <label for="role" class="form-label">Role</label>
@@ -61,6 +46,9 @@
                         <label for="class" class="form-label">Class</label>
                         <select class="form-select" id="class" name="class">
                             <option value="">Select Class</option>
+                            @foreach ($classes as $class)
+                                <option value="{{ $class->id }}">{{ $class->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -69,6 +57,14 @@
                         <label for="section" class="form-label">Section</label>
                         <select class="form-select" id="section" name="section">
                             <option value="">Select Section</option>
+                        </select>
+                    </div>
+
+                    <!-- Teacher Dropdown (for students) -->
+                    <div class="col-md-2" id="teacher-field" style="display:none;">
+                        <label for="teacher" class="form-label">Teacher</label>
+                        <select class="form-select" id="teacher" name="teacher">
+                            <option value="">Select Teacher</option>
                         </select>
                     </div>
 
@@ -98,7 +94,6 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Role</th>
-                                <th>Institution</th>
                                 <th>Class/Section</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -109,7 +104,7 @@
                         </thead>
                         <tbody id="attendance-table-body">
                             <tr>
-                                <td colspan="9" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="mb-3">
                                         <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
                                     </div>
@@ -137,19 +132,6 @@
                     <form id="mark-attendance-form">
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
-                                <label for="modal-institution" class="form-label">Institution *</label>
-                                <select class="form-select" id="modal-institution" name="institution_id" required>
-                                    <option value="">Select Institution</option>
-                                    @if(isset($institutions) && count($institutions) > 0)
-                                        @foreach ($institutions as $institution)
-                                            <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="">No institutions found</option>
-                                    @endif
-                                </select>
-                            </div>
-                            <div class="col-md-3">
                                 <label for="modal-role" class="form-label">Role *</label>
                                 <select class="form-select" id="modal-role" name="role" required>
                                     <option value="">Select Role</option>
@@ -162,12 +144,21 @@
                                 <label for="modal-class" class="form-label">Class</label>
                                 <select class="form-select" id="modal-class" name="class_id">
                                     <option value="">Select Class</option>
+                                    @foreach ($classes as $class)
+                                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3" id="modal-section-field" style="display:none;">
                                 <label for="modal-section" class="form-label">Section</label>
                                 <select class="form-select" id="modal-section" name="section_id">
                                     <option value="">Select Section</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3" id="modal-teacher-field" style="display:none;">
+                                <label for="modal-teacher" class="form-label">Teacher</label>
+                                <select class="form-select" id="modal-teacher" name="teacher_id">
+                                    <option value="">Select Teacher</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -248,5 +239,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/admin/attendance.js') }}"></script>
+    <script src="{{ asset('custom/js/institution/attendance.js') }}"></script>
 @endpush
