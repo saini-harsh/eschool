@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Teacher\Administration\AttendanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\Teacher\Setting\SettingsController;
@@ -66,7 +67,15 @@ Route::middleware('teacher')->group(function () {
             Route::get('/sections/{classId}', [AssignmentController::class, 'getSectionsByClass'])->name('teacher.assignments.sections');
             Route::get('/subjects/{institutionId}/{classId}', [AssignmentController::class, 'getSubjectsByInstitutionClass'])->name('teacher.assignments.subjects');
         });
+
+        Route::prefix('administration')->group(function () {
+            Route::get('/attendance', [AttendanceController::class, 'index'])->name('teacher.administration.attendance');
+            // Route::post('/attendance/store', [StudentController::class, 'storeAttendance'])->name('teacher.administration.attendance.store');
+            // Route::post('/attendance/report', [StudentController::class, 'attendanceReport'])->name('teacher.administration.attendance.report');
+        });
     });
+
+
     // Route::post('logout', [TeacherController::class, 'logout'])->name('teacher.logout');
 
 });
