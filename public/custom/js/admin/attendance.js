@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    // Initialize Flatpickr date pickers
+    initializeDatePickers();
+    
     // Filter form submission
     $('#attendance-filter-form').on('submit', function(e) {
         e.preventDefault();
@@ -84,6 +87,23 @@ $(document).ready(function() {
         updateAttendance();
     });
 
+    // Initialize Flatpickr date pickers
+    function initializeDatePickers() {
+        // Initialize filter date picker
+        flatpickr("#date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+        
+        // Initialize modal date picker
+        flatpickr("#modal-date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+    }
+
     // Load attendance records
     function loadAttendanceRecords() {
         const formData = {
@@ -91,7 +111,7 @@ $(document).ready(function() {
             role: $('#role').val(),
             class: $('#class').val(),
             section: $('#section').val(),
-            date: $('#date').val()
+            date: formatDateForAPI($('#date').val())
         };
 
         $.ajax({
@@ -282,7 +302,7 @@ $(document).ready(function() {
             role: $('#modal-role').val(),
             class_id: $('#modal-class').val(),
             section_id: $('#modal-section').val(),
-            date: $('#modal-date').val(),
+            date: formatDateForAPI($('#modal-date').val()),
             attendance_data: []
         };
 
@@ -389,6 +409,13 @@ $(document).ready(function() {
     };
 
     // Helper functions
+    function formatDateForAPI(dateString) {
+        if (!dateString) return '';
+        // Convert from "d M, Y" format to "Y-m-d" format for API
+        const date = moment(dateString, 'D MMM, YYYY');
+        return date.isValid() ? date.format('YYYY-MM-D') : '';
+    }
+
     function getUserFromRecord(record) {
         let name = 'N/A', email = 'N/A';
         if (record.role === 'student' && record.student) {

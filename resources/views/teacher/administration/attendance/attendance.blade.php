@@ -31,10 +31,20 @@
         <!-- Filter Form Card -->
         <div class="card mb-4">
             <div class="card-body">
-                <h6 class="card-title mb-3">Filter Student Attendance Records</h6>
+                <h6 class="card-title mb-3">Filter Attendance Records</h6>
                 <form id="attendance-filter-form" class="row g-3 align-items-end">
-                    <!-- Class Dropdown -->
-                    <div class="col-md-3">
+                    <!-- Role Dropdown -->
+                    <div class="col-md-2">
+                        <label for="role" class="form-label">Role</label>
+                        <select class="form-select" id="role" name="role">
+                            <option value="">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+
+                    <!-- Class Dropdown (for students) -->
+                    <div class="col-md-2" id="class-field" style="display:none;">
                         <label for="class" class="form-label">Class</label>
                         <select class="form-select" id="class" name="class">
                             <option value="">Select Class</option>
@@ -44,8 +54,8 @@
                         </select>
                     </div>
 
-                    <!-- Section Dropdown -->
-                    <div class="col-md-3" id="section-field" style="display:none;">
+                    <!-- Section Dropdown (for students) -->
+                    <div class="col-md-2" id="section-field" style="display:none;">
                         <label for="section" class="form-label">Section</label>
                         <select class="form-select" id="section" name="section">
                             <option value="">Select Section</option>
@@ -53,13 +63,13 @@
                     </div>
 
                     <!-- Date Filter -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}">
+                        <input type="text" class="form-control" id="date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}">
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="ti ti-filter me-1"></i>Filter
                         </button>
@@ -71,12 +81,13 @@
         <!-- Attendance Table Card -->
         <div class="card">
             <div class="card-body">
-                <h6 class="card-title mb-3">Student Attendance Records</h6>
+                <h6 class="card-title mb-3">Attendance Records</h6>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Student Name</th>
+                                <th>Name</th>
+                                <th>Role</th>
                                 <th>Class/Section</th>
                                 <th>Date</th>
                                 <th>Status</th>
@@ -87,7 +98,7 @@
                         </thead>
                         <tbody id="attendance-table-body">
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <div class="mb-3">
                                         <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
                                     </div>
@@ -160,7 +171,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="modal-date" class="form-label">Date *</label>
-                                <input type="date" class="form-control" id="modal-date" name="date" value="{{ date('Y-m-d') }}" required>
+                                <input type="text" class="form-control" id="modal-date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}" required>
                             </div>
                             <div class="col-md-3">
                                 <button type="button" class="btn btn-outline-primary mt-4" id="load-students-btn">
@@ -210,7 +221,7 @@
                     <form id="mark-my-attendance-form">
                         <div class="mb-3">
                             <label for="my-date" class="form-label">Date *</label>
-                            <input type="date" class="form-control" id="my-date" name="date" value="{{ date('Y-m-d') }}" required>
+                            <input type="text" class="form-control" id="my-date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="my-status" class="form-label">Status *</label>

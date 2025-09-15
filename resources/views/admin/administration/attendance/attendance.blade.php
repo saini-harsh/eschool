@@ -75,7 +75,7 @@
                     <!-- Date Filter -->
                     <div class="col-md-2">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}">
+                        <input type="text" class="form-control" id="date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}">
                     </div>
 
                     <!-- Action Buttons -->
@@ -172,7 +172,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="modal-date" class="form-label">Date *</label>
-                                <input type="date" class="form-control" id="modal-date" name="date" value="{{ date('Y-m-d') }}" required>
+                                <input type="text" class="form-control" id="modal-date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}" required>
                             </div>
                             <div class="col-md-3">
                                 <button type="button" class="btn btn-outline-primary mt-4" id="load-users-btn">

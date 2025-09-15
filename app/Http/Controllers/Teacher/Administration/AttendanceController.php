@@ -39,12 +39,20 @@ class AttendanceController extends Controller
     {
         $teacherId = auth('teacher')->user()->id;
         $institutionId = auth('teacher')->user()->institution_id;
+        $role = $request->role;
         $classId = $request->class;
         $sectionId = $request->section;
         $date = $request->date;
 
-        $query = Attendance::where('institution_id', $institutionId)
-            ->where('role', 'student'); // Teachers can only manage student attendance
+        $query = Attendance::where('institution_id', $institutionId);
+
+        // Apply role filter
+        if ($role) {
+            $query->where('role', $role);
+        } else {
+            // Default to student attendance if no role specified
+            $query->where('role', 'student');
+        }
 
         // Apply filters
         if ($classId) {
@@ -57,14 +65,24 @@ class AttendanceController extends Controller
             $query->whereDate('date', $date);
         }
 
-        // Only show attendance for classes/sections assigned to this teacher
-        $query->where(function($q) use ($teacherId) {
-            $q->where('teacher_id', $teacherId)
-              ->orWhere('marked_by', $teacherId);
-        });
+        // Apply teacher-specific filtering based on role
+        if ($role === 'student') {
+            // For student attendance, only show classes/sections assigned to this teacher
+            $query->where(function($q) use ($teacherId) {
+                $q->where('teacher_id', $teacherId)
+                  ->orWhere('marked_by', $teacherId);
+            });
+        } elseif ($role === 'teacher') {
+            // For teacher attendance, show all teacher attendance in the institution
+            // Teachers can view all teacher attendance records
+        }
 
-        // Eager load relationships
-        $query->with(['institution', 'schoolClass', 'section', 'student', 'assignedTeacher', 'markedBy', 'confirmedBy']);
+        // Eager load relationships based on role
+        if ($role === 'student') {
+            $query->with(['institution', 'schoolClass', 'section', 'student', 'assignedTeacher', 'markedBy', 'confirmedBy']);
+        } else {
+            $query->with(['institution', 'schoolClass', 'section', 'teacher', 'markedBy', 'confirmedBy']);
+        }
 
         $records = $query->orderBy('date', 'desc')->get();
 
@@ -107,7 +125,7 @@ class AttendanceController extends Controller
         $request->validate([
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'required|exists:sections,id',
-            'date' => 'required|date',
+            'date' => 'required|date_format:Y-m-d',
             'attendance_data' => 'required|array',
         ]);
 
@@ -244,7 +262,7 @@ class AttendanceController extends Controller
     public function markMyAttendance(Request $request)
     {
         $request->validate([
-            'date' => 'required|date',
+            'date' => 'required|date_format:Y-m-d',
             'status' => 'required|in:present,absent,late,excused',
             'remarks' => 'nullable|string|max:500',
         ]);
@@ -270,10 +288,18 @@ class AttendanceController extends Controller
         }
 
         try {
+            // Get teacher's assigned class and section
+            $assignment = AssignClassTeacher::where('teacher_id', $teacherId)
+                ->where('status', true)
+                ->with(['schoolClass', 'section'])
+                ->first();
+
             Attendance::create([
                 'user_id' => $teacherId,
                 'role' => 'teacher',
                 'institution_id' => $institutionId,
+                'class_id' => $assignment ? $assignment->class_id : null,
+                'section_id' => $assignment ? $assignment->section_id : null,
                 'date' => $date,
                 'status' => $status,
                 'remarks' => $remarks,

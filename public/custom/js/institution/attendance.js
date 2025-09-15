@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    // Initialize Flatpickr date pickers
+    initializeDatePickers();
+    
     // Filter form submission
     $('#attendance-filter-form').on('submit', function(e) {
         e.preventDefault();
@@ -78,6 +81,23 @@ $(document).ready(function() {
         updateAttendance();
     });
 
+    // Initialize Flatpickr date pickers
+    function initializeDatePickers() {
+        // Initialize filter date picker
+        flatpickr("#date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+        
+        // Initialize modal date picker
+        flatpickr("#modal-date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+    }
+
     // Load attendance records
     function loadAttendanceRecords() {
         const formData = {
@@ -85,7 +105,7 @@ $(document).ready(function() {
             class: $('#class').val(),
             section: $('#section').val(),
             teacher: $('#teacher').val(),
-            date: $('#date').val()
+            date: formatDateForAPI($('#date').val())
         };
 
         $.ajax({
@@ -278,7 +298,7 @@ $(document).ready(function() {
             class_id: $('#modal-class').val(),
             section_id: $('#modal-section').val(),
             teacher_id: $('#modal-teacher').val(),
-            date: $('#modal-date').val(),
+            date: formatDateForAPI($('#modal-date').val()),
             attendance_data: []
         };
 
@@ -385,6 +405,13 @@ $(document).ready(function() {
     };
 
     // Helper functions
+    function formatDateForAPI(dateString) {
+        if (!dateString) return '';
+        // Convert from "d M, Y" format to "Y-m-d" format for API
+        const date = moment(dateString, 'D MMM, YYYY');
+        return date.isValid() ? date.format('YYYY-MM-D') : '';
+    }
+
     function getUserFromRecord(record) {
         let name = 'N/A', email = 'N/A';
         if (record.role === 'student' && record.student) {
@@ -412,6 +439,10 @@ $(document).ready(function() {
 
     function getClassSectionText(record) {
         if (record.role === 'student') {
+            const className = record.school_class ? record.school_class.name : 'N/A';
+            const sectionName = record.section ? record.section.name : 'N/A';
+            return `${className} - ${sectionName}`;
+        } else if (record.role === 'teacher') {
             const className = record.school_class ? record.school_class.name : 'N/A';
             const sectionName = record.section ? record.section.name : 'N/A';
             return `${className} - ${sectionName}`;

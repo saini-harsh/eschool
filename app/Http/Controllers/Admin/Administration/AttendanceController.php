@@ -136,7 +136,7 @@ class AttendanceController extends Controller
         $request->validate([
             'role' => 'required|in:student,teacher,nonworkingstaff',
             'institution_id' => 'required|exists:institutions,id',
-            'date' => 'required|date',
+            'date' => 'required|date_format:Y-m-d',
             'attendance_data' => 'required|array',
         ]);
 
@@ -163,12 +163,32 @@ class AttendanceController extends Controller
                     ->whereDate('date', $date)
                     ->first();
 
+                // Get class/section based on role
+                $attendanceClassId = null;
+                $attendanceSectionId = null;
+                $attendanceTeacherId = null;
+
+                if ($role === 'student') {
+                    $attendanceClassId = $classId;
+                    $attendanceSectionId = $sectionId;
+                    $attendanceTeacherId = $this->getAssignedTeacher($classId, $sectionId);
+                } elseif ($role === 'teacher') {
+                    // Get teacher's assigned class and section
+                    $assignment = \App\Models\AssignClassTeacher::where('teacher_id', $userId)
+                        ->where('status', true)
+                        ->first();
+                    if ($assignment) {
+                        $attendanceClassId = $assignment->class_id;
+                        $attendanceSectionId = $assignment->section_id;
+                    }
+                }
+
                 if ($existingAttendance) {
                     // Update existing attendance
                     $existingAttendance->update([
-                        'class_id' => $classId,
-                        'section_id' => $sectionId,
-                        'teacher_id' => $role === 'student' ? $this->getAssignedTeacher($classId, $sectionId) : null,
+                        'class_id' => $attendanceClassId,
+                        'section_id' => $attendanceSectionId,
+                        'teacher_id' => $attendanceTeacherId,
                         'status' => $status,
                         'remarks' => $remarks,
                         'marked_by' => $markedBy,
@@ -183,9 +203,9 @@ class AttendanceController extends Controller
                         'user_id' => $userId,
                         'role' => $role,
                         'institution_id' => $institutionId,
-                        'class_id' => $classId,
-                        'section_id' => $sectionId,
-                        'teacher_id' => $role === 'student' ? $this->getAssignedTeacher($classId, $sectionId) : null,
+                        'class_id' => $attendanceClassId,
+                        'section_id' => $attendanceSectionId,
+                        'teacher_id' => $attendanceTeacherId,
                         'date' => $date,
                         'status' => $status,
                         'remarks' => $remarks,

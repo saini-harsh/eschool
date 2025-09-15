@@ -58,20 +58,16 @@ class AttendanceController extends Controller
             $query->whereDate('date', $date);
         }
 
-        // Eager load relationships
-        $query->with(['institution', 'schoolClass', 'section', 'assignedTeacher', 'markedBy', 'confirmedBy']);
-
-        // Load user based on role
-        switch ($role) {
-            case 'student':
-                $query->with('student');
-                break;
-            case 'teacher':
-                $query->with('teacher');
-                break;
-            case 'nonworkingstaff':
-                $query->with('staff');
-                break;
+        // Eager load relationships based on role
+        if ($role === 'student') {
+            $query->with(['institution', 'schoolClass', 'section', 'student', 'assignedTeacher', 'markedBy', 'confirmedBy']);
+        } elseif ($role === 'teacher') {
+            $query->with(['institution', 'schoolClass', 'section', 'teacher', 'markedBy', 'confirmedBy']);
+        } elseif ($role === 'nonworkingstaff') {
+            $query->with(['institution', 'schoolClass', 'section', 'staff', 'markedBy', 'confirmedBy']);
+        } else {
+            // Default: load all relationships
+            $query->with(['institution', 'schoolClass', 'section', 'student', 'teacher', 'staff', 'assignedTeacher', 'markedBy', 'confirmedBy']);
         }
 
         $records = $query->orderBy('date', 'desc')->get();
@@ -150,7 +146,7 @@ class AttendanceController extends Controller
             'class_id' => 'required_if:role,student|nullable|exists:classes,id',
             'section_id' => 'required_if:role,student|nullable|exists:sections,id',
             'teacher_id' => 'required_if:role,student|nullable|exists:teachers,id',
-            'date' => 'required|date',
+            'date' => 'required|date_format:Y-m-d',
             'attendance_data' => 'required|array',
         ]);
 
@@ -178,12 +174,32 @@ class AttendanceController extends Controller
                     ->whereDate('date', $date)
                     ->first();
 
+                // Get class/section based on role
+                $attendanceClassId = null;
+                $attendanceSectionId = null;
+                $attendanceTeacherId = null;
+
+                if ($role === 'student') {
+                    $attendanceClassId = $classId;
+                    $attendanceSectionId = $sectionId;
+                    $attendanceTeacherId = $teacherId;
+                } elseif ($role === 'teacher') {
+                    // Get teacher's assigned class and section
+                    $assignment = \App\Models\AssignClassTeacher::where('teacher_id', $userId)
+                        ->where('status', true)
+                        ->first();
+                    if ($assignment) {
+                        $attendanceClassId = $assignment->class_id;
+                        $attendanceSectionId = $assignment->section_id;
+                    }
+                }
+
                 if ($existingAttendance) {
                     // Update existing attendance
                     $existingAttendance->update([
-                        'class_id' => $classId,
-                        'section_id' => $sectionId,
-                        'teacher_id' => $teacherId,
+                        'class_id' => $attendanceClassId,
+                        'section_id' => $attendanceSectionId,
+                        'teacher_id' => $attendanceTeacherId,
                         'status' => $status,
                         'remarks' => $remarks,
                         'marked_by' => $markedBy,
@@ -198,9 +214,9 @@ class AttendanceController extends Controller
                         'user_id' => $userId,
                         'role' => $role,
                         'institution_id' => $institutionId,
-                        'class_id' => $classId,
-                        'section_id' => $sectionId,
-                        'teacher_id' => $teacherId,
+                        'class_id' => $attendanceClassId,
+                        'section_id' => $attendanceSectionId,
+                        'teacher_id' => $attendanceTeacherId,
                         'date' => $date,
                         'status' => $status,
                         'remarks' => $remarks,

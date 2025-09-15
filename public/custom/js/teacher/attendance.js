@@ -1,8 +1,22 @@
 $(document).ready(function() {
+    // Initialize Flatpickr date pickers
+    initializeDatePickers();
+    
     // Filter form submission
     $('#attendance-filter-form').on('submit', function(e) {
         e.preventDefault();
         loadAttendanceRecords();
+    });
+
+    // Role change handler for filter form
+    $('#role').on('change', function() {
+        const role = $(this).val();
+        if (role === 'student') {
+            $('#class-field, #section-field').show();
+        } else {
+            $('#class-field, #section-field').hide();
+            $('#class, #section').val('').trigger('change');
+        }
     });
 
     // Class change handler for filter form
@@ -49,12 +63,37 @@ $(document).ready(function() {
         loadMyAttendance();
     });
 
+    // Initialize Flatpickr date pickers
+    function initializeDatePickers() {
+        // Initialize filter date picker
+        flatpickr("#date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+        
+        // Initialize modal date picker
+        flatpickr("#modal-date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+        
+        // Initialize my attendance date picker
+        flatpickr("#my-date", {
+            dateFormat: "d M, Y",
+            placeholder: "dd/mm/yyyy",
+            allowInput: true
+        });
+    }
+
     // Load attendance records
     function loadAttendanceRecords() {
         const formData = {
+            role: $('#role').val(),
             class: $('#class').val(),
             section: $('#section').val(),
-            date: $('#date').val()
+            date: formatDateForAPI($('#date').val())
         };
 
         $.ajax({
@@ -65,6 +104,7 @@ $(document).ready(function() {
                 let tbody = '';
                 if (response.length > 0) {
                     response.forEach(function(record) {
+                        const user = getUserFromRecord(record);
                         const statusBadge = getStatusBadge(record.status);
                         const confirmedBadge = record.is_confirmed 
                             ? '<span class="badge bg-success">Confirmed</span>' 
@@ -78,11 +118,12 @@ $(document).ready(function() {
                                             <i class="ti ti-user text-muted"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 fs-14">${record.student.first_name} ${record.student.last_name}</h6>
-                                            <small class="text-muted">${record.student.email}</small>
+                                            <h6 class="mb-0 fs-14">${user.name}</h6>
+                                            <small class="text-muted">${user.email}</small>
                                         </div>
                                     </div>
                                 </td>
+                                <td><span class="badge bg-primary">${record.role.charAt(0).toUpperCase() + record.role.slice(1)}</span></td>
                                 <td>${getClassSectionText(record)}</td>
                                 <td>${moment(record.date).format('MMM DD, YYYY')}</td>
                                 <td>${statusBadge}</td>
@@ -106,7 +147,7 @@ $(document).ready(function() {
                 } else {
                     tbody = `
                         <tr>
-                            <td colspan="7" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <div class="mb-3">
                                     <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
                                 </div>
@@ -198,7 +239,7 @@ $(document).ready(function() {
         const formData = {
             class_id: $('#modal-class').val(),
             section_id: $('#modal-section').val(),
-            date: $('#modal-date').val(),
+            date: formatDateForAPI($('#modal-date').val()),
             attendance_data: []
         };
 
@@ -243,7 +284,7 @@ $(document).ready(function() {
     // Save my attendance
     function saveMyAttendance() {
         const formData = {
-            date: $('#my-date').val(),
+            date: formatDateForAPI($('#my-date').val()),
             status: $('#my-status').val(),
             remarks: $('#my-remarks').val()
         };
@@ -357,6 +398,13 @@ $(document).ready(function() {
     };
 
     // Helper functions
+    function formatDateForAPI(dateString) {
+        if (!dateString) return '';
+        // Convert from "d M, Y" format to "Y-m-d" format for API
+        const date = moment(dateString, 'D MMM, YYYY');
+        return date.isValid() ? date.format('YYYY-MM-D') : '';
+    }
+
     function getStatusBadge(status) {
         const badges = {
             'present': '<span class="badge bg-success">Present</span>',
@@ -367,10 +415,34 @@ $(document).ready(function() {
         return badges[status] || `<span class="badge bg-secondary">${status}</span>`;
     }
 
+    function getUserFromRecord(record) {
+        let name = 'N/A', email = 'N/A';
+        if (record.role === 'student' && record.student) {
+            name = record.student.first_name + ' ' + record.student.last_name;
+            email = record.student.email;
+        } else if (record.role === 'teacher' && record.teacher) {
+            name = record.teacher.first_name + ' ' + record.teacher.last_name;
+            email = record.teacher.email;
+        }
+        return { name, email };
+    }
+
     function getClassSectionText(record) {
-        const className = record.school_class ? record.school_class.name : 'N/A';
-        const sectionName = record.section ? record.section.name : 'N/A';
-        return `${className} - ${sectionName}`;
+        if (record.role === 'student') {
+            const className = record.school_class ? record.school_class.name : 'N/A';
+            const sectionName = record.section ? record.section.name : 'N/A';
+            return `${className} - ${sectionName}`;
+        } else if (record.role === 'teacher') {
+            // For teacher records, show assigned classes/sections
+            if (record.school_class && record.section) {
+                return `${record.school_class.name} - ${record.section.name}`;
+            } else if (record.school_class) {
+                return record.school_class.name;
+            } else {
+                return 'N/A';
+            }
+        }
+        return 'N/A';
     }
 
     function resetMarkAttendanceForm() {
