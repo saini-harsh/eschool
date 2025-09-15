@@ -166,6 +166,9 @@ class AttendanceController extends Controller
                 if ($existingAttendance) {
                     // Update existing attendance
                     $existingAttendance->update([
+                        'class_id' => $classId,
+                        'section_id' => $sectionId,
+                        'teacher_id' => $role === 'student' ? $this->getAssignedTeacher($classId, $sectionId) : null,
                         'status' => $status,
                         'remarks' => $remarks,
                         'marked_by' => $markedBy,
@@ -245,7 +248,7 @@ class AttendanceController extends Controller
     {
         $assignment = AssignClassTeacher::where('class_id', $classId)
             ->where('section_id', $sectionId)
-            ->where('status', 'active')
+            ->where('status', true)
             ->first();
 
         return $assignment ? $assignment->teacher_id : null;

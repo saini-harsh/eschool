@@ -181,6 +181,9 @@ class AttendanceController extends Controller
                 if ($existingAttendance) {
                     // Update existing attendance
                     $existingAttendance->update([
+                        'class_id' => $classId,
+                        'section_id' => $sectionId,
+                        'teacher_id' => $teacherId,
                         'status' => $status,
                         'remarks' => $remarks,
                         'marked_by' => $markedBy,

@@ -10,6 +10,11 @@ $(document).ready(function() {
         const role = $(this).val();
         if (role === 'student') {
             $('#class-field, #section-field').show();
+            // Load classes if institution is already selected
+            const institutionId = $('#institution').val();
+            if (institutionId) {
+                loadClasses(institutionId, '#class');
+            }
         } else {
             $('#class-field, #section-field').hide();
             $('#class, #section').val('').trigger('change');
@@ -37,6 +42,11 @@ $(document).ready(function() {
         const role = $(this).val();
         if (role === 'student') {
             $('#modal-class-field, #modal-section-field').show();
+            // Load classes if institution is already selected
+            const institutionId = $('#modal-institution').val();
+            if (institutionId) {
+                loadClasses(institutionId, '#modal-class');
+            }
         } else {
             $('#modal-class-field, #modal-section-field').hide();
             $('#modal-class, #modal-section').val('').trigger('change');
@@ -406,7 +416,7 @@ $(document).ready(function() {
 
     function getClassSectionText(record) {
         if (record.role === 'student') {
-            const className = record.schoolClass ? record.schoolClass.name : 'N/A';
+            const className = record.school_class ? record.school_class.name : 'N/A';
             const sectionName = record.section ? record.section.name : 'N/A';
             return `${className} - ${sectionName}`;
         }

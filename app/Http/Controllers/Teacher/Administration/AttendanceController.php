@@ -78,11 +78,11 @@ class AttendanceController extends Controller
         // Get sections assigned to this teacher for the given class
         $assignments = AssignClassTeacher::where('teacher_id', $teacherId)
             ->where('class_id', $classId)
-            ->where('status', 'active')
+            ->where('status', true)
             ->with('section:id,name')
             ->get();
 
-        $sections = $assignments->pluck('section');
+        $sections = $assignments->pluck('section')->unique('id')->values();
 
         return response()->json($sections);
     }
@@ -153,6 +153,9 @@ class AttendanceController extends Controller
                 if ($existingAttendance) {
                     // Update existing attendance
                     $existingAttendance->update([
+                        'class_id' => $classId,
+                        'section_id' => $sectionId,
+                        'teacher_id' => $teacherId,
                         'status' => $status,
                         'remarks' => $remarks,
                         'marked_by' => $markedBy,

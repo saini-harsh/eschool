@@ -368,7 +368,7 @@ $(document).ready(function() {
     }
 
     function getClassSectionText(record) {
-        const className = record.schoolClass ? record.schoolClass.name : 'N/A';
+        const className = record.school_class ? record.school_class.name : 'N/A';
         const sectionName = record.section ? record.section.name : 'N/A';
         return `${className} - ${sectionName}`;
     }
