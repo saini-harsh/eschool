@@ -62,12 +62,70 @@
 
                     </ul>
                 </li>
-
                 <li>
                     <ul>
                         <li class="">
                             <a class="{{ request()->routeIs('student.attendance*') ? 'active' : '' }}" href="{{ route('student.attendance') }}">
                                 <i class="ti ti-file"></i><span>Attendance</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="">
+                                <i class="ti ti-layout-dashboard"></i><span>Academics</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-report"></i><span>Routine</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-report"></i><span>Assignments</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-report"></i><span>Events</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="">
+                                <i class="ti ti-layout-dashboard"></i><span>Examination</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-report"></i><span>Routine</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="" href="">
+                                        <i class="ti ti-report"></i><span>Progress Report</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li class="">
+                            <a class="" href="">
+                                <i class="ti ti-file"></i><span>Notices</span>
                             </a>
                         </li>
                     </ul>
