@@ -13,7 +13,26 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('institution_id');
+            $table->unsignedBigInteger('exam_type_id');
+            $table->string('title');
+            $table->string('code');
+            $table->unsignedBigInteger('class_id')->nullable();
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->time('morning_time')->nullable();
+            $table->time('evening_time')->nullable();
+            $table->text('subject_dates')->nullable(); // JSON or serialized data for subjects
+            $table->text('morning_subjects')->nullable(); // JSON or serialized data for subjects
+            $table->text('evening_subjects')->nullable(); // JSON or serialized data for subjects
             $table->timestamps();
+
+            // Foreign keys (optional, remove if not needed)
+            $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
+            // $table->foreign('exam_type_id')->references('id')->on('exam_types')->onDelete('cascade');
+            $table->foreign('class_id')->references('id')->on('classes')->onDelete('set null');
+            $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
         });
     }
 

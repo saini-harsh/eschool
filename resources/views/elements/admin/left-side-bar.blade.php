@@ -203,6 +203,11 @@
                             </a>
                             <ul>
                                 <li class="">
+                                    <a class="" href="{{ route('admin.exam-management.exams') }}">
+                                        <i class="ti ti-home"></i><span>Exams</span>
+                                    </a>
+                                </li>
+                                <li class="">
                                     <a class="{{ request()->routeIs('admin.exam-management.exam-type') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-type') }}">
                                         <i class="ti ti-home"></i><span>Exam Type</span>
                                     </a>

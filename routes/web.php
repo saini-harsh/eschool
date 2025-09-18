@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Academic\SubjectController;
 use App\Http\Controllers\Admin\Setting\SettingsController;
 use App\Http\Controllers\Admin\Academic\CalendarController;
 use App\Http\Controllers\Admin\Routine\LessonPlanController;
+use App\Http\Controllers\Admin\ExamManagement\ExamController;
 use App\Http\Controllers\Admin\Academic\SchoolClassController;
 use App\Http\Controllers\Admin\Academic\AssignSubjectController;
 use App\Http\Controllers\Admin\Administration\StudentController;
@@ -97,7 +98,7 @@ Route::middleware('admin')->group(function () {
             Route::post('/mark', [AttendanceController::class, 'markAttendance'])->name('admin.attendance.mark');
             Route::put('/{id}', [AttendanceController::class, 'updateAttendance'])->name('admin.attendance.update');
             Route::delete('/{id}', [AttendanceController::class, 'deleteAttendance'])->name('admin.attendance.delete');
-            
+
             // AJAX routes for dynamic dropdowns
             Route::get('/classes/{institutionId}', [AttendanceController::class, 'getClassesByInstitution']);
             Route::get('/sections/{classId}', [AttendanceController::class, 'getSectionsByClass']);
@@ -195,13 +196,17 @@ Route::middleware('admin')->group(function () {
 
         // EXAM MANAGEMENT
         Route::prefix('exam-management')->group(function () {
+            Route::get('/exams',[ExamController::class,'index'])->name('admin.exam-management.exams');
+
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('admin.exam-management.exam-type');
             Route::post('/exam-type/store',[ExamTypeController::class,'store'])->name('admin.exam-management.exam-type.store');
             Route::post('/exam-type/update',[ExamTypeController::class,'update'])->name('admin.exam-management.exam-type.update');
 
             Route::get('/exam-setup',[ExamSetupController::class,'index'])->name('admin.exam-management.exam-setup');
-
+            Route::get('/exam-setup/fetch-data',[ExamSetupController::class,'fetchData'])->name('admin.exam-management.exam-setup.fetchdata');
+            Route::get('/exam-setup/fetch-subjects', [ExamSetupController::class, 'fetchSubjects'])->name('admin.exam-management.exam-setup.fetch-subjects');
+            Route::post('/exam-setup/store',[ExamSetupController::class,'store'])->name('admin.exam-management.exam-setup.store');
         });
 
         // Academic Calendar Routes
