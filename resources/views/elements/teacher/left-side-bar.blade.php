@@ -76,11 +76,6 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="{{ route('teacher.administration.attendance') }}">
-                                        <i class="ti ti-file"></i><span>Attendance</span>
-                                    </a>
-                                </li>
-                                <li class="">
                                     <a class="" href="">
                                         <i class="ti ti-files"></i><span>Classes</span>
                                     </a>

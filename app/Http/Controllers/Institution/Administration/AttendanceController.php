@@ -30,50 +30,18 @@ class AttendanceController extends Controller
         return view('institution.administration.attendance.attendance', compact('classes'));
     }
 
-    public function filter(Request $request)
+    public function markAttendancePage()
     {
         $institutionId = auth('institution')->user()->id;
-        $role = $request->role;
-        $classId = $request->class;
-        $sectionId = $request->section;
-        $teacherId = $request->teacher;
-        $date = $request->date;
+        
+        // Get all classes for this institution
+        $classes = SchoolClass::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get(['id', 'name']);
 
-        $query = Attendance::where('institution_id', $institutionId);
-
-        // Apply filters
-        if ($role) {
-            $query->where('role', $role);
-        }
-        if ($classId) {
-            $query->where('class_id', $classId);
-        }
-        if ($sectionId) {
-            $query->where('section_id', $sectionId);
-        }
-        if ($teacherId) {
-            $query->where('teacher_id', $teacherId);
-        }
-        if ($date) {
-            $query->whereDate('date', $date);
-        }
-
-        // Eager load relationships based on role
-        if ($role === 'student') {
-            $query->with(['institution', 'schoolClass', 'section', 'student', 'assignedTeacher', 'markedBy', 'confirmedBy']);
-        } elseif ($role === 'teacher') {
-            $query->with(['institution', 'schoolClass', 'section', 'teacher', 'markedBy', 'confirmedBy']);
-        } elseif ($role === 'nonworkingstaff') {
-            $query->with(['institution', 'schoolClass', 'section', 'staff', 'markedBy', 'confirmedBy']);
-        } else {
-            // Default: load all relationships
-            $query->with(['institution', 'schoolClass', 'section', 'student', 'teacher', 'staff', 'assignedTeacher', 'markedBy', 'confirmedBy']);
-        }
-
-        $records = $query->orderBy('date', 'desc')->get();
-
-        return response()->json($records);
+        return view('institution.administration.attendance.mark-attendance', compact('classes'));
     }
+
 
     public function getSectionsByClass($classId)
     {
@@ -272,6 +240,132 @@ class AttendanceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Attendance deleted successfully'
+        ]);
+    }
+
+    public function getAttendanceMatrix(Request $request)
+    {
+        $institutionId = auth('institution')->user()->id;
+        $role = $request->role;
+        $classId = $request->class;
+        $sectionId = $request->section;
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date;
+
+        // Get date range
+        $startDate = $fromDate ? \Carbon\Carbon::createFromFormat('d M, Y', $fromDate) : \Carbon\Carbon::now()->startOfMonth();
+        $endDate = $toDate ? \Carbon\Carbon::createFromFormat('d M, Y', $toDate) : \Carbon\Carbon::now()->endOfMonth();
+
+        // Generate date range
+        $dates = [];
+        $currentDate = $startDate->copy();
+        while ($currentDate->lte($endDate)) {
+            $dates[] = $currentDate->format('Y-m-d');
+            $currentDate->addDay();
+        }
+
+        // Get users based on role
+        $users = [];
+        if ($role === 'student' && $classId && $sectionId) {
+            $users = Student::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->where('section_id', $sectionId)
+                ->where('status', true)
+                ->get(['id', 'first_name', 'last_name', 'roll_number', 'admission_number']);
+                
+        } elseif ($role === 'teacher') {
+            $users = Teacher::where('institution_id', $institutionId)
+                ->where('status', true)
+                ->get(['id', 'first_name', 'last_name', 'email']);
+                
+        } elseif ($role === 'nonworkingstaff') {
+            $users = NonWorkingStaff::where('institution_id', $institutionId)
+                ->where('status', true)
+                ->get(['id', 'first_name', 'last_name', 'email', 'designation']);
+        }
+        
+        // If no users found for the selected role, return empty array
+        if (empty($users)) {
+            return response()->json([
+                'dates' => $dates,
+                'users' => [],
+                'class_info' => '',
+                'from_date' => $startDate->format('d M, Y'),
+                'to_date' => $endDate->format('d M, Y'),
+                'message' => 'No ' . $role . 's found for the selected criteria'
+            ]);
+        }
+
+        // Get attendance data
+        $attendanceData = [];
+        foreach ($users as $user) {
+            $userAttendance = [];
+            foreach ($dates as $date) {
+                $attendance = Attendance::where('user_id', $user->id)
+                    ->where('role', $role)
+                    ->where('institution_id', $institutionId)
+                    ->whereDate('date', $date)
+                    ->first();
+                
+                if ($attendance) {
+                    $userAttendance[$date] = [
+                        'status' => $attendance->status,
+                        'is_confirmed' => $attendance->is_confirmed,
+                        'marked_by_role' => $attendance->marked_by_role,
+                        'attendance_id' => $attendance->id
+                    ];
+                } else {
+                    $userAttendance[$date] = null;
+                }
+            }
+            $attendanceData[] = [
+                'user' => $user,
+                'attendance' => $userAttendance
+            ];
+        }
+
+        // Get class and section info for title
+        $classInfo = '';
+        if ($classId && $sectionId) {
+            $class = SchoolClass::find($classId);
+            $section = Section::find($sectionId);
+            $classInfo = $class ? $class->name : '';
+            $classInfo .= $section ? ' - ' . $section->name : '';
+        }
+
+        return response()->json([
+            'dates' => $dates,
+            'users' => $attendanceData,
+            'class_info' => $classInfo,
+            'from_date' => $startDate->format('d M, Y'),
+            'to_date' => $endDate->format('d M, Y'),
+            'role' => $role
+        ]);
+    }
+
+    public function confirmAttendance(Request $request, $id)
+    {
+        $attendance = Attendance::findOrFail($id);
+        $institutionId = auth('institution')->user()->id;
+
+        // Check if this attendance belongs to this institution
+        if ($attendance->institution_id !== $institutionId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        // Update attendance confirmation
+        $attendance->update([
+            'is_confirmed' => true,
+            'confirmed_by' => $institutionId,
+            'confirmed_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance confirmed successfully'
         ]);
     }
 }

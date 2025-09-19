@@ -2,74 +2,64 @@ $(document).ready(function() {
     // Initialize Flatpickr date pickers
     initializeDatePickers();
     
+    // Load initial data
+    loadMyAttendanceMatrix();
+    loadAttendanceStats();
+    
     // Filter form submission
     $('#attendance-filter-form').on('submit', function(e) {
         e.preventDefault();
-        loadAttendanceRecords();
+        loadMyAttendanceMatrix();
         loadAttendanceStats();
     });
 
     // Initialize Flatpickr date pickers
     function initializeDatePickers() {
-        // Initialize start date picker
-        flatpickr("#start_date", {
+        // Get current month start and end dates
+        const currentDate = moment();
+        const startOfMonth = currentDate.clone().startOf('month');
+        const endOfMonth = currentDate.clone().endOf('month');
+        
+        // Set default values to current month
+        $('#from_date').val(startOfMonth.format('D MMM, YYYY'));
+        $('#to_date').val(endOfMonth.format('D MMM, YYYY'));
+        
+        // Initialize filter date pickers
+        flatpickr("#from_date", {
             dateFormat: "d M, Y",
             placeholder: "dd/mm/yyyy",
-            allowInput: true
+            allowInput: true,
+            defaultDate: startOfMonth.format('D MMM, YYYY')
         });
         
-        // Initialize end date picker
-        flatpickr("#end_date", {
+        flatpickr("#to_date", {
             dateFormat: "d M, Y",
             placeholder: "dd/mm/yyyy",
-            allowInput: true
+            allowInput: true,
+            defaultDate: endOfMonth.format('D MMM, YYYY')
         });
     }
 
-    // Load attendance records
-    function loadAttendanceRecords() {
+    // Load my attendance matrix
+    function loadMyAttendanceMatrix() {
         const formData = {
-            start_date: formatDateForAPI($('#start_date').val()),
-            end_date: formatDateForAPI($('#end_date').val())
+            from_date: $('#from_date').val(),
+            to_date: $('#to_date').val()
         };
 
+        // Update attendance title
+        updateAttendanceTitle(formData);
+
         $.ajax({
-            url: '/student/attendance/filter',
+            url: '/student/attendance/my-attendance-matrix',
             type: 'GET',
             data: formData,
             success: function(response) {
-                let tbody = '';
-                if (response.length > 0) {
-                    response.forEach(function(record) {
-                        const statusBadge = getStatusBadge(record.status);
-                        const confirmedBadge = record.is_confirmed 
-                            ? '<span class="badge bg-success">Confirmed</span>' 
-                            : '<span class="badge bg-warning">Pending</span>';
-                        
-                        tbody += `
-                            <tr>
-                                <td>${moment(record.date).format('MMM DD, YYYY')}</td>
-                                <td>${statusBadge}</td>
-                                <td>${record.remarks || 'N/A'}</td>
-                                <td>${record.marked_by_role ? record.marked_by_role.charAt(0).toUpperCase() + record.marked_by_role.slice(1) : 'N/A'}</td>
-                                <td>${confirmedBadge}</td>
-                            </tr>
-                        `;
-                    });
+                if (response.student && response.attendance) {
+                    buildMyAttendanceMatrixTable(response);
                 } else {
-                    tbody = `
-                        <tr>
-                            <td colspan="5" class="text-center py-5">
-                                <div class="mb-3">
-                                    <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
-                                </div>
-                                <h6 class="text-muted mb-2">No attendance records found</h6>
-                                <p class="text-muted mb-0">Try adjusting your filter criteria.</p>
-                            </td>
-                        </tr>
-                    `;
+                    showNoDataMessage();
                 }
-                $('#attendance-table-body').html(tbody);
             },
             error: function() {
                 showAlert('Failed to fetch attendance records.', 'error');
@@ -80,8 +70,8 @@ $(document).ready(function() {
     // Load attendance statistics
     function loadAttendanceStats() {
         const formData = {
-            start_date: formatDateForAPI($('#start_date').val()),
-            end_date: formatDateForAPI($('#end_date').val())
+            from_date: $('#from_date').val(),
+            to_date: $('#to_date').val()
         };
 
         $.ajax({
@@ -89,61 +79,154 @@ $(document).ready(function() {
             type: 'GET',
             data: formData,
             success: function(response) {
-                // Update the statistics cards
-                $('.card.bg-primary h3').text(response.totalDays);
-                $('.card.bg-success h3').text(response.presentDays);
-                $('.card.bg-danger h3').text(response.absentDays);
-                $('.card.bg-info h3').text(response.attendancePercentage + '%');
+                updateAttendanceStats(response);
             },
             error: function() {
-                showAlert('Failed to fetch attendance statistics.', 'error');
+                console.log('Failed to fetch attendance statistics.');
             }
         });
     }
 
-    // Helper functions
-    function formatDateForAPI(dateString) {
-        if (!dateString) return '';
-        // Convert from "d M, Y" format to "Y-m-d" format for API
-        const date = moment(dateString, 'D MMM, YYYY');
-        return date.isValid() ? date.format('YYYY-MM-D') : '';
+    // Update attendance title
+    function updateAttendanceTitle(formData) {
+        let title = 'My Attendance Records';
+        
+        if (formData.from_date && formData.to_date) {
+            title += ` from ${formData.from_date} to ${formData.to_date}`;
+        } else if (formData.from_date) {
+            title += ` from ${formData.from_date}`;
+        } else if (formData.to_date) {
+            title += ` to ${formData.to_date}`;
+        }
+        
+        $('#attendance-title').text(title);
     }
 
-    function getStatusBadge(status) {
-        const badges = {
-            'present': '<span class="badge bg-success">Present</span>',
-            'absent': '<span class="badge bg-danger">Absent</span>',
-            'late': '<span class="badge bg-warning">Late</span>',
-            'excused': '<span class="badge bg-info">Excused</span>'
-        };
-        return badges[status] || `<span class="badge bg-secondary">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+    // Build my attendance matrix table
+    function buildMyAttendanceMatrixTable(response) {
+        const student = response.student;
+        const attendance = response.attendance;
+        
+        let thead = `<thead><tr><th>Name</th>`;
+        let tbody = '';
+        
+        // Build header with dates
+        response.dates.forEach(function(date) {
+            const dateObj = moment(date);
+            thead += `<th class="text-center">${dateObj.format('DD')}<br><small>${dateObj.format('MMM')}</small></th>`;
+        });
+        thead += '<th class="text-center">Details</th></tr></thead>';
+        
+        // Build body with student and attendance
+        tbody += `
+            <tr>
+                <td>
+                    <strong>${student.first_name} ${student.last_name}</strong><br>
+                    <small class="text-muted">${student.roll_number || student.admission_number}</small>
+                </td>
+        `;
+        
+        // Add attendance status for each date
+        response.dates.forEach(function(date) {
+            const attendanceData = attendance[date];
+            let statusIcon = '';
+            let statusText = '';
+            
+            if (attendanceData) {
+                const status = attendanceData.status;
+                const isConfirmed = attendanceData.is_confirmed;
+                const markedByRole = attendanceData.marked_by_role;
+                
+                // Status icon only
+                if (status === 'present') {
+                    statusIcon = '<span class="text-success fw-bold">✓</span>';
+                    statusText = 'Present';
+                } else if (status === 'absent') {
+                    statusIcon = '<span class="text-danger fw-bold">✗</span>';
+                    statusText = 'Absent';
+                } else if (status === 'late') {
+                    statusIcon = '<span class="text-warning fw-bold">⏰</span>';
+                    statusText = 'Late';
+                } else if (status === 'excused') {
+                    statusIcon = '<span class="text-info fw-bold">ℹ</span>';
+                    statusText = 'Excused';
+                }
+            } else {
+                statusIcon = '<span class="text-muted">-</span>';
+                statusText = 'No Record';
+            }
+            
+            tbody += `<td class="text-center" title="${statusText}">${statusIcon}</td>`;
+        });
+        
+        // Add details column
+        tbody += `
+            <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewAttendanceDetails()">
+                    View Details
+                </button>
+            </td>
+        </tr>
+        `;
+        
+        // Update table with simple styling
+        $('.table').addClass('table-bordered table-striped');
+        $('.table thead').replaceWith(thead);
+        $('#attendance-table-body').html(tbody);
     }
 
+    // Update attendance statistics
+    function updateAttendanceStats(stats) {
+        $('#total-days').text(stats.totalDays || 0);
+        $('#present-days').text(stats.presentDays || 0);
+        $('#absent-days').text(stats.absentDays || 0);
+        $('#attendance-percentage').text((stats.attendancePercentage || 0) + '%');
+    }
+
+    // Show no data message
+    function showNoDataMessage() {
+        const tbody = `
+            <tr>
+                <td colspan="100%" class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 class="text-muted mb-2">No attendance records found</h6>
+                    <p class="text-muted mb-0">Your attendance records will appear here when available.</p>
+                </td>
+            </tr>
+        `;
+        $('#attendance-table-body').html(tbody);
+    }
+
+    // View attendance details
+    window.viewAttendanceDetails = function() {
+        // This can be expanded to show detailed attendance information
+        showAlert('Attendance details feature coming soon!', 'info');
+    };
+
+    // Show alert
     function showAlert(message, type) {
         const alertClass = type === 'success' ? 'alert-success' : 
-                          type === 'error' ? 'alert-danger' : 
-                          type === 'warning' ? 'alert-warning' : 'alert-info';
+                          type === 'warning' ? 'alert-warning' : 
+                          type === 'error' ? 'alert-danger' : 'alert-info';
         
-        const alert = `
+        const alertHtml = `
             <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         `;
         
-        $('body').prepend(alert);
+        // Remove existing alerts
+        $('.alert').remove();
         
+        // Add new alert
+        $('.content').prepend(alertHtml);
+        
+        // Auto remove after 5 seconds
         setTimeout(function() {
             $('.alert').fadeOut();
         }, 5000);
     }
-
-    // Set default date range to current month
-    const now = new Date();
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    
-    // Set default dates in Flatpickr format
-    $('#start_date').val(moment(firstDay).format('D MMM, YYYY'));
-    $('#end_date').val(moment(lastDay).format('D MMM, YYYY'));
 });

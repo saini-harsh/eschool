@@ -222,8 +222,8 @@
                 email = 'rajesh.green@example.com'; // example
                 password = 'teacher123';
             } else if (role === 'student') {
-                email = 'afdasf@gmail.com'; // example
-                password = '12345678';
+                email = 'priya.rajesh@example.com'; // example
+                password = 'student123';
             }
             document.querySelector('input[name="email"]').value = email;
             document.querySelector('input[name="password"]').value = password;

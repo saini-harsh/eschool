@@ -63,9 +63,11 @@ Route::middleware('institution')->group(function () {
 
         Route::prefix('attendance')->group(function () {
             Route::get('/', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'index'])->name('institution.attendance');
-            Route::get('/filter', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'filter']);
+            Route::get('/mark', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'markAttendancePage'])->name('institution.attendance.mark-page');
+            Route::get('/matrix', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getAttendanceMatrix']);
             Route::post('/mark', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'markAttendance'])->name('institution.attendance.mark');
             Route::put('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'updateAttendance'])->name('institution.attendance.update');
+            Route::post('/{id}/confirm', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'confirmAttendance'])->name('institution.attendance.confirm');
             Route::delete('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'deleteAttendance'])->name('institution.attendance.delete');
             
             // AJAX routes for dynamic dropdowns

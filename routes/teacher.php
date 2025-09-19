@@ -32,10 +32,11 @@ Route::middleware('teacher')->group(function () {
 
         Route::prefix('attendance')->group(function () {
             Route::get('/', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'index'])->name('teacher.attendance');
-            Route::get('/filter', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'filter']);
+            Route::get('/mark', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'markAttendancePage'])->name('teacher.attendance.mark-page');
+            Route::get('/matrix', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getAttendanceMatrix']);
             Route::post('/mark', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'markAttendance'])->name('teacher.attendance.mark');
             Route::put('/{id}', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'updateAttendance'])->name('teacher.attendance.update');
-            Route::get('/my-attendance', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getMyAttendance'])->name('teacher.attendance.my');
+            Route::get('/my-attendance-matrix', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'getMyAttendanceMatrix']);
             Route::post('/mark-my-attendance', [\App\Http\Controllers\Teacher\Administration\AttendanceController::class, 'markMyAttendance'])->name('teacher.attendance.mark-my');
             
             // AJAX routes for dynamic dropdowns
@@ -86,11 +87,6 @@ Route::middleware('teacher')->group(function () {
             Route::get('/subjects/{institutionId}/{classId}', [AssignmentController::class, 'getSubjectsByInstitutionClass'])->name('teacher.assignments.subjects');
         });
 
-        Route::prefix('administration')->group(function () {
-            Route::get('/attendance', [AttendanceController::class, 'index'])->name('teacher.administration.attendance');
-            // Route::post('/attendance/store', [StudentController::class, 'storeAttendance'])->name('teacher.administration.attendance.store');
-            // Route::post('/attendance/report', [StudentController::class, 'attendanceReport'])->name('teacher.administration.attendance.report');
-        });
     });
 
 

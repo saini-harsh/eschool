@@ -21,14 +21,14 @@
         <!-- End Page Header -->
 
         <!-- Attendance Statistics Cards -->
-        <div class="row mb-4">
+        <div class="row mb-4" id="attendance-stats">
             <div class="col-md-3">
                 <div class="card bg-primary text-white">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h6 class="card-title text-white mb-1">Total Days</h6>
-                                <h3 class="mb-0 text-white">{{ $totalDays }}</h3>
+                                <h3 class="mb-0 text-white" id="total-days">0</h3>
                             </div>
                             <div class="flex-shrink-0">
                                 <i class="ti ti-calendar text-white" style="font-size: 2rem;"></i>
@@ -43,7 +43,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h6 class="card-title text-white mb-1">Present</h6>
-                                <h3 class="mb-0 text-white">{{ $presentDays }}</h3>
+                                <h3 class="mb-0 text-white" id="present-days">0</h3>
                             </div>
                             <div class="flex-shrink-0">
                                 <i class="ti ti-check text-white" style="font-size: 2rem;"></i>
@@ -58,7 +58,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h6 class="card-title text-white mb-1">Absent</h6>
-                                <h3 class="mb-0 text-white">{{ $absentDays }}</h3>
+                                <h3 class="mb-0 text-white" id="absent-days">0</h3>
                             </div>
                             <div class="flex-shrink-0">
                                 <i class="ti ti-x text-white" style="font-size: 2rem;"></i>
@@ -73,7 +73,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <h6 class="card-title text-white mb-1">Attendance %</h6>
-                                <h3 class="mb-0 text-white">{{ $attendancePercentage }}%</h3>
+                                <h3 class="mb-0 text-white" id="attendance-percentage">0%</h3>
                             </div>
                             <div class="flex-shrink-0">
                                 <i class="ti ti-percentage text-white" style="font-size: 2rem;"></i>
@@ -89,16 +89,16 @@
             <div class="card-body">
                 <h6 class="card-title mb-3">Filter Attendance Records</h6>
                 <form id="attendance-filter-form" class="row g-3 align-items-end">
-                    <!-- Start Date -->
+                    <!-- From Date -->
                     <div class="col-md-4">
-                        <label for="start_date" class="form-label">Start Date</label>
-                        <input type="text" class="form-control" id="start_date" name="start_date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy">
+                        <label for="from_date" class="form-label">From Date</label>
+                        <input type="text" class="form-control" id="from_date" name="from_date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy">
                     </div>
 
-                    <!-- End Date -->
+                    <!-- To Date -->
                     <div class="col-md-4">
-                        <label for="end_date" class="form-label">End Date</label>
-                        <input type="text" class="form-control" id="end_date" name="end_date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy">
+                        <label for="to_date" class="form-label">To Date</label>
+                        <input type="text" class="form-control" id="to_date" name="to_date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy">
                     </div>
 
                     <!-- Action Buttons -->
@@ -111,63 +111,27 @@
             </div>
         </div>
 
-        <!-- Attendance Records Table Card -->
+        <!-- My Attendance Records Card -->
         <div class="card">
-            <div class="card-header">
-                <h6 class="card-title mb-0">My Attendance Records</h6>
-            </div>
             <div class="card-body">
+                <h6 class="card-title mb-3" id="attendance-title">My Attendance Records</h6>
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-bordered table-striped" id="attendance-matrix-table">
+                        <thead class="table-light" id="attendance-table-head">
                             <tr>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Remarks</th>
-                                <th>Marked By</th>
-                                <th>Confirmed</th>
+                                <th colspan="100%" class="text-center">Select date range to view your attendance records</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-table-body">
-                            @if($attendanceRecords->count() > 0)
-                                @foreach($attendanceRecords as $record)
-                                    <tr>
-                                        <td>{{ \Carbon\Carbon::parse($record->date)->format('M d, Y') }}</td>
-                                        <td>
-                                            @if($record->status == 'present')
-                                                <span class="badge bg-success">Present</span>
-                                            @elseif($record->status == 'absent')
-                                                <span class="badge bg-danger">Absent</span>
-                                            @elseif($record->status == 'late')
-                                                <span class="badge bg-warning">Late</span>
-                                            @elseif($record->status == 'excused')
-                                                <span class="badge bg-info">Excused</span>
-                                            @else
-                                                <span class="badge bg-secondary">{{ ucfirst($record->status) }}</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $record->remarks ?? 'N/A' }}</td>
-                                        <td>{{ ucfirst($record->marked_by_role ?? 'N/A') }}</td>
-                                        <td>
-                                            @if($record->is_confirmed)
-                                                <span class="badge bg-success">Confirmed</span>
-                                            @else
-                                                <span class="badge bg-warning">Pending</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="5" class="text-center py-5">
-                                        <div class="mb-3">
-                                            <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h6 class="text-muted mb-2">No attendance records found</h6>
-                                        <p class="text-muted mb-0">Your attendance records will appear here.</p>
-                                    </td>
-                                </tr>
-                            @endif
+                            <tr>
+                                <td colspan="100%" class="text-center py-5">
+                                    <div class="mb-3">
+                                        <i class="ti ti-clipboard-list text-muted" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6 class="text-muted mb-2">No attendance records found</h6>
+                                    <p class="text-muted mb-0">Use the filter above to view your attendance records.</p>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -178,5 +142,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('custom/js/student/attendance.js') }}"></script>
+    <script src="{{ asset('custom/js/student/attendance.js') }}"></script>
 @endpush

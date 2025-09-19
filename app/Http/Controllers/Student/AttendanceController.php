@@ -18,71 +18,81 @@ class AttendanceController extends Controller
     public function index()
     {
         $student = auth('student')->user();
-        
-        // Get current month's attendance records
-        $currentMonth = Carbon::now()->format('Y-m');
-        $attendanceRecords = Attendance::where('user_id', $student->id)
-            ->where('role', 'student')
-            ->whereRaw("DATE_FORMAT(date, '%Y-%m') = ?", [$currentMonth])
-            ->orderBy('date', 'desc')
-            ->get();
-
-        // Calculate attendance statistics
-        $totalDays = $attendanceRecords->count();
-        $presentDays = $attendanceRecords->where('status', 'present')->count();
-        $absentDays = $attendanceRecords->where('status', 'absent')->count();
-        $lateDays = $attendanceRecords->where('status', 'late')->count();
-        $excusedDays = $attendanceRecords->where('status', 'excused')->count();
-        
-        $attendancePercentage = $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0;
-
-        return view('student.attendance.index', compact(
-            'attendanceRecords', 
-            'totalDays', 
-            'presentDays', 
-            'absentDays', 
-            'lateDays', 
-            'excusedDays', 
-            'attendancePercentage'
-        ));
+        return view('student.attendance.index', compact('student'));
     }
 
-    public function filter(Request $request)
+    public function getMyAttendanceMatrix(Request $request)
     {
         $student = auth('student')->user();
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date;
 
-        $query = Attendance::where('user_id', $student->id)
-            ->where('role', 'student');
+        // Get date range
+        $startDate = $fromDate ? \Carbon\Carbon::createFromFormat('d M, Y', $fromDate) : \Carbon\Carbon::now()->startOfMonth();
+        $endDate = $toDate ? \Carbon\Carbon::createFromFormat('d M, Y', $toDate) : \Carbon\Carbon::now()->endOfMonth();
 
-        if ($startDate) {
-            $query->whereDate('date', '>=', $startDate);
+        // Generate date range
+        $dates = [];
+        $currentDate = $startDate->copy();
+        while ($currentDate->lte($endDate)) {
+            $dates[] = $currentDate->format('Y-m-d');
+            $currentDate->addDay();
         }
-        if ($endDate) {
-            $query->whereDate('date', '<=', $endDate);
+
+        // Get attendance records for the student
+        $attendanceRecords = Attendance::where('user_id', $student->id)
+            ->where('role', 'student')
+            ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->get();
+
+        // Build attendance data for each date
+        $attendance = [];
+        foreach ($dates as $date) {
+            $attendanceRecord = $attendanceRecords->filter(function ($record) use ($date) {
+                return \Carbon\Carbon::parse($record->date)->format('Y-m-d') === $date;
+            })->first();
+
+            if ($attendanceRecord) {
+                $attendance[$date] = [
+                    'status' => $attendanceRecord->status,
+                    'is_confirmed' => $attendanceRecord->is_confirmed,
+                    'marked_by_role' => $attendanceRecord->marked_by_role,
+                    'attendance_id' => $attendanceRecord->id,
+                    'remarks' => $attendanceRecord->remarks
+                ];
+            } else {
+                $attendance[$date] = null;
+            }
         }
 
-        $records = $query->orderBy('date', 'desc')->get();
-
-        return response()->json($records);
+        return response()->json([
+            'dates' => $dates,
+            'student' => [
+                'id' => $student->id,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
+                'roll_number' => $student->roll_number,
+                'admission_number' => $student->admission_number
+            ],
+            'attendance' => $attendance,
+            'from_date' => $startDate->format('d M, Y'),
+            'to_date' => $endDate->format('d M, Y')
+        ]);
     }
 
     public function getAttendanceStats(Request $request)
     {
         $student = auth('student')->user();
-        $startDate = $request->start_date;
-        $endDate = $request->end_date;
+        $fromDate = $request->from_date;
+        $toDate = $request->to_date;
+
+        // Get date range
+        $startDate = $fromDate ? \Carbon\Carbon::createFromFormat('d M, Y', $fromDate) : \Carbon\Carbon::now()->startOfMonth();
+        $endDate = $toDate ? \Carbon\Carbon::createFromFormat('d M, Y', $toDate) : \Carbon\Carbon::now()->endOfMonth();
 
         $query = Attendance::where('user_id', $student->id)
-            ->where('role', 'student');
-
-        if ($startDate) {
-            $query->whereDate('date', '>=', $startDate);
-        }
-        if ($endDate) {
-            $query->whereDate('date', '<=', $endDate);
-        }
+            ->where('role', 'student')
+            ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')]);
 
         $records = $query->get();
 

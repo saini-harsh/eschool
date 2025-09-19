@@ -94,9 +94,11 @@ Route::middleware('admin')->group(function () {
 
         Route::prefix('attendance')->group(function () {
             Route::get('/', [AttendanceController::class, 'index'])->name('admin.attendance');
-            Route::get('/filter', [AttendanceController::class, 'filter']);
+            Route::get('/mark', [AttendanceController::class, 'markAttendancePage'])->name('admin.attendance.mark-page');
+            Route::get('/matrix', [AttendanceController::class, 'getAttendanceMatrix']);
             Route::post('/mark', [AttendanceController::class, 'markAttendance'])->name('admin.attendance.mark');
             Route::put('/{id}', [AttendanceController::class, 'updateAttendance'])->name('admin.attendance.update');
+            Route::post('/{id}/confirm', [AttendanceController::class, 'confirmAttendance'])->name('admin.attendance.confirm');
             Route::delete('/{id}', [AttendanceController::class, 'deleteAttendance'])->name('admin.attendance.delete');
 
             // AJAX routes for dynamic dropdowns

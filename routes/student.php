@@ -12,7 +12,7 @@ Route::middleware('student')->group(function () {
         // Attendance Management
         Route::prefix('attendance')->group(function () {
             Route::get('/', [AttendanceController::class, 'index'])->name('student.attendance');
-            Route::get('/filter', [AttendanceController::class, 'filter']);
+            Route::get('/my-attendance-matrix', [AttendanceController::class, 'getMyAttendanceMatrix']);
             Route::get('/stats', [AttendanceController::class, 'getAttendanceStats']);
         });
 
