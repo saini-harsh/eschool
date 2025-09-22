@@ -59,4 +59,8 @@ class Institution extends Authenticatable
         return $this->hasMany(EmailSms::class, 'institution_id');
     }
 
+    public function exams()
+    {
+        return $this->hasMany(Exam::class, 'institution_id');
+    }
 }

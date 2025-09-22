@@ -21,4 +21,14 @@ class Exam extends Model
         'morning_subjects',
         'evening_subjects',
     ];
+
+    public function classes()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
+
+    public function sections()
+    {
+        return $this->belongsTo(Section::class, 'section_id');
+    }
 }

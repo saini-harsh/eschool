@@ -36,7 +36,7 @@
 
          <div class="card mb-4">
             <div class="card-body">
-                <h6 class="card-title mb-3">Filter Attendance Records</h6>
+                <h6 class="card-title mb-3">Filter Exam Records</h6>
                 <form id="attendance-filter-form" class="row g-3 align-items-end">
                     <!-- Institution Dropdown -->
                     <div class="col-md-2">
@@ -53,19 +53,8 @@
                         </select>
                     </div>
 
-                    <!-- Role Dropdown -->
-                    <div class="col-md-2">
-                        <label for="role" class="form-label">Role</label>
-                        <select class="form-select" id="role" name="role">
-                            <option value="">Select Role</option>
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="nonworkingstaff">Non-working Staff</option>
-                        </select>
-                    </div>
-
                     <!-- Class Dropdown (for students) -->
-                    <div class="col-md-2" id="class-field" style="display:none;">
+                    <div class="col-md-2" id="class-field" >
                         <label for="class" class="form-label">Class</label>
                         <select class="form-select" id="class" name="class">
                             <option value="">Select Class</option>
@@ -73,17 +62,11 @@
                     </div>
 
                     <!-- Section Dropdown (for students) -->
-                    <div class="col-md-2" id="section-field" style="display:none;">
+                    <div class="col-md-2" id="section-field" >
                         <label for="section" class="form-label">Section</label>
                         <select class="form-select" id="section" name="section">
                             <option value="">Select Section</option>
                         </select>
-                    </div>
-
-                    <!-- Date Filter -->
-                    <div class="col-md-2">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="text" class="form-control" id="date" name="date" data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" value="{{ date('d M, Y') }}">
                     </div>
 
                     <!-- Action Buttons -->
@@ -180,3 +163,8 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('custom/js/admin/exams.js') }}"></script>
+@endpush
+
