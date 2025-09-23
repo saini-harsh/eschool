@@ -21,6 +21,12 @@ class TeacherController extends Controller
         $teachers = Teacher::all();
         return view('admin.administration.teachers.index',compact('teachers'));
     }
+    
+    public function Show(Teacher $teacher)
+    {
+        $teacher->load(['institution', 'admin']);
+        return view('admin.administration.teachers.show', compact('teacher'));
+    }
     public function Create(){
         $institutions = Institution::all();
         return view('admin.administration.teachers.create',compact('institutions'));
@@ -78,8 +84,9 @@ class TeacherController extends Controller
         $teacher->gender           = $request->gender;
         $teacher->institution_id   = $request->institution_id;
         $teacher->status           = 1;
+        $teacher->employee_id = $this->generateEmployeeId($institution->id);
         $teacher->institution_code = 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT);
-        $teacher->admin_id         = auth()->id();
+        $teacher->admin_id         = auth('admin')->id();
         $teacher->password         = Hash::make($request->password);
         $teacher->decrypt_pw       = $request->password;
 
@@ -144,9 +151,13 @@ class TeacherController extends Controller
         $teacher->caste_tribe      = $request->caste_tribe;
         $teacher->gender           = $request->gender;
         $teacher->institution_id   = $request->institution_id;
-        $teacher->status           = $request->status;
         $teacher->institution_code = 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT);
-        $teacher->admin_id         = auth()->id();
+        $teacher->status           = $request->status;
+        // Only generate new employee ID if institution changed
+        if ($teacher->institution_id != $request->institution_id) {
+            $teacher->employee_id = $this->generateEmployeeId($institution->id);
+        }
+        $teacher->admin_id         = auth('admin')->id();
 
         if ($request->filled('password')) {
             $teacher->password   = Hash::make($request->password);
@@ -183,5 +194,28 @@ class TeacherController extends Controller
         $teacher->delete();
 
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher deleted successfully!');
+    }
+
+    /**
+     * Generate a unique employee ID for the teacher
+     */
+    private function generateEmployeeId($institutionId)
+    {
+        // Get the current year
+        $currentYear = date('Y');
+        
+        // Get the count of teachers for this institution
+        $teacherCount = Teacher::where('institution_id', $institutionId)->count();
+        
+        // Generate employee ID: EMP + Year + Institution ID (3 digits) + Teacher Count (3 digits)
+        $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        
+        // Check if this employee ID already exists (very unlikely but just in case)
+        while (Teacher::where('employee_id', $employeeId)->exists()) {
+            $teacherCount++;
+            $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        }
+        
+        return $employeeId;
     }
 }

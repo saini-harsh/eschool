@@ -20,6 +20,7 @@ class Teacher extends Authenticatable
         'address',
         'pincode',
         'institution_code',
+        'employee_id',
         'gender',
         'caste_tribe',
         'institution_id',
