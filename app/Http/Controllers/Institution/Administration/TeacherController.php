@@ -18,18 +18,30 @@ class TeacherController extends Controller
     }
 
     public function Index(){
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $teachers = Teacher::where('institution_id', $institutionId)->get();
         return view('institution.administration.teachers.index',compact('teachers'));
     }
+    
+    public function Show(Teacher $teacher)
+    {
+        $institutionId = auth('institution')->id();
+        // Ensure the teacher belongs to the logged-in institution
+        if ($teacher->institution_id !== $institutionId) {
+            abort(403, 'Unauthorized access to teacher data.');
+        }
+        
+        $teacher->load(['institution', 'admin']);
+        return view('institution.administration.teachers.show', compact('teacher'));
+    }
     public function Create(){
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $institution = Institution::find($institutionId);
         return view('institution.administration.teachers.create',compact('institution'));
     }
     public function Store(Request $request)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $request->validate([
             'first_name'      => 'required|string|max:255',
             'middle_name'     => 'nullable|string|max:255',
@@ -80,8 +92,9 @@ class TeacherController extends Controller
         $teacher->gender           = $request->gender;
         $teacher->institution_id   = $institutionId;
         $teacher->status           = 1;
+        $teacher->employee_id      = $this->generateEmployeeId($institution->id);
         $teacher->institution_code = 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT);
-        $teacher->admin_id         = auth()->id();
+        $teacher->admin_id         = auth('institution')->id();
         $teacher->password         = Hash::make($request->password);
         $teacher->decrypt_pw       = $request->password;
 
@@ -97,7 +110,7 @@ class TeacherController extends Controller
     }
     public function Edit(Teacher $teacher)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         // Ensure the teacher belongs to the logged-in institution
         if ($teacher->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to teacher data.');
@@ -108,7 +121,7 @@ class TeacherController extends Controller
     }
     public function Update(Request $request, Teacher $teacher)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         // Ensure the teacher belongs to the logged-in institution
         if ($teacher->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to teacher data.');
@@ -157,7 +170,7 @@ class TeacherController extends Controller
         $teacher->institution_id   = $institutionId;
         $teacher->status           = $request->status;
         $teacher->institution_code = 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT);
-        $teacher->admin_id         = auth()->id();
+        $teacher->admin_id         = auth('institution')->id();
 
         if ($request->filled('password')) {
             $teacher->password   = Hash::make($request->password);
@@ -172,7 +185,7 @@ class TeacherController extends Controller
     public function updateStatus(Request $request, $id)
     {
         try {
-            $institutionId = auth()->id();
+            $institutionId = auth('institution')->id();
             $teacher = Teacher::where('id', $id)
                             ->where('institution_id', $institutionId)
                             ->firstOrFail();
@@ -193,12 +206,35 @@ class TeacherController extends Controller
     
     public function Delete($id)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $teacher = Teacher::where('id', $id)
                         ->where('institution_id', $institutionId)
                         ->firstOrFail();
         $teacher->delete();
 
         return redirect()->route('institution.teachers.index')->with('success', 'Teacher deleted successfully!');
+    }
+
+    /**
+     * Generate a unique employee ID for the teacher
+     */
+    private function generateEmployeeId($institutionId)
+    {
+        // Get the current year
+        $currentYear = date('Y');
+        
+        // Get the count of teachers for this institution
+        $teacherCount = Teacher::where('institution_id', $institutionId)->count();
+        
+        // Generate employee ID: EMP + Year + Institution ID (3 digits) + Teacher Count (3 digits)
+        $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        
+        // Check if this employee ID already exists (very unlikely but just in case)
+        while (Teacher::where('employee_id', $employeeId)->exists()) {
+            $teacherCount++;
+            $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        }
+        
+        return $employeeId;
     }
 }

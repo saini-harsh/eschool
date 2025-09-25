@@ -20,6 +20,13 @@ class SettingsController extends Controller
     public function index()
     {
         $teacher = Auth::guard('teacher')->user();
+        
+        // Generate employee ID if not exists
+        if (!$teacher->employee_id) {
+            $teacher->employee_id = $this->generateEmployeeId($teacher->institution_id);
+            $teacher->save();
+        }
+        
         return view('teacher.settings.index', compact('teacher'));
     }
 
@@ -180,5 +187,28 @@ class SettingsController extends Controller
                 'message' => 'An error occurred while deleting profile image: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Generate a unique employee ID for the teacher
+     */
+    private function generateEmployeeId($institutionId)
+    {
+        // Get the current year
+        $currentYear = date('Y');
+        
+        // Get the count of teachers for this institution
+        $teacherCount = Teacher::where('institution_id', $institutionId)->count();
+        
+        // Generate employee ID: EMP + Year + Institution ID (3 digits) + Teacher Count (3 digits)
+        $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        
+        // Check if this employee ID already exists (very unlikely but just in case)
+        while (Teacher::where('employee_id', $employeeId)->exists()) {
+            $teacherCount++;
+            $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
+        }
+        
+        return $employeeId;
     }
 }

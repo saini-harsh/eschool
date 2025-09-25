@@ -119,7 +119,23 @@
                                         <div class="col-lg-6">
                                             <div class="mb-0">
                                                 <label class="form-label">Employee ID</label>
-                                                <input type="text" class="form-control" value="{{ $teacher->employee_id ?? 'Not Assigned' }}" readonly>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" value="{{ $teacher->employee_id ?? 'Not Assigned' }}" readonly>
+                                                    @if($teacher->employee_id)
+                                                        <span class="input-group-text bg-success text-white">
+                                                            <i class="ti ti-check"></i>
+                                                        </span>
+                                                    @else
+                                                        <span class="input-group-text bg-warning text-white">
+                                                            <i class="ti ti-alert-triangle"></i>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                @if($teacher->employee_id)
+                                                    <small class="text-success">✓ Employee ID assigned</small>
+                                                @else
+                                                    <small class="text-warning">⚠ Employee ID will be generated automatically</small>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

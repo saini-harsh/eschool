@@ -31,6 +31,7 @@ Route::middleware('institution')->group(function () {
 
         Route::prefix('teachers')->group(function () {
             Route::get('/index', [TeacherController::class, 'Index'])->name('institution.teachers.index');
+            Route::get('/show/{teacher}', [TeacherController::class, 'Show'])->name('institution.teachers.show');
             Route::get('/create', [TeacherController::class, 'Create'])->name('institution.teachers.create');
             Route::post('/store', [TeacherController::class, 'Store'])->name('institution.teachers.store');
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('institution.teachers.edit');
