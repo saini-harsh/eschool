@@ -189,7 +189,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Insitution</th>
+                        <th>Employee ID</th>
                         <th>Status</th>
                         <th class="no-sort">Action</th>
                     </tr>
@@ -200,12 +200,12 @@
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
-                                <a href="employee-details.html" class="avatar avatar-sm avatar-rounded">
+                                <a href="{{ route('institution.teachers.show', $teacher->id) }}" class="avatar avatar-sm avatar-rounded">
                                 <img src="{{ asset($teacher->profile_image) }}"
                                         alt="img">
                                 </a>
                                 <div class="ms-2">
-                                    <h6 class="fs-14 mb-0"><a href="employee-details.html">{{ $teacher->first_name }} {{ $teacher->last_name }}</a></h6>
+                                    <h6 class="fs-14 mb-0"><a href="{{ route('institution.teachers.show', $teacher->id) }}">{{ $teacher->first_name }} {{ $teacher->last_name }}</a></h6>
                                 </div>
                             </div>
                         </td>
@@ -226,7 +226,7 @@
                     @endphp
                         <td>
                         <!-- <a href="{{URL::to('/admin/agents/view/'.base64_encode(convert_uuencode(@$agentdetail->id)))}}"> -->
-                            <span class="badge {{ $randomBadgeClass }}">{{ $teacher->institution_code }}</span>
+                            <span class="badge {{ $randomBadgeClass }}">{{ $teacher->employee_id ?? 'N/A' }}</span>
                         <!-- </a>     -->
 
                         </td>
