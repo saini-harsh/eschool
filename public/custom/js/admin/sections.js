@@ -1,13 +1,75 @@
 $(document).ready(function () {
+    $('#filter_institution_id').on('change', function() {
+        var institutionId = $(this).val();
+        if (institutionId) {
+            $.ajax({
+                url: '/admin/sections/by-institution/' + institutionId,
+                type: 'GET',
+                success: function(response) {
+                    var rows = '';
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(section) {
+                            rows += `<tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-0">${section.institution.name}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-2">
+                                            <h6 class="fs-14 mb-0">${section.name}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <select class="form-select section-status-select" data-section-id="${section.id}">
+                                            <option value="1" ${section.status == 1 ? 'selected' : ''}>Active</option>
+                                            <option value="0" ${section.status == 0 ? 'selected' : ''}>Inactive</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-inline-flex align-items-center">
+                                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-section"
+                                        data-section-id="${section.id}" data-section-name="${section.name}"
+                                        data-status="${section.status}">
+                                            <i class="ti ti-edit"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-section"
+                                        data-section-id="${section.id}" data-section-name="${section.name}">
+                                            <i class="ti ti-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        });
+                    } else {
+                        rows = `<tr><td colspan="3" class="text-center">No sections found.</td></tr>`;
+                    }
+                    $('#sections-table-body').html(rows);
+                }
+            });
+        } else {
+            $('#sections-table-body').html('<tr><td colspan="3" class="text-center">Please select an institution.</td></tr>');
+        }
+    });
+
+    // Optionally, trigger change on page load to show empty state
+    $('#filter_institution_id').trigger('change');
+
     // Check if we're on the sections page by looking for section-specific elements
     if ($(".section-status-select").length > 0 || window.location.pathname.includes('/admin/sections')) {
         // Initialize Select2 for existing dropdowns
         initializeSelect2();
-        
+
         // Add event listeners for status changes on page load
         addStatusChangeListeners();
     }
-    
+
     // Add section
     $("#add-section").on("click", function (e) {
         e.preventDefault();
@@ -155,14 +217,14 @@ $(document).ready(function () {
         e.preventDefault();
         const sectionId = $(this).data("section-id");
         const sectionName = $(this).data("section-name");
-        
+
         // Update modal content with section-specific information
         $("#delete_modal .modal-body h6").text("Delete Section");
         $("#delete_modal .modal-body p").text(`Are you sure you want to delete the section "${sectionName}"?`);
-        
+
         // Set up the delete form action
         $("#deleteForm").attr("action", `/admin/sections/delete/${sectionId}`);
-        
+
         // Show the modal
         const deleteModal = new bootstrap.Modal(document.getElementById('delete_modal'));
         deleteModal.show();
@@ -171,19 +233,19 @@ $(document).ready(function () {
     // Handle delete form submission for sections
     $("#deleteForm").on("submit", function (e) {
         e.preventDefault();
-        
+
         // Only handle if we're on the sections page
         if (!window.location.pathname.includes('/admin/sections')) {
             return;
         }
-        
+
         const form = $(this);
         const submitBtn = form.find('button[type="submit"]');
         const originalText = submitBtn.text();
-        
+
         // Disable submit button and show loading state
         submitBtn.prop("disabled", true).text("Deleting...");
-        
+
         $.ajax({
             url: form.attr("action"),
             type: "POST",
@@ -219,13 +281,13 @@ $(document).ready(function () {
     function resetForm() {
         const form = $("#section-form")[0];
         form.reset();
-        
+
         // Re-check the status checkbox since reset() unchecks it
         $("#section_status").prop("checked", true);
-        
+
         // Clear hidden field
         $("#section_id").val("");
-        
+
         // Switch buttons back to add mode
         $("#add-section").removeClass("d-none");
         $("#update-section").addClass("d-none");
@@ -250,7 +312,7 @@ $(document).ready(function () {
     function updateSectionTable(sections) {
         const tbody = $(".datatable tbody");
         let html = "";
-        
+
         if (sections.length === 0) {
             html = `<tr><td colspan="3" class="text-center">No sections found</td></tr>`;
         } else {
@@ -274,12 +336,12 @@ $(document).ready(function () {
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-section" 
-                                   data-section-id="${section.id}" data-section-name="${escapeHtml(section.name)}" 
+                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-section"
+                                   data-section-id="${section.id}" data-section-name="${escapeHtml(section.name)}"
                                    data-status="${section.status}">
                                     <i class="ti ti-edit"></i>
                                 </a>
-                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-section" 
+                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-section"
                                    data-section-id="${section.id}" data-section-name="${escapeHtml(section.name)}">
                                     <i class="ti ti-trash"></i>
                                 </a>
@@ -289,9 +351,9 @@ $(document).ready(function () {
                 `;
             });
         }
-        
+
         tbody.html(html);
-        
+
         // Reinitialize Select2 for the new dropdowns
         initializeSelect2();
 
@@ -314,7 +376,7 @@ $(document).ready(function () {
     function addStatusChangeListeners() {
         // Remove any existing listeners to prevent conflicts
         $(".section-status-select").off("change");
-        
+
         $(".section-status-select").on("change", function () {
             const sectionId = $(this).data("section-id");
             const newStatus = $(this).val();

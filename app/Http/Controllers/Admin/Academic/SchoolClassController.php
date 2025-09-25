@@ -17,10 +17,10 @@ class SchoolClassController extends Controller
     public function index()
     {
         $classes = SchoolClass::orderBy('created_at', 'desc')->get();
-        $sections = Section::where('status', 1)->get();
+
         $institutions = Institution::where('status', 1)->get();
 
-        return view('admin.academic.classes.index', compact('classes', 'sections','institutions'));
+        return view('admin.academic.classes.index', compact('classes','institutions'));
     }
 
     public function store(Request $request)
@@ -59,7 +59,7 @@ class SchoolClassController extends Controller
     public function getSchoolClasses()
     {
         $classes = SchoolClass::orderBy('created_at','desc')->get();
-        
+
         // Load section names for each class
         $classes->each(function($class) {
             if ($class->section_ids) {
@@ -78,7 +78,7 @@ class SchoolClassController extends Controller
     public function updateStatus(Request $request, $id)
     {
         Log::info('Status update request received', ['id' => $id, 'status' => $request->status]);
-        
+
         try {
             $class = SchoolClass::findOrFail($id);
             $class->update(['status' => $request->status]);
@@ -92,7 +92,7 @@ class SchoolClassController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error updating status', ['id' => $id, 'error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error updating status: ' . $e->getMessage()
@@ -104,7 +104,7 @@ class SchoolClassController extends Controller
     {
         try {
             $class = SchoolClass::findOrFail($id);
-            
+
             // Load sections for this class
             if ($class->section_ids) {
                 $sectionIds = is_array($class->section_ids) ? $class->section_ids : json_decode($class->section_ids, true);
@@ -169,7 +169,7 @@ class SchoolClassController extends Controller
     {
         try {
             $class = SchoolClass::findOrFail($id);
-            
+
             // Check if class has any students (you can add this validation if needed)
             // if ($class->students()->count() > 0) {
             //     return response()->json([
@@ -177,7 +177,7 @@ class SchoolClassController extends Controller
             //         'message' => 'Cannot delete class. It has associated students.'
             //     ], 422);
             // }
-            
+
             $className = $class->name;
             $class->delete();
 
@@ -187,7 +187,7 @@ class SchoolClassController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error deleting class', ['id' => $id, 'error' => $e->getMessage()]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while deleting the class'

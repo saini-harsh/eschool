@@ -45,9 +45,37 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
+                                        <label class="form-label">Institution <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
+                                            <option value="">Select Institution</option>
+                                            @if (isset($institutions) && !empty($institutions))
+                                                @foreach ($institutions as $institution)
+                                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-sm-12">
+                                    <div class="mb-3">
                                         <label class="form-label">Name</label>
                                         <input type="text" name="name" id="section_name" class="form-control"
                                             placeholder="Enter section name" autocomplete="off">
+                                    </div>
+                                </div> --}}
+                                <div class="col-sm-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Sections <span class="text-danger">*</span></label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @foreach (range('A', 'Z') as $letter)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="sections[]"
+                                                        id="section_{{ $letter }}" value="{{ $letter }}">
+                                                    <label class="form-check-label" for="section_{{ $letter }}">{{ $letter }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -71,194 +99,29 @@
             </div>
             <div class="col-9">
                 <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
-                    <div class="datatable-search">
-                        <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <div class="dropdown me-2">
-                            <a href="javascript:void(0);"
-                                class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                <i class="ti ti-filter me-1"></i>Filter
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
-                                <div class="card mb-0">
-                                    <div class="card-header">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <h6 class="fw-bold mb-0">Filter</h6>
-                                            <div class="d-flex align-items-center">
-                                                <a href="javascript:void(0);"
-                                                    class="link-danger text-decoration-underline">Clear
-                                                    All</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form action="#">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Name</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                                </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Nexa Core Solutions
-                                                            </label>
-                                                        </li>
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Byte Forge Technologies
-                                                            </label>
-                                                        </li>
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Code Pulse Innovations
-                                                            </label>
-                                                        </li>
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Quantum Stack Solutions
-                                                            </label>
-                                                        </li>
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Cognitix Technologies
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Status</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                                </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Active
-                                                            </label>
-                                                        </li>
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                Inactive
-                                                            </label>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer d-flex align-items-center justify-content-end">
-                                            <button type="button" class="btn btn-outline-white me-2"
-                                                id="close-filter">Close</button>
-                                            <button type="submit" class="btn btn-primary">Filter</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);"
-                                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                    data-bs-toggle="dropdown">
-                                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end p-1">
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div>
+                        <select class="form-select" name="filter_institution_id" id="filter_institution_id" required>
+                            <option value="">Select Institution</option>
+                            @if (isset($institutions) && !empty($institutions))
+                                @foreach ($institutions as $institution)
+                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
                         <thead class="thead-ight">
                             <tr>
-                                <th>Name</th>
+                                <th>Institution</th>
+                                <th>Section</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @if (isset($lists) && !empty($lists))
-                                @foreach ($lists as $list)
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->name }}</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <select class="form-select section-status-select" data-section-id="{{ $list->id }}">
-                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
-                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-inline-flex align-items-center">
-                                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-section" 
-                                                   data-section-id="{{ $list->id }}" data-section-name="{{ $list->name }}" 
-                                                   data-status="{{ $list->status }}">
-                                                    <i class="ti ti-edit"></i>
-                                                </a>
-                                                <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-section" 
-                                                   data-section-id="{{ $list->id }}" data-section-name="{{ $list->name }}">
-                                                    <i class="ti ti-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
+                        <tbody id="sections-table-body">
+
                         </tbody>
                     </table>
                 </div>

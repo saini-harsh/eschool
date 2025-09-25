@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Academic;
 
 use App\Http\Controllers\Controller;
+use App\Models\Institution;
 use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,14 +17,17 @@ class SectionController extends Controller
 
     public function index(){
         $lists = Section::orderBy('created_at', 'desc')->get();
-        return view('admin.academic.section.index', compact('lists'));
+        $institutions = Institution::all();
+        return view('admin.academic.section.index', compact('lists','institutions'));
     }
 
     public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255|unique:sections,name',
+                'institution_id' => 'required|exists:institutions,id',
+                'sections' => 'required|array|min:1',
+                'sections.*' => 'string|max:255',
                 'status' => 'nullable|in:0,1'
             ]);
 
@@ -35,24 +39,38 @@ class SectionController extends Controller
                 ], 422);
             }
 
-            $section = Section::create([
-                'name' => $request->name,
-                'status' => $request->status ?? 1 // Default to 1 if not provided
-            ]);
+            $createdSections = [];
+            foreach ($request->sections as $sectionName) {
+                $section = Section::create([
+                    'institution_id' => $request->institution_id,
+                    'name' => $sectionName,
+                    'status' => $request->status ?? 1 // Default to 1 if not provided
+                ]);
+                $createdSections[] = $section;
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Section created successfully',
-                'data' => $section
+                'message' => 'Sections created successfully',
+                'data' => $createdSections
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while creating the section',
+                'message' => 'An error occurred while creating the sections',
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getByInstitution($institution_id)
+    {
+        $sections = Section::where('institution_id', $institution_id)->with('institution')->orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $sections
+        ]);
     }
 
     public function getSections()
@@ -76,7 +94,7 @@ class SectionController extends Controller
     {
         try {
             $section = Section::findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $section
@@ -129,7 +147,7 @@ class SectionController extends Controller
     {
         try {
             $section = Section::findOrFail($id);
-            
+
             // Check if section is used in any classes
             $classesUsingSection = \App\Models\SchoolClass::whereJsonContains('section_ids', $id)->count();
             if ($classesUsingSection > 0) {
@@ -138,7 +156,7 @@ class SectionController extends Controller
                     'message' => 'Cannot delete section. It is being used by one or more classes.'
                 ], 422);
             }
-            
+
             $sectionName = $section->name;
             $section->delete();
 

@@ -56,15 +56,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label d-block">Sections</label>
-                            @foreach($sections as $section)
-                                <div class="form-check">
-                                    <input type="checkbox" name="section_ids[]" value="{{ $section->id }}"
-                                        class="form-check-input section-checkbox" id="section_{{ $section->id }}">
-                                    <label class="form-check-label" for="section_{{ $section->id }}">
-                                        {{ $section->name }}
-                                    </label>
-                                </div>
-                            @endforeach
+                            <div class="form-check" id="sections-container">
+                                {{-- Sections will be loaded here via JS --}}
+                                <input type="checkbox" name="section_ids[]" value="{{ $section->id }}"
+                                    class="form-check-input section-checkbox" id="section_{{ $section->id }}">
+                                <label class="form-check-label" for="section_{{ $section->id }}">
+                                    {{ $section->name }}
+                                </label>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -278,14 +277,14 @@
                                 </td>
                                 <td>
 
-                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-class" 
-                                       data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}" 
-                                       data-institution-id="{{ $class->institution_id }}" 
-                                       data-section-ids="{{ json_encode($sectionIds) }}" 
+                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 edit-class"
+                                       data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}"
+                                       data-institution-id="{{ $class->institution_id }}"
+                                       data-section-ids="{{ json_encode($sectionIds) }}"
                                        data-status="{{ $class->status }}">
                                         <i class="ti ti-edit"></i>
                                     </a>
-                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-class" 
+                                    <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-outline-white border-0 delete-class"
                                        data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}">
                                         <i class="ti ti-trash"></i>
                                     </a>
