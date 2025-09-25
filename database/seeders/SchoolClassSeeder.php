@@ -30,15 +30,19 @@ class SchoolClassSeeder extends Seeder
         // Create classes for all institutions
         for ($institutionId = 1; $institutionId <= 4; $institutionId++) {
             foreach ($classNames as $name) {
-                SchoolClass::create([
-                    'name' => $name,
-                    'section_ids' => json_encode(['1','2','3','4','5']), // default sections
-                    'student_count' => 0,
-                    'institution_id' => $institutionId,
-                    'admin_id' => 1,
-                    'status' => 1,
-                ]);
+                // Check if class already exists for this institution
+                if (!SchoolClass::where('name', $name)->where('institution_id', $institutionId)->exists()) {
+                    SchoolClass::create([
+                        'name' => $name,
+                        'section_ids' => json_encode(['1','2','3','4','5']), // default sections
+                        'student_count' => 0,
+                        'institution_id' => $institutionId,
+                        'admin_id' => 1,
+                        'status' => 1,
+                    ]);
+                }
             }
         }
+        $this->command->info('School classes seeded successfully!');
     }
 }

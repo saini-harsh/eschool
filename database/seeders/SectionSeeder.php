@@ -12,19 +12,21 @@ class SectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $sections = [
-            ['name' => 'A'],
-            ['name' => 'B'],
-            ['name' => 'C'],
-            ['name' => 'D'],
-            ['name' => 'E'],
-            ['name' => 'F'],
-        ];
+        $sectionNames = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-        foreach ($sections as $section) {
-            Section::create(array_merge($section, [
-                'status' => 1
-            ]));
+        // Create sections for all institutions
+        for ($institutionId = 1; $institutionId <= 4; $institutionId++) {
+            foreach ($sectionNames as $name) {
+                // Check if section already exists for this institution
+                if (!Section::where('name', $name)->where('institution_id', $institutionId)->exists()) {
+                    Section::create([
+                        'name' => $name,
+                        'institution_id' => $institutionId,
+                        'status' => 1
+                    ]);
+                }
+            }
         }
+        $this->command->info('Sections seeded successfully!');
     }
 }

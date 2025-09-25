@@ -31,6 +31,16 @@ $(document).ready(function() {
     if ($('.edit-assignment').length > 0) {
         initAssignmentEdit();
     }
+    
+    // Initialize view submissions functionality
+    if ($('.view-submissions').length > 0) {
+        initViewSubmissions();
+    }
+    
+    // Initialize grade functionality
+    if ($('#submit-grade').length > 0) {
+        initGradeAssignment();
+    }
 });
 
 function initTeacherAssignmentForm() {
@@ -457,6 +467,11 @@ function createAssignmentRow(assignment) {
             <td>
                 <div class="d-inline-flex align-items-center">
                     <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
+                        title="View Submissions (${assignment.student_assignments ? assignment.student_assignments.length : 0})">
+                        <i class="ti ti-users"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
                         class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
                         <i class="ti ti-edit"></i>
                     </a>
@@ -598,6 +613,33 @@ function initRowEventHandlers(row) {
         });
     });
     
+    // Initialize view submissions button handler
+    row.find('.view-submissions').off('click.assignments').on('click.assignments', function() {
+        const button = $(this);
+        const assignmentId = button.data('assignment-id');
+        
+        // Show loading
+        $('#submissions-content').html('<div class="text-center py-4"><i class="ti ti-loader fs-24"></i><p class="mt-2">Loading submissions...</p></div>');
+        $('#submissions_modal').modal('show');
+        
+        // Fetch submissions
+        $.ajax({
+            url: `/teacher/assignments/${assignmentId}/submissions`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    displaySubmissions(response.data);
+                } else {
+                    $('#submissions-content').html('<div class="alert alert-danger">Error loading submissions: ' + response.message + '</div>');
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON?.message || 'Error loading submissions';
+                $('#submissions-content').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+            }
+        });
+    });
+    
     // Initialize delete button handler
     row.find('.delete-assignment').off('click.assignments').on('click.assignments', function() {
         const button = $(this);
@@ -695,4 +737,195 @@ function showToast(message, type) {
     setTimeout(function() {
         $('.toast').remove();
     }, 3000);
+}
+
+function initViewSubmissions() {
+    $('.view-submissions').off('click.submissions').on('click.submissions', function(e) {
+        e.preventDefault();
+        
+        const assignmentId = $(this).data('assignment-id');
+        
+        // Show loading
+        $('#submissions-content').html('<div class="text-center py-4"><i class="ti ti-loader fs-24"></i><p class="mt-2">Loading submissions...</p></div>');
+        $('#submissions_modal').modal('show');
+        
+        // Fetch submissions
+        $.ajax({
+            url: `/teacher/assignments/${assignmentId}/submissions`,
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    displaySubmissions(response.data);
+                } else {
+                    $('#submissions-content').html('<div class="alert alert-danger">Error loading submissions: ' + response.message + '</div>');
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON?.message || 'Error loading submissions';
+                $('#submissions-content').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+            }
+        });
+    });
+}
+
+function displaySubmissions(data) {
+    const assignment = data.assignment;
+    const submissions = data.submissions;
+    
+    let html = `
+        <div class="mb-3">
+            <h6 class="fw-bold">${assignment.title}</h6>
+            <p class="text-muted mb-0">${assignment.school_class?.name || 'N/A'} - ${assignment.section?.name || 'N/A'} | ${assignment.subject?.name || 'N/A'}</p>
+        </div>
+    `;
+    
+    if (submissions.length === 0) {
+        html += '<div class="alert alert-info">No submissions yet.</div>';
+    } else {
+        html += `
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Submission Date</th>
+                            <th>Status</th>
+                            <th>Marks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        submissions.forEach(submission => {
+            const student = submission.student;
+            const statusClass = {
+                'pending': 'secondary',
+                'submitted': 'success',
+                'late': 'warning',
+                'graded': 'primary'
+            }[submission.status] || 'secondary';
+            
+            html += `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-sm me-2">
+                                <img src="${student.photo ? student.photo : '/adminpanel/img/default-avatar.png'}" alt="Student" class="rounded-circle">
+                            </div>
+                            <div>
+                                <h6 class="mb-0">${student.first_name} ${student.middle_name || ''} ${student.last_name}</h6>
+                                <small class="text-muted">${student.roll_number || 'N/A'}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        ${submission.submission_date ? new Date(submission.submission_date).toLocaleDateString() : 'Not submitted'}
+                    </td>
+                    <td>
+                        <span class="badge bg-${statusClass}">${submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}</span>
+                    </td>
+                    <td>
+                        ${submission.marks ? `<span class="fw-bold text-success">${submission.marks}/100</span>` : '<span class="text-muted">Not graded</span>'}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+            `;
+            
+            if (submission.submitted_file) {
+                html += `
+                    <a href="/teacher/assignments/submission/${submission.id}/download" class="btn btn-sm btn-outline-primary" title="Download Submission">
+                        <i class="ti ti-download"></i>
+                    </a>
+                `;
+            }
+            
+            if (submission.status === 'submitted' || submission.status === 'late') {
+                html += `
+                    <button class="btn btn-sm btn-outline-success grade-btn" 
+                            data-student-assignment-id="${submission.id}"
+                            data-assignment-id="${assignment.id}"
+                            data-student-name="${student.first_name} ${student.middle_name || ''} ${student.last_name}"
+                            title="Grade Assignment">
+                        <i class="ti ti-edit"></i>
+                    </button>
+                `;
+            }
+            
+            html += `
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    $('#submissions-content').html(html);
+    
+    // Initialize grade buttons
+    $('.grade-btn').off('click.grade').on('click.grade', function() {
+        const studentAssignmentId = $(this).data('student-assignment-id');
+        const assignmentId = $(this).data('assignment-id');
+        const studentName = $(this).data('student-name');
+        
+        $('#grade-student-assignment-id').val(studentAssignmentId);
+        $('#grade-assignment-id').val(assignmentId);
+        $('#grade-student-name').val(studentName);
+        $('#grade-marks').val('');
+        $('#grade-feedback').val('');
+        
+        $('#grade_modal').modal('show');
+    });
+}
+
+function initGradeAssignment() {
+    $('#submit-grade').off('click.grade').on('click.grade', function() {
+        const studentAssignmentId = $('#grade-student-assignment-id').val();
+        const assignmentId = $('#grade-assignment-id').val();
+        const marks = $('#grade-marks').val();
+        const feedback = $('#grade-feedback').val();
+        
+        if (!marks || marks < 0 || marks > 100) {
+            showToast('Please enter valid marks between 0 and 100', 'error');
+            return;
+        }
+        
+        const submitBtn = $(this);
+        const originalText = submitBtn.html();
+        
+        submitBtn.prop('disabled', true).html('<i class="ti ti-loader"></i> Grading...');
+        
+        $.ajax({
+            url: `/teacher/assignments/${assignmentId}/grade`,
+            method: 'POST',
+            data: {
+                student_assignment_id: studentAssignmentId,
+                marks: marks,
+                feedback: feedback
+            },
+            success: function(response) {
+                if (response.success) {
+                    showToast(response.message, 'success');
+                    $('#grade_modal').modal('hide');
+                    // Refresh submissions
+                    $('.view-submissions').first().click();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON?.message || 'Error grading assignment';
+                showToast(errorMessage, 'error');
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
 }

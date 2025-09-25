@@ -22,6 +22,11 @@ class DatabaseSeeder extends Seeder
             NonWorkingStaffSeeder::class, // Depends on institution
             EventSeeder::class,           // Depends on institution
             SubjectSeeder::class,         // Depends on institution
+            AssignClassTeacherSeeder::class, // Depends on institution, teacher, class, section
+            AssignSubjectSeeder::class,   // Depends on institution, teacher, class, section, subject
+            AssignmentSeeder::class,      // Depends on institution, teacher, class, section, subject
+            StudentAssignmentSeeder::class, // Depends on assignments and students
+            AttendanceSeeder::class,      // Depends on students and teachers
         ]);
     }
 }

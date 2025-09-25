@@ -80,4 +80,14 @@ class Teacher extends Authenticatable
     {
         return $this->hasMany(Attendance::class, 'confirmed_by');
     }
+
+    public function assignedSubjects()
+    {
+        return $this->hasMany(AssignSubject::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }

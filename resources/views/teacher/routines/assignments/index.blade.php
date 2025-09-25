@@ -291,6 +291,11 @@
                                     <td>
                                         <div class="d-inline-flex align-items-center">
                                             <a href="javascript:void(0);" data-assignment-id="{{ $assignment->id }}"
+                                                class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
+                                                title="View Submissions ({{ $assignment->studentAssignments->count() }})">
+                                                <i class="ti ti-users"></i>
+                                            </a>
+                                            <a href="javascript:void(0);" data-assignment-id="{{ $assignment->id }}"
                                                 class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
                                                 <i class="ti ti-edit"></i>
                                             </a>
@@ -311,6 +316,61 @@
     </div>
 </div>
 <!-- End Content -->
+
+<!-- Submissions Modal -->
+<div class="modal fade" id="submissions_modal" tabindex="-1" aria-labelledby="submissionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="submissionsModalLabel">Student Submissions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="submissions-content">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grade Modal -->
+<div class="modal fade" id="grade_modal" tabindex="-1" aria-labelledby="gradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gradeModalLabel">Grade Assignment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="grade-form">
+                    @csrf
+                    <input type="hidden" id="grade-student-assignment-id">
+                    <input type="hidden" id="grade-assignment-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <input type="text" id="grade-student-name" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Marks <span class="text-danger">*</span></label>
+                        <input type="number" id="grade-marks" class="form-control" min="0" max="100" step="0.01" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Feedback</label>
+                        <textarea id="grade-feedback" class="form-control" rows="3" placeholder="Add feedback for the student"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submit-grade">Submit Grade</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Delete Modal -->
 <div class="modal fade" id="delete_modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

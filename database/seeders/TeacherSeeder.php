@@ -112,16 +112,20 @@ class TeacherSeeder extends Seeder
         ];
 
         foreach ($teachers as $teacher) {
-            Teacher::create(array_merge($teacher, [
-                'middle_name' => null,
-                'address' => 'Sample Teacher Address',
-                'pincode' => '110001',
-                'caste_tribe' => 'General',
-                'admin_id' => 1,
-                'password' => Hash::make('teacher123'),
-                'decrypt_pw' => 'teacher123',
-                'status' => 1
-            ]));
+            // Check if teacher already exists
+            if (!Teacher::where('email', $teacher['email'])->exists()) {
+                Teacher::create(array_merge($teacher, [
+                    'middle_name' => null,
+                    'address' => 'Sample Teacher Address',
+                    'pincode' => '110001',
+                    'caste_tribe' => 'General',
+                    'admin_id' => 1,
+                    'password' => Hash::make('teacher123'),
+                    'decrypt_pw' => 'teacher123',
+                    'status' => 1
+                ]));
+            }
         }
+        $this->command->info('Teachers seeded successfully!');
     }
 }

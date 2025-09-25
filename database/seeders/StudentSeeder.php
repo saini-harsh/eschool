@@ -281,31 +281,35 @@ class StudentSeeder extends Seeder
         ];
 
         foreach ($students as $student) {
-            Student::create(array_merge($student, [
-                'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
-                'permanent_address' => $student['address'] ?? 'Same as Current Address',
-                // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
+            // Check if student already exists
+            if (!Student::where('email', $student['email'])->exists()) {
+                Student::create(array_merge($student, [
+                    'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
+                    'permanent_address' => $student['address'] ?? 'Same as Current Address',
+                    // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
 
-                // Photo fields (set to null for now)
-                'father_photo' => null,
-                'mother_photo' => null,
-                'guardian_photo' => null,
+                    // Photo fields (set to null for now)
+                    'father_photo' => null,
+                    'mother_photo' => null,
+                    'guardian_photo' => null,
 
-                // Document Information
-                'document_01_title' => 'Birth Certificate',
-                'document_01_file' => null,
-                'document_02_title' => 'Aadhar Card',
-                'document_02_file' => null,
-                'document_03_title' => 'Previous School Certificate',
-                'document_03_file' => null,
-                'document_04_title' => 'Medical Certificate',
-                'document_04_file' => null,
+                    // Document Information
+                    'document_01_title' => 'Birth Certificate',
+                    'document_01_file' => null,
+                    'document_02_title' => 'Aadhar Card',
+                    'document_02_file' => null,
+                    'document_03_title' => 'Previous School Certificate',
+                    'document_03_file' => null,
+                    'document_04_title' => 'Medical Certificate',
+                    'document_04_file' => null,
 
-                'admin_id' => 1,
-                'password' => Hash::make('student123'),
-                'decrypt_pw' => 'student123',
-                'status' => 1
-            ]));
+                    'admin_id' => 1,
+                    'password' => Hash::make('student123'),
+                    'decrypt_pw' => 'student123',
+                    'status' => 1
+                ]));
+            }
         }
+        $this->command->info('Students seeded successfully!');
     }
 }
