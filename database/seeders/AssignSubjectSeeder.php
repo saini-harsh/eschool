@@ -19,7 +19,7 @@ class AssignSubjectSeeder extends Seeder
             // Rajesh Sharma (teacher_id = 1) - Mathematics and Science
             [
                 'institution_id' => 1,
-                'class_id' => 4, // Class 1
+                'class_id' => 1, // Class 1
                 'section_id' => 1,
                 'subject_id' => 1, // Mathematics
                 'teacher_id' => 1, // Rajesh Sharma

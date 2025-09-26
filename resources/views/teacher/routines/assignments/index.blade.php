@@ -281,11 +281,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div>
-                                            <select class="form-select status-select assignment-status-select" data-assignment-id="{{ $assignment->id }}" data-original-value="{{ $assignment->status }}">
-                                                <option value="1" {{ $assignment->status == 1 ? 'selected' : '' }}>Active</option>
-                                                <option value="0" {{ $assignment->status == 0 ? 'selected' : '' }}>Inactive</option>
-                                            </select>
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox" class="form-check-input status-toggle" 
+                                                   data-assignment-id="{{ $assignment->id }}" 
+                                                   {{ $assignment->status ? 'checked' : '' }}>
                                         </div>
                                     </td>
                                     <td>

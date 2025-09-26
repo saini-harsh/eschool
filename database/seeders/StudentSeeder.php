@@ -29,7 +29,7 @@ class StudentSeeder extends Seeder
                 'teacher_id' => 1,
                 'institution_id' => 1,
                 'class_id' => 1, // Class 1 for Green Valley
-                'section_id' => 2,
+                'section_id' => 1,
                 'address' => '123 Green Park, New Delhi',
                 'pincode' => '110016',
                 'district' => 'New Delhi',
@@ -60,8 +60,8 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 2, // Class 2 for Green Valley
-                'section_id' => 3,
+                'class_id' => 1, // Class 2 for Green Valley
+                'section_id' => 1,
                 'address' => '456 Model Town, New Delhi',
                 'pincode' => '110009',
                 'district' => 'New Delhi',
@@ -91,10 +91,10 @@ class StudentSeeder extends Seeder
                 'phone' => '9876512342',
                 'gender' => 'Female',
                 'institution_code' => 'INS001',
-                'teacher_id' => 2,
+                'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 2, // Class 2 for Green Valley
-                'section_id' => 3,
+                'class_id' => 1, // Class 2 for Green Valley
+                'section_id' => 1,
                 'address' => '789 Punjabi Bagh, New Delhi',
                 'pincode' => '110026',
                 'district' => 'New Delhi',
@@ -123,10 +123,10 @@ class StudentSeeder extends Seeder
                 'phone' => '9876512343',
                 'gender' => 'Male',
                 'institution_code' => 'INS001',
-                'teacher_id' => 2,
+                'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 3, // Class 3 for Green Valley
-                'section_id' => 4,
+                'class_id' => 1, // Class 3 for Green Valley
+                'section_id' => 1,
                 'address' => '321 Lajpat Nagar, New Delhi',
                 'pincode' => '110024',
                 'district' => 'New Delhi',

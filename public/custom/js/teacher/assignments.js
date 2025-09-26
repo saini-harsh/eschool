@@ -17,8 +17,8 @@ $(document).ready(function() {
         initTeacherAssignmentForm();
     }
     
-    // Always initialize status updates if we're on a page with assignment status selects
-    if ($('.assignment-status-select').length > 0) {
+    // Always initialize status updates if we're on a page with assignment status toggles
+    if ($('.status-toggle').length > 0) {
         initAssignmentStatusUpdates();
     }
     
@@ -411,11 +411,12 @@ function createAssignmentRow(assignment) {
         </a>` : 
         '<span class="text-muted">No file</span>';
     
-    const statusSelect = `
-        <select class="form-select status-select assignment-status-select" data-assignment-id="${assignment.id}" data-original-value="${assignment.status}">
-            <option value="1" ${assignment.status == 1 ? 'selected' : ''}>Active</option>
-            <option value="0" ${assignment.status == 0 ? 'selected' : ''}>Inactive</option>
-        </select>
+    const statusToggle = `
+        <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input status-toggle" 
+                   data-assignment-id="${assignment.id}" 
+                   ${assignment.status ? 'checked' : ''}>
+        </div>
     `;
     
     return `
@@ -461,7 +462,7 @@ function createAssignmentRow(assignment) {
             </td>
             <td>
                 <div>
-                    ${statusSelect}
+                    ${statusToggle}
                 </div>
             </td>
             <td>
@@ -487,19 +488,18 @@ function createAssignmentRow(assignment) {
 }
 
 function initRowEventHandlers(row) {
-    // Initialize status select handler
-    row.find('.assignment-status-select').off('change.assignments').on('change.assignments', function(e) {
+    // Initialize status toggle handler
+    row.find('.status-toggle').off('change.assignments').on('change.assignments', function(e) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
         
-        const select = $(this);
-        const assignmentId = select.data('assignment-id');
-        const newStatus = select.val();
-        const originalValue = select.data('original-value') || select.find('option:selected').val();
+        const toggle = $(this);
+        const assignmentId = toggle.data('assignment-id');
+        const newStatus = toggle.is(':checked') ? 1 : 0; // Convert boolean to integer
         
-        // Disable select during update
-        select.prop('disabled', true);
+        // Disable toggle during update
+        toggle.prop('disabled', true);
         
         $.ajax({
             url: `/teacher/assignments/${assignmentId}/status`,
@@ -511,29 +511,25 @@ function initRowEventHandlers(row) {
             success: function(response) {
                 showToast('Status updated successfully', 'success');
                 
-                // Update the select with new value
-                select.val(newStatus);
-                select.data('original-value', newStatus);
-                
-                // Re-enable select
-                select.prop('disabled', false);
+                // Re-enable toggle
+                toggle.prop('disabled', false);
             },
             error: function(xhr, status, error) {
                 showToast('Failed to update status', 'error');
                 
-                // Revert the select value
-                select.val(originalValue);
+                // Revert the toggle value (newStatus is now 1 or 0, so !newStatus means opposite)
+                toggle.prop('checked', newStatus === 0);
                 
-                // Re-enable select
-                select.prop('disabled', false);
+                // Re-enable toggle
+                toggle.prop('disabled', false);
             }
         });
         
         return false;
     });
     
-    // Also prevent any form events from being triggered by status select
-    row.find('.assignment-status-select').off('click.assignments').on('click.assignments', function(e) {
+    // Also prevent any form events from being triggered by status toggle
+    row.find('.status-toggle').off('click.assignments').on('click.assignments', function(e) {
         e.stopPropagation();
     });
     

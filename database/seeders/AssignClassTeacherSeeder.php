@@ -19,7 +19,7 @@ class AssignClassTeacherSeeder extends Seeder
             // Rajesh Sharma (teacher_id = 1) - Class Teacher for multiple classes
             [
                 'institution_id' => 1,
-                'class_id' => 4, // Class 1
+                'class_id' => 1, // Class 1
                 'section_id' => 1,
                 'teacher_id' => 1, // Rajesh Sharma
                 'status' => 1,

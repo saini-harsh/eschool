@@ -39,7 +39,7 @@ class AssignmentSeeder extends Seeder
                 'description' => 'Solve complex algebraic equations involving multiple variables. Show step-by-step solutions.',
                 'institution_id' => 1,
                 'teacher_id' => 1, // Rajesh Sharma
-                'class_id' => 4, // Class 1
+                'class_id' => 1, // Class 1
                 'section_id' => 1,
                 'subject_id' => 1, // Mathematics
                 'due_date' => Carbon::now()->addDays(5),
@@ -51,9 +51,9 @@ class AssignmentSeeder extends Seeder
                 'title' => 'Creative Writing - Poetry',
                 'description' => 'Write a collection of 5 poems on different themes. Each poem should be at least 8 lines long.',
                 'institution_id' => 1,
-                'teacher_id' => 2, // Anita Mehra
-                'class_id' => 5, // Class 2
-                'section_id' => 2,
+                'teacher_id' => 1, // Anita Mehra
+                'class_id' => 1, // Class 2
+                'section_id' => 1,
                 'subject_id' => 2, // English
                 'due_date' => Carbon::now()->addDays(8),
                 'assignment_file' => 'teacher/uploads/assignment/poetry_guidelines.pdf',

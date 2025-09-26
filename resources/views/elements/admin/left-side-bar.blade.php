@@ -129,7 +129,7 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.classes*') || request()->routeIs('admin.sections*') || request()->routeIs('admin.subjects*') || request()->routeIs('admin.academic.assign-teacher*') || request()->routeIs('admin.assign-subject*') || request()->routeIs('admin.academic.calendar*') || request()->routeIs('admin.events*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.classes*') || request()->routeIs('admin.sections*') || request()->routeIs('admin.subjects*') || request()->routeIs('admin.academic.assign-teacher*') || request()->routeIs('admin.assign-subject*') || request()->routeIs('admin.assignments*') || request()->routeIs('admin.academic.calendar*') || request()->routeIs('admin.events*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -158,6 +158,11 @@
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.assign-subject*') ? 'active' : '' }}" href="{{ route('admin.assign-subject.index') }}">
                                         <i class="ti ti-checks"></i><span>Assign Subject</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('admin.assignments*') ? 'active' : '' }}" href="{{ route('admin.assignments.index') }}">
+                                        <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
                                 <li class="">

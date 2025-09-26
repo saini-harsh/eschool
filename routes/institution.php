@@ -11,6 +11,7 @@ use App\Http\Controllers\Institution\Academic\SectionController;
 use App\Http\Controllers\Institution\Academic\SubjectController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Academic\AssignSubjectController;
+use App\Http\Controllers\Institution\Academic\AssignmentController;
 use App\Http\Controllers\Institution\Academic\CalendarController;
 use App\Http\Controllers\Institution\Academic\EventController;
 use App\Http\Controllers\Institution\Communication\EmailSmsController;
@@ -149,6 +150,25 @@ Route::middleware('institution')->group(function () {
             Route::post('/{id}', [AssignSubjectController::class, 'update'])->name('institution.assign-subject.update');
             Route::delete('/{id}', [AssignSubjectController::class, 'destroy'])->name('institution.assign-subject.destroy');
             Route::post('/{id}/status', [AssignSubjectController::class, 'updateStatus'])->name('institution.assign-subject.status');
+        });
+
+        // ASSIGNMENTS
+        Route::prefix('assignments')->group(function () {
+            Route::get('/', [AssignmentController::class, 'index'])->name('institution.assignments.index');
+            Route::post('/', [AssignmentController::class, 'store'])->name('institution.assignments.store');
+            Route::get('/{id}/edit', [AssignmentController::class, 'edit'])->name('institution.assignments.edit');
+            Route::post('/{id}', [AssignmentController::class, 'update'])->name('institution.assignments.update');
+            Route::delete('/{id}', [AssignmentController::class, 'destroy'])->name('institution.assignments.destroy');
+            Route::post('/{id}/status', [AssignmentController::class, 'updateStatus'])->name('institution.assignments.status');
+            Route::get('/{id}/submissions', [AssignmentController::class, 'viewSubmissions'])->name('institution.assignments.submissions');
+            Route::post('/{id}/grade', [AssignmentController::class, 'gradeAssignment'])->name('institution.assignments.grade');
+            Route::get('/submission/{id}/download', [AssignmentController::class, 'downloadStudentSubmission'])->name('institution.assignments.download-submission');
+
+            // AJAX routes for dynamic dropdowns (must come before parameterized routes)
+            Route::get('/classes/{institutionId}', [AssignmentController::class, 'getClassesByInstitution']);
+            Route::get('/teachers/{institutionId}', [AssignmentController::class, 'getTeachersByInstitution']);
+            Route::get('/subjects/{institutionId}/{classId}', [AssignmentController::class, 'getSubjectsByInstitutionClass']);
+            Route::get('/sections/{classId}', [AssignmentController::class, 'getSectionsByClass']);
         });
 
         
