@@ -41,14 +41,14 @@
                         @csrf
                         <input type="hidden" name="class_id" id="class_id">
                         <div class="mb-3">
-                        <label class="form-label">Institution <span class="text-danger">*</span></label>
-                        <select name="institution_id" class="select" id="institution_id" required>
-                            @if (isset($institutions) && !empty($institutions))
-                            @foreach ($institutions as $institution)
-                            <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                            @endforeach
-                            @endif
-                        </select>
+                            <label class="form-label">Institution <span class="text-danger">*</span></label>
+                            <select name="institution_id" class="select" id="institution_id" required>
+                                @if (isset($institutions) && !empty($institutions))
+                                @foreach ($institutions as $institution)
+                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                @endforeach
+                                @endif
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Class Name</label>
