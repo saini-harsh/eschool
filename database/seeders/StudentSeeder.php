@@ -29,7 +29,7 @@ class StudentSeeder extends Seeder
                 'teacher_id' => 1,
                 'institution_id' => 1,
                 'class_id' => 1, // Class 1 for Green Valley
-                'section_id' => 2,
+                'section_id' => 1,
                 'address' => '123 Green Park, New Delhi',
                 'pincode' => '110016',
                 'district' => 'New Delhi',
@@ -60,8 +60,8 @@ class StudentSeeder extends Seeder
                 'institution_code' => 'INS001',
                 'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 2, // Class 2 for Green Valley
-                'section_id' => 3,
+                'class_id' => 1, // Class 2 for Green Valley
+                'section_id' => 1,
                 'address' => '456 Model Town, New Delhi',
                 'pincode' => '110009',
                 'district' => 'New Delhi',
@@ -91,10 +91,10 @@ class StudentSeeder extends Seeder
                 'phone' => '9876512342',
                 'gender' => 'Female',
                 'institution_code' => 'INS001',
-                'teacher_id' => 2,
+                'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 2, // Class 2 for Green Valley
-                'section_id' => 3,
+                'class_id' => 1, // Class 2 for Green Valley
+                'section_id' => 1,
                 'address' => '789 Punjabi Bagh, New Delhi',
                 'pincode' => '110026',
                 'district' => 'New Delhi',
@@ -123,10 +123,10 @@ class StudentSeeder extends Seeder
                 'phone' => '9876512343',
                 'gender' => 'Male',
                 'institution_code' => 'INS001',
-                'teacher_id' => 2,
+                'teacher_id' => 1,
                 'institution_id' => 1,
-                'class_id' => 3, // Class 3 for Green Valley
-                'section_id' => 4,
+                'class_id' => 1, // Class 3 for Green Valley
+                'section_id' => 1,
                 'address' => '321 Lajpat Nagar, New Delhi',
                 'pincode' => '110024',
                 'district' => 'New Delhi',
@@ -281,31 +281,35 @@ class StudentSeeder extends Seeder
         ];
 
         foreach ($students as $student) {
-            Student::create(array_merge($student, [
-                'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
-                'permanent_address' => $student['address'] ?? 'Same as Current Address',
-                // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
+            // Check if student already exists
+            if (!Student::where('email', $student['email'])->exists()) {
+                Student::create(array_merge($student, [
+                    'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
+                    'permanent_address' => $student['address'] ?? 'Same as Current Address',
+                    // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
 
-                // Photo fields (set to null for now)
-                'father_photo' => null,
-                'mother_photo' => null,
-                'guardian_photo' => null,
+                    // Photo fields (set to null for now)
+                    'father_photo' => null,
+                    'mother_photo' => null,
+                    'guardian_photo' => null,
 
-                // Document Information
-                'document_01_title' => 'Birth Certificate',
-                'document_01_file' => null,
-                'document_02_title' => 'Aadhar Card',
-                'document_02_file' => null,
-                'document_03_title' => 'Previous School Certificate',
-                'document_03_file' => null,
-                'document_04_title' => 'Medical Certificate',
-                'document_04_file' => null,
+                    // Document Information
+                    'document_01_title' => 'Birth Certificate',
+                    'document_01_file' => null,
+                    'document_02_title' => 'Aadhar Card',
+                    'document_02_file' => null,
+                    'document_03_title' => 'Previous School Certificate',
+                    'document_03_file' => null,
+                    'document_04_title' => 'Medical Certificate',
+                    'document_04_file' => null,
 
-                'admin_id' => 1,
-                'password' => Hash::make('student123'),
-                'decrypt_pw' => 'student123',
-                'status' => 1
-            ]));
+                    'admin_id' => 1,
+                    'password' => Hash::make('student123'),
+                    'decrypt_pw' => 'student123',
+                    'status' => 1
+                ]));
+            }
         }
+        $this->command->info('Students seeded successfully!');
     }
 }

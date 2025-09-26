@@ -81,6 +81,9 @@ Route::middleware('teacher')->group(function () {
             Route::delete('/{id}', [AssignmentController::class, 'destroy'])->name('teacher.assignments.destroy');
             Route::post('/{id}/status', [AssignmentController::class, 'updateStatus'])->name('teacher.assignments.status');
             Route::get('/{id}/download', [AssignmentController::class, 'download'])->name('teacher.assignments.download');
+            Route::get('/{id}/submissions', [AssignmentController::class, 'viewSubmissions'])->name('teacher.assignments.submissions');
+            Route::post('/{id}/grade', [AssignmentController::class, 'gradeAssignment'])->name('teacher.assignments.grade');
+            Route::get('/submission/{id}/download', [AssignmentController::class, 'downloadStudentSubmission'])->name('teacher.assignments.download-submission');
 
             // API routes for dynamic dropdowns
             Route::get('/sections/{classId}', [AssignmentController::class, 'getSectionsByClass'])->name('teacher.assignments.sections');

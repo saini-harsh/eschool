@@ -26,15 +26,19 @@ class SubjectSeeder extends Seeder
         // Create subjects for all institutions
         for ($institutionId = 1; $institutionId <= 4; $institutionId++) {
             foreach ($subjects as $subject) {
-                Subject::create([
-                    'name' => $subject['name'],
-                    'code' => $subject['code'],
-                    'type' => $subject['type'],
-                    'status' => 1,
-                    'institution_id' => $institutionId,
-                    'class_id' => 1,    // you can link to class later
-                ]);
+                // Check if subject already exists for this institution
+                if (!Subject::where('name', $subject['name'])->where('institution_id', $institutionId)->exists()) {
+                    Subject::create([
+                        'name' => $subject['name'],
+                        'code' => $subject['code'],
+                        'type' => $subject['type'],
+                        'status' => 1,
+                        'institution_id' => $institutionId,
+                        'class_id' => 1,    // you can link to class later
+                    ]);
+                }
             }
         }
+        $this->command->info('Subjects seeded successfully!');
     }
 }

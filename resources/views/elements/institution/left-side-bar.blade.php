@@ -130,6 +130,11 @@
                                     </a>
                                 </li>
                                 <li class="">
+                                    <a class="{{ request()->routeIs('institution.assignments*') ? 'active' : '' }}" href="{{ route('institution.assignments.index') }}">
+                                        <i class="ti ti-report"></i><span>Assignments</span>
+                                    </a>
+                                </li>
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.academic.calendar*') ? 'active' : '' }}" href="{{ route('institution.academic.calendar.index') }}">
                                         <i class="ti ti-calendar"></i><span>Calendar</span>
                                     </a>

@@ -1,0 +1,18 @@
+This is a sample assignment file.
+In a real scenario, this would be a PDF or DOC file containing the assignment details.
+
+Assignment Title: Mathematics Problem Solving
+Description: Solve the following algebraic equations and show your working.
+
+Problems:
+1. Solve for x: 2x + 5 = 13
+2. Find the value of y: 3y - 7 = 14
+3. Solve the quadratic equation: x² - 5x + 6 = 0
+
+Instructions:
+- Show all working steps
+- Use proper mathematical notation
+- Submit your answers in a clear, readable format
+- Due date: [Due date will be set when assignment is created]
+
+Good luck with your assignment!

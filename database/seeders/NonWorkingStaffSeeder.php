@@ -92,12 +92,16 @@ class NonWorkingStaffSeeder extends Seeder
         ];
 
         foreach ($staffs as $staff) {
-            NonWorkingStaff::create(array_merge($staff, [
-                'profile_image' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
-                'password' => Hash::make('staff123'),
-                'decrypt_pw' => 'staff123',
-                'status' => 1
-            ]));
+            // Check if staff already exists
+            if (!NonWorkingStaff::where('email', $staff['email'])->exists()) {
+                NonWorkingStaff::create(array_merge($staff, [
+                    'profile_image' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
+                    'password' => Hash::make('staff123'),
+                    'decrypt_pw' => 'staff123',
+                    'status' => 1
+                ]));
+            }
         }
+        $this->command->info('Non-working staff seeded successfully!');
     }
 }
