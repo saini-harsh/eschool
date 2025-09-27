@@ -13,17 +13,24 @@ class SectionSeeder extends Seeder
     public function run(): void
     {
         $sections = [
-            ['name' => 'A'],
-            ['name' => 'B'],
-            ['name' => 'C'],
-            ['name' => 'D'],
-            ['name' => 'E'],
-            ['name' => 'F'],
+            ['name' => 'A','institution_id' => 1],
+            ['name' => 'B','institution_id' => 1],
+            ['name' => 'C','institution_id' => 1],
+            ['name' => 'D','institution_id' => 1],
+            ['name' => 'E','institution_id' => 1],
+            ['name' => 'F','institution_id' => 1],
+            ['name' => 'G','institution_id' => 1],
+            ['name' => 'H','institution_id' => 1],
+            ['name' => 'I','institution_id' => 1],
+            ['name' => 'J','institution_id' => 1],
+            ['name' => 'K','institution_id' => 1],
+            ['name' => 'L','institution_id' => 1],
         ];
 
         foreach ($sections as $section) {
             Section::create(array_merge($section, [
-                'status' => 1
+                'status' => 1,
+                'institution_id' => $section['institution_id']
             ]));
         }
     }

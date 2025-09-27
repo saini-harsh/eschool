@@ -22,6 +22,16 @@ class Exam extends Model
         'evening_subjects',
     ];
 
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class, 'institution_id');
+    }
+
+    public function examType()
+    {
+        return $this->belongsTo(ExamType::class, 'exam_type_id');
+    }
+
     public function classes()
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');

@@ -1,21 +1,21 @@
-@extends('layouts.admin')
-@section('title', 'Admin | Exam Management | Exams')
-@section('content')
+<?php $__env->startSection('title', 'Admin | Exam Management | Exams'); ?>
+<?php $__env->startSection('content'); ?>
 
-    @if (session('success'))
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Start Content -->
     <div class="content">
@@ -25,7 +25,7 @@
                 <h5 class="fw-bold">Exams</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.dashboard') }}"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('admin.dashboard')); ?>"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Exams</li>
                     </ol>
@@ -38,19 +38,19 @@
             <div class="card-body">
                 <h6 class="card-title mb-3">Filter Exam Records</h6>
                 <form id="exam-filter-form" class="row g-3 align-items-end" method="GET"
-                    action="{{ route('admin.exam-management.exams') }}">
+                    action="<?php echo e(route('admin.exam-management.exams')); ?>">
                     <!-- Institution Dropdown -->
                     <div class="col-md-2">
                         <label for="institution" class="form-label">Institution</label>
                         <select class="form-select" id="institution" name="institution">
                             <option value="">Select Institution</option>
-                            @if (isset($institutions) && count($institutions) > 0)
-                                @foreach ($institutions as $institution)
-                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                @endforeach
-                            @else
+                            <?php if(isset($institutions) && count($institutions) > 0): ?>
+                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
                                 <option value="">No institutions found</option>
-                            @endif
+                            <?php endif; ?>
                         </select>
                     </div>
 
@@ -77,7 +77,7 @@
                         </button>
                     </div>
                     <div class="col-md-2">
-                        <a href="{{ route('admin.exam-management.exams') }}" class="btn btn-outline-secondary w-100">
+                        <a href="<?php echo e(route('admin.exam-management.exams')); ?>" class="btn btn-outline-secondary w-100">
                             <i class="ti ti-x me-1"></i>Clear
                         </a>
                     </div>
@@ -87,37 +87,37 @@
 
         <!-- Exam Timetable Cards -->
         <div class="row">
-            @if (isset($lists) && !empty($lists))
-                @php
+            <?php if(isset($lists) && !empty($lists)): ?>
+                <?php
                     $groupedExams = $lists->groupBy(function ($exam) {
                         return $exam->class ? $exam->class->name : 'Unknown Class';
                     });
-                @endphp
+                ?>
 
-                @foreach ($groupedExams as $className => $exams)
+                <?php $__currentLoopData = $groupedExams; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $className => $exams): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="col-12 mb-4">
                         <div class="card shadow-sm">
                             <div class="card-header class-header text-white">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h5 class="mb-0">
                                         <i class="ti ti-school me-2"></i>
-                                        {{ $className }} - Exam Timetable
+                                        <?php echo e($className); ?> - Exam Timetable
                                     </h5>
-                                    <span class="badge bg-light text-dark">{{ count($exams) }} Exam(s)</span>
+                                    <span class="badge bg-light text-dark"><?php echo e(count($exams)); ?> Exam(s)</span>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <div class="timetable-grid">
-                                    @foreach ($exams as $exam)
+                                    <?php $__currentLoopData = $exams; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $exam): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="exam-timetable-card card border-0 shadow-sm h-100">
                                             <div class="card-body">
                                                 <div class="exam-card-header">
                                                     <div class="d-flex align-items-start justify-content-between">
                                                         <div>
                                                             <h6 class="card-title text-primary mb-1 fw-bold">
-                                                                {{ $exam->title }}</h6>
+                                                                <?php echo e($exam->title); ?></h6>
                                                             <small class="text-muted fw-medium">Code:
-                                                                {{ $exam->code }}</small>
+                                                                <?php echo e($exam->code); ?></small>
                                                         </div>
                                                         <div class="dropdown">
                                                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -136,7 +136,7 @@
                                                                 </li>
                                                                 <li><a class="dropdown-item text-danger delete-exam"
                                                                         href="javascript:void(0);" data-delete-url="#"
-                                                                        data-exam-title="{{ $exam->title }}"><i
+                                                                        data-exam-title="<?php echo e($exam->title); ?>"><i
                                                                             class="ti ti-trash me-2"></i>Delete</a></li>
                                                             </ul>
                                                         </div>
@@ -147,83 +147,87 @@
                                                     <div class="d-flex align-items-center mb-2">
                                                         <i class="ti ti-building"></i>
                                                         <span class="ms-2">
-                                                            @if ($exam->institution)
-                                                                {{ $exam->institution->name }}
-                                                            @else
-                                                                Institution ID: {{ $exam->institution_id }}
-                                                            @endif
+                                                            <?php if($exam->institution): ?>
+                                                                <?php echo e($exam->institution->name); ?>
+
+                                                            <?php else: ?>
+                                                                Institution ID: <?php echo e($exam->institution_id); ?>
+
+                                                            <?php endif; ?>
                                                         </span>
                                                     </div>
 
                                                     <div class="d-flex align-items-center mb-2">
                                                         <i class="ti ti-clipboard-list"></i>
                                                         <span class="ms-2">
-                                                            @if ($exam->examType)
-                                                                {{ $exam->examType->title }}
-                                                            @else
-                                                                Type ID: {{ $exam->exam_type_id }}
-                                                            @endif
+                                                            <?php if($exam->examType): ?>
+                                                                <?php echo e($exam->examType->title); ?>
+
+                                                            <?php else: ?>
+                                                                Type ID: <?php echo e($exam->exam_type_id); ?>
+
+                                                            <?php endif; ?>
                                                         </span>
                                                     </div>
 
-                                                    @if ($exam->section)
+                                                    <?php if($exam->section): ?>
                                                         <div class="d-flex align-items-center mb-2">
                                                             <i class="ti ti-users"></i>
                                                             <span class="ms-2">Section:
-                                                                {{ $exam->section->name }}</span>
+                                                                <?php echo e($exam->section->name); ?></span>
                                                         </div>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </div>
 
                                                 <div class="row g-2 mb-3">
                                                     <div class="col-6">
                                                         <div class="exam-date-badge text-center">
                                                             <small class="d-block opacity-75">Start Date</small>
-                                                            <strong>{{ $exam->start_date ? \Carbon\Carbon::parse($exam->start_date)->format('M d') : 'N/A' }}</strong>
+                                                            <strong><?php echo e($exam->start_date ? \Carbon\Carbon::parse($exam->start_date)->format('M d') : 'N/A'); ?></strong>
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="exam-date-badge text-center">
                                                             <small class="d-block opacity-75">End Date</small>
-                                                            <strong>{{ $exam->end_date ? \Carbon\Carbon::parse($exam->end_date)->format('M d') : 'N/A' }}</strong>
+                                                            <strong><?php echo e($exam->end_date ? \Carbon\Carbon::parse($exam->end_date)->format('M d') : 'N/A'); ?></strong>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                @if ($exam->morning_time || $exam->evening_time)
+                                                <?php if($exam->morning_time || $exam->evening_time): ?>
                                                     <div class="exam-time-info">
                                                         <div class="row g-2">
-                                                            @if ($exam->morning_time)
+                                                            <?php if($exam->morning_time): ?>
                                                                 <div class="col-6">
                                                                     <div class="d-flex align-items-center">
                                                                         <i class="ti ti-sun text-warning"></i>
                                                                         <span class="ms-2 fw-medium">Morning:
-                                                                            {{ $exam->morning_time }}</span>
+                                                                            <?php echo e($exam->morning_time); ?></span>
                                                                     </div>
                                                                 </div>
-                                                            @endif
-                                                            @if ($exam->evening_time)
+                                                            <?php endif; ?>
+                                                            <?php if($exam->evening_time): ?>
                                                                 <div class="col-6">
                                                                     <div class="d-flex align-items-center">
                                                                         <i class="ti ti-moon text-info"></i>
                                                                         <span class="ms-2 fw-medium">Evening:
-                                                                            {{ $exam->evening_time }}</span>
+                                                                            <?php echo e($exam->evening_time); ?></span>
                                                                     </div>
                                                                 </div>
-                                                            @endif
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
-                                                @endif
+                                                <?php endif; ?>
 
                                                 <!-- Subject Schedule Section -->
-                                                @if ($exam->subject_dates || $exam->morning_subjects || $exam->evening_subjects)
+                                                <?php if($exam->subject_dates || $exam->morning_subjects || $exam->evening_subjects): ?>
                                                     <div class="mt-3">
                                                         <h6 class="text-primary mb-2">
                                                             <i class="ti ti-calendar-event me-1"></i>
                                                             Subject Schedule
                                                         </h6>
 
-                                                        @php
+                                                        <?php
                                                             $subjectDates = $exam->subject_dates
                                                                 ? json_decode($exam->subject_dates, true)
                                                                 : [];
@@ -274,58 +278,59 @@
                                                                     ];
                                                                 }
                                                             }
-                                                        @endphp
+                                                        ?>
 
 
-                                                        @if (!empty($subjectDates) && is_array($subjectDates))
+                                                        <?php if(!empty($subjectDates) && is_array($subjectDates)): ?>
                                                             <div class="subject-schedule">
-                                                                @foreach ($subjectDates as $index => $date)
+                                                                <?php $__currentLoopData = $subjectDates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                     <div class="schedule-item mb-2 p-2 bg-light rounded">
                                                                         <div
                                                                             class="d-flex align-items-center justify-content-between mb-1">
                                                                             <strong class="schedule-date">
                                                                                 <i class="ti ti-calendar me-1"></i>
-                                                                                {{ \Carbon\Carbon::parse($date)->format('M d, Y') }}
+                                                                                <?php echo e(\Carbon\Carbon::parse($date)->format('M d, Y')); ?>
+
                                                                             </strong>
                                                                             <small
-                                                                                class="schedule-day">{{ \Carbon\Carbon::parse($date)->format('l') }}</small>
+                                                                                class="schedule-day"><?php echo e(\Carbon\Carbon::parse($date)->format('l')); ?></small>
                                                                         </div>
 
                                                                         <!-- Display morning subjects for this date -->
-                                                                        @if (!empty($morningSubjectNames))
+                                                                        <?php if(!empty($morningSubjectNames)): ?>
                                                                             <div class="d-flex align-items-center mb-2">
                                                                                 <span
                                                                                     class="badge bg-warning me-2 time-slot-badge">
                                                                                     <i class="ti ti-sun me-1"></i>Morning
                                                                                 </span>
                                                                                 <div class="flex-grow-1">
-                                                                                    @foreach ($morningSubjectNames as $subjectName)
+                                                                                    <?php $__currentLoopData = $morningSubjectNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subjectName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                                         <span
-                                                                                            class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                                    @endforeach
+                                                                                            class="badge bg-primary me-1 mb-1 subject-badge"><?php echo e($subjectName); ?></span>
+                                                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                                 </div>
                                                                             </div>
-                                                                        @endif
+                                                                        <?php endif; ?>
 
                                                                         <!-- Display evening subjects for this date -->
-                                                                        @if (!empty($eveningSubjectNames))
+                                                                        <?php if(!empty($eveningSubjectNames)): ?>
                                                                             <div class="d-flex align-items-center">
                                                                                 <span
                                                                                     class="badge bg-info me-2 time-slot-badge">
                                                                                     <i class="ti ti-moon me-1"></i>Evening
                                                                                 </span>
                                                                                 <div class="flex-grow-1">
-                                                                                    @foreach ($eveningSubjectNames as $subjectName)
+                                                                                    <?php $__currentLoopData = $eveningSubjectNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subjectName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                                         <span
-                                                                                            class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                                    @endforeach
+                                                                                            class="badge bg-primary me-1 mb-1 subject-badge"><?php echo e($subjectName); ?></span>
+                                                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                                 </div>
                                                                             </div>
-                                                                        @endif
+                                                                        <?php endif; ?>
                                                                     </div>
-                                                                @endforeach
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </div>
-                                                        @elseif ($exam->subject_dates && !is_array($subjectDates))
+                                                        <?php elseif($exam->subject_dates && !is_array($subjectDates)): ?>
                                                             <!-- Display raw subject_dates if JSON parsing failed -->
                                                             <div class="subject-schedule">
                                                                 <div class="schedule-item mb-2 p-2 bg-light rounded">
@@ -337,14 +342,14 @@
                                                                     </div>
                                                                     <div>
                                                                         <span
-                                                                            class="badge bg-primary subject-badge">{{ $exam->subject_dates }}</span>
+                                                                            class="badge bg-primary subject-badge"><?php echo e($exam->subject_dates); ?></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        @else
+                                                        <?php else: ?>
                                                             <!-- Fallback to morning/evening subjects if subject_dates is empty -->
                                                             <div class="subject-schedule">
-                                                                @if (!empty($morningSubjectNames))
+                                                                <?php if(!empty($morningSubjectNames)): ?>
                                                                     <div class="schedule-item mb-2 p-2 bg-light rounded">
                                                                         <div class="d-flex align-items-center mb-1">
                                                                             <span class="badge bg-warning me-2">
@@ -353,15 +358,15 @@
                                                                             </span>
                                                                         </div>
                                                                         <div>
-                                                                            @foreach ($morningSubjectNames as $subjectName)
+                                                                            <?php $__currentLoopData = $morningSubjectNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subjectName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                                 <span
-                                                                                    class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                            @endforeach
+                                                                                    class="badge bg-primary me-1 mb-1 subject-badge"><?php echo e($subjectName); ?></span>
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                         </div>
                                                                     </div>
-                                                                @endif
+                                                                <?php endif; ?>
 
-                                                                @if (!empty($eveningSubjectNames))
+                                                                <?php if(!empty($eveningSubjectNames)): ?>
                                                                     <div class="schedule-item mb-2 p-2 bg-light rounded">
                                                                         <div class="d-flex align-items-center mb-1">
                                                                             <span class="badge bg-info me-2">
@@ -370,33 +375,33 @@
                                                                             </span>
                                                                         </div>
                                                                         <div>
-                                                                            @foreach ($eveningSubjectNames as $subjectName)
+                                                                            <?php $__currentLoopData = $eveningSubjectNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subjectName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                                 <span
-                                                                                    class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                            @endforeach
+                                                                                    class="badge bg-primary me-1 mb-1 subject-badge"><?php echo e($subjectName); ?></span>
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                         </div>
                                                                     </div>
-                                                                @endif
+                                                                <?php endif; ?>
 
-                                                                @if (empty($morningSubjectNames) && empty($eveningSubjectNames) && empty($subjectDates))
+                                                                <?php if(empty($morningSubjectNames) && empty($eveningSubjectNames) && empty($subjectDates)): ?>
                                                                     <div class="text-center text-muted py-3">
                                                                         <i class="ti ti-info-circle me-2"></i>
                                                                         No subject schedule available
                                                                     </div>
-                                                                @endif
+                                                                <?php endif; ?>
                                                             </div>
-                                                        @endif
+                                                        <?php endif; ?>
                                                     </div>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endforeach
-            @else
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body text-center py-5">
@@ -404,19 +409,19 @@
                             <h5 class="text-muted">No Exam Records Found</h5>
                             <p class="text-muted">There are no exam records to display. Create your first exam to get
                                 started.</p>
-                            <a href="{{ route('admin.exam-management.exam-setup') }}" class="btn btn-primary">
+                            <a href="<?php echo e(route('admin.exam-management.exam-setup')); ?>" class="btn btn-primary">
                                 <i class="ti ti-plus me-2"></i>Create Exam
                             </a>
                         </div>
                     </div>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
     <style>
         .exam-timetable-card {
             transition: all 0.3s ease;
@@ -517,8 +522,10 @@
             font-style: italic;
         }
     </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/exams.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/admin/exams.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/admin/examination/exam/index.blade.php ENDPATH**/ ?>

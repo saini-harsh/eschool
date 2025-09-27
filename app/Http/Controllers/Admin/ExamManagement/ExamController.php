@@ -14,13 +14,29 @@ class ExamController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Logic to list exams
-        // $lists = Institution::with('exams.classes', 'exams.sections')->get();
+        // Start building the query
+        $query = Exam::with(['institution', 'examType', 'classes', 'sections']);
+
+        // Apply filters if provided
+        if ($request->filled('institution')) {
+            $query->where('institution_id', $request->institution);
+        }
+
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
+        }
+
+        if ($request->filled('section_id')) {
+            $query->where('section_id', $request->section_id);
+        }
+
+        // Get filtered results
+        $lists = $query->orderBy('created_at', 'desc')->get();
 
         $institutions = Institution::all();
-        return view('admin.examination.exam.index', compact('institutions'));
+        return view('admin.examination.exam.index', compact('lists', 'institutions'));
     }
 
     public function getClassesSections($institutionId)
