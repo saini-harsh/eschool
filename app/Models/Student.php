@@ -124,4 +124,22 @@ class Student extends Authenticatable
         return $this->attendance()->whereDate('date', $date)->first();
     }
 
+    /**
+     * Get the student's assignment submissions.
+     */
+    public function studentAssignments()
+    {
+        return $this->hasMany(StudentAssignment::class);
+    }
+
+    /**
+     * Get the student's assignments based on class and section.
+     */
+    public function assignments()
+    {
+        return Assignment::where('class_id', $this->class_id)
+            ->where('section_id', $this->section_id)
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc');
+    }
 }

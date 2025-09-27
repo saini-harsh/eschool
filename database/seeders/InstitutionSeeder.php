@@ -65,13 +65,17 @@ class InstitutionSeeder extends Seeder
         ];
 
         foreach ($institutions as $inst) {
-            Institution::create(array_merge($inst, [
-                'admin_id' => 1,
-                'logo' => 1,
-                'password' => Hash::make('school123'),
-                'decrypt_pw' => 'school123',
-                'status' => 1
-            ]));
+            // Check if institution already exists
+            if (!Institution::where('email', $inst['email'])->exists()) {
+                Institution::create(array_merge($inst, [
+                    'admin_id' => 1,
+                    'logo' => 1,
+                    'password' => Hash::make('school123'),
+                    'decrypt_pw' => 'school123',
+                    'status' => 1
+                ]));
+            }
         }
+        $this->command->info('Institutions seeded successfully!');
     }
 }

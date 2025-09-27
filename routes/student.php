@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Student\AttendanceController;
+use App\Http\Controllers\Student\AssignmentController;
 
 Route::middleware('student')->group(function () {
     Route::prefix('student')->group(function () {
@@ -14,6 +15,15 @@ Route::middleware('student')->group(function () {
             Route::get('/', [AttendanceController::class, 'index'])->name('student.attendance');
             Route::get('/my-attendance-matrix', [AttendanceController::class, 'getMyAttendanceMatrix']);
             Route::get('/stats', [AttendanceController::class, 'getAttendanceStats']);
+        });
+
+        // Assignment Management
+        Route::prefix('assignments')->group(function () {
+            Route::get('/', [AssignmentController::class, 'index'])->name('student.assignments.index');
+            Route::get('/{id}', [AssignmentController::class, 'show'])->name('student.assignments.show');
+            Route::post('/{id}/submit', [AssignmentController::class, 'submit'])->name('student.assignments.submit');
+            Route::get('/{id}/download-assignment', [AssignmentController::class, 'downloadAssignment'])->name('student.assignments.download-assignment');
+            Route::get('/submission/{id}/download', [AssignmentController::class, 'downloadSubmission'])->name('student.assignments.download-submission');
         });
 
         Route::prefix('settings')->group(function () {

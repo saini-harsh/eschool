@@ -33,5 +33,6 @@ class SectionSeeder extends Seeder
                 'institution_id' => $section['institution_id']
             ]));
         }
+        $this->command->info('Sections seeded successfully!');
     }
 }

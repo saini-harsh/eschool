@@ -73,4 +73,12 @@ class Assignment extends Model
     {
         return $this->belongsTo(Admin::class);
     }
+
+    /**
+     * Get the student submissions for this assignment.
+     */
+    public function studentAssignments()
+    {
+        return $this->hasMany(StudentAssignment::class);
+    }
 }

@@ -167,7 +167,11 @@ class EventSeeder extends Seeder
         ];
 
         foreach ($events as $event) {
-            DB::table('academic_events')->insert($event);
+            // Check if event already exists
+            if (!DB::table('academic_events')->where('title', $event['title'])->where('institution_id', $event['institution_id'])->exists()) {
+                DB::table('academic_events')->insert($event);
+            }
         }
+        $this->command->info('Events seeded successfully!');
     }
 }

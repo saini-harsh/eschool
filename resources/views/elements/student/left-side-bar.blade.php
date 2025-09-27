@@ -86,7 +86,7 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="">
+                                    <a class="{{ request()->routeIs('student.assignments*') ? 'active' : '' }}" href="{{ route('student.assignments.index') }}">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
