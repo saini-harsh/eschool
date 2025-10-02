@@ -17,6 +17,8 @@ use App\Http\Controllers\Institution\Academic\EventController;
 use App\Http\Controllers\Institution\Communication\EmailSmsController;
 use App\Http\Controllers\Institution\Routine\RoutineController;
 use App\Http\Controllers\Institution\Routine\LessonPlanController;
+use App\Http\Controllers\Institution\Payment\FeeStructureController;
+use App\Http\Controllers\Institution\Payment\PaymentController;
 
 Route::middleware('institution')->group(function () {
    
@@ -252,6 +254,40 @@ Route::middleware('institution')->group(function () {
             Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('institution.lesson-plans.classes');
             Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('institution.lesson-plans.classes-by-teacher');
             Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('institution.lesson-plans.subjects');
+        });
+
+        // PAYMENT MANAGEMENT
+        Route::prefix('payment')->group(function () {
+            // Fee Structure Management
+            Route::prefix('fee-structure')->group(function () {
+                Route::get('/', [FeeStructureController::class, 'index'])->name('institution.fee-structure.index');
+                Route::get('/create', [FeeStructureController::class, 'create'])->name('institution.fee-structure.create');
+                Route::post('/', [FeeStructureController::class, 'store'])->name('institution.fee-structure.store');
+                Route::get('/{feeStructure}/edit', [FeeStructureController::class, 'edit'])->name('institution.fee-structure.edit');
+                Route::post('/{feeStructure}', [FeeStructureController::class, 'update'])->name('institution.fee-structure.update');
+                Route::delete('/{feeStructure}', [FeeStructureController::class, 'destroy'])->name('institution.fee-structure.destroy');
+                Route::post('/{id}/status', [FeeStructureController::class, 'updateStatus'])->name('institution.fee-structure.status');
+                Route::get('/{feeStructure}/invoice', [FeeStructureController::class, 'generateInvoice'])->name('institution.fee-structure.invoice');
+                Route::get('/{feeStructure}/download-invoice', [FeeStructureController::class, 'downloadInvoice'])->name('institution.fee-structure.download-invoice');
+                Route::get('/sections/{classId}', [FeeStructureController::class, 'getSectionsByClass']);
+            });
+
+            // Payment Management
+            Route::prefix('payments')->group(function () {
+                Route::get('/', [PaymentController::class, 'index'])->name('institution.payments.index');
+                Route::get('/create', [PaymentController::class, 'create'])->name('institution.payments.create');
+                Route::post('/', [PaymentController::class, 'store'])->name('institution.payments.store');
+                Route::get('/{payment}', [PaymentController::class, 'show'])->name('institution.payments.show');
+                Route::get('/{payment}/receipt', [PaymentController::class, 'generateReceipt'])->name('institution.payments.receipt');
+                Route::get('/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])->name('institution.payments.download-receipt');
+                Route::get('/generate-bills', [PaymentController::class, 'generateBills'])->name('institution.payments.generate-bills');
+                
+                // AJAX routes for dynamic dropdowns
+                Route::get('/students/{classId}', [PaymentController::class, 'getStudentsByClass']);
+                Route::get('/students/{classId}/{sectionId}', [PaymentController::class, 'getStudentsByClassSection']);
+                Route::get('/student-fees/{studentId}', [PaymentController::class, 'getStudentFees']);
+                Route::get('/sections/{classId}', [PaymentController::class, 'getSectionsByClass']);
+            });
         });
     });
     

@@ -123,6 +123,33 @@
                 </li>
                 <li>
                     <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ request()->routeIs('student.payments*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-credit-card"></i><span>Payment</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('student.payments.index') ? 'active' : '' }}" href="{{ route('student.payments.index') }}">
+                                        <i class="ti ti-dashboard"></i><span>Payment Dashboard</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('student.payments.pending') ? 'active' : '' }}" href="{{ route('student.payments.pending') }}">
+                                        <i class="ti ti-clock"></i><span>Pending Payments</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('student.payments.history') ? 'active' : '' }}" href="{{ route('student.payments.history') }}">
+                                        <i class="ti ti-history"></i><span>Payment History</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
                         <li class="">
                             <a class="" href="">
                                 <i class="ti ti-file"></i><span>Notices</span>

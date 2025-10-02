@@ -68,4 +68,19 @@ class Institution extends Authenticatable
     {
         return $this->hasMany(Section::class, 'institution_id');
     }
+
+    public function feeStructures()
+    {
+        return $this->hasMany(FeeStructure::class);
+    }
+
+    public function studentFees()
+    {
+        return $this->hasMany(StudentFee::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
