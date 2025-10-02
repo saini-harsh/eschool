@@ -9,13 +9,18 @@ class ClassRoom extends Model
 {
     use HasFactory;
 
+    protected $table = 'class_rooms';
+
     protected $fillable = [
         'room_no',
+        'room_name',
         'capacity',
+        'seatmap',
         'status',
     ];
 
     protected $casts = [
         'status' => 'boolean',
+        'seatmap' => 'array',
     ];
 }

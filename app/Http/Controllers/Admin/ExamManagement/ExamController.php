@@ -17,19 +17,19 @@ class ExamController extends Controller
     public function index(Request $request)
     {
         // Start building the query
-        $query = Exam::with(['institution', 'examType', 'classes', 'sections']);
+        $query = Exam::with(['institution', 'examType', 'class', 'section']);
 
         // Apply filters if provided
         if ($request->filled('institution')) {
             $query->where('institution_id', $request->institution);
         }
 
-        if ($request->filled('class_id')) {
-            $query->where('class_id', $request->class_id);
+        if ($request->filled('class')) {
+            $query->where('class_id', $request->class);
         }
 
-        if ($request->filled('section_id')) {
-            $query->where('section_id', $request->section_id);
+        if ($request->filled('section')) {
+            $query->where('section_id', $request->section);
         }
 
         // Get filtered results
@@ -41,38 +41,37 @@ class ExamController extends Controller
 
     public function getClassesSections($institutionId)
     {
-        $institution = Institution::with('classes.sec')->find($institutionId);
+        try {
+            // Get institution with classes and sections
+            $institution = Institution::with(['classes', 'sections'])->find($institutionId);
 
-        if (!$institution) {
-            return response()->json(['classes' => [], 'sections' => []]);
+            if (!$institution) {
+                return response()->json(['classes' => [], 'sections' => []]);
+            }
+
+            // Get classes for this institution
+            $classes = $institution->classes->map(function($class) {
+                return [
+                    'id' => $class->id,
+                    'name' => $class->name,
+                ];
+            });
+
+            // Get all sections for this institution
+            $sections = $institution->sections->map(function($section) {
+                return [
+                    'id' => $section->id,
+                    'name' => $section->name,
+                ];
+            });
+
+            return response()->json([
+                'classes' => $classes,
+                'sections' => $sections,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getClassesSections: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch classes and sections'], 500);
         }
-
-        $classes = $institution->classes->map(function($class) {
-            return [
-                'id' => $class->id,
-                'name' => $class->name,
-                'sections' => $class->sections->map(function($section) {
-                    return [
-                        'id' => $section->id,
-                        'name' => $section->name,
-                    ];
-                }),
-            ];
-        });
-
-        // Optionally, flatten all sections if you want a single list
-        $sections = $institution->classes->flatMap(function($class) {
-            return $class->sections;
-        })->unique('id')->values()->map(function($section) {
-            return [
-                'id' => $section->id,
-                'name' => $section->name,
-            ];
-        });
-
-        return response()->json([
-            'classes' => $classes,
-            'sections' => $sections,
-        ]);
     }
 }

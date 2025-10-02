@@ -211,12 +211,14 @@ Route::middleware('admin')->group(function () {
         // Class Room Routes
         Route::prefix('rooms')->group(function () {
             Route::get('/', [ClassRoomController::class, 'index'])->name('admin.rooms.index');
+            Route::get('/create', [ClassRoomController::class, 'create'])->name('admin.rooms.create');
             Route::post('/store', [ClassRoomController::class, 'store'])->name('admin.rooms.store');
-            // Route::get('/list', [ClassRoomController::class, 'getClassRooms'])->name('admin.rooms.list');
-            // Route::get('/edit/{id}', [ClassRoomController::class, 'edit'])->name('admin.rooms.edit');
-            // Route::post('/update/{id}', [ClassRoomController::class, 'update'])->name('admin.rooms.update');
-            // Route::post('/delete/{id}', [ClassRoomController::class, 'delete'])->name('admin.rooms.delete');
-            // Route::post('/{id}/status', [ClassRoomController::class, 'updateStatus'])->name('admin.rooms.status');
+            Route::post('/store-with-seatmap', [ClassRoomController::class, 'storeWithSeatmap'])->name('admin.rooms.store-with-seatmap');
+            Route::get('/{id}', [ClassRoomController::class, 'show'])->name('admin.rooms.show');
+            Route::get('/{id}/edit', [ClassRoomController::class, 'edit'])->name('admin.rooms.edit');
+            Route::put('/{id}', [ClassRoomController::class, 'update'])->name('admin.rooms.update');
+            Route::put('/{id}/seatmap', [ClassRoomController::class, 'updateSeatmap'])->name('admin.rooms.update-seatmap');
+            Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('admin.rooms.destroy');
         });
 
         // EXAM MANAGEMENT

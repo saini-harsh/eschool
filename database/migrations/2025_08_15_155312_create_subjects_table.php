@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code')->unique();
+            $table->string('code');
             $table->string('type');
             $table->boolean('status')->default(true);
             $table->foreignId('institution_id')->constrained()->onDelete('cascade'); // Assuming subjects belong to an institution

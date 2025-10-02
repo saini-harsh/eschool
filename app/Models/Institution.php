@@ -63,4 +63,9 @@ class Institution extends Authenticatable
     {
         return $this->hasMany(Exam::class, 'institution_id');
     }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'institution_id');
+    }
 }

@@ -30,6 +30,11 @@
                     </ol>
                 </nav>
             </div>
+            <div>
+                <a href="{{ route('admin.rooms.create') }}" class="btn btn-primary">
+                    <i class="ti ti-plus me-1"></i>Create Room with Seatmap
+                </a>
+            </div>
         </div>
         <!-- End Page Header -->
         <div class="row">
@@ -227,6 +232,7 @@
                         <thead class="thead-ight">
                             <tr>
                                 <th>Room No.</th>
+                                <th>Room Name</th>
                                 <th>Capacity</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
@@ -240,6 +246,13 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
                                                     <h6 class="fs-14 mb-0">{{ $list->room_no }}</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="ms-2">
+                                                    <h6 class="fs-14 mb-0">{{ $list->room_name ?? 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
@@ -263,9 +276,17 @@
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
+                                                @if ($list->seatmap)
+                                                    <a href="{{ route('admin.rooms.show', $list->id) }}"
+                                                        class="btn btn-icon btn-sm btn-outline-info border-0 me-1"
+                                                        title="View Seatmap">
+                                                        <i class="ti ti-layout-grid"></i>
+                                                    </a>
+                                                @endif
                                                 <a href="javascript:void(0);"
-                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-class-room"
+                                                    class="btn btn-icon btn-sm btn-outline-white border-0 edit-class-room me-1"
                                                     data-room-no="{{ $list->room_no }}"
+                                                    data-room-name="{{ $list->room_name }}"
                                                     data-capacity="{{ $list->capacity }}"
                                                     data-status="{{ $list->status }}">
                                                     <i class="ti ti-edit"></i>
@@ -273,7 +294,7 @@
                                                 <a href="javascript:void(0);"
                                                     class="btn btn-icon btn-sm btn-outline-white border-0 delete-class-room"
                                                     data-class_room-id="{{ $list->id }}"
-                                                    data-class_room-name="{{ $list->name }}">
+                                                    data-class_room-name="{{ $list->room_name }}">
                                                     <i class="ti ti-trash"></i>
                                                 </a>
                                             </div>

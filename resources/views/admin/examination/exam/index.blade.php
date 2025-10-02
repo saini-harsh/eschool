@@ -1,4 +1,16 @@
 @extends('layouts.admin')
+@php
+    if (!function_exists('getSubjectNames')) {
+        function getSubjectNames($subjectIds)
+        {
+            if (empty($subjectIds)) {
+                return [];
+            }
+            $subjects = \App\Models\Subject::whereIn('id', $subjectIds)->get();
+            return $subjects->pluck('name')->toArray();
+        }
+    }
+@endphp
 @section('title', 'Admin | Exam Management | Exams')
 @section('content')
 
@@ -46,7 +58,9 @@
                             <option value="">Select Institution</option>
                             @if (isset($institutions) && count($institutions) > 0)
                                 @foreach ($institutions as $institution)
-                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                    <option value="{{ $institution->id }}"
+                                        {{ request('institution') == $institution->id ? 'selected' : '' }}>
+                                        {{ $institution->name }}</option>
                                 @endforeach
                             @else
                                 <option value="">No institutions found</option>
@@ -85,436 +99,418 @@
             </div>
         </div>
 
-        <!-- Exam Timetable Cards -->
-        <div class="row">
-            @if (isset($lists) && !empty($lists))
-                @php
-                    $groupedExams = $lists->groupBy(function ($exam) {
-                        return $exam->class ? $exam->class->name : 'Unknown Class';
-                    });
-                @endphp
+        <!-- Exam Timetable Template -->
+        @if (isset($lists) &&
+                !empty($lists) &&
+                (request()->filled('institution') || request()->filled('class') || request()->filled('section')))
+            @php
+                $groupedExams = $lists->groupBy(function ($exam) {
+                    return $exam->class ? $exam->class->name : 'Unknown Class';
+                });
+                $examTitle = $lists->first()->title ?? 'Exam Timetable';
+                $institutionName = $lists->first()->institution->name ?? 'Institute Name';
 
-                @foreach ($groupedExams as $className => $exams)
-                    <div class="col-12 mb-4">
-                        <div class="card shadow-sm">
-                            <div class="card-header class-header text-white">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h5 class="mb-0">
-                                        <i class="ti ti-school me-2"></i>
-                                        {{ $className }} - Exam Timetable
-                                    </h5>
-                                    <span class="badge bg-light text-dark">{{ count($exams) }} Exam(s)</span>
+                // Debug: Let's see what data we have
+                // dd($lists->first()->toArray());
+
+            @endphp
+
+            <!-- Header -->
+            <div class="exam-header mb-4"
+                style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; border-radius: 12px; border: 2px solid #dee2e6; margin-bottom: 30px;">
+                <h3 class="text-center fw-bold text-primary"
+                    style="margin: 0; font-size: 1.8rem; color: #495057; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                    {{ $institutionName }}
+                </h3>
+            </div>
+
+            <!-- Class Sections Container -->
+            <div class="class-sections-container">
+                <div class="row g-4">
+                    @foreach ($groupedExams as $className => $exams)
+                        <div class="col-lg-4 col-md-6">
+                            <div class="class-section-card"
+                                style="background: #ffffff; border: 2px solid #dee2e6; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); overflow: hidden; transition: all 0.3s ease; height: 100%;">
+                                <div class="class-header"
+                                    style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 15px 20px; text-align: center;">
+                                    <h5 class="class-title"
+                                        style="margin: 0; font-size: 1.2rem; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);color:white">
+                                        Class: {{ $className }}</h5>
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="timetable-grid">
-                                    @foreach ($exams as $exam)
-                                        <div class="exam-timetable-card card border-0 shadow-sm h-100">
-                                            <div class="card-body">
-                                                <div class="exam-card-header">
-                                                    <div class="d-flex align-items-start justify-content-between">
-                                                        <div>
-                                                            <h6 class="card-title text-primary mb-1 fw-bold">
-                                                                {{ $exam->title }}</h6>
-                                                            <small class="text-muted fw-medium">Code:
-                                                                {{ $exam->code }}</small>
-                                                        </div>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                                                type="button" data-bs-toggle="dropdown">
-                                                                <i class="ti ti-dots-vertical"></i>
-                                                            </button>
-                                                            <ul class="dropdown-menu">
-                                                                <li><a class="dropdown-item" href="#"
-                                                                        title="View Details"><i
-                                                                            class="ti ti-eye me-2"></i>View</a></li>
-                                                                <li><a class="dropdown-item" href="#"
-                                                                        title="Edit"><i
-                                                                            class="ti ti-edit me-2"></i>Edit</a></li>
-                                                                <li>
-                                                                    <hr class="dropdown-divider">
-                                                                </li>
-                                                                <li><a class="dropdown-item text-danger delete-exam"
-                                                                        href="javascript:void(0);" data-delete-url="#"
-                                                                        data-exam-title="{{ $exam->title }}"><i
-                                                                            class="ti ti-trash me-2"></i>Delete</a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
-                                                <div class="exam-meta-info mb-3">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="ti ti-building"></i>
-                                                        <span class="ms-2">
-                                                            @if ($exam->institution)
-                                                                {{ $exam->institution->name }}
-                                                            @else
-                                                                Institution ID: {{ $exam->institution_id }}
-                                                            @endif
-                                                        </span>
-                                                    </div>
+                                <div class="class-content" style="padding: 20px; min-height: 300px;">
+                                    @if (!empty($exams))
+                                        @php
+                                            $firstExam = $exams->first();
+                                            $subjectDates = $firstExam->subject_dates
+                                                ? json_decode($firstExam->subject_dates, true)
+                                                : [];
+                                            $morningSubjects = $firstExam->morning_subjects
+                                                ? json_decode($firstExam->morning_subjects, true)
+                                                : [];
+                                            $eveningSubjects = $firstExam->evening_subjects
+                                                ? json_decode($firstExam->evening_subjects, true)
+                                                : [];
 
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="ti ti-clipboard-list"></i>
-                                                        <span class="ms-2">
-                                                            @if ($exam->examType)
-                                                                {{ $exam->examType->title }}
-                                                            @else
-                                                                Type ID: {{ $exam->exam_type_id }}
-                                                            @endif
-                                                        </span>
-                                                    </div>
+                                            // Get all subject IDs to fetch names in one query
+                                            $allSubjectIds = array_merge(
+                                                array_filter($morningSubjects ?: []),
+                                                array_filter($eveningSubjects ?: []),
+                                            );
+                                            $allSubjectIds = array_unique($allSubjectIds);
 
-                                                    @if ($exam->section)
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <i class="ti ti-users"></i>
-                                                            <span class="ms-2">Section:
-                                                                {{ $exam->section->name }}</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
+                                            // Get subject names for all IDs
+                                            $subjectNames = [];
+                                            if (!empty($allSubjectIds)) {
+                                                $subjects = \App\Models\Subject::whereIn('id', $allSubjectIds)->get();
+                                                $subjectNames = $subjects->pluck('name', 'id')->toArray();
+                                            }
 
-                                                <div class="row g-2 mb-3">
-                                                    <div class="col-6">
-                                                        <div class="exam-date-badge text-center">
-                                                            <small class="d-block opacity-75">Start Date</small>
-                                                            <strong>{{ $exam->start_date ? \Carbon\Carbon::parse($exam->start_date)->format('M d') : 'N/A' }}</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="exam-date-badge text-center">
-                                                            <small class="d-block opacity-75">End Date</small>
-                                                            <strong>{{ $exam->end_date ? \Carbon\Carbon::parse($exam->end_date)->format('M d') : 'N/A' }}</strong>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            // Create date-subject mapping
+                                            $dateSubjectMapping = [];
+                                            if (!empty($subjectDates)) {
+                                                foreach ($subjectDates as $index => $date) {
+                                                    $morningSubjectId = isset($morningSubjects[$index])
+                                                        ? $morningSubjects[$index]
+                                                        : null;
+                                                    $eveningSubjectId = isset($eveningSubjects[$index])
+                                                        ? $eveningSubjects[$index]
+                                                        : null;
 
-                                                @if ($exam->morning_time || $exam->evening_time)
-                                                    <div class="exam-time-info">
-                                                        <div class="row g-2">
-                                                            @if ($exam->morning_time)
-                                                                <div class="col-6">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <i class="ti ti-sun text-warning"></i>
-                                                                        <span class="ms-2 fw-medium">Morning:
-                                                                            {{ $exam->morning_time }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-                                                            @if ($exam->evening_time)
-                                                                <div class="col-6">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <i class="ti ti-moon text-info"></i>
-                                                                        <span class="ms-2 fw-medium">Evening:
-                                                                            {{ $exam->evening_time }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                                    $morningSubjectName =
+                                                        $morningSubjectId && isset($subjectNames[$morningSubjectId])
+                                                            ? $subjectNames[$morningSubjectId]
+                                                            : null;
+                                                    $eveningSubjectName =
+                                                        $eveningSubjectId && isset($subjectNames[$eveningSubjectId])
+                                                            ? $subjectNames[$eveningSubjectId]
+                                                            : null;
 
-                                                <!-- Subject Schedule Section -->
-                                                @if ($exam->subject_dates || $exam->morning_subjects || $exam->evening_subjects)
-                                                    <div class="mt-3">
-                                                        <h6 class="text-primary mb-2">
-                                                            <i class="ti ti-calendar-event me-1"></i>
-                                                            Subject Schedule
-                                                        </h6>
+                                                    $dateSubjectMapping[$date] = [
+                                                        'morning' => $morningSubjectName,
+                                                        'evening' => $eveningSubjectName,
+                                                    ];
+                                                }
+                                            }
+                                        @endphp
 
-                                                        @php
-                                                            $subjectDates = $exam->subject_dates
-                                                                ? json_decode($exam->subject_dates, true)
-                                                                : [];
-                                                            $morningSubjects = $exam->morning_subjects
-                                                                ? json_decode($exam->morning_subjects, true)
-                                                                : [];
-                                                            $eveningSubjects = $exam->evening_subjects
-                                                                ? json_decode($exam->evening_subjects, true)
-                                                                : [];
-
-                                                            // Helper function to get subject names from IDs
-                                                            function getSubjectNames($subjectIds)
-                                                            {
-                                                                if (empty($subjectIds)) {
-                                                                    return [];
-                                                                }
-
-                                                                $subjects = \App\Models\Subject::whereIn(
-                                                                    'id',
-                                                                    $subjectIds,
-                                                                )->get();
-                                                                return $subjects->pluck('name')->toArray();
-                                                            }
-
-                                                            // Create date-subject mapping
-                                                            $dateSubjectMapping = [];
-                                                            if (!empty($subjectDates) && !empty($morningSubjects)) {
-                                                                foreach ($subjectDates as $index => $date) {
-                                                                    $morningSubjectId = isset($morningSubjects[$index])
-                                                                        ? $morningSubjects[$index]
-                                                                        : null;
-                                                                    $eveningSubjectId = isset($eveningSubjects[$index])
-                                                                        ? $eveningSubjects[$index]
-                                                                        : null;
-
-                                                                    $morningSubjectName = $morningSubjectId
-                                                                        ? getSubjectNames([$morningSubjectId])[0] ??
-                                                                            null
-                                                                        : null;
-                                                                    $eveningSubjectName = $eveningSubjectId
-                                                                        ? getSubjectNames([$eveningSubjectId])[0] ??
-                                                                            null
-                                                                        : null;
-
-                                                                    $dateSubjectMapping[$date] = [
-                                                                        'morning' => $morningSubjectName,
-                                                                        'evening' => $eveningSubjectName,
-                                                                    ];
-                                                                }
-                                                            }
-                                                        @endphp
-
-
-                                                        @if (!empty($subjectDates) && is_array($subjectDates))
-                                                            <div class="subject-schedule">
-                                                                @foreach ($subjectDates as $index => $date)
-                                                                    <div class="schedule-item mb-2 p-2 bg-light rounded">
-                                                                        <div
-                                                                            class="d-flex align-items-center justify-content-between mb-1">
-                                                                            <strong class="schedule-date">
-                                                                                <i class="ti ti-calendar me-1"></i>
-                                                                                {{ \Carbon\Carbon::parse($date)->format('M d, Y') }}
-                                                                            </strong>
-                                                                            <small
-                                                                                class="schedule-day">{{ \Carbon\Carbon::parse($date)->format('l') }}</small>
-                                                                        </div>
-
-                                                                        <!-- Display morning subjects for this date -->
-                                                                        @if (!empty($morningSubjectNames))
-                                                                            <div class="d-flex align-items-center mb-2">
-                                                                                <span
-                                                                                    class="badge bg-warning me-2 time-slot-badge">
-                                                                                    <i class="ti ti-sun me-1"></i>Morning
-                                                                                </span>
-                                                                                <div class="flex-grow-1">
-                                                                                    @foreach ($morningSubjectNames as $subjectName)
-                                                                                        <span
-                                                                                            class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                                    @endforeach
-                                                                                </div>
-                                                                            </div>
-                                                                        @endif
-
-                                                                        <!-- Display evening subjects for this date -->
-                                                                        @if (!empty($eveningSubjectNames))
-                                                                            <div class="d-flex align-items-center">
-                                                                                <span
-                                                                                    class="badge bg-info me-2 time-slot-badge">
-                                                                                    <i class="ti ti-moon me-1"></i>Evening
-                                                                                </span>
-                                                                                <div class="flex-grow-1">
-                                                                                    @foreach ($eveningSubjectNames as $subjectName)
-                                                                                        <span
-                                                                                            class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                                    @endforeach
-                                                                                </div>
-                                                                            </div>
-                                                                        @endif
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        @elseif ($exam->subject_dates && !is_array($subjectDates))
-                                                            <!-- Display raw subject_dates if JSON parsing failed -->
-                                                            <div class="subject-schedule">
-                                                                <div class="schedule-item mb-2 p-2 bg-light rounded">
-                                                                    <div class="d-flex align-items-center mb-1">
-                                                                        <span class="badge bg-info me-2">
-                                                                            <i class="ti ti-calendar me-1"></i>Subject
-                                                                            Schedule
-                                                                        </span>
-                                                                    </div>
-                                                                    <div>
-                                                                        <span
-                                                                            class="badge bg-primary subject-badge">{{ $exam->subject_dates }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @else
-                                                            <!-- Fallback to morning/evening subjects if subject_dates is empty -->
-                                                            <div class="subject-schedule">
-                                                                @if (!empty($morningSubjectNames))
-                                                                    <div class="schedule-item mb-2 p-2 bg-light rounded">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <span class="badge bg-warning me-2">
-                                                                                <i class="ti ti-sun me-1"></i>Morning
-                                                                                Subjects
-                                                                            </span>
-                                                                        </div>
-                                                                        <div>
-                                                                            @foreach ($morningSubjectNames as $subjectName)
-                                                                                <span
-                                                                                    class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-
-                                                                @if (!empty($eveningSubjectNames))
-                                                                    <div class="schedule-item mb-2 p-2 bg-light rounded">
-                                                                        <div class="d-flex align-items-center mb-1">
-                                                                            <span class="badge bg-info me-2">
-                                                                                <i class="ti ti-moon me-1"></i>Evening
-                                                                                Subjects
-                                                                            </span>
-                                                                        </div>
-                                                                        <div>
-                                                                            @foreach ($eveningSubjectNames as $subjectName)
-                                                                                <span
-                                                                                    class="badge bg-primary me-1 mb-1 subject-badge">{{ $subjectName }}</span>
-                                                                            @endforeach
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-
-                                                                @if (empty($morningSubjectNames) && empty($eveningSubjectNames) && empty($subjectDates))
-                                                                    <div class="text-center text-muted py-3">
-                                                                        <i class="ti ti-info-circle me-2"></i>
-                                                                        No subject schedule available
-                                                                    </div>
-                                                                @endif
-                                                            </div>
+                                        @if (!empty($dateSubjectMapping))
+                                            <div class="schedule-table" style="width: 100%; border-collapse: collapse;">
+                                                <div class="table-header"
+                                                    style="display: flex; background: #f8f9fa; border-radius: 8px 8px 0 0; border: 1px solid #dee2e6; border-bottom: 2px solid #007bff;">
+                                                    <div class="header-cell"
+                                                        style="flex: 1; padding: 12px 8px; text-align: center; font-weight: 600; color: #495057; font-size: 0.9rem; border-right: 1px solid #dee2e6;">
+                                                        Date</div>
+                                                    <div class="header-cell"
+                                                        style="flex: 1; padding: 12px 8px; text-align: center; font-weight: 600; color: #495057; font-size: 0.9rem; border-right: 1px solid #dee2e6;">
+                                                        Morning
+                                                        @if ($firstExam->morning_time)
+                                                            <br><small
+                                                                style="font-size: 0.7rem; color: #6c757d;">{{ $firstExam->morning_time }}</small>
                                                         @endif
                                                     </div>
-                                                @endif
+                                                    <div class="header-cell"
+                                                        style="flex: 1; padding: 12px 8px; text-align: center; font-weight: 600; color: #495057; font-size: 0.9rem;">
+                                                        Evening
+                                                        @if ($firstExam->evening_time)
+                                                            <br><small
+                                                                style="font-size: 0.7rem; color: #6c757d;">{{ $firstExam->evening_time }}</small>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                @foreach ($dateSubjectMapping as $date => $subjects)
+                                                    <div class="table-row"
+                                                        style="display: flex; border-left: 1px solid #dee2e6; border-right: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6; transition: background-color 0.2s ease;">
+                                                        <div class="date-cell"
+                                                            style="flex: 1; padding: 12px 8px; text-align: center; font-weight: 600; color: #007bff; border-right: 1px solid #dee2e6; background: #f8f9fa; font-size: 0.9rem;">
+                                                            {{ \Carbon\Carbon::parse($date)->format('M d') }}
+                                                        </div>
+                                                        <div class="subject-cell morning"
+                                                            style="flex: 1; padding: 12px 8px; text-align: center; border-right: 1px solid #dee2e6; font-size: 0.85rem; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #fff3cd, #ffeaa7); color: #856404; font-weight: 500;">
+                                                            @if (!empty($subjects['morning']))
+                                                                <div style="font-weight: 600;">{{ $subjects['morning'] }}
+                                                                </div>
+                                                            @else
+                                                                <span class="empty-slot"
+                                                                    style="color: #6c757d; font-style: italic; font-size: 0.8rem;">-</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="subject-cell evening"
+                                                            style="flex: 1; padding: 12px 8px; text-align: center; font-size: 0.85rem; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #d1ecf1, #bee5eb); color: #0c5460; font-weight: 500;">
+                                                            @if (!empty($subjects['evening']))
+                                                                <div style="font-weight: 600;">{{ $subjects['evening'] }}
+                                                                </div>
+                                                            @else
+                                                                <span class="empty-slot"
+                                                                    style="color: #6c757d; font-style: italic; font-size: 0.8rem;">-</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="empty-schedule"
+                                                style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6;">
+                                                <div class="empty-message" style="text-align: center; color: #6c757d;">
+                                                    <i class="ti ti-calendar-x"
+                                                        style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                                    <p style="margin: 0; font-size: 0.9rem;">No schedule available</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="empty-schedule"
+                                            style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #dee2e6;">
+                                            <div class="empty-message" style="text-align: center; color: #6c757d;">
+                                                <i class="ti ti-calendar-x"
+                                                    style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                                <p style="margin: 0; font-size: 0.9rem;">No exams scheduled</p>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @endif
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            @else
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body text-center py-5">
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        @if (!request()->filled('institution') && !request()->filled('class') && !request()->filled('section'))
+                            <i class="ti ti-filter fs-1 text-muted mb-3"></i>
+                            <h5 class="text-muted">Apply Filters to View Exam Timetable</h5>
+                            <p class="text-muted">Please select an institution, class, or section to view the exam
+                                timetable.</p>
+                        @else
                             <i class="ti ti-inbox fs-1 text-muted mb-3"></i>
                             <h5 class="text-muted">No Exam Records Found</h5>
-                            <p class="text-muted">There are no exam records to display. Create your first exam to get
-                                started.</p>
+                            <p class="text-muted">No exam records found for the selected filters. Try adjusting your search
+                                criteria.</p>
                             <a href="{{ route('admin.exam-management.exam-setup') }}" class="btn btn-primary">
                                 <i class="ti ti-plus me-2"></i>Create Exam
                             </a>
-                        </div>
+                        @endif
                     </div>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
+    </div>
     </div>
 
 @endsection
 
 @push('styles')
     <style>
-        .exam-timetable-card {
+        /* Template-style design */
+        .exam-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+            margin-bottom: 30px;
+        }
+
+        .exam-header h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #495057;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .class-sections-container {
+            margin-top: 20px;
+        }
+
+        .class-section-card {
+            background: #ffffff;
+            border: 2px solid #dee2e6;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             transition: all 0.3s ease;
-            border-left: 4px solid #007bff;
+            height: 100%;
         }
 
-        .exam-timetable-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .exam-date-badge {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-weight: 600;
-        }
-
-        .exam-time-info {
-            background: #f8f9fa;
-            border-radius: 6px;
-            padding: 6px 10px;
-            border-left: 3px solid #28a745;
+        .class-section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .class-header {
             background: linear-gradient(135deg, #007bff, #0056b3);
-            border-radius: 8px 8px 0 0;
-        }
-
-        .exam-card-header {
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .exam-meta-info {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .exam-meta-info i {
-            width: 16px;
+            color: white;
+            padding: 15px 20px;
             text-align: center;
         }
 
-        .timetable-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        .class-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        @media (max-width: 768px) {
-            .timetable-grid {
-                grid-template-columns: 1fr;
-            }
+        .class-content {
+            padding: 20px;
+            min-height: 300px;
         }
 
-        .subject-schedule {
-            max-height: 300px;
-            overflow-y: auto;
+        /* Schedule Table Styling */
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .schedule-item {
-            border-left: 3px solid #007bff;
-            transition: all 0.2s ease;
+        .table-header {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #dee2e6;
+            border-bottom: 2px solid #007bff;
         }
 
-        .schedule-item:hover {
-            background-color: #f8f9fa !important;
-            transform: translateX(2px);
+        .header-cell {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            border-right: 1px solid #dee2e6;
         }
 
-        .subject-badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
+        .header-cell:last-child {
+            border-right: none;
+        }
+
+        .table-row {
+            display: flex;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-row:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .date-cell {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #007bff;
+            border-right: 1px solid #dee2e6;
+            background: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .subject-cell {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            border-right: 1px solid #dee2e6;
+            font-size: 0.85rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .subject-cell:last-child {
+            border-right: none;
+        }
+
+        .subject-cell.morning {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
             font-weight: 500;
         }
 
-        .time-slot-badge {
-            font-size: 0.7rem;
-            padding: 3px 6px;
-            border-radius: 8px;
-            font-weight: 600;
+        .subject-cell.evening {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            font-weight: 500;
         }
 
-        .schedule-date {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #007bff;
-        }
-
-        .schedule-day {
-            font-size: 0.75rem;
+        .empty-slot {
             color: #6c757d;
             font-style: italic;
+            font-size: 0.8rem;
+        }
+
+        /* Empty State Styling */
+        .empty-schedule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-message i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .empty-message p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .exam-header h3 {
+                font-size: 1.4rem;
+            }
+
+            .class-section-card {
+                margin-bottom: 20px;
+            }
+
+            .header-cell,
+            .date-cell,
+            .subject-cell {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .table-header,
+            .table-row {
+                flex-direction: column;
+            }
+
+            .header-cell,
+            .date-cell,
+            .subject-cell {
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .header-cell:last-child,
+            .date-cell:last-child,
+            .subject-cell:last-child {
+                border-bottom: none;
+            }
         }
     </style>
 @endpush

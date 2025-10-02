@@ -32,12 +32,12 @@ class Exam extends Model
         return $this->belongsTo(ExamType::class, 'exam_type_id');
     }
 
-    public function classes()
+    public function class()
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
 
-    public function sections()
+    public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
     }

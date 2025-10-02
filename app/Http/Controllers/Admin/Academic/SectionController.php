@@ -16,7 +16,7 @@ class SectionController extends Controller
     }
 
     public function index(){
-        $lists = Section::orderBy('created_at', 'desc')->get();
+        $lists = Section::with('institution')->orderBy('created_at', 'desc')->get();
         $institutions = Institution::all();
         return view('admin.academic.section.index', compact('lists','institutions'));
     }

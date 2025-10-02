@@ -34,6 +34,8 @@
 
     @include('components.dashboard.styles')
 
+    @stack('styles')
+
 </head>
 
 <body>
@@ -45,7 +47,7 @@
 
         <!--Content-->
         <!--Left Side Bar-->
-        @if(Auth::guard('teacher')->check())
+        @if (Auth::guard('teacher')->check())
             @include('../elements/teacher/left-side-bar')
         @elseif(Auth::guard('admin')->check())
             @include('../elements/admin/left-side-bar')
@@ -63,6 +65,8 @@
     <!-- End Main Wrapper -->
     <!-- jQuery -->
     @include('components.dashboard.scripts')
+
+    @stack('scripts')
 </body>
 
 </html>

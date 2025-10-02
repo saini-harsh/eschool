@@ -22,7 +22,7 @@ class SubjectController extends Controller
         $lists = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
         $institutions = Institution::where('status', 1)->get();
         $classes = collect(); // Empty collection - classes will be loaded via AJAX
-        
+
         return view('admin.academic.subject.index', compact('lists', 'institutions', 'classes'));
     }
 
@@ -30,8 +30,8 @@ class SubjectController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255|unique:subjects,name',
-                'code' => 'required|string|max:255|unique:subjects,code',
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
                 'status' => 'nullable|boolean',
                 'institution_id' => 'required|exists:institutions,id',
