@@ -66,14 +66,14 @@
                 <div class="card-body">
                     <form action="{{ route('institution.payments.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="class_id" class="form-label">Class <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('class_id') is-invalid @enderror" 
-                                            id="class_id" 
-                                            name="class_id" 
+                                    <select class="form-select @error('class_id') is-invalid @enderror"
+                                            id="class_id"
+                                            name="class_id"
                                             required>
                                         <option value="">Select Class</option>
                                         @foreach($classes as $class)
@@ -87,12 +87,12 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="section_id" class="form-label">Section</label>
-                                    <select class="form-select @error('section_id') is-invalid @enderror" 
-                                            id="section_id" 
+                                    <select class="form-select @error('section_id') is-invalid @enderror"
+                                            id="section_id"
                                             name="section_id">
                                         <option value="">All Sections</option>
                                     </select>
@@ -107,9 +107,9 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="student_id" class="form-label">Student <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('student_id') is-invalid @enderror" 
-                                            id="student_id" 
-                                            name="student_id" 
+                                    <select class="form-select @error('student_id') is-invalid @enderror"
+                                            id="student_id"
+                                            name="student_id"
                                             required>
                                         <option value="">Select Student</option>
                                     </select>
@@ -118,15 +118,16 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="student_fee_id" class="form-label">Fee Structure <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('student_fee_id') is-invalid @enderror" 
-                                            id="student_fee_id" 
-                                            name="student_fee_id" 
+                                    <select class="form-select @error('student_fee_id') is-invalid @enderror"
+                                            id="student_fee_id"
+                                            name="student_fee_id"
                                             required>
                                         <option value="">Select Fee Structure</option>
+                                        <option value="1">Monthly</option>
                                     </select>
                                     @error('student_fee_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -139,26 +140,26 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="amount" class="form-label">Payment Amount <span class="text-danger">*</span></label>
-                                    <input type="number" 
-                                           class="form-control @error('amount') is-invalid @enderror" 
-                                           id="amount" 
-                                           name="amount" 
-                                           step="0.01" 
-                                           min="0.01" 
-                                           value="{{ old('amount') }}" 
+                                    <input type="number"
+                                           class="form-control @error('amount') is-invalid @enderror"
+                                           id="amount"
+                                           name="amount"
+                                           step="0.01"
+                                           min="0.01"
+                                           value="{{ old('amount') }}"
                                            required>
                                     @error('amount')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="payment_method" class="form-label">Payment Method <span class="text-danger">*</span></label>
-                                    <select class="form-select @error('payment_method') is-invalid @enderror" 
-                                            id="payment_method" 
-                                            name="payment_method" 
+                                    <select class="form-select @error('payment_method') is-invalid @enderror"
+                                            id="payment_method"
+                                            name="payment_method"
                                             required>
                                         <option value="">Select Payment Method</option>
                                         <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Cash</option>
@@ -179,8 +180,8 @@
                                 <div class="mb-3">
                                     <label for="payment_date" class="form-label">Payment Date <span class="text-danger">*</span></label>
                                     <div class="input-group w-auto input-group-flat">
-                                        <input type="text" name="payment_date" id="payment_date" class="form-control @error('payment_date') is-invalid @enderror" 
-                                               data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy" 
+                                        <input type="text" name="payment_date" id="payment_date" class="form-control @error('payment_date') is-invalid @enderror"
+                                               data-provider="flatpickr" data-date-format="d M, Y" placeholder="dd/mm/yyyy"
                                                value="{{ old('payment_date', date('d M, Y')) }}" required>
                                         <span class="input-group-text"><i class="ti ti-calendar"></i></span>
                                     </div>
@@ -189,14 +190,14 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="transaction_id" class="form-label">Transaction ID</label>
-                                    <input type="text" 
-                                           class="form-control @error('transaction_id') is-invalid @enderror" 
-                                           id="transaction_id" 
-                                           name="transaction_id" 
+                                    <input type="text"
+                                           class="form-control @error('transaction_id') is-invalid @enderror"
+                                           id="transaction_id"
+                                           name="transaction_id"
                                            value="{{ old('transaction_id') }}">
                                     @error('transaction_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -207,9 +208,9 @@
 
                         <div class="mb-3">
                             <label for="payment_notes" class="form-label">Payment Notes</label>
-                            <textarea class="form-control @error('payment_notes') is-invalid @enderror" 
-                                      id="payment_notes" 
-                                      name="payment_notes" 
+                            <textarea class="form-control @error('payment_notes') is-invalid @enderror"
+                                      id="payment_notes"
+                                      name="payment_notes"
                                       rows="3">{{ old('payment_notes') }}</textarea>
                             @error('payment_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -277,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadStudents() {
         const classId = classSelect.value;
         const sectionId = sectionSelect.value;
-        
+
         studentSelect.innerHTML = '<option value="">Select Student</option>';
         feeSelect.innerHTML = '<option value="">Select Fee Structure</option>';
 
@@ -286,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (sectionId) {
                 url += `/${sectionId}`;
             }
-            
+
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -326,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
     feeSelect.addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
         const amountInput = document.getElementById('amount');
-        
+
         if (selectedOption.dataset.balance) {
             amountInput.max = selectedOption.dataset.balance;
             amountInput.placeholder = `Max: ₹${selectedOption.dataset.balance}`;

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Academic;
 
-use App\Http\Controllers\Controller;
-use App\Models\Institution;
 use App\Models\Section;
+use App\Models\Institution;
+use App\Models\SchoolClass;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class SectionController extends Controller
@@ -16,8 +17,9 @@ class SectionController extends Controller
     }
 
     public function index(){
-        $lists = Section::with('institution')->orderBy('created_at', 'desc')->get();
+        $lists = Section::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
         $institutions = Institution::all();
+
         return view('admin.academic.section.index', compact('lists','institutions'));
     }
 
@@ -26,6 +28,7 @@ class SectionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'institution_id' => 'required|exists:institutions,id',
+                'class_id' => 'required|exists:classes,id',
                 'sections' => 'required|array|min:1',
                 'sections.*' => 'string|max:255',
                 'status' => 'nullable|in:0,1'
@@ -43,6 +46,7 @@ class SectionController extends Controller
             foreach ($request->sections as $sectionName) {
                 $section = Section::create([
                     'institution_id' => $request->institution_id,
+                    'class_id' => $request->class_id,
                     'name' => $sectionName,
                     'status' => $request->status ?? 1 // Default to 1 if not provided
                 ]);
@@ -66,7 +70,7 @@ class SectionController extends Controller
 
     public function getByInstitution($institution_id)
     {
-        $sections = Section::where('institution_id', $institution_id)->with('institution')->orderBy('created_at', 'desc')->get();
+        $sections = Section::where('institution_id', $institution_id)->with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
         return response()->json([
             'success' => true,
             'data' => $sections
@@ -76,7 +80,7 @@ class SectionController extends Controller
     public function getSections()
     {
         try {
-            $sections = Section::orderBy('created_at', 'desc')->get();
+            $sections = Section::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
@@ -93,7 +97,7 @@ class SectionController extends Controller
     public function edit($id)
     {
         try {
-            $section = Section::findOrFail($id);
+            $section = Section::with(['institution', 'schoolClass'])->findOrFail($id);
 
             return response()->json([
                 'success' => true,
@@ -112,6 +116,7 @@ class SectionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255|unique:sections,name,' . $id,
+                'class_id' => 'required|exists:classes,id',
                 'status' => 'nullable|in:0,1'
             ]);
 
@@ -126,6 +131,7 @@ class SectionController extends Controller
             $section = Section::findOrFail($id);
             $section->update([
                 'name' => $request->name,
+                'class_id' => $request->class_id,
                 'status' => $request->status ?? 1,
             ]);
 
@@ -186,6 +192,25 @@ class SectionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error updating status'
+            ], 500);
+        }
+    }
+
+    public function getClassesByInstitution($institutionId)
+    {
+        try {
+            $classes = SchoolClass::where('institution_id', $institutionId)
+                ->where('status', 1)
+                ->get(['id', 'name']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $classes
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching classes'
             ], 500);
         }
     }

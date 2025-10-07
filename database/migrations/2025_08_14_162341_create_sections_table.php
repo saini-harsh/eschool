@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('institution_id')->constrained()->onDelete('cascade');
+            $table->integer('class_id');
             $table->integer('status')->default(1);
             $table->timestamps();
         });

@@ -26,9 +26,8 @@ class SchoolClassController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'          => 'required|string|max:255|unique:classes,name',
-            'section_ids'   => 'required|array',
-            'section_ids.*' => 'exists:sections,id',
+            'classes'   => 'required|array',
+            'classes.*' => 'required|string|max:255',
             'institution_id'=> 'required|exists:institutions,id',
             'status'        => 'nullable|boolean'
         ]);
@@ -41,19 +40,34 @@ class SchoolClassController extends Controller
             ], 422);
         }
 
-        $class = SchoolClass::create([
-            'name'           => $request->name,
-            'section_ids'    => $request->section_ids, // will be auto-casted to JSON
-            'institution_id' => $request->institution_id,
-            'admin_id'       => auth('admin')->id(),
-            'status'         => $request->status ?? 1,
-        ]);
+        try {
+            $createdClasses = [];
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Class created successfully',
-            'data'    => $class
-        ], 201);
+            // Loop through each class name and create individual records
+            foreach ($request->classes as $className) {
+                $class = SchoolClass::create([
+                    'name'           => $className,
+                    'student_count'  => 0, // Initial student count
+                    'institution_id' => $request->institution_id,
+                    'admin_id'       => auth('admin')->id(),
+                    'status'         => $request->status ?? 1,
+                ]);
+
+                $createdClasses[] = $class;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => count($createdClasses) . ' classes created successfully',
+                'data'    => $createdClasses
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating classes',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getSchoolClasses()
@@ -62,8 +76,8 @@ class SchoolClassController extends Controller
 
         // Load section names for each class
         $classes->each(function($class) {
-            if ($class->section_ids) {
-                $sectionIds = is_array($class->section_ids) ? $class->section_ids : json_decode($class->section_ids, true);
+            if ($class->classes) {
+                $sectionIds = is_array($class->classes) ? $class->classes : json_decode($class->classes, true);
                 $sections = Section::whereIn('id', $sectionIds ?: [])->get();
                 $class->sections = $sections;
             }
@@ -106,8 +120,8 @@ class SchoolClassController extends Controller
             $class = SchoolClass::findOrFail($id);
 
             // Load sections for this class
-            if ($class->section_ids) {
-                $sectionIds = is_array($class->section_ids) ? $class->section_ids : json_decode($class->section_ids, true);
+            if ($class->classes) {
+                $sectionIds = is_array($class->classes) ? $class->classes : json_decode($class->classes, true);
                 $sections = Section::whereIn('id', $sectionIds ?: [])->get();
                 $class->sections = $sections;
             }
@@ -128,8 +142,6 @@ class SchoolClassController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'          => 'required|string|max:255|unique:classes,name,' . $id,
-            'section_ids'   => 'required|array',
-            'section_ids.*' => 'exists:sections,id',
             'institution_id'=> 'required|exists:institutions,id',
             'status'        => 'nullable|boolean'
         ]);
@@ -146,7 +158,6 @@ class SchoolClassController extends Controller
             $class = SchoolClass::findOrFail($id);
             $class->update([
                 'name'           => $request->name,
-                'section_ids'    => $request->section_ids,
                 'institution_id' => $request->institution_id,
                 'status'         => $request->status ?? 1,
             ]);

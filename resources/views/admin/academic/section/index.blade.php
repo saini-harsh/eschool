@@ -56,13 +56,15 @@
                                         </select>
                                     </div>
                                 </div>
-                                {{-- <div class="col-sm-12">
+                                <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" name="name" id="section_name" class="form-control"
-                                            placeholder="Enter section name" autocomplete="off">
+                                        <label class="form-label">Class <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="class_id" id="class_id" required>
+                                            <option value="">Select Class</option>
+
+                                        </select>
                                     </div>
-                                </div> --}}
+                                </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Sections <span class="text-danger">*</span></label>
@@ -71,7 +73,8 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="sections[]"
                                                         id="section_{{ $letter }}" value="{{ $letter }}">
-                                                    <label class="form-check-label" for="section_{{ $letter }}">{{ $letter }}
+                                                    <label class="form-check-label"
+                                                        for="section_{{ $letter }}">{{ $letter }}
                                                     </label>
                                                 </div>
                                             @endforeach
@@ -115,6 +118,7 @@
                         <thead class="thead-ight">
                             <tr>
                                 <th>Institution</th>
+                                <th>Class</th>
                                 <th>Section</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>

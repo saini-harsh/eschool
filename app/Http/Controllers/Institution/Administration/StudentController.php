@@ -11,7 +11,9 @@ use App\Models\SchoolClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -21,46 +23,45 @@ class StudentController extends Controller
     }
 
     public function Index(){
-        $institutionId = auth()->id();
-        $students = Student::where('institution_id', $institutionId)->get();
-        return view('institution.administration.students.index',compact('students'));
+        $institutionId = auth('institution')->id();
+        $classes = SchoolClass::where('institution_id', $institutionId)
+            ->where('status', 1)
+            ->withCount('students')
+            ->get();
+        return view('institution.administration.students.index',compact('classes'));
     }
     public function Create(){
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $institution = Institution::find($institutionId);
-        $classes = SchoolClass::where('institution_id', $institutionId)->get(['id','name','institution_id','section_ids']);
+        $classes = SchoolClass::where('institution_id', $institutionId)->get(['id','name','institution_id']);
         $sections = collect(); // Start with empty sections
 
         return view('institution.administration.students.create',compact('institution','classes','sections'));
     }
 
-    // Method to get sections by class ID
+    // Method to get sections by institution ID and class ID
     public function getSectionsByClass($classId)
     {
         try {
-            $class = SchoolClass::find($classId);
+            $institutionId = auth('institution')->id();
+
+            // First verify the class belongs to the institution
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
+
             if (!$class) {
-                return response()->json(['sections' => []]);
+                return response()->json(['sections' => [], 'error' => 'Class not found or does not belong to your institution']);
             }
 
-            // Ensure section_ids is properly handled as an array
-            $sectionIds = $class->section_ids ?? [];
-            
-            // If section_ids is a string (JSON), decode it
-            if (is_string($sectionIds)) {
-                $sectionIds = json_decode($sectionIds, true) ?? [];
-            }
-            
-            // Ensure it's an array and not empty
-            if (!is_array($sectionIds) || empty($sectionIds)) {
-                return response()->json(['sections' => []]);
-            }
-            
-            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
-            
+            // Fetch sections directly from sections table by institution ID and class ID
+            $sections = Section::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->get(['id', 'name']);
+
             return response()->json(['sections' => $sections]);
         } catch (\Exception $e) {
-            \Log::error('Error in getSectionsByClass: ' . $e->getMessage());
+            Log::error('Error in getSectionsByClass: ' . $e->getMessage());
             return response()->json(['sections' => [], 'error' => 'An error occurred while fetching sections']);
         }
     }
@@ -71,7 +72,7 @@ class StudentController extends Controller
         $classes = SchoolClass::where('institution_id', $institutionId)
             ->where('status', 1)
             ->get(['id', 'name', 'institution_id', 'section_ids']);
-        
+
         return response()->json(['classes' => $classes]);
     }
 
@@ -81,12 +82,12 @@ class StudentController extends Controller
         $teachers = Teacher::where('institution_id', $institutionId)
             ->where('status', 1)
             ->get(['id', 'first_name', 'last_name', 'institution_id']);
-        
+
         return response()->json(['teachers' => $teachers]);
     }
     public function Store(Request $request)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $request->validate([
             'first_name'     => 'required|string|max:255',
             'middle_name'    => 'nullable|string|max:255',
@@ -152,12 +153,12 @@ class StudentController extends Controller
             $class = SchoolClass::find($request->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
                     return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
                 }
@@ -219,7 +220,7 @@ class StudentController extends Controller
         $student->class_id       = $request->class_id;
         $student->section_id     = $request->section_id;
         $student->status         = 1;
-        $student->admin_id       = auth()->id();
+        $student->admin_id       = auth('institution')->id();
         $student->password       = Hash::make($request->password);
         $student->decrypt_pw     = $request->password;
 
@@ -276,12 +277,12 @@ class StudentController extends Controller
     }
     public function Edit(Student $student)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         // Ensure the student belongs to the logged-in institution
         if ($student->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to student data.');
         }
-        
+
         $institution = Institution::find($institutionId);
         $classes = SchoolClass::where('institution_id', $institutionId)
             ->get(['id','name','institution_id','section_ids']);
@@ -290,18 +291,18 @@ class StudentController extends Controller
             $class = SchoolClass::find($student->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (is_array($sectionIds) && !empty($sectionIds)) {
                     $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
                 }
             }
         }
-        
+
         $teachers = Teacher::where('institution_id', $institutionId)->get(['id','first_name','last_name']);
 
         return view('institution.administration.students.edit', compact('student', 'institution','classes','sections','teachers'));
@@ -309,23 +310,23 @@ class StudentController extends Controller
 
     public function Show(Student $student)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         // Ensure the student belongs to the logged-in institution
         if ($student->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to student data.');
         }
-        
+
         return view('institution.administration.students.show', compact('student'));
     }
 
     public function Update(Request $request, Student $student)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         // Ensure the student belongs to the logged-in institution
         if ($student->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to student data.');
         }
-        
+
         $request->validate([
             'first_name'     => 'required|string|max:255',
             'middle_name'    => 'nullable|string|max:255',
@@ -390,12 +391,12 @@ class StudentController extends Controller
             $class = SchoolClass::find($request->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
                     return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
                 }
@@ -412,31 +413,31 @@ class StudentController extends Controller
         $document03Path = $student->document_03_file;
         $document04Path = $student->document_04_file;
 
-        if ($request->hasFile('photo')) { 
-            $photoPath = $this->uploadFile($request->file('photo'), 'students'); 
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->uploadFile($request->file('photo'), 'students');
         }
-        if ($request->hasFile('father_photo')) { 
-            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents'); 
+        if ($request->hasFile('father_photo')) {
+            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents');
         }
-        if ($request->hasFile('mother_photo')) { 
-            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents'); 
+        if ($request->hasFile('mother_photo')) {
+            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents');
         }
-        if ($request->hasFile('guardian_photo')) { 
-            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians'); 
+        if ($request->hasFile('guardian_photo')) {
+            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
         }
-        if ($request->hasFile('document_01_file')) { 
-            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents'); 
+        if ($request->hasFile('document_01_file')) {
+            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
         }
-        if ($request->hasFile('document_02_file')) { 
-            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents'); 
+        if ($request->hasFile('document_02_file')) {
+            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents');
         }
-        if ($request->hasFile('document_03_file')) { 
-            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents'); 
+        if ($request->hasFile('document_03_file')) {
+            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents');
         }
-        if ($request->hasFile('document_04_file')) { 
-            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents'); 
+        if ($request->hasFile('document_04_file')) {
+            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents');
         }
-    
+
         $student->first_name     = $request->first_name;
         $student->middle_name    = $request->middle_name;
         $student->last_name      = $request->last_name;
@@ -455,7 +456,7 @@ class StudentController extends Controller
         $student->institution_code = 'INS' . str_pad($institutionId, 3, '0', STR_PAD_LEFT);
         $student->class_id       = $request->class_id;
         $student->section_id     = $request->section_id;
-        $student->admin_id       = auth()->id();
+        $student->admin_id       = auth('institution')->id();
 
         // New fields
         $student->admission_date = $request->admission_date ? Carbon::parse($request->admission_date)->format('Y-m-d') : null;
@@ -497,20 +498,20 @@ class StudentController extends Controller
         $student->document_02_file = $document02Path;
         $student->document_03_file = $document03Path;
         $student->document_04_file = $document04Path;
-    
+
         // Update password only if provided
         if ($request->filled('password')) {
             $student->password   = Hash::make($request->password);
             $student->decrypt_pw = $request->password;
         }
-    
+
         $student->save();
 
         return redirect()->route('institution.students.index')->with('success', 'Student updated successfully!');
     }
     public function Delete($id)
     {
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $student = Student::where('id', $id)
                         ->where('institution_id', $institutionId)
                         ->firstOrFail();
@@ -528,7 +529,7 @@ class StudentController extends Controller
             'status' => 'required|in:0,1'
         ]);
 
-        $institutionId = auth()->id();
+        $institutionId = auth('institution')->id();
         $student = Student::where('id', $id)
                         ->where('institution_id', $institutionId)
                         ->firstOrFail();
@@ -539,19 +540,474 @@ class StudentController extends Controller
     }
 
     /**
+     * Get students by class ID
+     */
+    public function getStudentsByClass($classId)
+    {
+        try {
+            $institutionId = auth('institution')->id();
+
+            // Verify the class belongs to the institution
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
+
+            if (!$class) {
+                return response()->json(['students' => [], 'error' => 'Class not found']);
+            }
+
+            $students = Student::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->with(['teacher', 'section'])
+                ->get();
+
+            // Get sections for this class to populate filter dropdown
+            $sections = Section::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->get(['id', 'name']);
+
+            return response()->json([
+                'students' => $students,
+                'class' => $class,
+                'sections' => $sections
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getStudentsByClass: ' . $e->getMessage());
+            return response()->json(['students' => [], 'error' => 'An error occurred while fetching students']);
+        }
+    }
+
+    /**
+     * Get students by class ID and section ID
+     */
+    public function getStudentsByClassAndSection($classId, $sectionId = null)
+    {
+        try {
+            $institutionId = auth('institution')->id();
+
+            // Verify the class belongs to the institution
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
+
+            if (!$class) {
+                return response()->json(['students' => [], 'error' => 'Class not found']);
+            }
+
+            $query = Student::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->with(['teacher', 'section']);
+
+            // Add section filter if provided
+            if ($sectionId) {
+                $query->where('section_id', $sectionId);
+            }
+
+            $students = $query->get();
+
+            // Get sections for this class to populate filter dropdown
+            $sections = Section::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->get(['id', 'name']);
+
+            return response()->json([
+                'students' => $students,
+                'class' => $class,
+                'sections' => $sections
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getStudentsByClassAndSection: ' . $e->getMessage());
+            return response()->json(['students' => [], 'error' => 'An error occurred while fetching students']);
+        }
+    }
+
+    /**
+     * Import students from CSV file
+     */
+    public function import(Request $request)
+    {
+        try {
+            $institutionId = auth('institution')->id();
+
+            // Validate the request
+            $validator = Validator::make($request->all(), [
+                'class_id' => 'required|exists:classes,id',
+                'section_id' => 'required|exists:sections,id',
+                'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Verify class belongs to institution
+            $class = SchoolClass::where('id', $request->class_id)
+                ->where('institution_id', $institutionId)
+                ->first();
+
+            if (!$class) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Class not found or does not belong to your institution.'
+                ], 404);
+            }
+
+            // Verify section belongs to class
+            $section = Section::where('id', $request->section_id)
+                ->where('class_id', $class->id)
+                ->where('institution_id', $institutionId)
+                ->first();
+            if (!$section) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The selected section does not belong to the selected class.'
+                ], 422);
+            }
+
+
+
+            // Process CSV file
+            $file = $request->file('csv_file');
+            $csvData = $this->parseCsvFile($file);
+
+            if (empty($csvData)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'CSV file is empty or invalid.'
+                ], 422);
+            }
+
+            // Import students
+            $importResult = $this->importStudentsFromCsv($csvData, $institutionId, $request->class_id, $request->section_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Import completed. {$importResult['successful']} students imported successfully, {$importResult['failed']} failed.",
+                'details' => $importResult
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Student import error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred during import. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Parse CSV file and return array of data
+     */
+    private function parseCsvFile($file)
+    {
+        $csvData = [];
+        $handle = fopen($file->getPathname(), 'r');
+
+        if ($handle === false) {
+            return [];
+        }
+
+        // Get header row
+        $headers = fgetcsv($handle);
+        if ($headers === false) {
+            fclose($handle);
+            return [];
+        }
+
+        // Clean headers (remove BOM and trim)
+        $headers = array_map(function($header) {
+            return trim(str_replace("\xEF\xBB\xBF", '', $header));
+        }, $headers);
+
+        // Read data rows
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) === count($headers)) {
+                $csvData[] = array_combine($headers, $row);
+            }
+        }
+
+        fclose($handle);
+        return $csvData;
+    }
+
+    /**
+     * Import students from CSV data
+     */
+    private function importStudentsFromCsv($csvData, $institutionId, $classId, $sectionId)
+    {
+        $successful = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($csvData as $index => $row) {
+            try {
+                // Validate required fields
+                $requiredFields = ['first_name', 'last_name', 'email', 'phone', 'dob', 'address', 'pincode', 'gender', 'district'];
+                $missingFields = [];
+
+                foreach ($requiredFields as $field) {
+                    if (empty($row[$field])) {
+                        $missingFields[] = $field;
+                    }
+                }
+
+                if (!empty($missingFields)) {
+                    $errors[] = "Row " . ($index + 2) . ": Missing required fields: " . implode(', ', $missingFields);
+                    $failed++;
+                    continue;
+                }
+
+                // Check if email already exists
+                if (Student::where('email', $row['email'])->exists()) {
+                    $errors[] = "Row " . ($index + 2) . ": Email '{$row['email']}' already exists";
+                    $failed++;
+                    continue;
+                }
+
+                // Validate email format
+                if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid email format '{$row['email']}'";
+                    $failed++;
+                    continue;
+                }
+
+                // Validate gender
+                if (!in_array($row['gender'], ['Male', 'Female', 'Other'])) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid gender '{$row['gender']}'. Must be Male, Female, or Other";
+                    $failed++;
+                    continue;
+                }
+
+                // Validate date format
+                try {
+                    $dob = Carbon::createFromFormat('Y-m-d', $row['dob']);
+                } catch (\Exception $e) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid date format for DOB '{$row['dob']}'. Use YYYY-MM-DD";
+                    $failed++;
+                    continue;
+                }
+
+                // Create student
+                $student = new Student();
+                $student->first_name = $row['first_name'];
+                $student->last_name = $row['last_name'];
+                $student->middle_name = $row['middle_name'] ?? null;
+                $student->email = $row['email'];
+                $student->phone = $row['phone'];
+                $student->dob = $dob->format('Y-m-d');
+                $student->address = $row['address'];
+                $student->permanent_address = $row['permanent_address'] ?? null;
+                $student->pincode = $row['pincode'];
+                $student->gender = $row['gender'];
+                $student->caste_tribe = $row['caste_tribe'] ?? null;
+                $student->district = $row['district'];
+                $student->institution_code = 'INS' . str_pad($institutionId, 3, '0', STR_PAD_LEFT);
+                $student->institution_id = $institutionId;
+                $student->class_id = $classId;
+                $student->section_id = $sectionId;
+                $student->status = 1;
+                $student->admin_id = $institutionId;
+
+                // Generate default password
+                $defaultPassword = 'student123';
+                $student->password = Hash::make($defaultPassword);
+                $student->decrypt_pw = $defaultPassword;
+
+                // Optional fields
+                if (!empty($row['admission_date'])) {
+                    try {
+                        $student->admission_date = Carbon::createFromFormat('Y-m-d', $row['admission_date'])->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        // Skip invalid admission date
+                    }
+                }
+
+                $student->admission_number = $row['admission_number'] ?? null;
+                $student->roll_number = $row['roll_number'] ?? null;
+                $student->religion = $row['religion'] ?? null;
+                $student->blood_group = $row['blood_group'] ?? null;
+                $student->father_name = $row['father_name'] ?? null;
+                $student->mother_name = $row['mother_name'] ?? null;
+
+                $student->save();
+                $successful++;
+
+            } catch (\Exception $e) {
+                $errors[] = "Row " . ($index + 2) . ": " . $e->getMessage();
+                $failed++;
+            }
+        }
+
+        return [
+            'successful' => $successful,
+            'failed' => $failed,
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Export all students for the institution
+     */
+    public function exportAll()
+    {
+        try {
+            $institutionId = auth('institution')->id();
+
+            $students = Student::where('institution_id', $institutionId)
+                ->with(['teacher', 'section', 'schoolClass'])
+                ->get();
+
+            return $this->generateCSV($students, 'all_students');
+        } catch (\Exception $e) {
+            Log::error('Error exporting all students: ' . $e->getMessage());
+            return response()->json(['error' => 'Export failed'], 500);
+        }
+    }
+
+    /**
+     * Export students for a specific class
+     */
+    public function exportByClass($classId)
+    {
+        try {
+            $institutionId = auth('institution')->id();
+
+            // Verify the class belongs to the institution
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
+
+            if (!$class) {
+                return response()->json(['error' => 'Class not found'], 404);
+            }
+
+            $students = Student::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->with(['teacher', 'section', 'schoolClass'])
+                ->get();
+
+            return $this->generateCSV($students, 'class_' . $class->name . '_students');
+        } catch (\Exception $e) {
+            Log::error('Error exporting class students: ' . $e->getMessage());
+            return response()->json(['error' => 'Export failed'], 500);
+        }
+    }
+
+    /**
+     * Generate CSV file for students
+     */
+    private function generateCSV($students, $filename)
+    {
+        $csvData = [];
+
+        // CSV Headers
+        $csvData[] = [
+            'Student ID',
+            'First Name',
+            'Last Name',
+            'Middle Name',
+            'Email',
+            'Phone',
+            'Date of Birth',
+            'Address',
+            'Permanent Address',
+            'Pincode',
+            'Gender',
+            'Caste/Tribe',
+            'District',
+            'Admission Date',
+            'Admission Number',
+            'Roll Number',
+            'Religion',
+            'Blood Group',
+            'Father Name',
+            'Mother Name',
+            'Class',
+            'Section',
+            'Teacher',
+            'Status',
+            'Institution Code'
+        ];
+
+        // Add student data
+        foreach ($students as $student) {
+            $csvData[] = [
+                $student->id,
+                $student->first_name,
+                $student->last_name,
+                $student->middle_name ?? '',
+                $student->email,
+                $student->phone ?? '',
+                $student->dob ?? '',
+                $student->address ?? '',
+                $student->permanent_address ?? '',
+                $student->pincode ?? '',
+                $student->gender ?? '',
+                $student->caste_tribe ?? '',
+                $student->district ?? '',
+                $student->admission_date ?? '',
+                $student->admission_number ?? '',
+                $student->roll_number ?? '',
+                $student->religion ?? '',
+                $student->blood_group ?? '',
+                $student->father_name ?? '',
+                $student->mother_name ?? '',
+                $student->schoolClass->name ?? '',
+                $student->section->name ?? '',
+                $student->teacher ? $student->teacher->first_name . ' ' . $student->teacher->last_name : '',
+                $student->status == 1 ? 'Active' : 'Inactive',
+                $student->institution_code ?? ''
+            ];
+        }
+
+        // Generate filename with timestamp
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $fullFilename = $filename . '_' . $timestamp . '.csv';
+
+        // Set headers for CSV download
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fullFilename . '"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ];
+
+        // Create CSV content
+        $callback = function() use ($csvData) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for UTF-8
+            fwrite($file, "\xEF\xBB\xBF");
+
+            foreach ($csvData as $row) {
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
      * Helper method to upload files
      */
     private function uploadFile($file, $folder)
     {
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         $destinationPath = public_path('admin/uploads/' . $folder);
-        
+
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
         }
-        
+
         $file->move($destinationPath, $fileName);
-        
+
         return 'admin/uploads/' . $folder . '/' . $fileName;
     }
 }

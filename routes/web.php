@@ -128,6 +128,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/',[SectionController::class,'index'])->name('admin.sections.index');
             Route::post('/store',[SectionController::class,'store'])->name('admin.sections.store');
             Route::get('/by-institution/{institution_id}', [SectionController::class, 'getByInstitution']);
+            Route::get('/classes/{institutionId}', [SectionController::class, 'getClassesByInstitution'])->name('admin.sections.classes');
             Route::get('/list',[SectionController::class,'getSections'])->name('admin.sections.list');
             Route::get('/edit/{id}', [SectionController::class, 'edit'])->name('admin.sections.edit');
             Route::post('/update/{id}', [SectionController::class, 'update'])->name('admin.sections.update');

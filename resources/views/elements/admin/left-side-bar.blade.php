@@ -1,6 +1,5 @@
-
 <?php
-    $admin = @\App\Models\Admin::where('id', '=', 1)->first();
+$admin = @\App\Models\Admin::where('id', '=', 1)->first();
 ?>
 <!-- Sidenav Menu Start -->
 <div class="sidebar" id="sidebar">
@@ -41,12 +40,15 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.dashboard*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.dashboard*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-                                <li><a href="#" class="{{ request()->routeIs('admin.dashboard*') ? 'active' : '' }}">Dashboard</a></li>
+                                <li><a href="#"
+                                        class="{{ request()->routeIs('admin.dashboard*') ? 'active' : '' }}">Dashboard</a>
+                                </li>
                             </ul>
                         </li>
                         <!-- <li class="submenu">
@@ -91,34 +93,40 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.institutions*') || request()->routeIs('admin.teachers*') || request()->routeIs('admin.students*') || request()->routeIs('admin.nonworkingstaff*') || request()->routeIs('admin.attendance*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.institutions*') || request()->routeIs('admin.teachers*') || request()->routeIs('admin.students*') || request()->routeIs('admin.nonworkingstaff*') || request()->routeIs('admin.attendance*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Administration</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
 
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.institutions*') ? 'active' : '' }}" href="{{ route('admin.institutions.index') }}">
+                                    <a class="{{ request()->routeIs('admin.institutions*') ? 'active' : '' }}"
+                                        href="{{ route('admin.institutions.index') }}">
                                         <i class="ti ti-building-community"></i><span>Insitutions</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.teachers*') ? 'active' : '' }}" href="{{ route('admin.teachers.index') }}">
+                                    <a class="{{ request()->routeIs('admin.teachers*') ? 'active' : '' }}"
+                                        href="{{ route('admin.teachers.index') }}">
                                         <i class="ti ti-users-group"></i><span>Teachers</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.students*') ? 'active' : '' }}" href="{{ route('admin.students.index') }}">
+                                    <a class="{{ request()->routeIs('admin.students*') ? 'active' : '' }}"
+                                        href="{{ route('admin.students.index') }}">
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.nonworkingstaff*') ? 'active' : '' }}" href="{{ route('admin.nonworkingstaff.index') }}">
+                                    <a class="{{ request()->routeIs('admin.nonworkingstaff*') ? 'active' : '' }}"
+                                        href="{{ route('admin.nonworkingstaff.index') }}">
                                         <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.attendance*') ? 'active' : '' }}" href="{{ route('admin.attendance') }}">
+                                    <a class="{{ request()->routeIs('admin.attendance*') ? 'active' : '' }}"
+                                        href="{{ route('admin.attendance') }}">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
                                     </a>
                                 </li>
@@ -129,49 +137,58 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.classes*') || request()->routeIs('admin.sections*') || request()->routeIs('admin.subjects*') || request()->routeIs('admin.academic.assign-teacher*') || request()->routeIs('admin.assign-subject*') || request()->routeIs('admin.assignments*') || request()->routeIs('admin.academic.calendar*') || request()->routeIs('admin.events*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.classes*') || request()->routeIs('admin.sections*') || request()->routeIs('admin.subjects*') || request()->routeIs('admin.academic.assign-teacher*') || request()->routeIs('admin.assign-subject*') || request()->routeIs('admin.assignments*') || request()->routeIs('admin.academic.calendar*') || request()->routeIs('admin.events*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Academics</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
 
-                            <li class="">
-                                <a class="{{ request()->routeIs('admin.classes*') ? 'active' : '' }}" href="{{ route('admin.classes.index')}}">
-                                    <i class="ti ti-report"></i><span>Class</span>
-                                </a>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('admin.classes*') ? 'active' : '' }}"
+                                        href="{{ route('admin.classes.index') }}">
+                                        <i class="ti ti-report"></i><span>Class</span>
+                                    </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.sections*') ? 'active' : '' }}" href="{{ route('admin.sections.index') }}">
+                                    <a class="{{ request()->routeIs('admin.sections*') ? 'active' : '' }}"
+                                        href="{{ route('admin.sections.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Section</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.subjects*') ? 'active' : '' }}" href="{{ route('admin.subjects.index') }}">
+                                    <a class="{{ request()->routeIs('admin.subjects*') ? 'active' : '' }}"
+                                        href="{{ route('admin.subjects.index') }}">
                                         <i class="ti ti-book"></i><span>Subject</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.academic.assign-teacher*') ? 'active' : '' }}" href="{{ route('admin.academic.assign-teacher.index') }}">
+                                    <a class="{{ request()->routeIs('admin.academic.assign-teacher*') ? 'active' : '' }}"
+                                        href="{{ route('admin.academic.assign-teacher.index') }}">
                                         <i class="ti ti-user"></i><span>Assign Class Teacher</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.assign-subject*') ? 'active' : '' }}" href="{{ route('admin.assign-subject.index') }}">
+                                    <a class="{{ request()->routeIs('admin.assign-subject*') ? 'active' : '' }}"
+                                        href="{{ route('admin.assign-subject.index') }}">
                                         <i class="ti ti-checks"></i><span>Assign Subject</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.assignments*') ? 'active' : '' }}" href="{{ route('admin.assignments.index') }}">
+                                    <a class="{{ request()->routeIs('admin.assignments*') ? 'active' : '' }}"
+                                        href="{{ route('admin.assignments.index') }}">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.academic.calendar*') ? 'active' : '' }}" href="{{ route('admin.academic.calendar.index') }}">
+                                    <a class="{{ request()->routeIs('admin.academic.calendar*') ? 'active' : '' }}"
+                                        href="{{ route('admin.academic.calendar.index') }}">
                                         <i class="ti ti-calendar"></i><span>Calendar</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.events*') ? 'active' : '' }}" href="{{ route('admin.events.index') }}">
+                                    <a class="{{ request()->routeIs('admin.events*') ? 'active' : '' }}"
+                                        href="{{ route('admin.events.index') }}">
                                         <i class="ti ti-list"></i><span>Event Management</span>
                                     </a>
                                 </li>
@@ -184,13 +201,15 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.email-sms*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.email-sms*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Communication</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.email-sms*') ? 'active' : '' }}" href="{{ route('admin.email-sms.index') }}">
+                                    <a class="{{ request()->routeIs('admin.email-sms*') ? 'active' : '' }}"
+                                        href="{{ route('admin.email-sms.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Email / Sms</span>
                                     </a>
                                 </li>
@@ -202,7 +221,8 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.rooms*') || request()->routeIs('admin.invigilators*') || request()->routeIs('admin.exam-management*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.rooms*') || request()->routeIs('admin.invigilators*') || request()->routeIs('admin.exam-management*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Exam Management</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -213,22 +233,26 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.exam-management.exam-type') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-type') }}">
+                                    <a class="{{ request()->routeIs('admin.exam-management.exam-type') ? 'active' : '' }}"
+                                        href="{{ route('admin.exam-management.exam-type') }}">
                                         <i class="ti ti-home"></i><span>Exam Type</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.exam-management.exam-setup') ? 'active' : '' }}" href="{{ route('admin.exam-management.exam-setup') }}">
+                                    <a class="{{ request()->routeIs('admin.exam-management.exam-setup') ? 'active' : '' }}"
+                                        href="{{ route('admin.exam-management.exam-setup') }}">
                                         <i class="ti ti-home"></i><span>Exam Setup</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.rooms*') ? 'active' : '' }}" href="{{ route('admin.rooms.index') }}">
+                                    <a class="{{ request()->routeIs('admin.rooms*') ? 'active' : '' }}"
+                                        href="{{ route('admin.rooms.index') }}">
                                         <i class="ti ti-home"></i><span>Class Rooms</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.invigilators*') ? 'active' : '' }}" href="#">
+                                    <a class="{{ request()->routeIs('admin.invigilators*') ? 'active' : '' }}"
+                                        href="#">
                                         <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                                     </a>
                                 </li>
@@ -239,18 +263,21 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ request()->routeIs('admin.routines*') || request()->routeIs('admin.lesson-plans*') ? 'active subdrop' : '' }}">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('admin.routines*') || request()->routeIs('admin.lesson-plans*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Routine</span>
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.routines*') ? 'active' : '' }}" href="{{ route('admin.routines.index') }}">
+                                    <a class="{{ request()->routeIs('admin.routines*') ? 'active' : '' }}"
+                                        href="{{ route('admin.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="{{ request()->routeIs('admin.lesson-plans*') ? 'active' : '' }}" href="{{ route('admin.lesson-plans.index') }}">
+                                    <a class="{{ request()->routeIs('admin.lesson-plans*') ? 'active' : '' }}"
+                                        href="{{ route('admin.lesson-plans.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
                                     </a>
                                 </li>
@@ -261,7 +288,8 @@
                 <li>
                     <ul>
                         <li class="">
-                            <a class="{{ request()->routeIs('admin.settings*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}">
+                            <a class="{{ request()->routeIs('admin.settings*') ? 'active' : '' }}"
+                                href="{{ route('admin.settings.index') }}">
                                 <i class="ti ti-settings"></i><span>Settings</span>
                             </a>
                         </li>
@@ -497,14 +525,14 @@
                         src="{{ $admin->logo ? asset($admin->logo) : '' }}" alt=""></a>
                 <div>
                     <h6 class="fs-14 fw-semibold mb-1"><a href="#">{{ $admin->name }}</a></h6>
-                    <p class="fs-13 mb-0"><a href="mailto:{{ $admin->email }}"
-                            class="__cf_email__"
+                    <p class="fs-13 mb-0"><a href="mailto:{{ $admin->email }}" class="__cf_email__"
                             data-cfemail="{{ $admin->email }}">{{ $admin->email }}</a></p>
                 </div>
             </div>
         </div>
         <div class="p-3 pt-0">
-            <a href="{{ route('logout')}}" class="btn btn-danger w-100"><i class="ti ti-logout-2 me-1"></i>Logout</a>
+            <a href="{{ route('logout') }}" class="btn btn-danger w-100"><i
+                    class="ti ti-logout-2 me-1"></i>Logout</a>
         </div>
     </div>
 

@@ -11,6 +11,7 @@ class Section extends Model
 
     protected $fillable = [
         'institution_id',
+        'class_id',
         'name',
         'description',
         'status',
@@ -26,5 +27,9 @@ class Section extends Model
 
     public function institution(){
         return $this->belongsTo(Institution::class, 'institution_id');
+    }
+
+    public function schoolClass(){
+        return $this->belongsTo(SchoolClass::class, 'class_id');
     }
 }

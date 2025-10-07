@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Institution;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ExamController extends Controller
 {
@@ -70,7 +71,7 @@ class ExamController extends Controller
                 'sections' => $sections,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error in getClassesSections: ' . $e->getMessage());
+            Log::error('Error in getClassesSections: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch classes and sections'], 500);
         }
     }

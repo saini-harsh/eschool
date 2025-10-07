@@ -2,26 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstitutionController;
-use App\Http\Controllers\Institution\Setting\SettingsController;
-use App\Http\Controllers\Institution\Administration\TeacherController;
-use App\Http\Controllers\Institution\Administration\StudentController;
-use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
-use App\Http\Controllers\Institution\Academic\SchoolClassController;
+use App\Http\Controllers\Institution\Academic\EventController;
+use App\Http\Controllers\Institution\Payment\PaymentController;
+use App\Http\Controllers\Institution\Routine\RoutineController;
 use App\Http\Controllers\Institution\Academic\SectionController;
 use App\Http\Controllers\Institution\Academic\SubjectController;
-use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
-use App\Http\Controllers\Institution\Academic\AssignSubjectController;
-use App\Http\Controllers\Institution\Academic\AssignmentController;
+use App\Http\Controllers\Institution\Setting\SettingsController;
+use App\Http\Controllers\Institution\ExamManagement\ExamTypeController;
 use App\Http\Controllers\Institution\Academic\CalendarController;
-use App\Http\Controllers\Institution\Academic\EventController;
-use App\Http\Controllers\Institution\Communication\EmailSmsController;
-use App\Http\Controllers\Institution\Routine\RoutineController;
+use App\Http\Controllers\Institution\ExamManagement\ExamSetupController;
 use App\Http\Controllers\Institution\Routine\LessonPlanController;
+use App\Http\Controllers\Institution\Academic\AssignmentController;
+use App\Http\Controllers\Institution\ExamManagement\ExamController;
+use App\Http\Controllers\Institution\Academic\SchoolClassController;
 use App\Http\Controllers\Institution\Payment\FeeStructureController;
-use App\Http\Controllers\Institution\Payment\PaymentController;
+use App\Http\Controllers\Institution\Academic\AssignSubjectController;
+use App\Http\Controllers\Institution\Administration\StudentController;
+use App\Http\Controllers\Institution\Administration\TeacherController;
+use App\Http\Controllers\Institution\Communication\EmailSmsController;
+use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
+use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
+use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
 
 Route::middleware('institution')->group(function () {
-   
+
     Route::prefix('institution')->group(function () {
         Route::get('/dashboard', [InstitutionController::class, 'dashboard'])->name('institution.dashboard');
 
@@ -50,10 +54,15 @@ Route::middleware('institution')->group(function () {
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('institution.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('institution.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('institution.students.delete');
+            Route::post('/import', [StudentController::class, 'import'])->name('institution.students.import');
             Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('institution.students.classes');
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('institution.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('institution.students.sections');
+            Route::get('/class/{classId}', [StudentController::class, 'getStudentsByClass'])->name('institution.students.by-class');
+            Route::get('/class/{classId}/section/{sectionId}', [StudentController::class, 'getStudentsByClassAndSection'])->name('institution.students.by-class-section');
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('institution.students.status');
+            Route::get('/export/all', [StudentController::class, 'exportAll'])->name('institution.students.export.all');
+            Route::get('/export/class/{classId}', [StudentController::class, 'exportByClass'])->name('institution.students.export.class');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('institution.nonworkingstaff.index');
@@ -73,7 +82,7 @@ Route::middleware('institution')->group(function () {
             Route::put('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'updateAttendance'])->name('institution.attendance.update');
             Route::post('/{id}/confirm', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'confirmAttendance'])->name('institution.attendance.confirm');
             Route::delete('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'deleteAttendance'])->name('institution.attendance.delete');
-            
+
             // AJAX routes for dynamic dropdowns
             Route::get('/sections/{classId}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getSectionsByClass']);
             Route::get('/teachers', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getTeachersByClassSection']);
@@ -173,7 +182,7 @@ Route::middleware('institution')->group(function () {
             Route::get('/sections/{classId}', [AssignmentController::class, 'getSectionsByClass']);
         });
 
-        
+
 
         // Academic Calendar Routes
         Route::prefix('calendar')->group(function () {
@@ -219,6 +228,23 @@ Route::middleware('institution')->group(function () {
             Route::get('/classes/{institutionId}', [EmailSmsController::class, 'getClassesByInstitution'])->name('institution.email-sms.classes');
             Route::get('/sections/{classId}', [EmailSmsController::class, 'getSectionsByClass'])->name('institution.email-sms.sections');
             Route::get('/class-students-parents/{classId}/{sectionId?}', [EmailSmsController::class, 'getStudentsAndParentsByClassSection'])->name('institution.email-sms.class-students-parents');
+        });
+
+        // EXAM MANAGEMENT
+        Route::prefix('exam-management')->group(function () {
+            Route::get('/exams',[ExamController::class,'index'])->name('institution.exam-management.exams');
+            Route::get('/exams/get-classes-sections/{institution}', [ExamController::class, 'getClassesSections'])->name('institution.exams.getClassesSections');
+
+            // Future exam management routes can be added here
+            Route::get('/exam-type',[ExamTypeController::class,'index'])->name('institution.exam-management.exam-type');
+            Route::post('/exam-type/store',[ExamTypeController::class,'store'])->name('institution.exam-management.exam-type.store');
+            Route::post('/exam-type/update',[ExamTypeController::class,'update'])->name('institution.exam-management.exam-type.update');
+
+            Route::get('/exam-setup',[ExamSetupController::class,'index'])->name('institution.exam-management.exam-setup');
+            Route::get('/exam-setup/fetch-data',[ExamSetupController::class,'fetchData'])->name('institution.exam-management.exam-setup.fetchdata');
+            Route::get('/exam-setup/fetch-subjects', [ExamSetupController::class, 'fetchSubjects'])->name('institution.exam-management.exam-setup.fetch-subjects');
+            Route::get('/exam-setup/fetch-sections/{classId}', [ExamSetupController::class, 'fetchSections'])->name('institution.exam-management.exam-setup.fetch-sections');
+            Route::post('/exam-setup/store',[ExamSetupController::class,'store'])->name('institution.exam-management.exam-setup.store');
         });
 
         // ROUTINE MANAGEMENT
@@ -281,7 +307,7 @@ Route::middleware('institution')->group(function () {
                 Route::get('/{payment}/receipt', [PaymentController::class, 'generateReceipt'])->name('institution.payments.receipt');
                 Route::get('/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])->name('institution.payments.download-receipt');
                 Route::get('/generate-bills', [PaymentController::class, 'generateBills'])->name('institution.payments.generate-bills');
-                
+
                 // AJAX routes for dynamic dropdowns
                 Route::get('/students/{classId}', [PaymentController::class, 'getStudentsByClass']);
                 Route::get('/students/{classId}/{sectionId}', [PaymentController::class, 'getStudentsByClassSection']);
@@ -290,6 +316,6 @@ Route::middleware('institution')->group(function () {
             });
         });
     });
-    
-    
+
+
 });
