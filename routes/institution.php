@@ -245,6 +245,20 @@ Route::middleware('institution')->group(function () {
             Route::get('/exam-setup/fetch-subjects', [ExamSetupController::class, 'fetchSubjects'])->name('institution.exam-management.exam-setup.fetch-subjects');
             Route::get('/exam-setup/fetch-sections/{classId}', [ExamSetupController::class, 'fetchSections'])->name('institution.exam-management.exam-setup.fetch-sections');
             Route::post('/exam-setup/store',[ExamSetupController::class,'store'])->name('institution.exam-management.exam-setup.store');
+
+            // Class Room Management
+            Route::prefix('rooms')->group(function () {
+                Route::get('/', [ClassRoomController::class, 'index'])->name('institution.exam-management.rooms.index');
+                Route::get('/create', [ClassRoomController::class, 'create'])->name('institution.exam-management.rooms.create');
+                Route::post('/store', [ClassRoomController::class, 'store'])->name('institution.exam-management.rooms.store');
+                Route::post('/store-with-layout', [ClassRoomController::class, 'storeWithLayout'])->name('institution.exam-management.rooms.store-with-layout');
+                Route::get('/{id}', [ClassRoomController::class, 'show'])->name('institution.exam-management.rooms.show');
+                Route::get('/{id}/edit', [ClassRoomController::class, 'edit'])->name('institution.exam-management.rooms.edit');
+                Route::get('/{id}/design-layout', [ClassRoomController::class, 'designLayout'])->name('institution.exam-management.rooms.design-layout');
+                Route::post('/{id}/update', [ClassRoomController::class, 'update'])->name('institution.exam-management.rooms.update');
+                Route::post('/{id}/update-layout', [ClassRoomController::class, 'updateLayout'])->name('institution.exam-management.rooms.update-layout');
+                Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('institution.exam-management.rooms.destroy');
+            });
         });
 
         // ROUTINE MANAGEMENT

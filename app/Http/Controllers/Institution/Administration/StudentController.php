@@ -871,7 +871,7 @@ class StudentController extends Controller
     /**
      * Export students for a specific class
      */
-    public function exportByClass($classId)
+    public function exportByClass($classId, Request $request)
     {
         try {
             $institutionId = auth('institution')->id();
@@ -885,12 +885,35 @@ class StudentController extends Controller
                 return response()->json(['error' => 'Class not found'], 404);
             }
 
-            $students = Student::where('institution_id', $institutionId)
+            $query = Student::where('institution_id', $institutionId)
                 ->where('class_id', $classId)
-                ->with(['teacher', 'section', 'schoolClass'])
-                ->get();
+                ->with(['teacher', 'section', 'schoolClass']);
 
-            return $this->generateCSV($students, 'class_' . $class->name . '_students');
+            // Add section filter if provided
+            if ($request->has('section_id') && $request->section_id) {
+                $query->where('section_id', $request->section_id);
+            }
+
+            // Add status filter (exclude inactive by default)
+            if (!$request->has('include_inactive') || !$request->include_inactive) {
+                $query->where('status', 1);
+            }
+
+            $students = $query->get();
+
+            // Generate filename based on filters
+            $filename = 'class_' . $class->name . '_students';
+            if ($request->has('section_id') && $request->section_id) {
+                $section = Section::find($request->section_id);
+                if ($section) {
+                    $filename .= '_section_' . $section->name;
+                }
+            }
+            if ($request->has('include_inactive') && $request->include_inactive) {
+                $filename .= '_with_inactive';
+            }
+
+            return $this->generateCSV($students, $filename);
         } catch (\Exception $e) {
             Log::error('Error exporting class students: ' . $e->getMessage());
             return response()->json(['error' => 'Export failed'], 500);

@@ -16,6 +16,7 @@ class ClassRoom extends Model
         'room_name',
         'capacity',
         'seatmap',
+        'students_per_bench',
         'status',
     ];
 

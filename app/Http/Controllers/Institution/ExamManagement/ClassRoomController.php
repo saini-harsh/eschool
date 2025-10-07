@@ -16,7 +16,7 @@ class ClassRoomController extends Controller
     public function index()
     {
         $lists = ClassRoom::all();
-        return view('institution.academic.classrooms.index', compact('lists'));
+        return view('institution.examination.rooms', compact('lists'));
     }
 
     public function create()
@@ -68,6 +68,33 @@ class ClassRoomController extends Controller
         ]);
     }
 
+    public function storeWithLayout(Request $request)
+    {
+        $request->validate([
+            'room_no' => 'required|string|max:255',
+            'room_name' => 'nullable|string|max:255',
+            'capacity' => 'required|integer|min:1',
+            'layout_data' => 'required|array',
+            'students_per_bench' => 'required|integer|min:1|max:4',
+            'status' => 'required|boolean',
+        ]);
+
+        $classRoom = new ClassRoom;
+        $classRoom->room_no = $request->room_no;
+        $classRoom->room_name = $request->room_name;
+        $classRoom->capacity = $request->capacity;
+        $classRoom->seatmap = $request->layout_data;
+        $classRoom->students_per_bench = $request->students_per_bench;
+        $classRoom->status = $request->status;
+        $classRoom->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Class Room with layout created successfully.',
+            'data' => $classRoom
+        ]);
+    }
+
     public function show($id)
     {
         $classRoom = ClassRoom::findOrFail($id);
@@ -112,6 +139,31 @@ class ClassRoomController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Seatmap updated successfully.',
+            'data' => $classRoom
+        ]);
+    }
+
+    public function designLayout($id)
+    {
+        $classRoom = ClassRoom::findOrFail($id);
+        return view('institution.examination.room-layout', compact('classRoom'));
+    }
+
+    public function updateLayout(Request $request, $id)
+    {
+        $request->validate([
+            'layout_data' => 'required|array',
+            'students_per_bench' => 'required|integer|min:1|max:4',
+        ]);
+
+        $classRoom = ClassRoom::findOrFail($id);
+        $classRoom->seatmap = $request->layout_data;
+        $classRoom->students_per_bench = $request->students_per_bench;
+        $classRoom->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Room layout updated successfully.',
             'data' => $classRoom
         ]);
     }

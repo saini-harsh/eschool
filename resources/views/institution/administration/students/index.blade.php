@@ -33,7 +33,7 @@
                 </nav>
             </div>
             <div>
-                <button type="button" class="btn btn-success" id="exportStudentsBtn">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportStudentsModal">
                     <i class="ti ti-download me-1"></i>Export Students
                 </button>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importStudentsModal">
@@ -59,7 +59,7 @@
                                             <i class="ti ti-school fs-24"></i>
                                         </div>
                                     </div>
-                                    <h5 class="card-title mb-2">{{ $class->name }}</h5>
+                                    <h5 class="card-title mb-2">Class - {{ $class->name }}</h5>
                                     <p class="text-muted mb-3">
                                         <i class="ti ti-users me-1"></i>
                                         {{ $class->students_count ?? 0 }} Students
@@ -275,6 +275,93 @@
             </div>
         </div>
 
+        <!-- Export Students Modal -->
+        <div class="modal fade" id="exportStudentsModal" tabindex="-1" aria-labelledby="exportStudentsModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exportStudentsModalLabel">
+                            <i class="ti ti-download me-2"></i>Export Students to CSV
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="exportStudentsForm">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="export_class_id" class="form-label">Select Class <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="export_class_id" name="class_id" required>
+                                        <option value="">Choose Class</option>
+                                        @if (isset($classes) && !empty($classes))
+                                            @foreach ($classes as $class)
+                                                <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="export_section_id" class="form-label">Select Section</label>
+                                    <select class="form-select" id="export_section_id" name="section_id">
+                                        <option value="">All Sections</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Export Options -->
+                            <div class="mb-3">
+                                <label class="form-label">Export Options</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="include_inactive"
+                                        name="include_inactive">
+                                    <label class="form-check-label" for="include_inactive">
+                                        Include inactive students
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Export Information -->
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading">
+                                    <i class="ti ti-info-circle me-1"></i>Export Information
+                                </h6>
+                                <p class="mb-2">The exported CSV file will contain the following student information:</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small>
+                                            <strong>Student Details:</strong><br>
+                                            • Student ID, Name, Email, Phone<br>
+                                            • Date of Birth, Address, Gender<br>
+                                            • Admission Details, Roll Number<br>
+                                            • Class, Section, Teacher
+                                        </small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small>
+                                            <strong>Additional Information:</strong><br>
+                                            • Parent Names, Religion, Blood Group<br>
+                                            • Caste/Tribe, District, Pincode<br>
+                                            • Status, Institution Code<br>
+                                            • Permanent Address
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="ti ti-x me-1"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-success" id="exportBtn">
+                                <i class="ti ti-download me-1"></i>Export Students
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
@@ -325,6 +412,12 @@
             const importForm = document.getElementById('importStudentsForm');
             const importBtn = document.getElementById('importBtn');
             const downloadTemplate = document.getElementById('downloadTemplate');
+
+            // Export Students Modal functionality
+            const exportClassSelect = document.getElementById('export_class_id');
+            const exportSectionSelect = document.getElementById('export_section_id');
+            const exportForm = document.getElementById('exportStudentsForm');
+            const exportBtn = document.getElementById('exportBtn');
 
             // Handle class selection change
             classSelect.addEventListener('change', function() {
@@ -428,6 +521,90 @@
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
+            });
+
+            // Handle export class selection change
+            exportClassSelect.addEventListener('change', function() {
+                const classId = this.value;
+                exportSectionSelect.innerHTML = '<option value="">All Sections</option>';
+
+                if (classId) {
+                    fetch(`/institution/students/sections/${classId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.sections && data.sections.length > 0) {
+                                data.sections.forEach(section => {
+                                    const option = document.createElement('option');
+                                    option.value = section.id;
+                                    option.textContent = section.name;
+                                    exportSectionSelect.appendChild(option);
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching sections:', error);
+                        });
+                }
+            });
+
+            // Handle export form submission
+            exportForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const classId = exportClassSelect.value;
+                const sectionId = exportSectionSelect.value;
+                const includeInactive = document.getElementById('include_inactive').checked;
+
+                if (!classId) {
+                    showToast('error', 'Please select a class');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = exportBtn;
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="ti ti-loader-2 me-1"></i>Exporting...';
+                submitBtn.disabled = true;
+
+                // Build export URL
+                let exportUrl = `/institution/students/export/class/${classId}`;
+                const params = new URLSearchParams();
+
+                if (sectionId) {
+                    params.append('section_id', sectionId);
+                }
+                if (includeInactive) {
+                    params.append('include_inactive', '1');
+                }
+
+                if (params.toString()) {
+                    exportUrl += '?' + params.toString();
+                }
+
+                // Create a temporary form to trigger download
+                const form = document.createElement('form');
+                form.method = 'GET';
+                form.action = exportUrl;
+                form.target = '_blank';
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('exportStudentsModal'));
+                modal.hide();
+
+                // Reset form
+                exportForm.reset();
+                exportSectionSelect.innerHTML = '<option value="">All Sections</option>';
+
+                // Reset button state
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 1000);
+
+                showToast('success', 'Export started successfully!');
             });
 
             // Toast notification function

@@ -192,7 +192,7 @@ $institution = Auth::guard('institution')->user();
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="">
+                                    <a class="" href="<?php echo e(route('institution.exam-management.rooms.index')); ?>">
                                         <i class="ti ti-home"></i><span>Class Rooms</span>
                                     </a>
                                 </li>
