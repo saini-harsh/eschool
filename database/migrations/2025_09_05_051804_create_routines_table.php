@@ -35,6 +35,11 @@ return new class extends Migration
             $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
             $table->foreign('class_room_id')->references('id')->on('class_rooms')->onDelete('set null');
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
+            
+            // Add unique constraints to prevent conflicts
+            $table->unique(['class_id', 'section_id', 'day', 'start_time'], 'unique_class_section_day_time');
+            $table->unique(['teacher_id', 'day', 'start_time'], 'unique_teacher_day_time');
+            $table->unique(['class_room_id', 'day', 'start_time'], 'unique_room_day_time');
         });
     }
 

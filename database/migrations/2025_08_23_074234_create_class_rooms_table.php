@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('class_rooms', function (Blueprint $table) {
             $table->id();
             $table->string('room_no')->unique();
+            $table->string('room_name')->nullable();
             $table->integer('capacity')->nullable();
+            $table->json('seatmap')->nullable();
+            $table->integer('students_per_bench')->default(1);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

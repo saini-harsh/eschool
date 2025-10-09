@@ -27,16 +27,24 @@ class SchoolClassSeeder extends Seeder
             'Class 9',
         ];
 
+        // Get all institutions
+        $institutions = \App\Models\Institution::where('status', 1)->get();
+        
+        if ($institutions->isEmpty()) {
+            $this->command->info('No institutions found. Skipping class creation.');
+            return;
+        }
+
         // Create classes for all institutions
-        for ($institutionId = 1; $institutionId <= 4; $institutionId++) {
+        foreach ($institutions as $institution) {
             foreach ($classNames as $name) {
                 // Check if class already exists for this institution
-                if (!SchoolClass::where('name', $name)->where('institution_id', $institutionId)->exists()) {
+                if (!SchoolClass::where('name', $name)->where('institution_id', $institution->id)->exists()) {
                     SchoolClass::create([
                         'name' => $name,
                         'section_ids' => json_encode(['1','2','3','4','5']), // default sections
                         'student_count' => 0,
-                        'institution_id' => $institutionId,
+                        'institution_id' => $institution->id,
                         'admin_id' => 1,
                         'status' => 1,
                     ]);

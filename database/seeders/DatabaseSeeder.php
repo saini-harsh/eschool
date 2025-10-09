@@ -16,13 +16,17 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,           // Must be first (creates admin with ID 1)
             InstitutionSeeder::class,     // Depends on admin
             ClassRoomSeeder::class,       // Independent - classrooms needed for routines
-            SectionSeeder::class,         // Independent
-            SchoolClassSeeder::class,     // Depends on institution
+            SchoolClassSeeder::class,     // Depends on institution - MUST be before SectionSeeder
+            SectionSeeder::class,         // Depends on institution and classes
             TeacherSeeder::class,         // Depends on institution
             StudentSeeder::class,         // Depends on teacher, class, section
             NonWorkingStaffSeeder::class, // Depends on institution
             EventSeeder::class,           // Depends on institution
             SubjectSeeder::class,         // Depends on institution
+            ExamTypeSeeder::class,        // Depends on institution
+            ExamSeeder::class,            // Depends on institution, class, subject, teacher, exam_type
+            InvigilatorSeeder::class,     // Depends on institution, teachers, classes, sections, exams
+            EmailSmsSeeder::class,        // Depends on institution, students, teachers, classes
             AssignClassTeacherSeeder::class, // Depends on institution, teacher, class, section
             AssignSubjectSeeder::class,   // Depends on institution, teacher, class, section, subject
             AssignmentSeeder::class,      // Depends on institution, teacher, class, section, subject

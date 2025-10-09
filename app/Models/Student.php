@@ -148,13 +148,4 @@ class Student extends Authenticatable
             ->orderBy('created_at', 'desc');
     }
 
-    public function studentFees()
-    {
-        return $this->hasMany(StudentFee::class);
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
 }

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->foreignId('institution_id')->constrained()->onDelete('cascade'); // Assuming subjects belong to an institution
             $table->foreignId('class_id')->nullable();
             $table->timestamps();
+            
+            // Add composite unique constraint on code and institution_id
+            // This allows same code across different institutions
+            $table->unique(['code', 'institution_id'], 'subjects_code_institution_unique');
         });
     }
 

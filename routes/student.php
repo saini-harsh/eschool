@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\AssignmentController;
-use App\Http\Controllers\Student\PaymentController;
 use App\Http\Controllers\Student\Setting\SettingsController;
 
 Route::middleware('student')->group(function () {
@@ -28,16 +27,6 @@ Route::middleware('student')->group(function () {
             Route::get('/submission/{id}/download', [AssignmentController::class, 'downloadSubmission'])->name('student.assignments.download-submission');
         });
 
-        // Payment Management
-        Route::prefix('payments')->group(function () {
-            Route::get('/', [PaymentController::class, 'index'])->name('student.payments.index');
-            Route::get('/pending', [PaymentController::class, 'pendingPayments'])->name('student.payments.pending');
-            Route::get('/history', [PaymentController::class, 'paymentHistory'])->name('student.payments.history');
-            Route::get('/payment/{payment}', [PaymentController::class, 'showPayment'])->name('student.payments.show');
-            Route::get('/payment/{payment}/receipt', [PaymentController::class, 'generateReceipt'])->name('student.payments.receipt');
-            Route::get('/payment/{payment}/download-receipt', [PaymentController::class, 'downloadReceipt'])->name('student.payments.download-receipt');
-            Route::get('/fee/{studentFee}', [PaymentController::class, 'showFee'])->name('student.payments.fee-details');
-        });
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('student.settings.index');

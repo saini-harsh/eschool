@@ -18,14 +18,28 @@ return new class extends Migration
             $table->unsignedBigInteger('institution_id');
             $table->foreignId('class_id')->nullable()->constrained('classes')->onDelete('cascade');
             $table->foreignId('section_id')->nullable()->constrained('sections')->onDelete('cascade');
+            $table->unsignedBigInteger('teacher_id')->nullable();
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'late', 'excused'])->default('present');
             $table->text('remarks')->nullable();
+            $table->unsignedBigInteger('marked_by')->nullable();
+            $table->string('marked_by_role')->nullable();
+            $table->boolean('is_confirmed')->default(false);
+            $table->unsignedBigInteger('confirmed_by')->nullable();
+            $table->timestamp('confirmed_at')->nullable();
             $table->timestamps();
 
-            // Foreign keys for user_id and institution_id (uncomment if needed)
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
+            // Foreign keys
+            // Note: user_id can reference students, teachers, or admins (all extend Authenticatable)
+            $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
+            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
+            $table->foreign('marked_by')->references('id')->on('teachers')->onDelete('set null');
+            $table->foreign('confirmed_by')->references('id')->on('teachers')->onDelete('set null');
+            
+            // Indexes for better performance
+            $table->index(['institution_id', 'class_id', 'section_id', 'date']);
+            $table->index(['role', 'date']);
+            $table->index(['is_confirmed', 'date']);
         });
     }
 

@@ -16,11 +16,14 @@ class SectionSeeder extends Seeder
         $institutions = \App\Models\Institution::where('status', 1)->get();
         $classes = \App\Models\SchoolClass::where('status', 1)->get();
         
+        $this->command->info("Found {$institutions->count()} institutions and {$classes->count()} classes.");
+        
         $sectionNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
         $sectionCount = 0;
 
         foreach ($institutions as $institution) {
             $institutionClasses = $classes->where('institution_id', $institution->id);
+            $this->command->info("Institution {$institution->id} has {$institutionClasses->count()} classes.");
             
             foreach ($institutionClasses as $class) {
                 // Create 2-4 sections per class
@@ -41,6 +44,7 @@ class SectionSeeder extends Seeder
                             'status' => 1,
                         ]);
                         $sectionCount++;
+                        $this->command->info("Created section {$sectionName} for class {$class->name} in institution {$institution->id}");
                     }
                 }
             }

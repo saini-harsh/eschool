@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('email_sms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('institution_id')->nullable();
             $table->string('title');
             $table->text('description');
             $table->enum('send_through', ['email', 'sms', 'whatsapp']);
@@ -21,6 +22,9 @@ return new class extends Migration
             $table->enum('status', ['pending', 'sent', 'failed'])->default('pending');
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();
+            
+            $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
+            $table->index('institution_id');
         });
     }
 
