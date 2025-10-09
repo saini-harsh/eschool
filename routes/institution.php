@@ -22,6 +22,7 @@ use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Institution\Payment\FeeStructureController;
+use App\Http\Controllers\Institution\Payment\AdmissionFeeController;
 
 Route::middleware('institution')->group(function () {
 
@@ -308,6 +309,21 @@ Route::middleware('institution')->group(function () {
             
             // AJAX routes for dynamic dropdowns
             Route::get('/sections/{classId}', [FeeStructureController::class, 'getSectionsByClass'])->name('institution.fee-structure.sections');
+        });
+
+        // ADMISSION FEE
+        Route::prefix('admission-fee')->group(function () {
+            Route::get('/', [AdmissionFeeController::class, 'index'])->name('institution.admission-fee.index');
+            Route::get('/create', [AdmissionFeeController::class, 'create'])->name('institution.admission-fee.create');
+            Route::post('/', [AdmissionFeeController::class, 'store'])->name('institution.admission-fee.store');
+            Route::get('/{id}', [AdmissionFeeController::class, 'show'])->name('institution.admission-fee.show');
+            Route::get('/{id}/edit', [AdmissionFeeController::class, 'edit'])->name('institution.admission-fee.edit');
+            Route::put('/{id}', [AdmissionFeeController::class, 'update'])->name('institution.admission-fee.update');
+            Route::delete('/{id}', [AdmissionFeeController::class, 'destroy'])->name('institution.admission-fee.destroy');
+            Route::post('/{id}/status', [AdmissionFeeController::class, 'updateStatus'])->name('institution.admission-fee.status');
+            
+            // AJAX routes for dynamic dropdowns
+            Route::get('/sections/{classId}', [AdmissionFeeController::class, 'getSectionsByClass'])->name('institution.admission-fee.sections');
         });
 
     });

@@ -264,6 +264,12 @@ $institution = Auth::guard('institution')->user();
                                         <i class="ti ti-receipt"></i><span>Fee Structure</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('institution.admission-fee*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('institution.admission-fee.index')); ?>">
+                                        <i class="ti ti-school"></i><span>Admission Fee</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

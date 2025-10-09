@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Institution\Payment;
 
 use App\Http\Controllers\Controller;
-use App\Models\FeeStructure;
+use App\Models\AdmissionFee;
 use App\Models\SchoolClass;
 use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class FeeStructureController extends Controller
+class AdmissionFeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,12 +18,12 @@ class FeeStructureController extends Controller
     public function index()
     {
         $institution = Auth::guard('institution')->user();
-        $feeStructures = FeeStructure::with(['schoolClass', 'section'])
+        $admissionFees = AdmissionFee::with(['schoolClass', 'section'])
             ->where('institution_id', $institution->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('institution.payment.fee-structure.index', compact('feeStructures'));
+        return view('institution.payment.admission-fee.index', compact('admissionFees'));
     }
 
     /**
@@ -37,7 +37,7 @@ class FeeStructureController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('institution.payment.fee-structure.create', compact('classes'));
+        return view('institution.payment.admission-fee.create', compact('classes'));
     }
 
     /**
@@ -51,8 +51,9 @@ class FeeStructureController extends Controller
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
-            'fee_type' => 'required|in:monthly,quarterly,yearly',
-            'start_date' => 'required|string|date_format:Y-m-d',
+            'effective_from' => 'required|string|date_format:Y-m-d',
+            'effective_until' => 'nullable|string|date_format:Y-m-d|after:effective_from',
+            'is_mandatory' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -65,22 +66,23 @@ class FeeStructureController extends Controller
 
         $institution = Auth::guard('institution')->user();
 
-        $feeStructure = FeeStructure::create([
+        $admissionFee = AdmissionFee::create([
             'name' => $request->name,
             'description' => $request->description,
             'institution_id' => $institution->id,
             'class_id' => $request->class_id,
             'section_id' => $request->section_id,
             'amount' => $request->amount,
-            'fee_type' => $request->fee_type,
-            'start_date' => $request->start_date,
+            'effective_from' => $request->effective_from,
+            'effective_until' => $request->effective_until,
+            'is_mandatory' => $request->has('is_mandatory') ? 1 : 0,
             'status' => 1,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Fee structure created successfully',
-            'data' => $feeStructure
+            'message' => 'Admission fee created successfully',
+            'data' => $admissionFee
         ]);
     }
 
@@ -90,11 +92,11 @@ class FeeStructureController extends Controller
     public function show(string $id)
     {
         $institution = Auth::guard('institution')->user();
-        $feeStructure = FeeStructure::with(['schoolClass', 'section'])
+        $admissionFee = AdmissionFee::with(['schoolClass', 'section'])
             ->where('institution_id', $institution->id)
             ->findOrFail($id);
 
-        return view('institution.payment.fee-structure.show', compact('feeStructure'));
+        return view('institution.payment.admission-fee.show', compact('admissionFee'));
     }
 
     /**
@@ -103,7 +105,7 @@ class FeeStructureController extends Controller
     public function edit(string $id)
     {
         $institution = Auth::guard('institution')->user();
-        $feeStructure = FeeStructure::where('institution_id', $institution->id)
+        $admissionFee = AdmissionFee::where('institution_id', $institution->id)
             ->findOrFail($id);
 
         $classes = SchoolClass::where('institution_id', $institution->id)
@@ -111,12 +113,12 @@ class FeeStructureController extends Controller
             ->orderBy('name')
             ->get();
 
-        $sections = Section::where('class_id', $feeStructure->class_id)
+        $sections = Section::where('class_id', $admissionFee->class_id)
             ->where('status', 1)
             ->orderBy('name')
             ->get();
 
-        return view('institution.payment.fee-structure.edit', compact('feeStructure', 'classes', 'sections'));
+        return view('institution.payment.admission-fee.edit', compact('admissionFee', 'classes', 'sections'));
     }
 
     /**
@@ -130,8 +132,9 @@ class FeeStructureController extends Controller
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
-            'fee_type' => 'required|in:monthly,quarterly,yearly',
-            'start_date' => 'required|string|date_format:Y-m-d',
+            'effective_from' => 'required|string|date_format:Y-m-d',
+            'effective_until' => 'nullable|string|date_format:Y-m-d|after:effective_from',
+            'is_mandatory' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -143,23 +146,24 @@ class FeeStructureController extends Controller
         }
 
         $institution = Auth::guard('institution')->user();
-        $feeStructure = FeeStructure::where('institution_id', $institution->id)
+        $admissionFee = AdmissionFee::where('institution_id', $institution->id)
             ->findOrFail($id);
 
-        $feeStructure->update([
+        $admissionFee->update([
             'name' => $request->name,
             'description' => $request->description,
             'class_id' => $request->class_id,
             'section_id' => $request->section_id,
             'amount' => $request->amount,
-            'fee_type' => $request->fee_type,
-            'start_date' => $request->start_date,
+            'effective_from' => $request->effective_from,
+            'effective_until' => $request->effective_until,
+            'is_mandatory' => $request->has('is_mandatory') ? 1 : 0,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Fee structure updated successfully',
-            'data' => $feeStructure
+            'message' => 'Admission fee updated successfully',
+            'data' => $admissionFee
         ]);
     }
 
@@ -169,31 +173,31 @@ class FeeStructureController extends Controller
     public function destroy(string $id)
     {
         $institution = Auth::guard('institution')->user();
-        $feeStructure = FeeStructure::where('institution_id', $institution->id)
+        $admissionFee = AdmissionFee::where('institution_id', $institution->id)
             ->findOrFail($id);
 
-        $feeStructure->delete();
+        $admissionFee->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Fee structure deleted successfully'
+            'message' => 'Admission fee deleted successfully'
         ]);
     }
 
     /**
-     * Update the status of the fee structure.
+     * Update the status of the admission fee.
      */
     public function updateStatus(Request $request, $id)
     {
         $institution = Auth::guard('institution')->user();
-        $feeStructure = FeeStructure::where('institution_id', $institution->id)
+        $admissionFee = AdmissionFee::where('institution_id', $institution->id)
             ->findOrFail($id);
 
-        $feeStructure->update(['status' => $request->status]);
+        $admissionFee->update(['status' => $request->status]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Fee structure status updated successfully'
+            'message' => 'Admission fee status updated successfully'
         ]);
     }
 

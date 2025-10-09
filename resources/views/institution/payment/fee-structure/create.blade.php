@@ -96,7 +96,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                                    <input type="text" class="form-control flatpickr" id="start_date" name="start_date" placeholder="Select start date" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -131,6 +131,13 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    // Initialize Flatpickr for date input
+    flatpickr("#start_date", {
+        dateFormat: "Y-m-d",
+        allowInput: true,
+        placeholder: "Select start date"
+    });
+
     // Load sections when class is selected
     $('#class_id').change(function() {
         const classId = $(this).val();
