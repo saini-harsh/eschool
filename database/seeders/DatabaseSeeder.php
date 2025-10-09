@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             AttendanceSeeder::class,      // Depends on students and teachers
             RoutineSeeder::class,         // Depends on institution, class, section, subject, teacher, classroom
             LessonPlanSeeder::class,      // Depends on institution, class, subject, teacher
+            FeeStructureSeeder::class,    // Depends on institution, class, section
         ]);
     }
 }

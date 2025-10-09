@@ -251,6 +251,25 @@ $institution = Auth::guard('institution')->user();
                 </li>
                 <li>
                     <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"
+                                class="<?php echo e(request()->routeIs('institution.fee-structure*') ? 'active subdrop' : ''); ?>">
+                                <i class="ti ti-credit-card"></i><span>Fee Management</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('institution.fee-structure*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('institution.fee-structure.index')); ?>">
+                                        <i class="ti ti-receipt"></i><span>Fee Structure</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
                         <li class="">
                             <a class="<?php echo e(request()->routeIs('institution.settings*') ? 'active' : ''); ?>"
                                 href="<?php echo e(route('institution.settings.index')); ?>">
