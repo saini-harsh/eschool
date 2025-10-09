@@ -19,6 +19,7 @@ class Student extends Authenticatable
         'email',
         'phone',
         'dob',
+        'gender',
         'address',
         'permanent_address',
         'pincode',
@@ -33,16 +34,18 @@ class Student extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
-        // New fields from form
+        // Academic Information
         'admission_date',
         'admission_number',
         'roll_number',
         'group',
+        // Personal Information
         'religion',
         'blood_group',
         'category',
         'height',
         'weight',
+        // Parent Information
         'father_name',
         'father_occupation',
         'father_phone',
@@ -51,6 +54,7 @@ class Student extends Authenticatable
         'mother_occupation',
         'mother_phone',
         'mother_photo',
+        // Guardian Information
         'guardian_name',
         'guardian_relation',
         'guardian_relation_text',
@@ -59,6 +63,7 @@ class Student extends Authenticatable
         'guardian_occupation',
         'guardian_address',
         'guardian_photo',
+        // Document Information
         'national_id',
         'birth_certificate_number',
         'bank_name',

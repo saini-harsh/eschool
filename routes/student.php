@@ -5,6 +5,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\AssignmentController;
 use App\Http\Controllers\Student\PaymentController;
+use App\Http\Controllers\Student\Setting\SettingsController;
 
 Route::middleware('student')->group(function () {
     Route::prefix('student')->group(function () {
