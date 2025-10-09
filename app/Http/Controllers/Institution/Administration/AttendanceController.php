@@ -45,12 +45,20 @@ class AttendanceController extends Controller
 
     public function getSectionsByClass($classId)
     {
-        $class = SchoolClass::find($classId);
+        $institutionId = auth('institution')->user()->id;
+        
+        // Verify the class belongs to the institution
+        $class = SchoolClass::where('id', $classId)
+            ->where('institution_id', $institutionId)
+            ->first();
+            
         if (!$class) {
             return response()->json([]);
         }
 
-        $sections = Section::whereIn('id', $class->section_ids ?? [])
+        // Get sections by class_id and institution_id
+        $sections = Section::where('class_id', $classId)
+            ->where('institution_id', $institutionId)
             ->where('status', true)
             ->get(['id', 'name']);
 

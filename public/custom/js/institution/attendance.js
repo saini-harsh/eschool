@@ -254,6 +254,7 @@ $(document).ready(function() {
                     options += `<option value="${section.id}">${section.name}</option>`;
                 });
                 $(targetSelector).html(options);
+                $('#section-field').show();
             },
             error: function() {
                 showAlert('Failed to load sections.', 'error');
@@ -276,6 +277,7 @@ $(document).ready(function() {
                     options += `<option value="${teacher.id}">${teacher.first_name} ${teacher.last_name}</option>`;
                 });
                 $(targetSelector).html(options);
+                $('#teacher-field').show();
             },
             error: function() {
                 showAlert('Failed to load teachers.', 'error');

@@ -158,7 +158,9 @@ class AttendanceController extends Controller
             return response()->json([]);
         }
 
-        $sections = Section::whereIn('id', $class->section_ids ?? [])
+        // Get sections by class_id and institution_id
+        $sections = Section::where('class_id', $classId)
+            ->where('institution_id', $class->institution_id)
             ->where('status', true)
             ->get(['id', 'name']);
 

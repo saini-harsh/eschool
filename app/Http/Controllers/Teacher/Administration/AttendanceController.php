@@ -55,6 +55,7 @@ class AttendanceController extends Controller
     public function getSectionsByClass($classId)
     {
         $teacherId = auth('teacher')->user()->id;
+        $institutionId = auth('teacher')->user()->institution_id;
 
         // First check if teacher is assigned to this class
         $isAssigned = AssignClassTeacher::where('teacher_id', $teacherId)
@@ -66,14 +67,9 @@ class AttendanceController extends Controller
             return response()->json([]);
         }
 
-        // Get the class and its section_ids
-        $schoolClass = SchoolClass::find($classId);
-        if (!$schoolClass || !$schoolClass->section_ids) {
-            return response()->json([]);
-        }
-
-        // Get sections using the section_ids from the class
-        $sections = Section::whereIn('id', $schoolClass->section_ids)
+        // Get sections by class_id and institution_id
+        $sections = Section::where('class_id', $classId)
+            ->where('institution_id', $institutionId)
             ->where('status', true)
             ->get(['id', 'name']);
 
@@ -100,7 +96,7 @@ class AttendanceController extends Controller
         $request->validate([
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'required|exists:sections,id',
-            'date' => 'required|date_format:Y-m-d',
+            'date' => 'required|string',
             'attendance_data' => 'required|array',
         ]);
 
@@ -244,7 +240,7 @@ class AttendanceController extends Controller
     public function markMyAttendance(Request $request)
     {
         $request->validate([
-            'date' => 'required|date_format:Y-m-d',
+            'date' => 'required|string',
             'status' => 'required|in:present,absent,late,excused',
             'remarks' => 'nullable|string|max:500',
         ]);

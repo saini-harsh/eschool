@@ -161,17 +161,9 @@ class RoutineController extends Controller
                 ], 404);
             }
 
-            $sectionIds = $class->section_ids ?? [];
-            
-            // If no sections are assigned to this class, return empty array
-            if (empty($sectionIds) || !is_array($sectionIds)) {
-                return response()->json([
-                    'success' => true,
-                    'data' => []
-                ]);
-            }
-            
-            $sections = Section::whereIn('id', $sectionIds)
+            // Get sections by class_id and institution_id
+            $sections = Section::where('class_id', $classId)
+                ->where('institution_id', $class->institution_id)
                 ->where('status', 1)
                 ->get(['id', 'name']);
 
