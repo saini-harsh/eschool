@@ -49,9 +49,11 @@
                     <label class="form-label">INSTITUTION <span class="text-danger">*</span></label>
                     <select id="institution_filter" class="form-select">
                         <option value="">Select Institution</option>
-                        @foreach($routines->groupBy('institution.name') as $institutionName => $institutionRoutines)
-                            <option value="{{ $institutionRoutines->first()->institution_id }}">{{ $institutionName }}</option>
-                        @endforeach
+                        @if(isset($institutions) && !empty($institutions))
+                            @foreach($institutions as $institution)
+                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                            @endforeach
+                        @endif
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">

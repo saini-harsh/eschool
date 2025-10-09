@@ -14,272 +14,65 @@ class AssignClassTeacherSeeder extends Seeder
      */
     public function run(): void
     {
-        $assignments = [
-            // Green Valley School (institution_id = 1)
-            // Rajesh Sharma (teacher_id = 1) - Class Teacher for multiple classes
-            [
-                'institution_id' => 1,
-                'class_id' => 1, // Class 1
-                'section_id' => 1,
-                'teacher_id' => 1, // Rajesh Sharma
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 1,
-                'class_id' => 4, // Class 1
-                'section_id' => 2,
-                'teacher_id' => 1, // Rajesh Sharma
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 1,
-                'class_id' => 6, // Class 3
-                'section_id' => 1,
-                'teacher_id' => 1, // Rajesh Sharma
-                'status' => 1,
-            ],
+        // Get all institutions, teachers, classes, and sections
+        $institutions = \App\Models\Institution::where('status', 1)->get();
+        $teachers = Teacher::where('status', 1)->get();
+        $classes = SchoolClass::where('status', 1)->get();
+        $sections = \App\Models\Section::where('status', 1)->get();
 
-            // Anita Mehra (teacher_id = 2) - Class Teacher for multiple classes
-            [
-                'institution_id' => 1,
-                'class_id' => 5, // Class 2
-                'section_id' => 1,
-                'teacher_id' => 2, // Anita Mehra
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 1,
-                'class_id' => 5, // Class 2
-                'section_id' => 2,
-                'teacher_id' => 2, // Anita Mehra
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 1,
-                'class_id' => 7, // Class 4
-                'section_id' => 1,
-                'teacher_id' => 2, // Anita Mehra
-                'status' => 1,
-            ],
+        $assignmentCount = 0;
 
-            // Sunrise Public School (institution_id = 2)
-            // Vikram Kumar (teacher_id = 3) - Class Teacher for multiple classes
-            [
-                'institution_id' => 2,
-                'class_id' => 8, // Class 5
-                'section_id' => 1,
-                'teacher_id' => 3, // Vikram Kumar
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 2,
-                'class_id' => 8, // Class 5
-                'section_id' => 2,
-                'teacher_id' => 3, // Vikram Kumar
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 2,
-                'class_id' => 10, // Class 7
-                'section_id' => 1,
-                'teacher_id' => 3, // Vikram Kumar
-                'status' => 1,
-            ],
+        foreach ($institutions as $institution) {
+            $institutionTeachers = $teachers->where('institution_id', $institution->id);
+            $institutionClasses = $classes->where('institution_id', $institution->id);
 
-            // Neha Singh (teacher_id = 4) - Class Teacher for multiple classes
-            [
-                'institution_id' => 2,
-                'class_id' => 9, // Class 6
-                'section_id' => 1,
-                'teacher_id' => 4, // Neha Singh
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 2,
-                'class_id' => 9, // Class 6
-                'section_id' => 2,
-                'teacher_id' => 4, // Neha Singh
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 2,
-                'class_id' => 11, // Class 8
-                'section_id' => 1,
-                'teacher_id' => 4, // Neha Singh
-                'status' => 1,
-            ],
+            if ($institutionTeachers->isEmpty() || $institutionClasses->isEmpty()) {
+                $this->command->info("Skipping institution {$institution->id} - missing teachers or classes");
+                continue;
+            }
 
-            // Delhi International School (institution_id = 3)
-            // Arun Patel (teacher_id = 5) - Class Teacher for multiple classes
-            [
-                'institution_id' => 3,
-                'class_id' => 11, // Class 8
-                'section_id' => 2,
-                'teacher_id' => 5, // Arun Patel
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 3,
-                'class_id' => 11, // Class 8
-                'section_id' => 3,
-                'teacher_id' => 5, // Arun Patel
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 3,
-                'class_id' => 12, // Class 9
-                'section_id' => 1,
-                'teacher_id' => 5, // Arun Patel
-                'status' => 1,
-            ],
+            foreach ($institutionClasses as $class) {
+                // Get sections for this class
+                $classSections = $sections->where('class_id', $class->id)
+                    ->where('institution_id', $institution->id);
 
-            // Kavita Reddy (teacher_id = 6) - Class Teacher for multiple classes
-            [
-                'institution_id' => 3,
-                'class_id' => 12, // Class 9
-                'section_id' => 2,
-                'teacher_id' => 6, // Kavita Reddy
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 3,
-                'class_id' => 12, // Class 9
-                'section_id' => 3,
-                'teacher_id' => 6, // Kavita Reddy
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 3,
-                'class_id' => 10, // Class 7
-                'section_id' => 2,
-                'teacher_id' => 6, // Kavita Reddy
-                'status' => 1,
-            ],
+                if ($classSections->isEmpty()) {
+                    $this->command->info("Skipping class {$class->name} - no sections found");
+                    continue;
+                }
 
-            // Modern Public School (institution_id = 4)
-            // Sanjay Gupta (teacher_id = 7) - Class Teacher for multiple classes
-            [
-                'institution_id' => 4,
-                'class_id' => 8, // Class 5
-                'section_id' => 3,
-                'teacher_id' => 7, // Sanjay Gupta
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 4,
-                'class_id' => 8, // Class 5
-                'section_id' => 4,
-                'teacher_id' => 7, // Sanjay Gupta
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 4,
-                'class_id' => 8, // Class 5
-                'section_id' => 5,
-                'teacher_id' => 7, // Sanjay Gupta
-                'status' => 1,
-            ],
+                // Assign 1-2 teachers per class, with each teacher handling 1-2 sections
+                $teachersForClass = $institutionTeachers->random(min(2, $institutionTeachers->count()));
+                $sectionsArray = $classSections->toArray();
+                $sectionsPerTeacher = ceil(count($sectionsArray) / count($teachersForClass));
 
-            // Pooja Sharma (teacher_id = 8) - Class Teacher for multiple classes
-            [
-                'institution_id' => 4,
-                'class_id' => 9, // Class 6
-                'section_id' => 3,
-                'teacher_id' => 8, // Pooja Sharma
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 4,
-                'class_id' => 9, // Class 6
-                'section_id' => 4,
-                'teacher_id' => 8, // Pooja Sharma
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 4,
-                'class_id' => 10, // Class 7
-                'section_id' => 3,
-                'teacher_id' => 8, // Pooja Sharma
-                'status' => 1,
-            ],
-
-            // Additional assignments for better coverage
-            // Green Valley School - More assignments
-            [
-                'institution_id' => 1,
-                'class_id' => 3, // UKG
-                'section_id' => 1,
-                'teacher_id' => 1, // Rajesh Sharma
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 1,
-                'class_id' => 3, // UKG
-                'section_id' => 2,
-                'teacher_id' => 2, // Anita Mehra
-                'status' => 1,
-            ],
-
-            // Sunrise Public School - More assignments
-            [
-                'institution_id' => 2,
-                'class_id' => 7, // Class 4
-                'section_id' => 1,
-                'teacher_id' => 3, // Vikram Kumar
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 2,
-                'class_id' => 7, // Class 4
-                'section_id' => 2,
-                'teacher_id' => 4, // Neha Singh
-                'status' => 1,
-            ],
-
-            // Delhi International School - More assignments
-            [
-                'institution_id' => 3,
-                'class_id' => 10, // Class 7
-                'section_id' => 3,
-                'teacher_id' => 5, // Arun Patel
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 3,
-                'class_id' => 10, // Class 7
-                'section_id' => 4,
-                'teacher_id' => 6, // Kavita Reddy
-                'status' => 1,
-            ],
-
-            // Modern Public School - More assignments
-            [
-                'institution_id' => 4,
-                'class_id' => 11, // Class 8
-                'section_id' => 1,
-                'teacher_id' => 7, // Sanjay Gupta
-                'status' => 1,
-            ],
-            [
-                'institution_id' => 4,
-                'class_id' => 11, // Class 8
-                'section_id' => 2,
-                'teacher_id' => 8, // Pooja Sharma
-                'status' => 1,
-            ],
-        ];
-
-        foreach ($assignments as $assignment) {
-            // Check if assignment already exists
-            if (!AssignClassTeacher::where('institution_id', $assignment['institution_id'])
-                ->where('class_id', $assignment['class_id'])
-                ->where('section_id', $assignment['section_id'])
-                ->where('teacher_id', $assignment['teacher_id'])
-                ->exists()) {
-                AssignClassTeacher::create($assignment);
+                $sectionIndex = 0;
+                foreach ($teachersForClass as $teacher) {
+                    $sectionsToAssign = array_slice($sectionsArray, $sectionIndex, $sectionsPerTeacher);
+                    
+                    foreach ($sectionsToAssign as $section) {
+                        // Check if assignment already exists
+                        if (!AssignClassTeacher::where('institution_id', $institution->id)
+                            ->where('class_id', $class->id)
+                            ->where('section_id', $section['id'])
+                            ->where('teacher_id', $teacher->id)
+                            ->exists()) {
+                            
+                            AssignClassTeacher::create([
+                                'institution_id' => $institution->id,
+                                'class_id' => $class->id,
+                                'section_id' => $section['id'],
+                                'teacher_id' => $teacher->id,
+                                'status' => 1,
+                            ]);
+                            $assignmentCount++;
+                        }
+                    }
+                    $sectionIndex += $sectionsPerTeacher;
+                }
             }
         }
 
-        $this->command->info('Class-teacher assignments seeded successfully!');
+        $this->command->info("Class-teacher assignments seeded successfully! Created {$assignmentCount} assignments.");
     }
 }

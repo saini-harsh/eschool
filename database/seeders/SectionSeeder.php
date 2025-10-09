@@ -12,28 +12,40 @@ class SectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $sections = [
-            ['name' => 'A','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'B','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'C','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'D','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'E','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'F','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'G','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'H','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'I','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'J','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'K','institution_id' => 1,'class_id' => 1  ],
-            ['name' => 'L','institution_id' => 1,'class_id' => 1  ],
-        ];
+        // Get all institutions and classes
+        $institutions = \App\Models\Institution::where('status', 1)->get();
+        $classes = \App\Models\SchoolClass::where('status', 1)->get();
+        
+        $sectionNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+        $sectionCount = 0;
 
-        foreach ($sections as $section) {
-            Section::create(array_merge($section, [
-                'status' => 1,
-                'institution_id' => $section['institution_id'],
-                'class_id' => $section['class_id']
-            ]));
+        foreach ($institutions as $institution) {
+            $institutionClasses = $classes->where('institution_id', $institution->id);
+            
+            foreach ($institutionClasses as $class) {
+                // Create 2-4 sections per class
+                $sectionsPerClass = rand(2, 4);
+                $selectedSectionNames = array_slice($sectionNames, 0, $sectionsPerClass);
+                
+                foreach ($selectedSectionNames as $sectionName) {
+                    // Check if section already exists
+                    if (!Section::where('institution_id', $institution->id)
+                        ->where('class_id', $class->id)
+                        ->where('name', $sectionName)
+                        ->exists()) {
+                        
+                        Section::create([
+                            'name' => $sectionName,
+                            'institution_id' => $institution->id,
+                            'class_id' => $class->id,
+                            'status' => 1,
+                        ]);
+                        $sectionCount++;
+                    }
+                }
+            }
         }
-        $this->command->info('Sections seeded successfully!');
+        
+        $this->command->info("Sections seeded successfully! Created {$sectionCount} sections.");
     }
 }

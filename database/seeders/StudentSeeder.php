@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Student;
-
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,302 +13,141 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        $students = [
-            // Green Valley School Students (institution_id = 1)
-            // Rajesh's Students (teacher_id = 1)
-            [
-                'first_name' => 'Priya',
-                'middle_name' => 'Kumari',
-                'last_name' => 'Verma',
-                'dob' => '2008-08-12',
-                'email' => 'priya.rajesh@example.com',
-                'phone' => '9876512340',
-                'gender' => 'Female',
-                'institution_code' => 'INS001',
-                'teacher_id' => 1,
-                'institution_id' => 1,
-                'class_id' => 1, // Class 1 for Green Valley
-                'section_id' => 1,
-                'address' => '123 Green Park, New Delhi',
-                'pincode' => '110016',
+        // Get all institutions, teachers, classes, and sections
+        $institutions = \App\Models\Institution::where('status', 1)->get();
+        $teachers = \App\Models\Teacher::where('status', 1)->get();
+        $classes = \App\Models\SchoolClass::where('status', 1)->get();
+        $sections = \App\Models\Section::where('status', 1)->get();
+
+        $studentCount = 0;
+
+        foreach ($institutions as $institution) {
+            $institutionTeachers = $teachers->where('institution_id', $institution->id);
+            $institutionClasses = $classes->where('institution_id', $institution->id);
+
+            if ($institutionTeachers->isEmpty() || $institutionClasses->isEmpty()) {
+                $this->command->info("Skipping institution {$institution->id} - missing teachers or classes");
+                continue;
+            }
+
+            foreach ($institutionClasses as $class) {
+                // Get sections for this class
+                $classSections = $sections->where('class_id', $class->id)
+                    ->where('institution_id', $institution->id);
+
+                if ($classSections->isEmpty()) {
+                    $this->command->info("Skipping class {$class->name} - no sections found");
+                    continue;
+                }
+
+                // Create 3-5 students per section
+                foreach ($classSections as $section) {
+                    $studentsPerSection = rand(3, 5);
+                    $randomTeacher = $institutionTeachers->random();
+
+                    for ($i = 1; $i <= $studentsPerSection; $i++) {
+                        $firstName = $this->getRandomFirstName();
+                        $lastName = $this->getRandomLastName();
+                        $email = strtolower($firstName . '.' . $lastName . '@example.com');
+                        
+                        // Check if student already exists
+                        if (!Student::where('email', $email)->exists()) {
+                            Student::create([
+                                'first_name' => $firstName,
+                                'middle_name' => $this->getRandomMiddleName(),
+                                'last_name' => $lastName,
+                                'dob' => $this->getRandomDOB(),
+                                'email' => $email,
+                                'phone' => '98765' . rand(10000, 99999),
+                                'gender' => rand(0, 1) ? 'Male' : 'Female',
+                                'institution_code' => 'INS' . str_pad($institution->id, 3, '0', STR_PAD_LEFT),
+                                'teacher_id' => $randomTeacher->id,
+                                'institution_id' => $institution->id,
+                                'class_id' => $class->id,
+                                'section_id' => $section->id,
+                                'address' => $this->getRandomAddress(),
+                                'pincode' => '110' . rand(100, 999),
                 'district' => 'New Delhi',
                 'caste_tribe' => 'General',
                 'category' => 'General',
-                'blood_group' => 'A+',
+                                'blood_group' => $this->getRandomBloodGroup(),
                 'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Rajesh Verma',
-                'father_phone' => '9876543210',
-                'father_occupation' => 'Engineer',
-                'mother_name' => 'Mrs. Sunita Verma',
-                'mother_phone' => '9876543211',
-                'mother_occupation' => 'Teacher',
-                'guardian_name' => 'Mr. Rajesh Verma',
-                'guardian_phone' => '9876543210',
-                'guardian_occupation' => 'Engineer',
+                                'father_name' => 'Mr. ' . $this->getRandomFirstName() . ' ' . $lastName,
+                                'father_phone' => '98765' . rand(10000, 99999),
+                                'father_occupation' => $this->getRandomOccupation(),
+                                'mother_name' => 'Mrs. ' . $this->getRandomFirstName() . ' ' . $lastName,
+                                'mother_phone' => '98765' . rand(10000, 99999),
+                                'mother_occupation' => $this->getRandomOccupation(),
+                                'guardian_name' => 'Mr. ' . $this->getRandomFirstName() . ' ' . $lastName,
+                                'guardian_phone' => '98765' . rand(10000, 99999),
+                                'guardian_occupation' => $this->getRandomOccupation(),
                 'guardian_relation' => 'Father',
-                'guardian_address' => '123 Green Park, New Delhi'
-            ],
-            [
-                'first_name' => 'Rohan',
-                'middle_name' => 'Kumar',
-                'last_name' => 'Kapoor',
-                'dob' => '2009-11-05',
-                'email' => 'rohan.rajesh@example.com',
-                'phone' => '9876512341',
-                'gender' => 'Male',
-                'institution_code' => 'INS001',
-                'teacher_id' => 1,
-                'institution_id' => 1,
-                'class_id' => 1, // Class 2 for Green Valley
-                'section_id' => 1,
-                'address' => '456 Model Town, New Delhi',
-                'pincode' => '110009',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'OBC',
-                'category' => 'OBC',
-                'blood_group' => 'B+',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Suresh Kapoor',
-                'father_phone' => '9876543212',
-                'father_occupation' => 'Doctor',
-                'mother_name' => 'Mrs. Rekha Kapoor',
-                'mother_phone' => '9876543213',
-                'mother_occupation' => 'Nurse',
-                'guardian_name' => 'Mr. Suresh Kapoor',
-                'guardian_phone' => '9876543212',
-                'guardian_occupation' => 'Doctor',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '456 Model Town, New Delhi'
-            ],
-            // Anita's Students (teacher_id = 2)
-            [
-                'first_name' => 'Simran',
-                'middle_name' => 'Kaur',
-                'last_name' => 'Gill',
-                'dob' => '2007-03-14',
-                'email' => 'simran.anita@example.com',
-                'phone' => '9876512342',
-                'gender' => 'Female',
-                'institution_code' => 'INS001',
-                'teacher_id' => 1,
-                'institution_id' => 1,
-                'class_id' => 1, // Class 2 for Green Valley
-                'section_id' => 1,
-                'address' => '789 Punjabi Bagh, New Delhi',
-                'pincode' => '110026',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'General',
-                'category' => 'General',
-                'blood_group' => 'AB+',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Harpreet Gill',
-                'father_phone' => '9876543214',
-                'father_occupation' => 'Business',
-                'mother_name' => 'Mrs. Gurpreet Gill',
-                'mother_phone' => '9876543215',
-                'mother_occupation' => 'Housewife',
-                'guardian_name' => 'Mr. Harpreet Gill',
-                'guardian_phone' => '9876543214',
-                'guardian_occupation' => 'Business',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '789 Punjabi Bagh, New Delhi'
-            ],
-            [
-                'first_name' => 'Aman',
-                'middle_name' => 'Singh',
-                'last_name' => 'Yadav',
-                'dob' => '2008-09-21',
-                'email' => 'aman.anita@example.com',
-                'phone' => '9876512343',
-                'gender' => 'Male',
-                'institution_code' => 'INS001',
-                'teacher_id' => 1,
-                'institution_id' => 1,
-                'class_id' => 1, // Class 3 for Green Valley
-                'section_id' => 1,
-                'address' => '321 Lajpat Nagar, New Delhi',
-                'pincode' => '110024',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'SC',
-                'category' => 'SC',
-                'blood_group' => 'O-',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Ram Yadav',
-                'father_phone' => '9876543216',
-                'father_occupation' => 'Farmer',
-                'mother_name' => 'Mrs. Sita Yadav',
-                'mother_phone' => '9876543217',
-                'mother_occupation' => 'Housewife',
-                'guardian_name' => 'Mr. Ram Yadav',
-                'guardian_phone' => '9876543216',
-                'guardian_occupation' => 'Farmer',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '321 Lajpat Nagar, New Delhi'
-            ],
-
-            // Sunrise Public School Students (institution_id = 2)
-            // Vikram's Students (teacher_id = 3)
-            [
-                'first_name' => 'Karan',
-                'middle_name' => 'Raj',
-                'last_name' => 'Bhatia',
-                'dob' => '2009-06-30',
-                'email' => 'karan.vikram@example.com',
-                'phone' => '9876512344',
-                'gender' => 'Male',
-                'institution_code' => 'INS002',
-                'teacher_id' => 3,
-                'institution_id' => 2,
-                'class_id' => 13, // Class 1 for Sunrise (13th class created)
-                'section_id' => 2,
-                'address' => '654 Karol Bagh, New Delhi',
-                'pincode' => '110005',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'General',
-                'category' => 'General',
-                'blood_group' => 'A-',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Vikram Bhatia',
-                'father_phone' => '9876543218',
-                'father_occupation' => 'Lawyer',
-                'mother_name' => 'Mrs. Priya Bhatia',
-                'mother_phone' => '9876543219',
-                'mother_occupation' => 'Doctor',
-                'guardian_name' => 'Mr. Vikram Bhatia',
-                'guardian_phone' => '9876543218',
-                'guardian_occupation' => 'Lawyer',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '654 Karol Bagh, New Delhi'
-            ],
-            [
-                'first_name' => 'Tanya',
-                'middle_name' => 'Sharma',
-                'last_name' => 'Malhotra',
-                'dob' => '2007-12-10',
-                'email' => 'tanya.vikram@example.com',
-                'phone' => '9876512345',
-                'gender' => 'Female',
-                'institution_code' => 'INS002',
-                'teacher_id' => 3,
-                'institution_id' => 2,
-                'class_id' => 14, // Class 2 for Sunrise (14th class created)
-                'section_id' => 3,
-                'address' => '987 Connaught Place, New Delhi',
-                'pincode' => '110001',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'General',
-                'category' => 'General',
-                'blood_group' => 'B-',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Rajesh Malhotra',
-                'father_phone' => '9876543220',
-                'father_occupation' => 'Banker',
-                'mother_name' => 'Mrs. Neha Malhotra',
-                'mother_phone' => '9876543221',
-                'mother_occupation' => 'Accountant',
-                'guardian_name' => 'Mr. Rajesh Malhotra',
-                'guardian_phone' => '9876543220',
-                'guardian_occupation' => 'Banker',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '987 Connaught Place, New Delhi'
-            ],
-            // Neha's Students (teacher_id = 4)
-            [
-                'first_name' => 'Ishaan',
-                'middle_name' => 'Kumar',
-                'last_name' => 'Rathore',
-                'dob' => '2008-04-25',
-                'email' => 'ishaan.neha@example.com',
-                'phone' => '9876512346',
-                'gender' => 'Male',
-                'institution_code' => 'INS002',
-                'teacher_id' => 4,
-                'institution_id' => 2,
-                'class_id' => 13, // Class 1 for Sunrise (13th class created)
-                'section_id' => 2,
-                'address' => '147 Janpath, New Delhi',
-                'pincode' => '110001',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'General',
-                'category' => 'General',
-                'blood_group' => 'AB-',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Vikram Rathore',
-                'father_phone' => '9876543222',
-                'father_occupation' => 'Police Officer',
-                'mother_name' => 'Mrs. Sunita Rathore',
-                'mother_phone' => '9876543223',
-                'mother_occupation' => 'Teacher',
-                'guardian_name' => 'Mr. Vikram Rathore',
-                'guardian_phone' => '9876543222',
-                'guardian_occupation' => 'Police Officer',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '147 Janpath, New Delhi'
-            ],
-            [
-                'first_name' => 'Meera',
-                'middle_name' => 'Devi',
-                'last_name' => 'Joshi',
-                'dob' => '2009-10-17',
-                'email' => 'meera.neha@example.com',
-                'phone' => '9876512347',
-                'gender' => 'Female',
-                'institution_code' => 'INS002',
-                'teacher_id' => 4,
-                'institution_id' => 2,
-                'class_id' => 14, // Class 2 for Sunrise (14th class created)
-                'section_id' => 3,
-                'address' => '258 India Gate, New Delhi',
-                'pincode' => '110003',
-                'district' => 'New Delhi',
-                'caste_tribe' => 'ST',
-                'category' => 'ST',
-                'blood_group' => 'O+',
-                'admission_date' => '2024-04-01',
-                'father_name' => 'Mr. Ramesh Joshi',
-                'father_phone' => '9876543224',
-                'father_occupation' => 'Government Employee',
-                'mother_name' => 'Mrs. Geeta Joshi',
-                'mother_phone' => '9876543225',
-                'mother_occupation' => 'Housewife',
-                'guardian_name' => 'Mr. Ramesh Joshi',
-                'guardian_phone' => '9876543224',
-                'guardian_occupation' => 'Government Employee',
-                'guardian_relation' => 'Father',
-                'guardian_address' => '258 India Gate, New Delhi'
-            ]
-        ];
-
-        foreach ($students as $student) {
-            // Check if student already exists
-            if (!Student::where('email', $student['email'])->exists()) {
-                Student::create(array_merge($student, [
-                    'photo' => "admin/uploads/students/1755236487_689ec887dc5d6.jpeg",
-                    'permanent_address' => $student['address'] ?? 'Same as Current Address',
-                    // 'student_id' => 'STU' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT),
-
-                    // Photo fields (set to null for now)
-                    'father_photo' => null,
-                    'mother_photo' => null,
-                    'guardian_photo' => null,
-
-                    // Document Information
-                    'document_01_title' => 'Birth Certificate',
-                    'document_01_file' => null,
-                    'document_02_title' => 'Aadhar Card',
-                    'document_02_file' => null,
-                    'document_03_title' => 'Previous School Certificate',
-                    'document_03_file' => null,
-                    'document_04_title' => 'Medical Certificate',
-                    'document_04_file' => null,
-
-                    'admin_id' => 1,
-                    'password' => Hash::make('student123'),
-                    'decrypt_pw' => 'student123',
-                    'status' => 1
-                ]));
+                                'guardian_address' => $this->getRandomAddress(),
+                                'password' => Hash::make('password'),
+                                'decrypt_pw' => 'password', // Plain text password for reference
+                                'admin_id' => 1, // Default admin ID
+                                'status' => 1,
+                            ]);
+                            $studentCount++;
+                        }
+                    }
+                }
             }
         }
-        $this->command->info('Students seeded successfully!');
+
+        $this->command->info("Students seeded successfully! Created {$studentCount} students.");
+    }
+
+    private function getRandomFirstName()
+    {
+        $firstNames = ['Priya', 'Raj', 'Anita', 'Vikram', 'Neha', 'Arun', 'Kavita', 'Sanjay', 'Pooja', 'Rahul', 'Sneha', 'Amit', 'Deepika', 'Rohit', 'Kavya', 'Suresh', 'Meera', 'Vikash', 'Sunita', 'Ravi'];
+        return $firstNames[array_rand($firstNames)];
+    }
+
+    private function getRandomLastName()
+    {
+        $lastNames = ['Sharma', 'Verma', 'Kumar', 'Singh', 'Patel', 'Reddy', 'Gupta', 'Agarwal', 'Jain', 'Malhotra', 'Chopra', 'Bansal', 'Goyal', 'Khanna', 'Mehta', 'Saxena', 'Tiwari', 'Yadav', 'Pandey', 'Mishra'];
+        return $lastNames[array_rand($lastNames)];
+    }
+
+    private function getRandomMiddleName()
+    {
+        $middleNames = ['Kumari', 'Kumar', 'Singh', 'Devi', 'Prasad', 'Lal', 'Babu', 'Bai', 'Kumari', 'Kumar'];
+        return $middleNames[array_rand($middleNames)];
+    }
+
+    private function getRandomDOB()
+    {
+        $start = strtotime('2000-01-01');
+        $end = strtotime('2010-12-31');
+        $timestamp = rand($start, $end);
+        return date('Y-m-d', $timestamp);
+    }
+
+    private function getRandomAddress()
+    {
+        $addresses = [
+            '123 Green Park, New Delhi',
+            '456 Model Town, New Delhi',
+            '789 Punjabi Bagh, New Delhi',
+            '321 Lajpat Nagar, New Delhi',
+            '654 Karol Bagh, New Delhi',
+            '987 Connaught Place, New Delhi',
+            '147 Janpath, New Delhi',
+            '258 India Gate, New Delhi'
+        ];
+        return $addresses[array_rand($addresses)];
+    }
+
+    private function getRandomBloodGroup()
+    {
+        $bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        return $bloodGroups[array_rand($bloodGroups)];
+    }
+
+    private function getRandomOccupation()
+    {
+        $occupations = ['Engineer', 'Teacher', 'Doctor', 'Businessman', 'Government Employee', 'Private Employee', 'Farmer', 'Shopkeeper'];
+        return $occupations[array_rand($occupations)];
     }
 }

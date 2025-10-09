@@ -1,5 +1,5 @@
 
-<?php $__env->startSection('title', 'Admin | Class Routine Management'); ?>
+<?php $__env->startSection('title', 'Teacher | Class Routine Management'); ?>
 <?php $__env->startSection('content'); ?>
 <?php if(session('success')): ?>
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -24,7 +24,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                     <li class="breadcrumb-item d-flex align-items-center">
-                        <a href="<?php echo e(route('admin.dashboard')); ?>"><i class="ti ti-home me-1"></i>Dashboard</a>
+                        <a href="<?php echo e(route('teacher.dashboard')); ?>"><i class="ti ti-home me-1"></i>Dashboard</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Reports</li>
                     <li class="breadcrumb-item active" aria-current="page">Class Routine Report</li>
@@ -32,9 +32,7 @@
             </nav>
         </div>
         <div>
-            <a href="<?php echo e(route('admin.routines.create')); ?>" class="btn btn-primary">
-                <i class="ti ti-circle-plus me-1"></i> Add Routine
-            </a>
+           
         </div>
     </div>
     <!-- End Page Header -->
@@ -46,30 +44,24 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">INSTITUTION <span class="text-danger">*</span></label>
-                    <select id="institution_filter" class="form-select">
-                        <option value="">Select Institution</option>
-                        <?php if(isset($institutions) && !empty($institutions)): ?>
-                            <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">CLASS <span class="text-danger">*</span></label>
+                    <select id="class_filter" class="form-select">
+                        <option value="">Select Class</option>
+                        <?php if(isset($classes) && !empty($classes)): ?>
+                            <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         <?php endif; ?>
                     </select>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label class="form-label">CLASS <span class="text-danger">*</span></label>
-                    <select id="class_filter" class="form-select" disabled>
-                        <option value="">Select Class</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label">SECTION <span class="text-danger">*</span></label>
                     <select id="section_filter" class="form-select" disabled>
                         <option value="">Select Section</option>
                     </select>
                 </div>
-                <div class="col-md-3 mb-3 d-flex align-items-end">
+                <div class="col-md-4 mb-3 d-flex align-items-end">
                     <button type="button" id="search_routine" class="btn btn-primary" disabled>
                         <i class="ti ti-search me-1"></i> SEARCH
                     </button>
@@ -132,7 +124,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
-<script src="<?php echo e(asset('custom/js/admin/routines.js')); ?>"></script>
+<script src="<?php echo e(asset('custom/js/teacher/routines.js')); ?>"></script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/admin/routines/class-routine/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.teacher', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/teacher/routines/class-routine/index.blade.php ENDPATH**/ ?>

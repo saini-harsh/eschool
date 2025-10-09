@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminSeeder::class,           // Must be first (creates admin with ID 1)
             InstitutionSeeder::class,     // Depends on admin
+            ClassRoomSeeder::class,       // Independent - classrooms needed for routines
             SectionSeeder::class,         // Independent
             SchoolClassSeeder::class,     // Depends on institution
             TeacherSeeder::class,         // Depends on institution
@@ -27,6 +28,8 @@ class DatabaseSeeder extends Seeder
             AssignmentSeeder::class,      // Depends on institution, teacher, class, section, subject
             StudentAssignmentSeeder::class, // Depends on assignments and students
             AttendanceSeeder::class,      // Depends on students and teachers
+            RoutineSeeder::class,         // Depends on institution, class, section, subject, teacher, classroom
+            LessonPlanSeeder::class,      // Depends on institution, class, subject, teacher
         ]);
     }
 }

@@ -30,7 +30,10 @@ class RoutineController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        return view('admin.routines.class-routine.index', compact('routines'));
+        // Get all institutions for the dropdown, regardless of whether they have routines
+        $institutions = Institution::where('status', 1)->get();
+        
+        return view('admin.routines.class-routine.index', compact('routines', 'institutions'));
     }
 
     /**
