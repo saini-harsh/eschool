@@ -118,6 +118,11 @@
                                         <i class="ti ti-file-text"></i><span>Assignments</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('teacher.events*') ? 'active' : ''); ?>" href="<?php echo e(route('teacher.events.index')); ?>">
+                                        <i class="ti ti-calendar-event"></i><span>Events</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

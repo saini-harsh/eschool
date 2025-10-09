@@ -81,8 +81,8 @@
                             </a>
                             <ul>
                                 <li class="">
-                                    <a class="" href="">
-                                        <i class="ti ti-report"></i><span>Routine</span>
+                                    <a class="{{ request()->routeIs('student.routine*') ? 'active' : '' }}" href="{{ route('student.routine.index') }}">
+                                        <i class="ti ti-calendar-event"></i><span>Routine</span>
                                     </a>
                                 </li>
                                 <li class="">
@@ -91,8 +91,8 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="">
-                                        <i class="ti ti-report"></i><span>Events</span>
+                                    <a class="{{ request()->routeIs('student.events*') ? 'active' : '' }}" href="{{ route('student.events.index') }}">
+                                        <i class="ti ti-calendar-event"></i><span>Events</span>
                                     </a>
                                 </li>
                             </ul>

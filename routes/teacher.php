@@ -9,12 +9,20 @@ use App\Http\Controllers\Teacher\Routine\LessonPlanController;
 use App\Http\Controllers\Teacher\Routine\AssignmentController;
 use App\Http\Controllers\Teacher\Routine\RoutineController;
 use App\Http\Controllers\Teacher\Academic\SchoolClassController;
+use App\Http\Controllers\Teacher\Academic\EventController;
 
 
 Route::middleware('teacher')->group(function () {
     Route::prefix('teacher')->group(function () {
 
         Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+        
+        // Events Management
+        Route::prefix('events')->group(function () {
+            Route::get('/', [EventController::class, 'index'])->name('teacher.events.index');
+            Route::get('/api', [EventController::class, 'getEvents'])->name('teacher.events.api');
+            Route::get('/upcoming', [EventController::class, 'getUpcomingEvents'])->name('teacher.events.upcoming');
+        });
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('teacher.settings.index');

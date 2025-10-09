@@ -1,4 +1,3 @@
-
 <?php $__env->startSection('title', 'Institution Dashboard'); ?>
 <?php $__env->startSection('content'); ?>
 
@@ -25,6 +24,7 @@
     <!-- End Page Header -->
      
 
+   
    
 </div>
 <!-- End Content -->

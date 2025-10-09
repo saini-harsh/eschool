@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,         // Depends on institution
             StudentSeeder::class,         // Depends on teacher, class, section
             NonWorkingStaffSeeder::class, // Depends on institution
-            EventSeeder::class,           // Depends on institution
+                EventSeeder::class,           // Depends on institution
             SubjectSeeder::class,         // Depends on institution
             ExamTypeSeeder::class,        // Depends on institution
             ExamSeeder::class,            // Depends on institution, class, subject, teacher, exam_type
