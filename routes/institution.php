@@ -21,6 +21,7 @@ use App\Http\Controllers\Institution\Communication\EmailSmsController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
+use App\Http\Controllers\Institution\Payment\FeeStructureController;
 
 Route::middleware('institution')->group(function () {
 
@@ -292,6 +293,21 @@ Route::middleware('institution')->group(function () {
             Route::get('/classes/{institutionId}', [LessonPlanController::class, 'getClassesByInstitution'])->name('institution.lesson-plans.classes');
             Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('institution.lesson-plans.classes-by-teacher');
             Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('institution.lesson-plans.subjects');
+        });
+
+        // FEE STRUCTURE
+        Route::prefix('fee-structure')->group(function () {
+            Route::get('/', [FeeStructureController::class, 'index'])->name('institution.fee-structure.index');
+            Route::get('/create', [FeeStructureController::class, 'create'])->name('institution.fee-structure.create');
+            Route::post('/', [FeeStructureController::class, 'store'])->name('institution.fee-structure.store');
+            Route::get('/{id}', [FeeStructureController::class, 'show'])->name('institution.fee-structure.show');
+            Route::get('/{id}/edit', [FeeStructureController::class, 'edit'])->name('institution.fee-structure.edit');
+            Route::put('/{id}', [FeeStructureController::class, 'update'])->name('institution.fee-structure.update');
+            Route::delete('/{id}', [FeeStructureController::class, 'destroy'])->name('institution.fee-structure.destroy');
+            Route::post('/{id}/status', [FeeStructureController::class, 'updateStatus'])->name('institution.fee-structure.status');
+            
+            // AJAX routes for dynamic dropdowns
+            Route::get('/sections/{classId}', [FeeStructureController::class, 'getSectionsByClass'])->name('institution.fee-structure.sections');
         });
 
     });
