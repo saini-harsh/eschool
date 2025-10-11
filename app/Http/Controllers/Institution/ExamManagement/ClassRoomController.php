@@ -98,13 +98,13 @@ class ClassRoomController extends Controller
     public function show($id)
     {
         $classRoom = ClassRoom::findOrFail($id);
-        return view('institution.academic.classrooms.show', compact('classRoom'));
+        return view('institution.examination.room-details', compact('classRoom'));
     }
 
     public function edit($id)
     {
         $classRoom = ClassRoom::findOrFail($id);
-        return view('institution.academic.classrooms.edit', compact('classRoom'));
+        return view('institution.examination.room-edit', compact('classRoom'));
     }
 
     public function update(Request $request, $id)

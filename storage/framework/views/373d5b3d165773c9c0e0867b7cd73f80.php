@@ -1,38 +1,38 @@
-@extends('layouts.institution')
-@section('title', 'Institution | Room Layout Design')
+<?php $__env->startSection('title', 'Institution | Room Layout Design'); ?>
 
-@push('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-@endpush
+<?php $__env->startPush('head'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-    @if (session('success'))
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Start Content -->
     <div class="content">
         <!-- Page Header -->
         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
             <div class="flex-grow-1">
-                <h5 class="fw-bold">Room Layout Design - {{ $classRoom->room_no }}</h5>
+                <h5 class="fw-bold">Room Layout Design - <?php echo e($classRoom->room_no); ?></h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                         <li class="breadcrumb-item d-flex align-items-center"><a
-                                href="{{ route('institution.dashboard') }}"><i class="ti ti-home me-1"></i>Home</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('institution.exam-management.rooms.index') }}">Class
+                                href="<?php echo e(route('institution.dashboard')); ?>"><i class="ti ti-home me-1"></i>Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e(route('institution.exam-management.rooms.index')); ?>">Class
                                 Rooms</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Layout Design</li>
                     </ol>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label">Room Capacity: {{ $classRoom->capacity }}</label>
+                            <label class="form-label">Room Capacity: <?php echo e($classRoom->capacity); ?></label>
                         </div>
 
                         <!-- Desk Layout Controls -->
@@ -114,7 +114,7 @@
                                     id="totalDesks">0</span></span>
                             <span class="badge bg-info me-2" id="studentInfo">Students: <span
                                     id="totalStudents">0</span></span>
-                            <span class="badge bg-success">Capacity: {{ $classRoom->capacity }}</span>
+                            <span class="badge bg-success">Capacity: <?php echo e($classRoom->capacity); ?></span>
                         </div>
                     </div>
                     <div class="card-body">
@@ -132,9 +132,9 @@
 
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
     <style>
         .room-layout {
             display: flex;
@@ -320,9 +320,9 @@
             display: flex !important;
         }
     </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <script>
         let roomCapacity = 30;
         let roomId = 1;
@@ -337,8 +337,8 @@
 
             // Get data from PHP variables
             try {
-                roomCapacity = {{ $classRoom->capacity }};
-                roomId = {{ $classRoom->id }};
+                roomCapacity = <?php echo e($classRoom->capacity); ?>;
+                roomId = <?php echo e($classRoom->id); ?>;
 
                 console.log('Room capacity:', roomCapacity);
                 console.log('Room ID:', roomId);
@@ -1117,4 +1117,6 @@
         window.showStudentInfo = showStudentInfo;
         window.printLayout = printLayout;
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/institution/examination/room-layout.blade.php ENDPATH**/ ?>

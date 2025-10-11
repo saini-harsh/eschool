@@ -1,26 +1,26 @@
-@extends('layouts.institution')
-@section('title', 'Institution | Exam Management | Exams')
+<?php $__env->startSection('title', 'Institution | Exam Management | Exams'); ?>
 
-@push('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-@endpush
+<?php $__env->startPush('head'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-    @if (session('success'))
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Start Content -->
     <div class="content">
@@ -31,7 +31,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                         <li class="breadcrumb-item d-flex align-items-center"><a
-                                href="{{ route('institution.dashboard') }}"><i class="ti ti-home me-1"></i>Home</a></li>
+                                href="<?php echo e(route('institution.dashboard')); ?>"><i class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Exam Rooms</li>
                     </ol>
                 </nav>
@@ -64,43 +64,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($lists as $room)
+                                    <?php $__empty_1 = true; $__currentLoopData = $lists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $room): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                         <tr>
-                                            <td>{{ $room->room_no }}</td>
-                                            <td>{{ $room->room_name ?? 'N/A' }}</td>
-                                            <td>{{ $room->capacity }}</td>
-                                            <td>{{ $room->students_per_bench ?? 1 }}</td>
+                                            <td><?php echo e($room->room_no); ?></td>
+                                            <td><?php echo e($room->room_name ?? 'N/A'); ?></td>
+                                            <td><?php echo e($room->capacity); ?></td>
+                                            <td><?php echo e($room->students_per_bench ?? 1); ?></td>
                                             <td>
-                                                <span class="badge {{ $room->status ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $room->status ? 'Active' : 'Inactive' }}
+                                                <span class="badge <?php echo e($room->status ? 'bg-success' : 'bg-danger'); ?>">
+                                                    <?php echo e($room->status ? 'Active' : 'Inactive'); ?>
+
                                                 </span>
                                             </td>
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <button type="button" class="btn btn-sm btn-outline-primary"
-                                                        onclick="viewRoom({{ $room->id }})" title="View">
+                                                        onclick="viewRoom(<?php echo e($room->id); ?>)" title="View">
                                                         <i class="ti ti-eye"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-success"
-                                                        onclick="designLayout({{ $room->id }})" title="Design Layout">
+                                                        onclick="designLayout(<?php echo e($room->id); ?>)" title="Design Layout">
                                                         <i class="ti ti-layout-grid"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-warning"
-                                                        onclick="editRoom({{ $room->id }})" title="Edit">
+                                                        onclick="editRoom(<?php echo e($room->id); ?>)" title="Edit">
                                                         <i class="ti ti-edit"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        onclick="deleteRoom({{ $room->id }})" title="Delete">
+                                                        onclick="deleteRoom(<?php echo e($room->id); ?>)" title="Delete">
                                                         <i class="ti ti-trash"></i>
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    @empty
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                         <tr>
                                             <td colspan="6" class="text-center">No rooms found</td>
                                         </tr>
-                                    @endforelse
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -187,9 +188,11 @@
 
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
 
-@push('scripts')
-    <script src="{{ asset('custom/js/institution/rooms.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/institution/rooms.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/institution/examination/rooms.blade.php ENDPATH**/ ?>
