@@ -22,6 +22,48 @@ class StudentController extends Controller
         $this->middleware('auth:institution');
     }
 
+    /**
+     * Generate admission number
+     */
+    public function generateAdmissionNumber(Request $request)
+    {
+        $request->validate([
+            'institution_id' => 'required|integer',
+            'class_id' => 'required|integer'
+        ]);
+
+        $admissionNumber = Student::generateAdmissionNumber(
+            $request->institution_id,
+            $request->class_id
+        );
+
+        return response()->json([
+            'success' => true,
+            'admission_number' => $admissionNumber
+        ]);
+    }
+
+    /**
+     * Generate roll number
+     */
+    public function generateRollNumber(Request $request)
+    {
+        $request->validate([
+            'class_id' => 'required|integer',
+            'section_id' => 'required|integer'
+        ]);
+
+        $rollNumber = Student::generateRollNumber(
+            $request->class_id,
+            $request->section_id
+        );
+
+        return response()->json([
+            'success' => true,
+            'roll_number' => $rollNumber
+        ]);
+    }
+
     public function Index(){
         $institutionId = auth('institution')->id();
         $classes = SchoolClass::where('institution_id', $institutionId)
@@ -132,7 +174,13 @@ class StudentController extends Controller
             'guardian_occupation' => 'nullable|string|max:255',
             'guardian_address' => 'nullable|string|max:500',
             'guardian_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'national_id' => 'nullable|string|max:50',
+            'aadhaar_no' => 'nullable|string|max:12',
+            'aadhaar_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'aadhaar_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_no' => 'nullable|string|max:10',
+            'pan_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pen_no' => 'nullable|string|max:50',
             'birth_certificate_number' => 'nullable|string|max:50',
             'bank_name' => 'nullable|string|max:255',
             'bank_account_number' => 'nullable|string|max:50',
@@ -170,6 +218,10 @@ class StudentController extends Controller
         $fatherPhotoPath = null;
         $motherPhotoPath = null;
         $guardianPhotoPath = null;
+        $aadhaarFrontPath = null;
+        $aadhaarBackPath = null;
+        $panFrontPath = null;
+        $panBackPath = null;
         $document01Path = null;
         $document02Path = null;
         $document03Path = null;
@@ -186,6 +238,18 @@ class StudentController extends Controller
         }
         if ($request->hasFile('guardian_photo')) {
             $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
+        }
+        if ($request->hasFile('aadhaar_front')) {
+            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents');
+        }
+        if ($request->hasFile('aadhaar_back')) {
+            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents');
+        }
+        if ($request->hasFile('pan_front')) {
+            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents');
+        }
+        if ($request->hasFile('pan_back')) {
+            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents');
         }
         if ($request->hasFile('document_01_file')) {
             $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
@@ -250,7 +314,13 @@ class StudentController extends Controller
         $student->guardian_occupation = $request->guardian_occupation;
         $student->guardian_address = $request->guardian_address;
         $student->guardian_photo = $guardianPhotoPath;
-        $student->national_id = $request->national_id;
+        $student->aadhaar_no = $request->aadhaar_no;
+        $student->aadhaar_front = $aadhaarFrontPath;
+        $student->aadhaar_back = $aadhaarBackPath;
+        $student->pan_no = $request->pan_no;
+        $student->pan_front = $panFrontPath;
+        $student->pan_back = $panBackPath;
+        $student->pen_no = $request->pen_no;
         $student->birth_certificate_number = $request->birth_certificate_number;
         $student->bank_name = $request->bank_name;
         $student->bank_account_number = $request->bank_account_number;
@@ -370,7 +440,13 @@ class StudentController extends Controller
             'guardian_occupation' => 'nullable|string|max:255',
             'guardian_address' => 'nullable|string|max:500',
             'guardian_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-            'national_id'    => 'nullable|string|max:50',
+            'aadhaar_no' => 'nullable|string|max:12',
+            'aadhaar_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'aadhaar_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_no' => 'nullable|string|max:10',
+            'pan_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pen_no' => 'nullable|string|max:50',
             'birth_certificate_number' => 'nullable|string|max:50',
             'bank_name'      => 'nullable|string|max:255',
             'bank_account_number' => 'nullable|string|max:50',
@@ -408,6 +484,10 @@ class StudentController extends Controller
         $fatherPhotoPath = $student->father_photo;
         $motherPhotoPath = $student->mother_photo;
         $guardianPhotoPath = $student->guardian_photo;
+        $aadhaarFrontPath = $student->aadhaar_front;
+        $aadhaarBackPath = $student->aadhaar_back;
+        $panFrontPath = $student->pan_front;
+        $panBackPath = $student->pan_back;
         $document01Path = $student->document_01_file;
         $document02Path = $student->document_02_file;
         $document03Path = $student->document_03_file;
@@ -424,6 +504,18 @@ class StudentController extends Controller
         }
         if ($request->hasFile('guardian_photo')) {
             $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
+        }
+        if ($request->hasFile('aadhaar_front')) {
+            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents');
+        }
+        if ($request->hasFile('aadhaar_back')) {
+            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents');
+        }
+        if ($request->hasFile('pan_front')) {
+            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents');
+        }
+        if ($request->hasFile('pan_back')) {
+            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents');
         }
         if ($request->hasFile('document_01_file')) {
             $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
@@ -484,7 +576,13 @@ class StudentController extends Controller
         $student->guardian_occupation = $request->guardian_occupation;
         $student->guardian_address = $request->guardian_address;
         $student->guardian_photo = $guardianPhotoPath;
-        $student->national_id = $request->national_id;
+        $student->aadhaar_no = $request->aadhaar_no;
+        $student->aadhaar_front = $aadhaarFrontPath;
+        $student->aadhaar_back = $aadhaarBackPath;
+        $student->pan_no = $request->pan_no;
+        $student->pan_front = $panFrontPath;
+        $student->pan_back = $panBackPath;
+        $student->pen_no = $request->pen_no;
         $student->birth_certificate_number = $request->birth_certificate_number;
         $student->bank_name = $request->bank_name;
         $student->bank_account_number = $request->bank_account_number;

@@ -1,6 +1,5 @@
-@extends('layouts.student')
-@section('title', 'Student | Routine')
-@section('content')
+<?php $__env->startSection('title', 'Student | Routine'); ?>
+<?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -11,7 +10,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                     <li class="breadcrumb-item d-flex align-items-center">
-                        <a href="{{ route('student.dashboard') }}"><i class="ti ti-home me-1"></i>Dashboard</a>
+                        <a href="<?php echo e(route('student.dashboard')); ?>"><i class="ti ti-home me-1"></i>Dashboard</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Academics</li>
                     <li class="breadcrumb-item active" aria-current="page">Routine</li>
@@ -19,7 +18,7 @@
             </nav>
         </div>
         <div>
-            <span class="text-muted">Class: {{ $student->schoolClass->name ?? 'N/A' }} - Section: {{ $student->section->name ?? 'N/A' }}</span>
+            <span class="text-muted">Class: <?php echo e($student->schoolClass->name ?? 'N/A'); ?> - Section: <?php echo e($student->section->name ?? 'N/A'); ?></span>
         </div>
     </div>
     <!-- End Page Header -->
@@ -39,8 +38,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center">Day</th>
-                                @if($routines->count() > 0)
-                                    @php
+                                <?php if($routines->count() > 0): ?>
+                                    <?php
                                         $timeSlots = [];
                                         $allRoutines = $groupedRoutines->flatten();
                                         
@@ -59,20 +58,21 @@
                                         uasort($timeSlots, function($a, $b) {
                                             return strcmp($a['start_time'], $b['start_time']);
                                         });
-                                    @endphp
+                                    ?>
                                     
-                                    @foreach($timeSlots as $timeSlot)
+                                    <?php $__currentLoopData = $timeSlots; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $timeSlot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <th class="text-center">
-                                            {{ \Carbon\Carbon::parse($timeSlot['start_time'])->format('H:i') }} - 
-                                            {{ \Carbon\Carbon::parse($timeSlot['end_time'])->format('H:i') }}
+                                            <?php echo e(\Carbon\Carbon::parse($timeSlot['start_time'])->format('H:i')); ?> - 
+                                            <?php echo e(\Carbon\Carbon::parse($timeSlot['end_time'])->format('H:i')); ?>
+
                                         </th>
-                                    @endforeach
-                                @endif
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody id="routine-tbody">
-                            @if($routines->count() > 0)
-                                @php
+                            <?php if($routines->count() > 0): ?>
+                                <?php
                                     $timeSlots = [];
                                     $allRoutines = $groupedRoutines->flatten();
                                     
@@ -91,42 +91,42 @@
                                     uasort($timeSlots, function($a, $b) {
                                         return strcmp($a['start_time'], $b['start_time']);
                                     });
-                                @endphp
+                                ?>
                                 
-                                @foreach(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as $day)
+                                <?php $__currentLoopData = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
-                                        <td class="text-center fw-bold">{{ strtoupper($day) }}</td>
-                                        @foreach($timeSlots as $timeSlot)
+                                        <td class="text-center fw-bold"><?php echo e(strtoupper($day)); ?></td>
+                                        <?php $__currentLoopData = $timeSlots; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $timeSlot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <td class="text-center">
-                                                @php
+                                                <?php
                                                     $dayRoutines = $groupedRoutines->get($day, collect())->filter(function($routine) use ($timeSlot) {
                                                         return $routine->start_time == $timeSlot['start_time'] && $routine->end_time == $timeSlot['end_time'];
                                                     });
-                                                @endphp
+                                                ?>
                                                 
-                                                @if($dayRoutines->isNotEmpty())
-                                                    @foreach($dayRoutines as $routine)
+                                                <?php if($dayRoutines->isNotEmpty()): ?>
+                                                    <?php $__currentLoopData = $dayRoutines; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $routine): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <div class="routine-cell p-2 border rounded mb-1" style="background-color: #f8f9fa;">
-                                                            <div class="fw-bold text-primary">{{ $routine->subject->name ?? 'N/A' }}</div>
-                                                            <div class="text-muted small">{{ $routine->teacher->first_name ?? 'N/A' }} {{ $routine->teacher->last_name ?? '' }}</div>
-                                                            <div class="text-muted small">{{ $routine->classRoom->room_no ?? 'N/A' }}</div>
+                                                            <div class="fw-bold text-primary"><?php echo e($routine->subject->name ?? 'N/A'); ?></div>
+                                                            <div class="text-muted small"><?php echo e($routine->teacher->first_name ?? 'N/A'); ?> <?php echo e($routine->teacher->last_name ?? ''); ?></div>
+                                                            <div class="text-muted small"><?php echo e($routine->classRoom->room_no ?? 'N/A'); ?></div>
                                                         </div>
-                                                    @endforeach
-                                                @else
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php else: ?>
                                                     <div class="text-muted">-</div>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tr>
-                                @endforeach
-                            @else
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
                                 <tr>
                                     <td colspan="8" class="text-center text-muted py-4">
                                         <i class="ti ti-calendar-event fs-48 mb-3 d-block"></i>
                                         No routine found for your class and section
                                     </td>
                                 </tr>
-                            @endif
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -136,9 +136,9 @@
 </div>
 <!-- End Content -->
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     /* Print-specific styles */
     @media print {
@@ -194,9 +194,9 @@
         }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     // Student Routine Management
     document.addEventListener('DOMContentLoaded', function() {
@@ -355,4 +355,5 @@
         };
     }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.student', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/student/academic/routine/index.blade.php ENDPATH**/ ?>

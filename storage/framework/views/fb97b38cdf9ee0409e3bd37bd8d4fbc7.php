@@ -1,8 +1,8 @@
-@extends('layouts.admin')
 
-@section('title', 'Student Details')
 
-@push('styles')
+<?php $__env->startSection('title', 'Student Details'); ?>
+
+<?php $__env->startPush('styles'); ?>
 <style>
     .avatar-xxxl {
         width: 120px;
@@ -23,16 +23,16 @@
         color: #495057;
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <div class="content">
         <!-- start row -->
         <div class="row">
             <div class="col-lg-10 mx-auto">
                 <div>
-                    <h6 class="mb-3 fs-14"><a href="{{ route('admin.students.index') }}"><i class="ti ti-arrow-left me-1"></i>Students</a></h6>
+                    <h6 class="mb-3 fs-14"><a href="<?php echo e(route('institution.students.index')); ?>"><i class="ti ti-arrow-left me-1"></i>Students</a></h6>
                 </div>
                 
                 <!-- Tab Navigation -->
@@ -54,35 +54,35 @@
                                 <div class="card rounded-0 shadow flex-fill mb-xl-0">
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->photo)
+                                            <?php if($student->photo): ?>
                                                 <span class="avatar avatar-xxxl avatar-rounded mb-3">
-                                                    <img src="{{ asset($student->photo) }}" alt="Student Photo">
+                                                    <img src="<?php echo e(asset($student->photo)); ?>" alt="Student Photo">
                                                 </span>
-                                            @else
+                                            <?php else: ?>
                                                 <span class="avatar avatar-xxxl avatar-rounded mb-3 bg-light border">
                                                     <i class="ti ti-user fs-48 text-muted"></i>
                                                 </span>
-                                            @endif
-                                            <h6 class="fs-16 mb-1">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</h6>
-                                            <p class="mb-0">{{ $student->email }}</p>
+                                            <?php endif; ?>
+                                            <h6 class="fs-16 mb-1"><?php echo e($student->first_name); ?> <?php echo e($student->middle_name); ?> <?php echo e($student->last_name); ?></h6>
+                                            <p class="mb-0"><?php echo e($student->email); ?></p>
                                         </div>
                                         <div class="d-flex align-items-center gap-3 flex-wrap">
                                             <div class="flex-fill">
                                                 <div class="bg-light border rounded p-2">
                                                     <h6 class="fw-semibold fs-14 mb-1">Student ID</h6>
-                                                    <p class="mb-0">{{ $student->student_id }}</p>
+                                                    <p class="mb-0"><?php echo e($student->student_id); ?></p>
                                                 </div>
                                             </div>
                                             <div class="flex-fill">
                                                 <div class="bg-light border rounded p-2">
                                                     <h6 class="fw-semibold fs-14 mb-1">Date of Birth</h6>
-                                                    <p class="mb-0">{{ $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M Y') : 'N/A' }}</p>
+                                                    <p class="mb-0"><?php echo e($student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M Y') : 'N/A'); ?></p>
                                                 </div>
                                             </div>
                                             <div class="flex-fill">
                                                 <div class="bg-light border rounded p-2">
                                                     <h6 class="fw-semibold fs-14 mb-1">Gender</h6>
-                                                    <p class="mb-0">{{ $student->gender ?? 'N/A' }}</p>
+                                                    <p class="mb-0"><?php echo e($student->gender ?? 'N/A'); ?></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@
                                 <div class="card rounded-0 shadow flex-fill mb-0">
                                     <div class="card-header d-flex align-items-center justify-content-between">
                                         <h6 class="mb-0 fw-bold">Contact Details</h6>
-                                        <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                        <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                             <i class="ti ti-edit"></i>
                                         </a>
                                     </div>
@@ -103,19 +103,19 @@
                                                 <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-phone"></i>
                                                 </span>
-                                                <p class="mb-0 fs-13 text-dark">{{ $student->phone ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13 text-dark"><?php echo e($student->phone ?? 'N/A'); ?></p>
                                             </div>
                                             <div class="bg-light border rounded d-flex align-items-center p-2 mb-3">
                                                 <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-mail"></i>
                                                 </span>
-                                                <p class="mb-0 fs-13 text-dark">{{ $student->email ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13 text-dark"><?php echo e($student->email ?? 'N/A'); ?></p>
                                             </div>
                                             <div class="bg-light border rounded d-flex align-items-center p-2">
                                                 <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-map-pin"></i>
                                                 </span>
-                                                <p class="mb-0 fs-13 text-dark">{{ $student->address ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13 text-dark"><?php echo e($student->address ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -138,13 +138,14 @@
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
                                                 <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-primary d-inline-flex">
-                                                    {{ $student->institution->name ?? 'N/A' }}
+                                                    <?php echo e($student->institution->name ?? 'N/A'); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -165,13 +166,14 @@
                                             <div class="d-flex align-items-center">
                                                 <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
                                                     
-                                                    {{ $student->schoolClass->name ?? 'N/A' }}
+                                                    <?php echo e($student->schoolClass->name ?? 'N/A'); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -191,13 +193,14 @@
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
                                                 <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
-                                                    {{ $student->section->name ?? 'N/A' }}
+                                                    <?php echo e($student->section->name ?? 'N/A'); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -216,23 +219,23 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                @if($student->teacher)
+                                                <?php if($student->teacher): ?>
                                                     <span class="avatar avatar-sm avatar-rounded flex-shrink-0 me-2">
-                                                        @if($student->teacher->photo)
-                                                            <img src="{{ asset($student->teacher->photo) }}" alt="">
-                                                        @else
+                                                        <?php if($student->teacher->photo): ?>
+                                                            <img src="<?php echo e(asset($student->teacher->photo)); ?>" alt="">
+                                                        <?php else: ?>
                                                             <i class="ti ti-user"></i>
-                                                        @endif
+                                                        <?php endif; ?>
                                                     </span>
-                                                    <p class="mb-0">{{ $student->teacher->first_name }} {{ $student->teacher->last_name }}</p>
-                                                @else
+                                                    <p class="mb-0"><?php echo e($student->teacher->first_name); ?> <?php echo e($student->teacher->last_name); ?></p>
+                                                <?php else: ?>
                                                     <span class="text-muted">No teacher assigned</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -252,13 +255,14 @@
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
                                                 <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
-                                                    {{ $student->admission_date ? \Carbon\Carbon::parse($student->admission_date)->format('d M Y') : 'N/A' }}
+                                                    <?php echo e($student->admission_date ? \Carbon\Carbon::parse($student->admission_date)->format('d M Y') : 'N/A'); ?>
+
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -279,27 +283,27 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->father_photo)
+                                            <?php if($student->father_photo): ?>
                                                 <span class="avatar avatar-xl avatar-rounded mb-3">
-                                                    <img src="{{ asset($student->father_photo) }}" alt="Father Photo">
+                                                    <img src="<?php echo e(asset($student->father_photo)); ?>" alt="Father Photo">
                                                 </span>
-                                            @else
+                                            <?php else: ?>
                                                 <span class="avatar avatar-xl avatar-rounded mb-3 bg-light border">
                                                     <i class="ti ti-user fs-24 text-muted"></i>
                                                 </span>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Name</h6>
-                                            <p class="mb-0">{{ $student->father_name ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->father_name ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Phone</h6>
-                                            <p class="mb-0">{{ $student->father_phone ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->father_phone ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Occupation</h6>
-                                            <p class="mb-0">{{ $student->father_occupation ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->father_occupation ?? 'N/A'); ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -311,27 +315,27 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->mother_photo)
+                                            <?php if($student->mother_photo): ?>
                                                 <span class="avatar avatar-xl avatar-rounded mb-3">
-                                                    <img src="{{ asset($student->mother_photo) }}" alt="Mother Photo">
+                                                    <img src="<?php echo e(asset($student->mother_photo)); ?>" alt="Mother Photo">
                                                 </span>
-                                            @else
+                                            <?php else: ?>
                                                 <span class="avatar avatar-xl avatar-rounded mb-3 bg-light border">
                                                     <i class="ti ti-user fs-24 text-muted"></i>
                                                 </span>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Name</h6>
-                                            <p class="mb-0">{{ $student->mother_name ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->mother_name ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Phone</h6>
-                                            <p class="mb-0">{{ $student->mother_phone ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->mother_phone ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Occupation</h6>
-                                            <p class="mb-0">{{ $student->mother_occupation ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->mother_occupation ?? 'N/A'); ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -346,46 +350,46 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-3 text-center">
-                                                @if($student->guardian_photo)
+                                                <?php if($student->guardian_photo): ?>
                                                     <span class="avatar avatar-xl avatar-rounded mb-3">
-                                                        <img src="{{ asset($student->guardian_photo) }}" alt="Guardian Photo">
+                                                        <img src="<?php echo e(asset($student->guardian_photo)); ?>" alt="Guardian Photo">
                                                     </span>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="avatar avatar-xl avatar-rounded mb-3 bg-light border">
                                                         <i class="ti ti-user fs-24 text-muted"></i>
                                                     </span>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Name</h6>
-                                                            <p class="mb-0">{{ $student->guardian_name ?? 'N/A' }}</p>
+                                                            <p class="mb-0"><?php echo e($student->guardian_name ?? 'N/A'); ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Phone</h6>
-                                                            <p class="mb-0">{{ $student->guardian_phone ?? 'N/A' }}</p>
+                                                            <p class="mb-0"><?php echo e($student->guardian_phone ?? 'N/A'); ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Relation</h6>
-                                                            <p class="mb-0">{{ $student->guardian_relation ?? 'N/A' }}</p>
+                                                            <p class="mb-0"><?php echo e($student->guardian_relation ?? 'N/A'); ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Occupation</h6>
-                                                            <p class="mb-0">{{ $student->guardian_occupation ?? 'N/A' }}</p>
+                                                            <p class="mb-0"><?php echo e($student->guardian_occupation ?? 'N/A'); ?></p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="bg-light border rounded p-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Address</h6>
-                                                            <p class="mb-0">{{ $student->guardian_address ?? 'N/A' }}</p>
+                                                            <p class="mb-0"><?php echo e($student->guardian_address ?? 'N/A'); ?></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -402,114 +406,84 @@
                         <div class="card rounded-0 mb-0">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h6 class="fw-bold mb-0">Documents</h6>
-                                <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-primary fs-12 py-1">
+                                <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn btn-primary fs-12 py-1">
                                     <i class="ti ti-circle-plus me-1"></i>Edit Documents
                                 </a>
                             </div>
                             <div class="card-body">
                                 <!-- New Document Details Section -->
                                 <div class="row mb-4">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="card border">
-                                            <div class="card-header bg-light">
-                                                <h6 class="fw-bold mb-0 text-dark">Aadhaar Card</h6>
+                                            <div class="card-header bg-primary text-white">
+                                                <h6 class="fw-bold mb-0">Aadhaar Card</h6>
                                             </div>
                                             <div class="card-body">
-                                                <div class="mb-3">
-                                                    <strong>Number:</strong> {{ $student->aadhaar_no ?? 'N/A' }}
-                                                </div>
-                                                @if($student->aadhaar_front || $student->aadhaar_back)
-                                                <div class="row">
-                                                    @if($student->aadhaar_front)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Front</strong>
-                                                            <img src="{{ asset($student->aadhaar_front) }}" alt="Aadhaar Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->aadhaar_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                    @if($student->aadhaar_back)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Back</strong>
-                                                            <img src="{{ asset($student->aadhaar_back) }}" alt="Aadhaar Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->aadhaar_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                </div>
-                                                @else
-                                                <div class="text-center text-muted py-3">
-                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
-                                                    <p class="mb-0">No images uploaded</p>
-                                                </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card border">
-                                            <div class="card-header bg-light">
-                                                <h6 class="fw-bold mb-0 text-dark">PAN Card</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <strong>Number:</strong> {{ $student->pan_no ?? 'N/A' }}
-                                                </div>
-                                                @if($student->pan_front || $student->pan_back)
-                                                <div class="row">
-                                                    @if($student->pan_front)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Front</strong>
-                                                            <img src="{{ asset($student->pan_front) }}" alt="PAN Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->pan_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                    @if($student->pan_back)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Back</strong>
-                                                            <img src="{{ asset($student->pan_back) }}" alt="PAN Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->pan_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                </div>
-                                                @else
-                                                <div class="text-center text-muted py-3">
-                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
-                                                    <p class="mb-0">No images uploaded</p>
-                                                </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                                <div class="mb-2">
+                                                    <strong>Number:</strong> <?php echo e($student->aadhaar_no ?? 'N/A'); ?>
 
-                                <!-- PEN Number Section -->
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
+                                                </div>
+                                                <?php if($student->aadhaar_front): ?>
+                                                <div class="mb-2">
+                                                    <strong>Front:</strong>
+                                                    <a href="<?php echo e(asset($student->aadhaar_front)); ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                                        <i class="ti ti-eye me-1"></i>View
+                                                    </a>
+                                                </div>
+                                                <?php endif; ?>
+                                                <?php if($student->aadhaar_back): ?>
+                                                <div class="mb-2">
+                                                    <strong>Back:</strong>
+                                                    <a href="<?php echo e(asset($student->aadhaar_back)); ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                                        <i class="ti ti-eye me-1"></i>View
+                                                    </a>
+                                                </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="card border">
-                                            <div class="card-header bg-light">
-                                                <h6 class="fw-bold mb-0 text-dark">PEN Number</h6>
+                                            <div class="card-header bg-success text-white">
+                                                <h6 class="fw-bold mb-0">PAN Card</h6>
                                             </div>
                                             <div class="card-body">
                                                 <div class="mb-2">
-                                                    <strong>Number:</strong> {{ $student->pen_no ?? 'N/A' }}
+                                                    <strong>Number:</strong> <?php echo e($student->pan_no ?? 'N/A'); ?>
+
+                                                </div>
+                                                <?php if($student->pan_front): ?>
+                                                <div class="mb-2">
+                                                    <strong>Front:</strong>
+                                                    <a href="<?php echo e(asset($student->pan_front)); ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                                        <i class="ti ti-eye me-1"></i>View
+                                                    </a>
+                                                </div>
+                                                <?php endif; ?>
+                                                <?php if($student->pan_back): ?>
+                                                <div class="mb-2">
+                                                    <strong>Back:</strong>
+                                                    <a href="<?php echo e(asset($student->pan_back)); ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                                        <i class="ti ti-eye me-1"></i>View
+                                                    </a>
+                                                </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card border">
+                                            <div class="card-header bg-info text-white">
+                                                <h6 class="fw-bold mb-0">PEN Number</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-2">
+                                                    <strong>Number:</strong> <?php echo e($student->pen_no ?? 'N/A'); ?>
+
                                                 </div>
                                                 <div class="mb-2">
-                                                    <strong>Student ID:</strong> {{ $student->student_id ?? 'N/A' }}
+                                                    <strong>Student ID:</strong> <?php echo e($student->student_id ?? 'N/A'); ?>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -530,94 +504,94 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if($student->document_01_file)
+                                            <?php if($student->document_01_file): ?>
                                             <tr>
                                                 <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_01_title ?? 'Document 01' }}</h6>
+                                                    <h6 class="mb-0 fs-14"><?php echo e($student->document_01_title ?? 'Document 01'); ?></h6>
                                                 </td>
                                                 <td>
                                                     <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_01_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_01_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-download me-1"></i>Download
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_01_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_01_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            @endif
-                                            @if($student->document_02_file)
+                                            <?php endif; ?>
+                                            <?php if($student->document_02_file): ?>
                                             <tr>
                                                 <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_02_title ?? 'Document 02' }}</h6>
+                                                    <h6 class="mb-0 fs-14"><?php echo e($student->document_02_title ?? 'Document 02'); ?></h6>
                                                 </td>
                                                 <td>
                                                     <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_02_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_02_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-download me-1"></i>Download
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_02_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_02_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            @endif
-                                            @if($student->document_03_file)
+                                            <?php endif; ?>
+                                            <?php if($student->document_03_file): ?>
                                             <tr>
                                                 <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_03_title ?? 'Document 03' }}</h6>
+                                                    <h6 class="mb-0 fs-14"><?php echo e($student->document_03_title ?? 'Document 03'); ?></h6>
                                                 </td>
                                                 <td>
                                                     <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_03_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_03_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-download me-1"></i>Download
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_03_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_03_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            @endif
-                                            @if($student->document_04_file)
+                                            <?php endif; ?>
+                                            <?php if($student->document_04_file): ?>
                                             <tr>
                                                 <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_04_title ?? 'Document 04' }}</h6>
+                                                    <h6 class="mb-0 fs-14"><?php echo e($student->document_04_title ?? 'Document 04'); ?></h6>
                                                 </td>
                                                 <td>
                                                     <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_04_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_04_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-download me-1"></i>Download
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ asset($student->document_04_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <a href="<?php echo e(asset($student->document_04_file)); ?>" target="_blank" class="btn btn-sm btn-outline-primary">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
-                                            @endif
-                                            @if(!$student->document_01_file && !$student->document_02_file && !$student->document_03_file && !$student->document_04_file)
+                                            <?php endif; ?>
+                                            <?php if(!$student->document_01_file && !$student->document_02_file && !$student->document_03_file && !$student->document_04_file): ?>
                                             <tr>
                                                 <td colspan="4" class="text-center text-muted py-4">
                                                     <i class="ti ti-file-off fs-48 mb-3 d-block"></i>
                                                     <p class="mb-0">No documents uploaded</p>
                                                 </td>
                                             </tr>
-                                            @endif
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -636,19 +610,19 @@
                                     <div class="card-body">
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Blood Group</h6>
-                                            <p class="mb-0">{{ $student->blood_group ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->blood_group ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Category</h6>
-                                            <p class="mb-0">{{ $student->category ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->category ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Caste/Tribe</h6>
-                                            <p class="mb-0">{{ $student->caste_tribe ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->caste_tribe ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2">
                                             <h6 class="fw-semibold fs-14 mb-1">District</h6>
-                                            <p class="mb-0">{{ $student->district ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->district ?? 'N/A'); ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -661,15 +635,15 @@
                                     <div class="card-body">
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Current Address</h6>
-                                            <p class="mb-0">{{ $student->address ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->address ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2 mb-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Permanent Address</h6>
-                                            <p class="mb-0">{{ $student->permanent_address ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->permanent_address ?? 'N/A'); ?></p>
                                         </div>
                                         <div class="bg-light border rounded p-2">
                                             <h6 class="fw-semibold fs-14 mb-1">Pincode</h6>
-                                            <p class="mb-0">{{ $student->pincode ?? 'N/A' }}</p>
+                                            <p class="mb-0"><?php echo e($student->pincode ?? 'N/A'); ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -689,30 +663,30 @@
                                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Student ID</h6>
-                                                <p class="mb-0 fs-13">{{ $student->student_id ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13"><?php echo e($student->student_id ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Email</h6>
-                                                <p class="mb-0 fs-13">{{ $student->email ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13"><?php echo e($student->email ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Phone</h6>
-                                                <p class="mb-0 fs-13">{{ $student->phone ?? 'N/A' }}</p>
+                                                <p class="mb-0 fs-13"><?php echo e($student->phone ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Status</h6>
                                                 <p class="mb-0 fs-13">
-                                                    @if($student->status == 'active')
+                                                    <?php if($student->status == 'active'): ?>
                                                         <span class="badge badge-soft-success">Active</span>
-                                                    @else
+                                                    <?php else: ?>
                                                         <span class="badge badge-soft-danger">Inactive</span>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </p>
                                             </div>
                                         </div>
@@ -726,10 +700,10 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="d-grid gap-2">
-                                            <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-primary">
+                                            <a href="<?php echo e(route('institution.students.edit', $student->id)); ?>" class="btn btn-primary">
                                                 <i class="ti ti-edit me-1"></i>Edit Student
                                             </a>
-                                            <a href="{{ route('admin.students.index') }}" class="btn btn-outline-secondary">
+                                            <a href="<?php echo e(route('institution.students.index')); ?>" class="btn btn-outline-secondary">
                                                 <i class="ti ti-arrow-left me-1"></i>Back to List
                                             </a>
                                         </div>
@@ -743,9 +717,9 @@
         </div>
         <!-- end row -->
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
     // Tab switching functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -770,4 +744,6 @@
         });
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/administration/students/show.blade.php ENDPATH**/ ?>

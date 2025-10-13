@@ -83,6 +83,8 @@ Route::middleware('admin')->group(function () {
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('admin.students.status');
+            Route::post('/generate-admission-number', [StudentController::class, 'generateAdmissionNumber'])->name('admin.students.generate-admission-number');
+            Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('admin.students.generate-roll-number');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');

@@ -79,7 +79,13 @@ class SettingsController extends Controller
             'guardian_address' => 'nullable|string|max:255',
             
             // Document Information
-            'national_id' => 'nullable|string|max:50',
+            'aadhaar_no' => 'nullable|string|max:12',
+            'aadhaar_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'aadhaar_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_no' => 'nullable|string|max:10',
+            'pan_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pen_no' => 'nullable|string|max:50',
             'birth_certificate_number' => 'nullable|string|max:50',
             'bank_name' => 'nullable|string|max:255',
             'bank_account_number' => 'nullable|string|max:50',
@@ -95,6 +101,10 @@ class SettingsController extends Controller
             'father_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'mother_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'guardian_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'aadhaar_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'aadhaar_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_front' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'pan_back' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'document_01_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'document_02_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
             'document_03_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
@@ -170,6 +180,64 @@ class SettingsController extends Controller
                 $student->guardian_photo = 'student/uploads/guardians/' . $fileName;
             }
 
+            // Handle Aadhaar card uploads
+            if ($request->hasFile('aadhaar_front')) {
+                if ($student->aadhaar_front && File::exists(public_path($student->aadhaar_front))) {
+                    File::delete(public_path($student->aadhaar_front));
+                }
+                $file = $request->file('aadhaar_front');
+                $fileName = time() . '_aadhaar_front_' . $file->getClientOriginalName();
+                $uploadPath = public_path('student/uploads/documents');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+                $file->move($uploadPath, $fileName);
+                $student->aadhaar_front = 'student/uploads/documents/' . $fileName;
+            }
+
+            if ($request->hasFile('aadhaar_back')) {
+                if ($student->aadhaar_back && File::exists(public_path($student->aadhaar_back))) {
+                    File::delete(public_path($student->aadhaar_back));
+                }
+                $file = $request->file('aadhaar_back');
+                $fileName = time() . '_aadhaar_back_' . $file->getClientOriginalName();
+                $uploadPath = public_path('student/uploads/documents');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+                $file->move($uploadPath, $fileName);
+                $student->aadhaar_back = 'student/uploads/documents/' . $fileName;
+            }
+
+            // Handle PAN card uploads
+            if ($request->hasFile('pan_front')) {
+                if ($student->pan_front && File::exists(public_path($student->pan_front))) {
+                    File::delete(public_path($student->pan_front));
+                }
+                $file = $request->file('pan_front');
+                $fileName = time() . '_pan_front_' . $file->getClientOriginalName();
+                $uploadPath = public_path('student/uploads/documents');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+                $file->move($uploadPath, $fileName);
+                $student->pan_front = 'student/uploads/documents/' . $fileName;
+            }
+
+            if ($request->hasFile('pan_back')) {
+                if ($student->pan_back && File::exists(public_path($student->pan_back))) {
+                    File::delete(public_path($student->pan_back));
+                }
+                $file = $request->file('pan_back');
+                $fileName = time() . '_pan_back_' . $file->getClientOriginalName();
+                $uploadPath = public_path('student/uploads/documents');
+                if (!File::exists($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true);
+                }
+                $file->move($uploadPath, $fileName);
+                $student->pan_back = 'student/uploads/documents/' . $fileName;
+            }
+
             // Handle document uploads
             $documentFields = ['document_01_file', 'document_02_file', 'document_03_file', 'document_04_file'];
             foreach ($documentFields as $field) {
@@ -232,7 +300,9 @@ class SettingsController extends Controller
             $student->guardian_address = $request->guardian_address;
             
             // Document Information
-            $student->national_id = $request->national_id;
+            $student->aadhaar_no = $request->aadhaar_no;
+            $student->pan_no = $request->pan_no;
+            $student->pen_no = $request->pen_no;
             $student->birth_certificate_number = $request->birth_certificate_number;
             $student->bank_name = $request->bank_name;
             $student->bank_account_number = $request->bank_account_number;

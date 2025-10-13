@@ -61,6 +61,8 @@ Route::middleware('institution')->group(function () {
             Route::get('/class/{classId}', [StudentController::class, 'getStudentsByClass'])->name('institution.students.by-class');
             Route::get('/class/{classId}/section/{sectionId}', [StudentController::class, 'getStudentsByClassAndSection'])->name('institution.students.by-class-section');
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('institution.students.status');
+            Route::post('/generate-admission-number', [StudentController::class, 'generateAdmissionNumber'])->name('institution.students.generate-admission-number');
+            Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('institution.students.generate-roll-number');
             Route::get('/export/all', [StudentController::class, 'exportAll'])->name('institution.students.export.all');
             Route::get('/export/class/{classId}', [StudentController::class, 'exportByClass'])->name('institution.students.export.class');
         });

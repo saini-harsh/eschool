@@ -298,11 +298,6 @@
                                                onclick="window.open(this.href, '_blank'); return false;">
                                                 <i class="ti ti-download"></i>
                                             </a>
-                                            <a href="{{ route('institution.payments.show', $payment->id) }}" 
-                                               class="btn btn-icon btn-sm btn-outline-white border-0" title="Print Receipt" 
-                                               onclick="window.print(); return false;">
-                                                <i class="ti ti-printer"></i>
-                                            </a>
                                         </div>
                                     </td>
                                 </tr>
