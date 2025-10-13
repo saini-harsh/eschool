@@ -1,6 +1,5 @@
-@extends('layouts.institution')
-@section('title', 'Create Fee Structure')
-@section('content')
+<?php $__env->startSection('title', 'Create Fee Structure'); ?>
+<?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -15,14 +14,14 @@
                         <i class="ti ti-home me-1"></i>Home
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('institution.fee-structure.index') }}">Fee Structure</a>
+                        <a href="<?php echo e(route('institution.fee-structure.index')); ?>">Fee Structure</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Create</li>
                 </ol>
             </nav>
         </div>
         <div>
-            <a href="{{ route('institution.fee-structure.index') }}" class="btn btn-outline-secondary">
+            <a href="<?php echo e(route('institution.fee-structure.index')); ?>" class="btn btn-outline-secondary">
                 <i class="ti ti-arrow-left me-1"></i>Back to List
             </a>
         </div>
@@ -38,7 +37,7 @@
                 </div>
                 <div class="card-body">
                     <form id="feeStructureForm">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -68,9 +67,9 @@
                                     <label for="class_id" class="form-label">Class <span class="text-danger">*</span></label>
                                     <select class="form-select" id="class_id" name="class_id" required>
                                         <option value="">Select Class</option>
-                                        @foreach($classes as $class)
-                                            <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                        @endforeach
+                                        <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -113,7 +112,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="ti ti-device-floppy me-1"></i>Create Fee Structure
                             </button>
-                            <a href="{{ route('institution.fee-structure.index') }}" class="btn btn-outline-secondary">
+                            <a href="<?php echo e(route('institution.fee-structure.index')); ?>" class="btn btn-outline-secondary">
                                 <i class="ti ti-x me-1"></i>Cancel
                             </a>
                         </div>
@@ -127,9 +126,9 @@
 </div>
 <!-- End Content -->
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 $(document).ready(function() {
     // Initialize Flatpickr for date input
@@ -176,7 +175,7 @@ $(document).ready(function() {
         const formData = new FormData(this);
         
         $.ajax({
-            url: '{{ route("institution.fee-structure.store") }}',
+            url: '<?php echo e(route("institution.fee-structure.store")); ?>',
             method: 'POST',
             data: formData,
             processData: false,
@@ -184,7 +183,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     toastr.success(response.message);
-                    window.location.href = '{{ route("institution.fee-structure.index") }}';
+                    window.location.href = '<?php echo e(route("institution.fee-structure.index")); ?>';
                 } else {
                     toastr.error(response.message || 'Failed to create fee structure');
                 }
@@ -205,4 +204,5 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/payment/fee-structure/create.blade.php ENDPATH**/ ?>
