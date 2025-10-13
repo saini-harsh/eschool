@@ -370,6 +370,118 @@
                                 <h6 class="fw-bold mb-0">Documents</h6>
                             </div>
                             <div class="card-body">
+                                <!-- New Document Details Section -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card border">
+                                            <div class="card-header bg-light">
+                                                <h6 class="fw-bold mb-0 text-dark">Aadhaar Card</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <strong>Number:</strong> {{ $student->aadhaar_no ?? 'N/A' }}
+                                                </div>
+                                                @if($student->aadhaar_front || $student->aadhaar_back)
+                                                <div class="row">
+                                                    @if($student->aadhaar_front)
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <strong class="d-block mb-2">Front</strong>
+                                                            <img src="{{ asset($student->aadhaar_front) }}" alt="Aadhaar Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                            <a href="{{ asset($student->aadhaar_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
+                                                                <i class="ti ti-external-link me-1"></i>Open
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    @if($student->aadhaar_back)
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <strong class="d-block mb-2">Back</strong>
+                                                            <img src="{{ asset($student->aadhaar_back) }}" alt="Aadhaar Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                            <a href="{{ asset($student->aadhaar_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
+                                                                <i class="ti ti-external-link me-1"></i>Open
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                @else
+                                                <div class="text-center text-muted py-3">
+                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
+                                                    <p class="mb-0">No images uploaded</p>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border">
+                                            <div class="card-header bg-light">
+                                                <h6 class="fw-bold mb-0 text-dark">PAN Card</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <strong>Number:</strong> {{ $student->pan_no ?? 'N/A' }}
+                                                </div>
+                                                @if($student->pan_front || $student->pan_back)
+                                                <div class="row">
+                                                    @if($student->pan_front)
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <strong class="d-block mb-2">Front</strong>
+                                                            <img src="{{ asset($student->pan_front) }}" alt="PAN Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                            <a href="{{ asset($student->pan_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
+                                                                <i class="ti ti-external-link me-1"></i>Open
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    @if($student->pan_back)
+                                                    <div class="col-6">
+                                                        <div class="text-center">
+                                                            <strong class="d-block mb-2">Back</strong>
+                                                            <img src="{{ asset($student->pan_back) }}" alt="PAN Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                            <a href="{{ asset($student->pan_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
+                                                                <i class="ti ti-external-link me-1"></i>Open
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                @else
+                                                <div class="text-center text-muted py-3">
+                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
+                                                    <p class="mb-0">No images uploaded</p>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PEN Number Section -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card border">
+                                            <div class="card-header bg-light">
+                                                <h6 class="fw-bold mb-0 text-dark">PEN Number</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-2">
+                                                    <strong>Number:</strong> {{ $student->pen_no ?? 'N/A' }}
+                                                </div>
+                                                <div class="mb-2">
+                                                    <strong>Student ID:</strong> {{ $student->student_id ?? 'N/A' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <h6 class="fw-bold mb-3">Other Documents</h6>
                                 <div class="table-responsive">
                                     <table class="table table-nowrap border">
                                         <thead class="table-light">

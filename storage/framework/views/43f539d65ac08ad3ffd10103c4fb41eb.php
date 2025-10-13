@@ -1,8 +1,8 @@
-@extends('layouts.student')
 
-@section('title', 'Student Settings')
 
-@section('content')
+<?php $__env->startSection('title', 'Student Settings'); ?>
+
+<?php $__env->startSection('content'); ?>
     <!-- Start Content -->
     <div class="content">
         <!-- Page Header -->
@@ -12,7 +12,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                         <li class="breadcrumb-item d-flex align-items-center">
-                            <a href="{{ route('student.dashboard') }}">
+                            <a href="<?php echo e(route('student.dashboard')); ?>">
                                 <i class="ti ti-home me-1"></i>Dashboard
                             </a>
                         </li>
@@ -52,7 +52,7 @@
                                         <div class="input-group w-auto input-group-flat">
                                             <input type="text" name="admission_date" class="form-control" data-provider="flatpickr"
                                                    data-date-format="d M, Y" placeholder="dd/mm/yyyy" 
-                                                   value="{{ $student->admission_date ? \Carbon\Carbon::parse($student->admission_date)->format('d M, Y') : '' }}">
+                                                   value="<?php echo e($student->admission_date ? \Carbon\Carbon::parse($student->admission_date)->format('d M, Y') : ''); ?>">
                                             <span class="input-group-text"><i class="ti ti-calendar"></i></span>
                                         </div>
                                     </div>
@@ -60,18 +60,18 @@
                                         <label class="form-label">GROUP</label>
                                         <select name="group" class="form-control">
                                             <option value="">Group</option>
-                                            <option value="Science" {{ $student->group == 'Science' ? 'selected' : '' }}>Science</option>
-                                            <option value="Arts" {{ $student->group == 'Arts' ? 'selected' : '' }}>Arts</option>
-                                            <option value="Commerce" {{ $student->group == 'Commerce' ? 'selected' : '' }}>Commerce</option>
+                                            <option value="Science" <?php echo e($student->group == 'Science' ? 'selected' : ''); ?>>Science</option>
+                                            <option value="Arts" <?php echo e($student->group == 'Arts' ? 'selected' : ''); ?>>Arts</option>
+                                            <option value="Commerce" <?php echo e($student->group == 'Commerce' ? 'selected' : ''); ?>>Commerce</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">ADMISSION NUMBER</label>
-                                        <input type="text" name="admission_number" class="form-control" value="{{ $student->admission_number }}">
+                                        <input type="text" name="admission_number" class="form-control" value="<?php echo e($student->admission_number); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Roll</label>
-                                        <input type="text" name="roll_number" class="form-control" value="{{ $student->roll_number }}">
+                                        <input type="text" name="roll_number" class="form-control" value="<?php echo e($student->roll_number); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -86,11 +86,11 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">EMAIL ADDRESS</label>
-                                        <input type="email" name="email" class="form-control" value="{{ $student->email }}">
+                                        <input type="email" name="email" class="form-control" value="<?php echo e($student->email); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">PHONE NUMBER</label>
-                                        <input type="text" name="phone" class="form-control" value="{{ $student->phone }}">
+                                        <input type="text" name="phone" class="form-control" value="<?php echo e($student->phone); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -105,19 +105,19 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">CURRENT ADDRESS <span class="text-danger">*</span></label>
-                                        <textarea name="address" class="form-control" rows="3" required>{{ $student->address }}</textarea>
+                                        <textarea name="address" class="form-control" rows="3" required><?php echo e($student->address); ?></textarea>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">PINCODE <span class="text-danger">*</span></label>
-                                        <input type="text" name="pincode" class="form-control" value="{{ $student->pincode }}" required>
+                                        <input type="text" name="pincode" class="form-control" value="<?php echo e($student->pincode); ?>" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">DISTRICT <span class="text-danger">*</span></label>
-                                        <input type="text" name="district" class="form-control" value="{{ $student->district }}" required>
+                                        <input type="text" name="district" class="form-control" value="<?php echo e($student->district); ?>" required>
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">PERMANENT ADDRESS</label>
-                                        <textarea name="permanent_address" class="form-control" rows="3">{{ $student->permanent_address }}</textarea>
+                                        <textarea name="permanent_address" class="form-control" rows="3"><?php echo e($student->permanent_address); ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -135,19 +135,19 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">FIRST NAME</label>
-                                        <input type="text" name="first_name" class="form-control" value="{{ $student->first_name }}" required>
+                                        <input type="text" name="first_name" class="form-control" value="<?php echo e($student->first_name); ?>" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">LAST NAME</label>
-                                        <input type="text" name="last_name" class="form-control" value="{{ $student->last_name }}" required>
+                                        <input type="text" name="last_name" class="form-control" value="<?php echo e($student->last_name); ?>" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">GENDER</label>
                                         <select name="gender" class="form-control" required>
                                             <option value="">Gender</option>
-                                            <option value="Male" {{ $student->gender == 'Male' ? 'selected' : '' }}>Male</option>
-                                            <option value="Female" {{ $student->gender == 'Female' ? 'selected' : '' }}>Female</option>
-                                            <option value="Other" {{ $student->gender == 'Other' ? 'selected' : '' }}>Other</option>
+                                            <option value="Male" <?php echo e($student->gender == 'Male' ? 'selected' : ''); ?>>Male</option>
+                                            <option value="Female" <?php echo e($student->gender == 'Female' ? 'selected' : ''); ?>>Female</option>
+                                            <option value="Other" <?php echo e($student->gender == 'Other' ? 'selected' : ''); ?>>Other</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -155,7 +155,7 @@
                                         <div class="input-group w-auto input-group-flat">
                                             <input type="text" name="dob" class="form-control" data-provider="flatpickr"
                                                    data-date-format="d M, Y" placeholder="dd/mm/yyyy" 
-                                                   value="{{ $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M, Y') : '' }}">
+                                                   value="<?php echo e($student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M, Y') : ''); ?>">
                                             <span class="input-group-text"><i class="ti ti-calendar"></i></span>
                                         </div>
                                     </div>
@@ -163,16 +163,16 @@
                                         <label class="form-label">RELIGION</label>
                                         <select name="religion" class="form-control">
                                             <option value="">Religion</option>
-                                            <option value="Islam" {{ $student->religion == 'Islam' ? 'selected' : '' }}>Islam</option>
-                                            <option value="Hinduism" {{ $student->religion == 'Hinduism' ? 'selected' : '' }}>Hinduism</option>
-                                            <option value="Christianity" {{ $student->religion == 'Christianity' ? 'selected' : '' }}>Christianity</option>
-                                            <option value="Buddhism" {{ $student->religion == 'Buddhism' ? 'selected' : '' }}>Buddhism</option>
-                                            <option value="Other" {{ $student->religion == 'Other' ? 'selected' : '' }}>Other</option>
+                                            <option value="Islam" <?php echo e($student->religion == 'Islam' ? 'selected' : ''); ?>>Islam</option>
+                                            <option value="Hinduism" <?php echo e($student->religion == 'Hinduism' ? 'selected' : ''); ?>>Hinduism</option>
+                                            <option value="Christianity" <?php echo e($student->religion == 'Christianity' ? 'selected' : ''); ?>>Christianity</option>
+                                            <option value="Buddhism" <?php echo e($student->religion == 'Buddhism' ? 'selected' : ''); ?>>Buddhism</option>
+                                            <option value="Other" <?php echo e($student->religion == 'Other' ? 'selected' : ''); ?>>Other</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">CASTE</label>
-                                        <input type="text" name="caste_tribe" class="form-control" value="{{ $student->caste_tribe }}">
+                                        <input type="text" name="caste_tribe" class="form-control" value="<?php echo e($student->caste_tribe); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Student Photo</label>
@@ -187,8 +187,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 5MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="photoPreviewContainer" style="{{ $student->photo ? 'display: block;' : 'display: none;' }}">
-                                                <img id="photoPreview" src="{{ $student->photo ? asset($student->photo) : '' }}" alt="Profile Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="photoPreviewContainer" style="<?php echo e($student->photo ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="photoPreview" src="<?php echo e($student->photo ? asset($student->photo) : ''); ?>" alt="Profile Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('photo').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removePhoto()">Remove</button>
@@ -211,34 +211,34 @@
                                         <label class="form-label">BLOOD GROUP</label>
                                         <select name="blood_group" class="form-control">
                                             <option value="">Blood Group</option>
-                                            <option value="A+" {{ $student->blood_group == 'A+' ? 'selected' : '' }}>A+</option>
-                                            <option value="A-" {{ $student->blood_group == 'A-' ? 'selected' : '' }}>A-</option>
-                                            <option value="B+" {{ $student->blood_group == 'B+' ? 'selected' : '' }}>B+</option>
-                                            <option value="B-" {{ $student->blood_group == 'B-' ? 'selected' : '' }}>B-</option>
-                                            <option value="AB+" {{ $student->blood_group == 'AB+' ? 'selected' : '' }}>AB+</option>
-                                            <option value="AB-" {{ $student->blood_group == 'AB-' ? 'selected' : '' }}>AB-</option>
-                                            <option value="O+" {{ $student->blood_group == 'O+' ? 'selected' : '' }}>O+</option>
-                                            <option value="O-" {{ $student->blood_group == 'O-' ? 'selected' : '' }}>O-</option>
+                                            <option value="A+" <?php echo e($student->blood_group == 'A+' ? 'selected' : ''); ?>>A+</option>
+                                            <option value="A-" <?php echo e($student->blood_group == 'A-' ? 'selected' : ''); ?>>A-</option>
+                                            <option value="B+" <?php echo e($student->blood_group == 'B+' ? 'selected' : ''); ?>>B+</option>
+                                            <option value="B-" <?php echo e($student->blood_group == 'B-' ? 'selected' : ''); ?>>B-</option>
+                                            <option value="AB+" <?php echo e($student->blood_group == 'AB+' ? 'selected' : ''); ?>>AB+</option>
+                                            <option value="AB-" <?php echo e($student->blood_group == 'AB-' ? 'selected' : ''); ?>>AB-</option>
+                                            <option value="O+" <?php echo e($student->blood_group == 'O+' ? 'selected' : ''); ?>>O+</option>
+                                            <option value="O-" <?php echo e($student->blood_group == 'O-' ? 'selected' : ''); ?>>O-</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">CATEGORY</label>
                                         <select name="category" class="form-control">
                                             <option value="">Category</option>
-                                            <option value="General" {{ $student->category == 'General' ? 'selected' : '' }}>General</option>
-                                            <option value="OBC" {{ $student->category == 'OBC' ? 'selected' : '' }}>OBC</option>
-                                            <option value="SC" {{ $student->category == 'SC' ? 'selected' : '' }}>SC</option>
-                                            <option value="ST" {{ $student->category == 'ST' ? 'selected' : '' }}>ST</option>
-                                            <option value="EWS" {{ $student->category == 'EWS' ? 'selected' : '' }}>EWS</option>
+                                            <option value="General" <?php echo e($student->category == 'General' ? 'selected' : ''); ?>>General</option>
+                                            <option value="OBC" <?php echo e($student->category == 'OBC' ? 'selected' : ''); ?>>OBC</option>
+                                            <option value="SC" <?php echo e($student->category == 'SC' ? 'selected' : ''); ?>>SC</option>
+                                            <option value="ST" <?php echo e($student->category == 'ST' ? 'selected' : ''); ?>>ST</option>
+                                            <option value="EWS" <?php echo e($student->category == 'EWS' ? 'selected' : ''); ?>>EWS</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">HEIGHT</label>
-                                        <input type="text" name="height" class="form-control" value="{{ $student->height }}" placeholder="e.g., 5'6">
+                                        <input type="text" name="height" class="form-control" value="<?php echo e($student->height); ?>" placeholder="e.g., 5'6">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">WEIGHT</label>
-                                        <input type="text" name="weight" class="form-control" value="{{ $student->weight }}" placeholder="e.g., 60 kg">
+                                        <input type="text" name="weight" class="form-control" value="<?php echo e($student->weight); ?>" placeholder="e.g., 60 kg">
                                     </div>
                                 </div>
                             </div>
@@ -261,15 +261,15 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">FATHER NAME</label>
-                                        <input type="text" name="father_name" class="form-control" value="{{ $student->father_name }}">
+                                        <input type="text" name="father_name" class="form-control" value="<?php echo e($student->father_name); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">FATHER OCCUPATION</label>
-                                        <input type="text" name="father_occupation" class="form-control" value="{{ $student->father_occupation }}">
+                                        <input type="text" name="father_occupation" class="form-control" value="<?php echo e($student->father_occupation); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">FATHER PHONE</label>
-                                        <input type="text" name="father_phone" class="form-control" value="{{ $student->father_phone }}">
+                                        <input type="text" name="father_phone" class="form-control" value="<?php echo e($student->father_phone); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">FATHERS PHOTO</label>
@@ -284,8 +284,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 5MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="fatherPhotoPreviewContainer" style="{{ $student->father_photo ? 'display: block;' : 'display: none;' }}">
-                                                <img id="fatherPhotoPreview" src="{{ $student->father_photo ? asset($student->father_photo) : '' }}" alt="Father Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="fatherPhotoPreviewContainer" style="<?php echo e($student->father_photo ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="fatherPhotoPreview" src="<?php echo e($student->father_photo ? asset($student->father_photo) : ''); ?>" alt="Father Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('father_photo').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFatherPhoto()">Remove</button>
@@ -306,15 +306,15 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">MOTHER NAME</label>
-                                        <input type="text" name="mother_name" class="form-control" value="{{ $student->mother_name }}">
+                                        <input type="text" name="mother_name" class="form-control" value="<?php echo e($student->mother_name); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">MOTHER OCCUPATION</label>
-                                        <input type="text" name="mother_occupation" class="form-control" value="{{ $student->mother_occupation }}">
+                                        <input type="text" name="mother_occupation" class="form-control" value="<?php echo e($student->mother_occupation); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">MOTHER PHONE</label>
-                                        <input type="text" name="mother_phone" class="form-control" value="{{ $student->mother_phone }}">
+                                        <input type="text" name="mother_phone" class="form-control" value="<?php echo e($student->mother_phone); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">MOTHERS PHOTO</label>
@@ -329,8 +329,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 5MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="motherPhotoPreviewContainer" style="{{ $student->mother_photo ? 'display: block;' : 'display: none;' }}">
-                                                <img id="motherPhotoPreview" src="{{ $student->mother_photo ? asset($student->mother_photo) : '' }}" alt="Mother Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="motherPhotoPreviewContainer" style="<?php echo e($student->mother_photo ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="motherPhotoPreview" src="<?php echo e($student->mother_photo ? asset($student->mother_photo) : ''); ?>" alt="Mother Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('mother_photo').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMotherPhoto()">Remove</button>
@@ -354,40 +354,40 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN NAME</label>
-                                        <input type="text" name="guardian_name" class="form-control" value="{{ $student->guardian_name }}">
+                                        <input type="text" name="guardian_name" class="form-control" value="<?php echo e($student->guardian_name); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN RELATION</label>
                                         <select name="guardian_relation" class="form-control" onchange="toggleGuardianRelationText(this.value)">
                                             <option value="">Relation</option>
-                                            <option value="Father" {{ $student->guardian_relation == 'Father' ? 'selected' : '' }}>Father</option>
-                                            <option value="Mother" {{ $student->guardian_relation == 'Mother' ? 'selected' : '' }}>Mother</option>
-                                            <option value="Grandfather" {{ $student->guardian_relation == 'Grandfather' ? 'selected' : '' }}>Grandfather</option>
-                                            <option value="Grandmother" {{ $student->guardian_relation == 'Grandmother' ? 'selected' : '' }}>Grandmother</option>
-                                            <option value="Uncle" {{ $student->guardian_relation == 'Uncle' ? 'selected' : '' }}>Uncle</option>
-                                            <option value="Aunt" {{ $student->guardian_relation == 'Aunt' ? 'selected' : '' }}>Aunt</option>
-                                            <option value="Other" {{ $student->guardian_relation == 'Other' ? 'selected' : '' }}>Other</option>
+                                            <option value="Father" <?php echo e($student->guardian_relation == 'Father' ? 'selected' : ''); ?>>Father</option>
+                                            <option value="Mother" <?php echo e($student->guardian_relation == 'Mother' ? 'selected' : ''); ?>>Mother</option>
+                                            <option value="Grandfather" <?php echo e($student->guardian_relation == 'Grandfather' ? 'selected' : ''); ?>>Grandfather</option>
+                                            <option value="Grandmother" <?php echo e($student->guardian_relation == 'Grandmother' ? 'selected' : ''); ?>>Grandmother</option>
+                                            <option value="Uncle" <?php echo e($student->guardian_relation == 'Uncle' ? 'selected' : ''); ?>>Uncle</option>
+                                            <option value="Aunt" <?php echo e($student->guardian_relation == 'Aunt' ? 'selected' : ''); ?>>Aunt</option>
+                                            <option value="Other" <?php echo e($student->guardian_relation == 'Other' ? 'selected' : ''); ?>>Other</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-12 mb-3" id="guardian_relation_text_div" style="display: {{ $student->guardian_relation == 'Other' ? 'block' : 'none' }};">
+                                    <div class="col-md-12 mb-3" id="guardian_relation_text_div" style="display: <?php echo e($student->guardian_relation == 'Other' ? 'block' : 'none'); ?>;">
                                         <label class="form-label">RELATION (OTHER)</label>
-                                        <input type="text" name="guardian_relation_text" class="form-control" value="{{ $student->guardian_relation_text }}">
+                                        <input type="text" name="guardian_relation_text" class="form-control" value="<?php echo e($student->guardian_relation_text); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN EMAIL</label>
-                                        <input type="email" name="guardian_email" class="form-control" value="{{ $student->guardian_email }}">
+                                        <input type="email" name="guardian_email" class="form-control" value="<?php echo e($student->guardian_email); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN PHONE</label>
-                                        <input type="text" name="guardian_phone" class="form-control" value="{{ $student->guardian_phone }}">
+                                        <input type="text" name="guardian_phone" class="form-control" value="<?php echo e($student->guardian_phone); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN OCCUPATION</label>
-                                        <input type="text" name="guardian_occupation" class="form-control" value="{{ $student->guardian_occupation }}">
+                                        <input type="text" name="guardian_occupation" class="form-control" value="<?php echo e($student->guardian_occupation); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN ADDRESS</label>
-                                        <textarea name="guardian_address" class="form-control" rows="3">{{ $student->guardian_address }}</textarea>
+                                        <textarea name="guardian_address" class="form-control" rows="3"><?php echo e($student->guardian_address); ?></textarea>
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">GUARDIAN PHOTO</label>
@@ -402,8 +402,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 5MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="guardianPhotoPreviewContainer" style="{{ $student->guardian_photo ? 'display: block;' : 'display: none;' }}">
-                                                <img id="guardianPhotoPreview" src="{{ $student->guardian_photo ? asset($student->guardian_photo) : '' }}" alt="Guardian Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="guardianPhotoPreviewContainer" style="<?php echo e($student->guardian_photo ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="guardianPhotoPreview" src="<?php echo e($student->guardian_photo ? asset($student->guardian_photo) : ''); ?>" alt="Guardian Photo" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('guardian_photo').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeGuardianPhoto()">Remove</button>
@@ -431,39 +431,39 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">STUDENT ID</label>
-                                        <input type="text" name="student_id" class="form-control" value="{{ $student->student_id }}" readonly>
+                                        <input type="text" name="student_id" class="form-control" value="<?php echo e($student->student_id); ?>" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">BIRTH CERTIFICATE NUMBER</label>
-                                        <input type="text" name="birth_certificate_number" class="form-control" value="{{ $student->birth_certificate_number }}">
+                                        <input type="text" name="birth_certificate_number" class="form-control" value="<?php echo e($student->birth_certificate_number); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">AADHAAR CARD NUMBER</label>
-                                        <input type="text" name="aadhaar_no" class="form-control" value="{{ $student->aadhaar_no }}" placeholder="Enter 12-digit Aadhaar number">
+                                        <input type="text" name="aadhaar_no" class="form-control" value="<?php echo e($student->aadhaar_no); ?>" placeholder="Enter 12-digit Aadhaar number">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">PAN CARD NUMBER</label>
-                                        <input type="text" name="pan_no" class="form-control" value="{{ $student->pan_no }}" placeholder="Enter PAN number">
+                                        <input type="text" name="pan_no" class="form-control" value="<?php echo e($student->pan_no); ?>" placeholder="Enter PAN number">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">PEN NUMBER</label>
-                                        <input type="text" name="pen_no" class="form-control" value="{{ $student->pen_no }}" placeholder="Enter PEN number">
+                                        <input type="text" name="pen_no" class="form-control" value="<?php echo e($student->pen_no); ?>" placeholder="Enter PEN number">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">BANK NAME</label>
-                                        <input type="text" name="bank_name" class="form-control" value="{{ $student->bank_name }}">
+                                        <input type="text" name="bank_name" class="form-control" value="<?php echo e($student->bank_name); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">BANK ACCOUNT NUMBER</label>
-                                        <input type="text" name="bank_account_number" class="form-control" value="{{ $student->bank_account_number }}">
+                                        <input type="text" name="bank_account_number" class="form-control" value="<?php echo e($student->bank_account_number); ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">IFSC CODE</label>
-                                        <input type="text" name="ifsc_code" class="form-control" value="{{ $student->ifsc_code }}">
+                                        <input type="text" name="ifsc_code" class="form-control" value="<?php echo e($student->ifsc_code); ?>">
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">ADDITIONAL NOTES</label>
-                                        <textarea name="additional_notes" class="form-control" rows="3">{{ $student->additional_notes }}</textarea>
+                                        <textarea name="additional_notes" class="form-control" rows="3"><?php echo e($student->additional_notes); ?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -489,8 +489,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="aadhaarFrontPreviewContainer" style="{{ $student->aadhaar_front ? 'display: block;' : 'display: none;' }}">
-                                                <img id="aadhaarFrontPreview" src="{{ $student->aadhaar_front ? asset($student->aadhaar_front) : '' }}" alt="Aadhaar Front" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="aadhaarFrontPreviewContainer" style="<?php echo e($student->aadhaar_front ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="aadhaarFrontPreview" src="<?php echo e($student->aadhaar_front ? asset($student->aadhaar_front) : ''); ?>" alt="Aadhaar Front" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('aadhaar_front').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAadhaarFront()">Remove</button>
@@ -511,8 +511,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="aadhaarBackPreviewContainer" style="{{ $student->aadhaar_back ? 'display: block;' : 'display: none;' }}">
-                                                <img id="aadhaarBackPreview" src="{{ $student->aadhaar_back ? asset($student->aadhaar_back) : '' }}" alt="Aadhaar Back" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="aadhaarBackPreviewContainer" style="<?php echo e($student->aadhaar_back ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="aadhaarBackPreview" src="<?php echo e($student->aadhaar_back ? asset($student->aadhaar_back) : ''); ?>" alt="Aadhaar Back" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('aadhaar_back').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAadhaarBack()">Remove</button>
@@ -544,8 +544,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="panFrontPreviewContainer" style="{{ $student->pan_front ? 'display: block;' : 'display: none;' }}">
-                                                <img id="panFrontPreview" src="{{ $student->pan_front ? asset($student->pan_front) : '' }}" alt="PAN Front" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="panFrontPreviewContainer" style="<?php echo e($student->pan_front ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="panFrontPreview" src="<?php echo e($student->pan_front ? asset($student->pan_front) : ''); ?>" alt="PAN Front" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('pan_front').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removePanFront()">Remove</button>
@@ -566,8 +566,8 @@
                                                     <small class="upload-subtitle">JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="panBackPreviewContainer" style="{{ $student->pan_back ? 'display: block;' : 'display: none;' }}">
-                                                <img id="panBackPreview" src="{{ $student->pan_back ? asset($student->pan_back) : '' }}" alt="PAN Back" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="panBackPreviewContainer" style="<?php echo e($student->pan_back ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="panBackPreview" src="<?php echo e($student->pan_back ? asset($student->pan_back) : ''); ?>" alt="PAN Back" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('pan_back').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removePanBack()">Remove</button>
@@ -588,7 +588,7 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">DOCUMENT 01 TITLE</label>
-                                        <input type="text" name="document_01_title" class="form-control" value="{{ $student->document_01_title }}">
+                                        <input type="text" name="document_01_title" class="form-control" value="<?php echo e($student->document_01_title); ?>">
                                         <div class="upload-area mt-2">
                                             <input type="file" name="document_01_file" id="document_01_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="previewDocument01(this)">
                                             <div class="upload-content" onclick="document.getElementById('document_01_file').click()">
@@ -600,8 +600,8 @@
                                                     <small class="upload-subtitle">PDF, DOC, JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="document01PreviewContainer" style="{{ $student->document_01_file ? 'display: block;' : 'display: none;' }}">
-                                                <img id="document01Preview" src="{{ $student->document_01_file ? asset($student->document_01_file) : '' }}" alt="Document 01" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="document01PreviewContainer" style="<?php echo e($student->document_01_file ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="document01Preview" src="<?php echo e($student->document_01_file ? asset($student->document_01_file) : ''); ?>" alt="Document 01" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('document_01_file').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument01()">Remove</button>
@@ -611,7 +611,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">DOCUMENT 02 TITLE</label>
-                                        <input type="text" name="document_02_title" class="form-control" value="{{ $student->document_02_title }}">
+                                        <input type="text" name="document_02_title" class="form-control" value="<?php echo e($student->document_02_title); ?>">
                                         <div class="upload-area mt-2">
                                             <input type="file" name="document_02_file" id="document_02_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="previewDocument02(this)">
                                             <div class="upload-content" onclick="document.getElementById('document_02_file').click()">
@@ -623,8 +623,8 @@
                                                     <small class="upload-subtitle">PDF, DOC, JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="document02PreviewContainer" style="{{ $student->document_02_file ? 'display: block;' : 'display: none;' }}">
-                                                <img id="document02Preview" src="{{ $student->document_02_file ? asset($student->document_02_file) : '' }}" alt="Document 02" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="document02PreviewContainer" style="<?php echo e($student->document_02_file ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="document02Preview" src="<?php echo e($student->document_02_file ? asset($student->document_02_file) : ''); ?>" alt="Document 02" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('document_02_file').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument02()">Remove</button>
@@ -634,7 +634,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">DOCUMENT 03 TITLE</label>
-                                        <input type="text" name="document_03_title" class="form-control" value="{{ $student->document_03_title }}">
+                                        <input type="text" name="document_03_title" class="form-control" value="<?php echo e($student->document_03_title); ?>">
                                         <div class="upload-area mt-2">
                                             <input type="file" name="document_03_file" id="document_03_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="previewDocument03(this)">
                                             <div class="upload-content" onclick="document.getElementById('document_03_file').click()">
@@ -646,8 +646,8 @@
                                                     <small class="upload-subtitle">PDF, DOC, JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="document03PreviewContainer" style="{{ $student->document_03_file ? 'display: block;' : 'display: none;' }}">
-                                                <img id="document03Preview" src="{{ $student->document_03_file ? asset($student->document_03_file) : '' }}" alt="Document 03" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="document03PreviewContainer" style="<?php echo e($student->document_03_file ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="document03Preview" src="<?php echo e($student->document_03_file ? asset($student->document_03_file) : ''); ?>" alt="Document 03" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('document_03_file').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument03()">Remove</button>
@@ -657,7 +657,7 @@
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">DOCUMENT 04 TITLE</label>
-                                        <input type="text" name="document_04_title" class="form-control" value="{{ $student->document_04_title }}">
+                                        <input type="text" name="document_04_title" class="form-control" value="<?php echo e($student->document_04_title); ?>">
                                         <div class="upload-area mt-2">
                                             <input type="file" name="document_04_file" id="document_04_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="previewDocument04(this)">
                                             <div class="upload-content" onclick="document.getElementById('document_04_file').click()">
@@ -669,8 +669,8 @@
                                                     <small class="upload-subtitle">PDF, DOC, JPG, PNG (Max 10MB)</small>
                                                 </div>
                                             </div>
-                                            <div class="photo-preview mt-2" id="document04PreviewContainer" style="{{ $student->document_04_file ? 'display: block;' : 'display: none;' }}">
-                                                <img id="document04Preview" src="{{ $student->document_04_file ? asset($student->document_04_file) : '' }}" alt="Document 04" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
+                                            <div class="photo-preview mt-2" id="document04PreviewContainer" style="<?php echo e($student->document_04_file ? 'display: block;' : 'display: none;'); ?>">
+                                                <img id="document04Preview" src="<?php echo e($student->document_04_file ? asset($student->document_04_file) : ''); ?>" alt="Document 04" class="rounded" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e9ecef;">
                                                 <div class="photo-actions">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('document_04_file').click()">Change</button>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument04()">Remove</button>
@@ -694,7 +694,7 @@
                                 <h6 class="fw-bold mb-0">Change Password</h6>
                             </div>
                             <form id="change-password-form">
-                                @csrf
+                                <?php echo csrf_field(); ?>
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <label class="form-label">CURRENT PASSWORD <span class="text-danger">*</span></label>
@@ -732,7 +732,7 @@
     </div>
     <!-- End Content -->
 
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
         <style>
             .toast-container {
                 z-index: 9999;
@@ -748,9 +748,9 @@
                 padding: 12px 16px;
             }
         </style>
-    @endpush
+    <?php $__env->stopPush(); ?>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
         <script>
             $(document).ready(function() {
                 // Initialize flatpickr for date inputs
@@ -992,7 +992,7 @@
                     showToast('Saving settings...', 'info');
 
                     $.ajax({
-                        url: "{{ route('student.settings.profile') }}",
+                        url: "<?php echo e(route('student.settings.profile')); ?>",
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -1026,7 +1026,7 @@
                     showToast('Changing password...', 'info');
 
                     $.ajax({
-                        url: "{{ route('student.settings.change-password') }}",
+                        url: "<?php echo e(route('student.settings.change-password')); ?>",
                         type: 'POST',
                         data: formData,
                         processData: false,
@@ -1137,5 +1137,6 @@
                 }
             });
         </script>
-    @endpush
-@endsection
+    <?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.student', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/student/settings/index.blade.php ENDPATH**/ ?>

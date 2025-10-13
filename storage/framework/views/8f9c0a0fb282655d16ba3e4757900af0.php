@@ -545,10 +545,10 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">NATIONAL ID</label>
-                                                    <input type="text" name="national_id" class="form-control" value="<?php echo e(old('national_id', $student->national_id)); ?>">
+                                                    <label class="form-label">STUDENT ID</label>
+                                                    <input type="text" name="student_id" class="form-control" value="<?php echo e(old('student_id', $student->student_id)); ?>" readonly>
                                                 </div>
-                                <div class="col-md-6 mb-3">
+                                                <div class="col-md-6 mb-3">
                                                     <label class="form-label">BIRTH CERTIFICATE NUMBER</label>
                                                     <input type="text" name="birth_certificate_number" class="form-control" value="<?php echo e(old('birth_certificate_number', $student->birth_certificate_number)); ?>">
                                                 </div>
@@ -560,10 +560,126 @@
                                         </div>
                                     </div>
 
+                                    <!-- Aadhaar Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">AADHAAR CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">AADHAAR NUMBER</label>
+                                                    <input type="text" name="aadhaar_no" class="form-control" value="<?php echo e(old('aadhaar_no', $student->aadhaar_no)); ?>" maxlength="12" placeholder="12-digit Aadhaar number">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR FRONT</label>
+                                                    <div class="document-upload">
+                                                        <input type="file" name="aadhaar_front" id="aadhaar_front" class="d-none" accept=".pdf,.jpg,.jpeg,.png">
+                                                        <div class="document-upload-btn" onclick="document.getElementById('aadhaar_front').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload Front</span>
+                                                        </div>
+                                                        <div class="file-info mt-1" id="aadhaar_front_info" style="display: none;">
+                                                            <small class="text-success" id="aadhaar_front_name"></small>
+                                                        </div>
+                                                        <?php if($student->aadhaar_front): ?>
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">Current: <?php echo e(basename($student->aadhaar_front)); ?></small>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR BACK</label>
+                                                    <div class="document-upload">
+                                                        <input type="file" name="aadhaar_back" id="aadhaar_back" class="d-none" accept=".pdf,.jpg,.jpeg,.png">
+                                                        <div class="document-upload-btn" onclick="document.getElementById('aadhaar_back').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload Back</span>
+                                                        </div>
+                                                        <div class="file-info mt-1" id="aadhaar_back_info" style="display: none;">
+                                                            <small class="text-success" id="aadhaar_back_name"></small>
+                                                        </div>
+                                                        <?php if($student->aadhaar_back): ?>
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">Current: <?php echo e(basename($student->aadhaar_back)); ?></small>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <!-- Right Column -->
                                 <div class="col-md-6">
+                                    <!-- PAN Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PAN CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PAN NUMBER</label>
+                                                    <input type="text" name="pan_no" class="form-control" value="<?php echo e(old('pan_no', $student->pan_no)); ?>" maxlength="10" placeholder="ABCDE1234F">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN FRONT</label>
+                                                    <div class="document-upload">
+                                                        <input type="file" name="pan_front" id="pan_front" class="d-none" accept=".pdf,.jpg,.jpeg,.png">
+                                                        <div class="document-upload-btn" onclick="document.getElementById('pan_front').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload Front</span>
+                                                        </div>
+                                                        <div class="file-info mt-1" id="pan_front_info" style="display: none;">
+                                                            <small class="text-success" id="pan_front_name"></small>
+                                                        </div>
+                                                        <?php if($student->pan_front): ?>
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">Current: <?php echo e(basename($student->pan_front)); ?></small>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN BACK</label>
+                                                    <div class="document-upload">
+                                                        <input type="file" name="pan_back" id="pan_back" class="d-none" accept=".pdf,.jpg,.jpeg,.png">
+                                                        <div class="document-upload-btn" onclick="document.getElementById('pan_back').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload Back</span>
+                                                        </div>
+                                                        <div class="file-info mt-1" id="pan_back_info" style="display: none;">
+                                                            <small class="text-success" id="pan_back_name"></small>
+                                                        </div>
+                                                        <?php if($student->pan_back): ?>
+                                                            <div class="mt-2">
+                                                                <small class="text-muted">Current: <?php echo e(basename($student->pan_back)); ?></small>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- PEN Number -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PEN NUMBER</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PEN NUMBER</label>
+                                                    <input type="text" name="pen_no" class="form-control" value="<?php echo e(old('pen_no', $student->pen_no)); ?>" placeholder="PEN number">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- Bank Information -->
                                     <div class="card mb-4">
                                         <div class="card-header">

@@ -119,11 +119,11 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">ADMISSION NUMBER</label>
-                                                    <input type="text" name="admission_number" class="form-control" value="{{ old('admission_number', '565') }}">
+                                                    <input type="text" name="admission_number" id="admission_number" class="form-control" value="{{ old('admission_number') }}" readonly placeholder="Auto-generated">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Roll</label>
-                                                    <input type="text" name="roll_number" class="form-control" value="{{ old('roll_number') }}">
+                                                    <label class="form-label">ROLL NUMBER</label>
+                                                    <input type="text" name="roll_number" id="roll_number" class="form-control" value="{{ old('roll_number') }}" readonly placeholder="Auto-generated">
                                                 </div>
                                             </div>
                                         </div>
@@ -507,8 +507,8 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">NATIONAL ID CARD</label>
-                                                    <input type="text" name="national_id" class="form-control" value="{{ old('national_id') }}">
+                                                    <label class="form-label">STUDENT ID</label>
+                                                    <input type="text" name="student_id" class="form-control" value="{{ old('student_id') }}" readonly placeholder="Auto-generated">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">Birth Certificate Number</label>
@@ -517,6 +517,67 @@
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">ADDITIONAL NOTES</label>
                                                     <textarea name="additional_notes" class="form-control" rows="4">{{ old('additional_notes') }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Aadhaar Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">AADHAAR CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">AADHAAR CARD NUMBER</label>
+                                                    <input type="text" name="aadhaar_no" class="form-control" value="{{ old('aadhaar_no') }}" placeholder="Enter 12-digit Aadhaar number">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR CARD FRONT</label>
+                                                    <input type="file" name="aadhaar_front" class="form-control" accept="image/*">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR CARD BACK</label>
+                                                    <input type="file" name="aadhaar_back" class="form-control" accept="image/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- PAN Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PAN CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PAN CARD NUMBER</label>
+                                                    <input type="text" name="pan_no" class="form-control" value="{{ old('pan_no') }}" placeholder="Enter PAN number">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN CARD FRONT</label>
+                                                    <input type="file" name="pan_front" class="form-control" accept="image/*">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN CARD BACK</label>
+                                                    <input type="file" name="pan_back" class="form-control" accept="image/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- PEN Number -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PEN NUMBER</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PEN NUMBER</label>
+                                                    <input type="text" name="pen_no" class="form-control" value="{{ old('pen_no') }}" placeholder="Enter PEN number">
                                                 </div>
                                             </div>
                                         </div>
@@ -772,6 +833,68 @@
 
         // Set institution ID for JavaScript
         window.institutionId = {{ $institution->id }};
+
+        // Auto-generate admission number and roll number
+        function generateAdmissionAndRollNumbers() {
+            const institutionId = window.institutionId;
+            const classId = document.querySelector('select[name="class_id"]').value;
+            const sectionId = document.querySelector('select[name="section_id"]').value;
+            
+            if (institutionId && classId && sectionId) {
+                // Generate admission number
+                fetch('/institution/students/generate-admission-number', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        institution_id: institutionId,
+                        class_id: classId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('admission_number').value = data.admission_number;
+                    }
+                })
+                .catch(error => console.error('Error generating admission number:', error));
+                
+                // Generate roll number
+                fetch('/institution/students/generate-roll-number', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        class_id: classId,
+                        section_id: sectionId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('roll_number').value = data.roll_number;
+                    }
+                })
+                .catch(error => console.error('Error generating roll number:', error));
+            }
+        }
+        
+        // Add event listeners to class and section dropdowns
+        document.addEventListener('DOMContentLoaded', function() {
+            const classSelect = document.querySelector('select[name="class_id"]');
+            const sectionSelect = document.querySelector('select[name="section_id"]');
+            
+            if (classSelect) {
+                classSelect.addEventListener('change', generateAdmissionAndRollNumbers);
+            }
+            if (sectionSelect) {
+                sectionSelect.addEventListener('change', generateAdmissionAndRollNumbers);
+            }
+        });
 
         // Photo file selection handlers
         document.getElementById('father_photo').addEventListener('change', function(e) {

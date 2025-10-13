@@ -67,11 +67,11 @@ class StudentSeeder extends Seeder
                                 'section_id' => $section->id,
                                 'address' => $this->getRandomAddress(),
                                 'pincode' => '110' . rand(100, 999),
-                'district' => 'New Delhi',
-                'caste_tribe' => 'General',
-                'category' => 'General',
+                                'district' => 'New Delhi',
+                                'caste_tribe' => 'General',
+                                'category' => 'General',
                                 'blood_group' => $this->getRandomBloodGroup(),
-                'admission_date' => '2024-04-01',
+                                'admission_date' => '2024-04-01',
                                 'father_name' => 'Mr. ' . $this->getRandomFirstName() . ' ' . $lastName,
                                 'father_phone' => '98765' . rand(10000, 99999),
                                 'father_occupation' => $this->getRandomOccupation(),
@@ -81,8 +81,12 @@ class StudentSeeder extends Seeder
                                 'guardian_name' => 'Mr. ' . $this->getRandomFirstName() . ' ' . $lastName,
                                 'guardian_phone' => '98765' . rand(10000, 99999),
                                 'guardian_occupation' => $this->getRandomOccupation(),
-                'guardian_relation' => 'Father',
+                                'guardian_relation' => 'Father',
                                 'guardian_address' => $this->getRandomAddress(),
+                                // New document fields
+                                'aadhaar_no' => $this->generateAadhaarNumber(),
+                                'pan_no' => $this->generatePANNumber(),
+                                'pen_no' => 'PEN' . rand(100000, 999999),
                                 'password' => Hash::make('password'),
                                 'decrypt_pw' => 'password', // Plain text password for reference
                                 'admin_id' => 1, // Default admin ID
@@ -149,5 +153,31 @@ class StudentSeeder extends Seeder
     {
         $occupations = ['Engineer', 'Teacher', 'Doctor', 'Businessman', 'Government Employee', 'Private Employee', 'Farmer', 'Shopkeeper'];
         return $occupations[array_rand($occupations)];
+    }
+
+    private function generateAadhaarNumber()
+    {
+        // Generate a 12-digit Aadhaar-like number
+        return str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT);
+    }
+
+    private function generatePANNumber()
+    {
+        // Generate a PAN-like number (5 letters + 4 digits + 1 letter)
+        $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $pan = '';
+        
+        // First 5 letters
+        for ($i = 0; $i < 5; $i++) {
+            $pan .= $letters[rand(0, strlen($letters) - 1)];
+        }
+        
+        // 4 digits
+        $pan .= rand(1000, 9999);
+        
+        // Last letter
+        $pan .= $letters[rand(0, strlen($letters) - 1)];
+        
+        return $pan;
     }
 }

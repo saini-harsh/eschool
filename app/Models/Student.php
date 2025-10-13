@@ -12,6 +12,7 @@ class Student extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
+        'student_id',
         'first_name',
         'middle_name',
         'last_name',
@@ -64,8 +65,14 @@ class Student extends Authenticatable
         'guardian_address',
         'guardian_photo',
         // Document Information
-        'national_id',
         'birth_certificate_number',
+        'aadhaar_no',
+        'aadhaar_front',
+        'aadhaar_back',
+        'pan_no',
+        'pan_front',
+        'pan_back',
+        'pen_no',
         'bank_name',
         'bank_account_number',
         'ifsc_code',
@@ -90,6 +97,73 @@ class Student extends Authenticatable
         'dob' => 'date',
         'status' => 'boolean',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($student) {
+            if (empty($student->student_id)) {
+                $student->student_id = static::generateStudentId();
+            }
+        });
+    }
+
+    /**
+     * Generate a unique student ID.
+     */
+    public static function generateStudentId()
+    {
+        do {
+            $year = date('Y');
+            $randomNumber = str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
+            $studentId = 'STU' . $year . $randomNumber;
+        } while (static::where('student_id', $studentId)->exists());
+
+        return $studentId;
+    }
+
+    /**
+     * Generate a unique admission number.
+     */
+    public static function generateAdmissionNumber($institutionId = null, $classId = null)
+    {
+        do {
+            $year = date('Y');
+            $institutionCode = $institutionId ? str_pad($institutionId, 3, '0', STR_PAD_LEFT) : '000';
+            $classCode = $classId ? str_pad($classId, 2, '0', STR_PAD_LEFT) : '00';
+            $randomNumber = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $admissionNumber = 'ADM' . $year . $institutionCode . $classCode . $randomNumber;
+        } while (static::where('admission_number', $admissionNumber)->exists());
+
+        return $admissionNumber;
+    }
+
+    /**
+     * Generate a unique roll number for a class and section.
+     */
+    public static function generateRollNumber($classId, $sectionId)
+    {
+        // Get the highest roll number for this class and section
+        $lastStudent = static::where('class_id', $classId)
+            ->where('section_id', $sectionId)
+            ->orderBy('roll_number', 'desc')
+            ->first();
+
+        if ($lastStudent && $lastStudent->roll_number) {
+            // Extract numeric part and increment
+            $lastRollNumber = (int) $lastStudent->roll_number;
+            $newRollNumber = $lastRollNumber + 1;
+        } else {
+            // Start from 1 if no students exist
+            $newRollNumber = 1;
+        }
+
+        return str_pad($newRollNumber, 3, '0', STR_PAD_LEFT);
+    }
 
     public function getAuthPassword()
     {

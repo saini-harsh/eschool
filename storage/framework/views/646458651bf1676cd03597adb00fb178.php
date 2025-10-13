@@ -1,22 +1,22 @@
-@extends('layouts.admin')
-@section('title', 'Admin | Add Student')
-@section('content')
+<?php $__env->startSection('title', 'Admin | Add Student'); ?>
+<?php $__env->startSection('content'); ?>
 
-@if (session('success'))
+<?php if(session('success')): ?>
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
         <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                     <i class="ti ti-check-circle me-2"></i>
-                    {{ session('success') }}
+                    <?php echo e(session('success')); ?>
+
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
-@endif
+<?php endif; ?>
 
-@if ($errors->any())
+<?php if($errors->any()): ?>
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
         <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
@@ -24,23 +24,23 @@
                     <i class="ti ti-alert-circle me-2"></i>
                     <strong>Validation Errors:</strong>
                     <ul class="mb-0 mt-2">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
-@endif 
+<?php endif; ?> 
 
 <div class="content">
     <div class="row">
         <div class="col-lg-12 mx-auto">
             <div>
                 <h6 class="mb-3 fs-14">
-                    <a href="{{ route('admin.students.index') }}">
+                    <a href="<?php echo e(route('admin.students.index')); ?>">
                         <i class="ti ti-arrow-left me-1"></i> Students
                     </a>
                 </h6>
@@ -58,8 +58,8 @@
                     </div>
                 </div>
 
-                <form id="studentForm" action="{{ route('admin.students.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf 
+                <form id="studentForm" action="<?php echo e(route('admin.students.store')); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?> 
 
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs mb-4" id="studentTabs" role="tablist">
@@ -104,7 +104,7 @@
                                                     <div class="input-group w-auto input-group-flat">
                                                         <input type="text" name="admission_date" class="form-control" data-provider="flatpickr"
                                                                data-date-format="d M, Y" placeholder="dd/mm/yyyy" 
-                                                               value="{{ old('admission_date', date('d M, Y')) }}">
+                                                               value="<?php echo e(old('admission_date', date('d M, Y'))); ?>">
                                                         <span class="input-group-text"><i class="ti ti-calendar"></i></span>
                                                     </div>
                                                 </div>
@@ -119,11 +119,11 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">ADMISSION NUMBER</label>
-                                                    <input type="text" name="admission_number" id="admission_number" class="form-control" value="{{ old('admission_number') }}" readonly placeholder="Auto-generated">
+                                                    <input type="text" name="admission_number" id="admission_number" class="form-control" value="<?php echo e(old('admission_number')); ?>" readonly placeholder="Auto-generated">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">ROLL NUMBER</label>
-                                                    <input type="text" name="roll_number" id="roll_number" class="form-control" value="{{ old('roll_number') }}" readonly placeholder="Auto-generated">
+                                                    <input type="text" name="roll_number" id="roll_number" class="form-control" value="<?php echo e(old('roll_number')); ?>" readonly placeholder="Auto-generated">
                                                 </div>
                                             </div>
                                         </div>
@@ -138,11 +138,11 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">EMAIL ADDRESS</label>
-                                                    <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                                                    <input type="email" name="email" class="form-control" value="<?php echo e(old('email')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">PHONE NUMBER</label>
-                                                    <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+                                                    <input type="text" name="phone" class="form-control" value="<?php echo e(old('phone')); ?>">
                                                 </div>
                                     </div>
                                 </div>
@@ -157,19 +157,19 @@
                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">CURRENT ADDRESS <span class="text-danger">*</span></label>
-                                                    <textarea name="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+                                                    <textarea name="address" class="form-control" rows="3" required><?php echo e(old('address')); ?></textarea>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">PINCODE <span class="text-danger">*</span></label>
-                                                    <input type="text" name="pincode" class="form-control" value="{{ old('pincode') }}" required>
+                                                    <input type="text" name="pincode" class="form-control" value="<?php echo e(old('pincode')); ?>" required>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">DISTRICT <span class="text-danger">*</span></label>
-                                                    <input type="text" name="district" class="form-control" value="{{ old('district') }}" required>
+                                                    <input type="text" name="district" class="form-control" value="<?php echo e(old('district')); ?>" required>
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">PERMANENT ADDRESS</label>
-                                                    <textarea name="permanent_address" class="form-control" rows="3">{{ old('permanent_address') }}</textarea>
+                                                    <textarea name="permanent_address" class="form-control" rows="3"><?php echo e(old('permanent_address')); ?></textarea>
                                 </div>
                                 </div>
                                 </div>
@@ -187,19 +187,19 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">FIRST NAME</label>
-                                                    <input type="text" name="first_name" class="form-control" value="{{ old('first_name') }}" required>
+                                                    <input type="text" name="first_name" class="form-control" value="<?php echo e(old('first_name')); ?>" required>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">LAST NAME</label>
-                                                    <input type="text" name="last_name" class="form-control" value="{{ old('last_name') }}" required>
+                                                    <input type="text" name="last_name" class="form-control" value="<?php echo e(old('last_name')); ?>" required>
                                                 </div>
                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">GENDER</label>
                                                     <select name="gender" class="form-control" required>
                                                         <option value="">Gender</option>
-                                                        <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
-                                                        <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
-                                                        <option value="Other" {{ old('gender') == 'Other' ? 'selected' : '' }}>Other</option>
+                                                        <option value="Male" <?php echo e(old('gender') == 'Male' ? 'selected' : ''); ?>>Male</option>
+                                                        <option value="Female" <?php echo e(old('gender') == 'Female' ? 'selected' : ''); ?>>Female</option>
+                                                        <option value="Other" <?php echo e(old('gender') == 'Other' ? 'selected' : ''); ?>>Other</option>
                                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -207,7 +207,7 @@
                                                     <div class="input-group w-auto input-group-flat">
                                                         <input type="text" name="dob" class="form-control" data-provider="flatpickr"
                                                                data-date-format="d M, Y" placeholder="dd/mm/yyyy" 
-                                                               value="{{ old('dob') }}">
+                                                               value="<?php echo e(old('dob')); ?>">
                                                         <span class="input-group-text"><i class="ti ti-calendar"></i></span>
                                                     </div>
                                 </div>
@@ -224,7 +224,7 @@
                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">CASTE</label>
-                                    <input type="text" name="caste_tribe" class="form-control" value="{{ old('caste_tribe') }}">
+                                    <input type="text" name="caste_tribe" class="form-control" value="<?php echo e(old('caste_tribe')); ?>">
                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">Student Photo</label>
@@ -285,11 +285,11 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">HEIGHT (IN)</label>
-                                                    <input type="text" name="height" class="form-control" value="{{ old('height') }}">
+                                                    <input type="text" name="height" class="form-control" value="<?php echo e(old('height')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                                     <label class="form-label">WEIGHT (KG)</label>
-                                                                    <input type="text" name="weight" class="form-control" value="{{ old('weight') }}">
+                                                                    <input type="text" name="weight" class="form-control" value="<?php echo e(old('weight')); ?>">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -306,11 +306,12 @@
                                                                     <label class="form-label">INSTITUTION</label>
                                                                     <select name="institution_id" class="form-control" required onchange="loadClasses(this.value)">
                                         <option value="">Select Institution</option>
-                                                                        @foreach($institutions as $institution)
-                                                                            <option value="{{ $institution->id }}" {{ old('institution_id') == $institution->id ? 'selected' : '' }}>
-                                                {{ $institution->name }}
+                                                                        <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                            <option value="<?php echo e($institution->id); ?>" <?php echo e(old('institution_id') == $institution->id ? 'selected' : ''); ?>>
+                                                <?php echo e($institution->name); ?>
+
                                             </option>
-                                        @endforeach
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -323,22 +324,24 @@
                                                     <label class="form-label">CLASS</label>
                                                     <select name="class_id" class="form-control" id="class_id" onchange="loadSections(this.value)">
                                                         <option value="">Class</option>
-                                                        @foreach($classes as $class)
-                                                            <option value="{{ $class->id }}" {{ old('class_id') == $class->id ? 'selected' : '' }}>
-                                                                {{ $class->name }}
+                                                        <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($class->id); ?>" <?php echo e(old('class_id') == $class->id ? 'selected' : ''); ?>>
+                                                                <?php echo e($class->name); ?>
+
                                                             </option>
-                                                        @endforeach
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">SECTION</label>
                                                     <select name="section_id" class="form-control" id="section_id">
                                                         <option value="">Section</option>
-                                                        @foreach($sections as $section)
-                                                            <option value="{{ $section->id }}" {{ old('section_id') == $section->id ? 'selected' : '' }}>
-                                                                {{ $section->name }}
+                                                        <?php $__currentLoopData = $sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($section->id); ?>" <?php echo e(old('section_id') == $section->id ? 'selected' : ''); ?>>
+                                                                <?php echo e($section->name); ?>
+
                                                             </option>
-                                                        @endforeach
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                                 </div>
                                                 <div class="col-md-12 mb-3">
@@ -369,15 +372,15 @@
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">FATHER NAME</label>
-                                                    <input type="text" name="father_name" class="form-control" value="{{ old('father_name') }}">
+                                                    <input type="text" name="father_name" class="form-control" value="<?php echo e(old('father_name')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">OCCUPATION</label>
-                                                    <input type="text" name="father_occupation" class="form-control" value="{{ old('father_occupation') }}">
+                                                    <input type="text" name="father_occupation" class="form-control" value="<?php echo e(old('father_occupation')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">FATHER PHONE</label>
-                                                    <input type="text" name="father_phone" class="form-control" value="{{ old('father_phone') }}">
+                                                    <input type="text" name="father_phone" class="form-control" value="<?php echo e(old('father_phone')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">FATHERS PHOTO</label>
@@ -405,15 +408,15 @@
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">MOTHER NAME</label>
-                                                    <input type="text" name="mother_name" class="form-control" value="{{ old('mother_name') }}">
+                                                    <input type="text" name="mother_name" class="form-control" value="<?php echo e(old('mother_name')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">OCCUPATION</label>
-                                                    <input type="text" name="mother_occupation" class="form-control" value="{{ old('mother_occupation') }}">
+                                                    <input type="text" name="mother_occupation" class="form-control" value="<?php echo e(old('mother_occupation')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">MOTHER PHONE</label>
-                                                    <input type="text" name="mother_phone" class="form-control" value="{{ old('mother_phone') }}">
+                                                    <input type="text" name="mother_phone" class="form-control" value="<?php echo e(old('mother_phone')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">MOTHERS PHOTO</label>
@@ -462,7 +465,7 @@
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIANS NAME</label>
-                                                    <input type="text" name="guardian_name" class="form-control" value="{{ old('guardian_name') }}">
+                                                    <input type="text" name="guardian_name" class="form-control" value="<?php echo e(old('guardian_name')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">RELATION WITH GUARDIAN</label>
@@ -470,7 +473,7 @@
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIANS EMAIL <span class="text-danger">*</span></label>
-                                                    <input type="email" name="guardian_email" class="form-control" value="{{ old('guardian_email') }}">
+                                                    <input type="email" name="guardian_email" class="form-control" value="<?php echo e(old('guardian_email')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIAN PHOTO</label>
@@ -487,15 +490,15 @@
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIANS PHONE</label>
-                                                    <input type="text" name="guardian_phone" class="form-control" value="{{ old('guardian_phone') }}">
+                                                    <input type="text" name="guardian_phone" class="form-control" value="<?php echo e(old('guardian_phone')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIAN OCCUPATION</label>
-                                                    <input type="text" name="guardian_occupation" class="form-control" value="{{ old('guardian_occupation') }}">
+                                                    <input type="text" name="guardian_occupation" class="form-control" value="<?php echo e(old('guardian_occupation')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">GUARDIAN ADDRESS</label>
-                                                    <textarea name="guardian_address" class="form-control" rows="3">{{ old('guardian_address') }}</textarea>
+                                                    <textarea name="guardian_address" class="form-control" rows="3"><?php echo e(old('guardian_address')); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -517,15 +520,15 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">STUDENT ID</label>
-                                                    <input type="text" name="student_id" class="form-control" value="{{ old('student_id') }}" readonly placeholder="Auto-generated">
+                                                    <input type="text" name="student_id" class="form-control" value="<?php echo e(old('student_id')); ?>" readonly placeholder="Auto-generated">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">Birth Certificate Number</label>
-                                                    <input type="text" name="birth_certificate_number" class="form-control" value="{{ old('birth_certificate_number') }}">
+                                                    <input type="text" name="birth_certificate_number" class="form-control" value="<?php echo e(old('birth_certificate_number')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">ADDITIONAL NOTES</label>
-                                                    <textarea name="additional_notes" class="form-control" rows="4">{{ old('additional_notes') }}</textarea>
+                                                    <textarea name="additional_notes" class="form-control" rows="4"><?php echo e(old('additional_notes')); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -540,7 +543,7 @@
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">AADHAAR NUMBER</label>
-                                                    <input type="text" name="aadhaar_no" class="form-control" value="{{ old('aadhaar_no') }}" maxlength="12" placeholder="12-digit Aadhaar number">
+                                                    <input type="text" name="aadhaar_no" class="form-control" value="<?php echo e(old('aadhaar_no')); ?>" maxlength="12" placeholder="12-digit Aadhaar number">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">AADHAAR FRONT</label>
@@ -585,7 +588,7 @@
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">PAN NUMBER</label>
-                                                    <input type="text" name="pan_no" class="form-control" value="{{ old('pan_no') }}" maxlength="10" placeholder="ABCDE1234F">
+                                                    <input type="text" name="pan_no" class="form-control" value="<?php echo e(old('pan_no')); ?>" maxlength="10" placeholder="ABCDE1234F">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">PAN FRONT</label>
@@ -626,7 +629,7 @@
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">PEN NUMBER</label>
-                                                    <input type="text" name="pen_no" class="form-control" value="{{ old('pen_no') }}" placeholder="PEN number">
+                                                    <input type="text" name="pen_no" class="form-control" value="<?php echo e(old('pen_no')); ?>" placeholder="PEN number">
                                                 </div>
                                             </div>
                                         </div>
@@ -641,15 +644,15 @@
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">BANK NAME</label>
-                                                    <input type="text" name="bank_name" class="form-control" value="{{ old('bank_name') }}">
+                                                    <input type="text" name="bank_name" class="form-control" value="<?php echo e(old('bank_name')); ?>">
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">BANK ACCOUNT NUMBER</label>
-                                                    <input type="text" name="bank_account_number" class="form-control" value="{{ old('bank_account_number') }}">
+                                                    <input type="text" name="bank_account_number" class="form-control" value="<?php echo e(old('bank_account_number')); ?>">
                                                 </div>
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">IFSC CODE</label>
-                                                    <input type="text" name="ifsc_code" class="form-control" value="{{ old('ifsc_code') }}">
+                                                    <input type="text" name="ifsc_code" class="form-control" value="<?php echo e(old('ifsc_code')); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -666,7 +669,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">DOCUMENT 01 TITLE</label>
-                                            <input type="text" name="document_01_title" class="form-control" value="{{ old('document_01_title') }}">
+                                            <input type="text" name="document_01_title" class="form-control" value="<?php echo e(old('document_01_title')); ?>">
                                             <div class="document-upload mt-2">
                                                 <input type="file" name="document_01_file" id="document_01_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                                 <div class="document-upload-btn" onclick="document.getElementById('document_01_file').click()">
@@ -680,7 +683,7 @@
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">DOCUMENT 02 TITLE</label>
-                                            <input type="text" name="document_02_title" class="form-control" value="{{ old('document_02_title') }}">
+                                            <input type="text" name="document_02_title" class="form-control" value="<?php echo e(old('document_02_title')); ?>">
                                             <div class="document-upload mt-2">
                                                 <input type="file" name="document_02_file" id="document_02_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                                 <div class="document-upload-btn" onclick="document.getElementById('document_02_file').click()">
@@ -694,7 +697,7 @@
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">DOCUMENT 03 TITLE</label>
-                                            <input type="text" name="document_03_title" class="form-control" value="{{ old('document_03_title') }}">
+                                            <input type="text" name="document_03_title" class="form-control" value="<?php echo e(old('document_03_title')); ?>">
                                             <div class="document-upload mt-2">
                                                 <input type="file" name="document_03_file" id="document_03_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                                 <div class="document-upload-btn" onclick="document.getElementById('document_03_file').click()">
@@ -708,7 +711,7 @@
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">DOCUMENT 04 TITLE</label>
-                                            <input type="text" name="document_04_title" class="form-control" value="{{ old('document_04_title') }}">
+                                            <input type="text" name="document_04_title" class="form-control" value="<?php echo e(old('document_04_title')); ?>">
                                             <div class="document-upload mt-2">
                                                 <input type="file" name="document_04_file" id="document_04_file" class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                                 <div class="document-upload-btn" onclick="document.getElementById('document_04_file').click()">
@@ -731,9 +734,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
 /* Upload Area Styles */
 .upload-area {
@@ -854,10 +857,10 @@
     font-weight: 500;
 }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/students.js') }}"></script>
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/admin/students.js')); ?>"></script>
     <script>
         // Auto-generate admission number and roll number
         function generateAdmissionAndRollNumbers() {
@@ -925,4 +928,5 @@
             }
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/admin/administration/students/create.blade.php ENDPATH**/ ?>

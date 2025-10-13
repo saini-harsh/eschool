@@ -118,11 +118,11 @@
                                                 </div>
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">ADMISSION NUMBER</label>
-                                                    <input type="text" name="admission_number" class="form-control" value="{{ old('admission_number', $student->admission_number) }}">
+                                                    <input type="text" name="admission_number" class="form-control" value="{{ old('admission_number', $student->admission_number) }}" readonly>
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Roll</label>
-                                                    <input type="text" name="roll_number" class="form-control" value="{{ old('roll_number', $student->roll_number) }}">
+                                                    <label class="form-label">ROLL NUMBER</label>
+                                                    <input type="text" name="roll_number" class="form-control" value="{{ old('roll_number', $student->roll_number) }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -532,8 +532,8 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">NATIONAL ID</label>
-                                                    <input type="text" name="national_id" class="form-control" value="{{ old('national_id', $student->national_id) }}">
+                                                    <label class="form-label">STUDENT ID</label>
+                                                    <input type="text" name="student_id" class="form-control" value="{{ old('student_id', $student->student_id) }}" readonly>
                                                 </div>
                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">BIRTH CERTIFICATE NUMBER</label>
@@ -542,6 +542,79 @@
                                                 <div class="col-md-12 mb-3">
                                                     <label class="form-label">ADDITIONAL NOTES</label>
                                                     <textarea name="additional_notes" class="form-control" rows="4">{{ old('additional_notes', $student->additional_notes) }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Aadhaar Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">AADHAAR CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">AADHAAR CARD NUMBER</label>
+                                                    <input type="text" name="aadhaar_no" class="form-control" value="{{ old('aadhaar_no', $student->aadhaar_no) }}" placeholder="Enter 12-digit Aadhaar number">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR CARD FRONT</label>
+                                                    <input type="file" name="aadhaar_front" class="form-control" accept="image/*">
+                                                    @if($student->aadhaar_front)
+                                                        <small class="text-muted">Current file: {{ basename($student->aadhaar_front) }}</small>
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">AADHAAR CARD BACK</label>
+                                                    <input type="file" name="aadhaar_back" class="form-control" accept="image/*">
+                                                    @if($student->aadhaar_back)
+                                                        <small class="text-muted">Current file: {{ basename($student->aadhaar_back) }}</small>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- PAN Card Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PAN CARD INFORMATION</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PAN CARD NUMBER</label>
+                                                    <input type="text" name="pan_no" class="form-control" value="{{ old('pan_no', $student->pan_no) }}" placeholder="Enter PAN number">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN CARD FRONT</label>
+                                                    <input type="file" name="pan_front" class="form-control" accept="image/*">
+                                                    @if($student->pan_front)
+                                                        <small class="text-muted">Current file: {{ basename($student->pan_front) }}</small>
+                                                    @endif
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">PAN CARD BACK</label>
+                                                    <input type="file" name="pan_back" class="form-control" accept="image/*">
+                                                    @if($student->pan_back)
+                                                        <small class="text-muted">Current file: {{ basename($student->pan_back) }}</small>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- PEN Number -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">PEN NUMBER</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">PEN NUMBER</label>
+                                                    <input type="text" name="pen_no" class="form-control" value="{{ old('pen_no', $student->pen_no) }}" placeholder="Enter PEN number">
                                                 </div>
                                             </div>
                                         </div>
