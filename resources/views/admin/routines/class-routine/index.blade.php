@@ -103,14 +103,15 @@
         <table class="table table-bordered">
             <thead class="table-light">
                 <tr>
-                    <th class="text-center">Time</th>
-                    <th class="text-center">SATURDAY</th>
-                    <th class="text-center">SUNDAY</th>
-                    <th class="text-center">MONDAY</th>
-                    <th class="text-center">TUESDAY</th>
-                    <th class="text-center">WEDNESDAY</th>
-                    <th class="text-center">THURSDAY</th>
-                    <th class="text-center">FRIDAY</th>
+                    <th class="text-center">Day</th>
+                    <th id="time-header-1" class="text-center">Time Slot 1</th>
+                    <th id="time-header-2" class="text-center">Time Slot 2</th>
+                    <th id="time-header-3" class="text-center">Time Slot 3</th>
+                    <th id="time-header-4" class="text-center">Time Slot 4</th>
+                    <th id="time-header-5" class="text-center">Time Slot 5</th>
+                    <th id="time-header-6" class="text-center">Time Slot 6</th>
+                    <th id="time-header-7" class="text-center">Time Slot 7</th>
+                    <th id="time-header-8" class="text-center">Time Slot 8</th>
                 </tr>
             </thead>
             <tbody id="routine-tbody">

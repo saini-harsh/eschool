@@ -404,17 +404,58 @@ $(document).ready(function() {
             return;
         }
 
-        content.html(template);
-        
-        // Create time slots and populate routine data
+        // Create time slots first
         const timeSlots = generateTimeSlots(routines);
+        
+        // Create dynamic table with proper number of columns
+        let tableHtml = `
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">Day</th>`;
+        
+        // Add time header columns dynamically
+        timeSlots.forEach(function(timeSlot, index) {
+            // Find the routine for this time slot to get both start and end time
+            let routineForTime = null;
+            ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].forEach(function(day) {
+                const dayRoutines = routines[day] || [];
+                const routineAtTime = dayRoutines.find(r => r.start_time === timeSlot);
+                if (routineAtTime && !routineForTime) {
+                    routineForTime = routineAtTime;
+                }
+            });
+            
+            // Display both start and end time
+            const timeDisplay = routineForTime ? 
+                `${formatTimeTo12Hour(routineForTime.start_time)} - ${formatTimeTo12Hour(routineForTime.end_time)}` : 
+                formatTimeTo12Hour(timeSlot);
+            
+            tableHtml += `<th class="text-center">${timeDisplay}</th>`;
+        });
+        
+        tableHtml += `
+                        </tr>
+                    </thead>
+                    <tbody id="routine-tbody">
+                        <!-- Routine rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>`;
+        
+        content.html(tableHtml);
         const tbody = $('#routine-tbody');
         
-        timeSlots.forEach(function(timeSlot) {
+        // Create rows for each day (Monday to Saturday, excluding Sunday)
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+        
+        days.forEach(function(day, dayIndex) {
             const row = $('<tr></tr>');
-            row.append(`<td class="text-center fw-bold">${formatTimeTo12Hour(timeSlot)}</td>`);
+            row.append(`<td class="text-center fw-bold">${dayNames[dayIndex]}</td>`);
             
-            ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(function(day) {
+            timeSlots.forEach(function(timeSlot) {
                 const cell = $('<td class="text-center"></td>');
                 const dayRoutines = routines[day] || [];
                 const routineAtTime = dayRoutines.find(r => r.start_time === timeSlot);
