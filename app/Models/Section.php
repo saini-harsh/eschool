@@ -17,6 +17,8 @@ class Section extends Model
         'status',
     ];
 
+    protected $with = ['institution', 'class'];
+
     protected $casts = [
         'status' => 'boolean',
     ];
@@ -30,6 +32,10 @@ class Section extends Model
     }
 
     public function schoolClass(){
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
+
+    public function class(){
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
 }

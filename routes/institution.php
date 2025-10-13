@@ -257,6 +257,11 @@ Route::middleware('institution')->group(function () {
                 Route::get('/{id}/design-layout', [ClassRoomController::class, 'designLayout'])->name('institution.exam-management.rooms.design-layout');
                 Route::post('/{id}/update', [ClassRoomController::class, 'update'])->name('institution.exam-management.rooms.update');
                 Route::post('/{id}/update-layout', [ClassRoomController::class, 'updateLayout'])->name('institution.exam-management.rooms.update-layout');
+
+                // API routes for loading classes, sections, and students
+                Route::get('/api/classes/{institutionId}', [ClassRoomController::class, 'getClassesByInstitution'])->name('institution.exam-management.rooms.classes');
+                Route::get('/api/sections/{classId}', [ClassRoomController::class, 'getSectionsByClass'])->name('institution.exam-management.rooms.sections');
+                Route::get('/api/students/{classId}/{sectionId}', [ClassRoomController::class, 'getStudentsByClassAndSection'])->name('institution.exam-management.rooms.students');
                 Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('institution.exam-management.rooms.destroy');
             });
         });
@@ -306,7 +311,7 @@ Route::middleware('institution')->group(function () {
             Route::put('/{id}', [FeeStructureController::class, 'update'])->name('institution.fee-structure.update');
             Route::delete('/{id}', [FeeStructureController::class, 'destroy'])->name('institution.fee-structure.destroy');
             Route::post('/{id}/status', [FeeStructureController::class, 'updateStatus'])->name('institution.fee-structure.status');
-            
+
             // AJAX routes for dynamic dropdowns
             Route::get('/sections/{classId}', [FeeStructureController::class, 'getSectionsByClass'])->name('institution.fee-structure.sections');
         });
@@ -321,7 +326,7 @@ Route::middleware('institution')->group(function () {
             Route::put('/{id}', [AdmissionFeeController::class, 'update'])->name('institution.admission-fee.update');
             Route::delete('/{id}', [AdmissionFeeController::class, 'destroy'])->name('institution.admission-fee.destroy');
             Route::post('/{id}/status', [AdmissionFeeController::class, 'updateStatus'])->name('institution.admission-fee.status');
-            
+
             // AJAX routes for dynamic dropdowns
             Route::get('/sections/{classId}', [AdmissionFeeController::class, 'getSectionsByClass'])->name('institution.admission-fee.sections');
         });

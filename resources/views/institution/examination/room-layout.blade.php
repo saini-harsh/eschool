@@ -704,18 +704,6 @@
                                             <label class="form-label">Class</label>
                                             <select class="form-control" id="studentClass" onchange="loadSections()">
                                                 <option value="">Select Class</option>
-                                                <option value="1">Class 1</option>
-                                                <option value="2">Class 2</option>
-                                                <option value="3">Class 3</option>
-                                                <option value="4">Class 4</option>
-                                                <option value="5">Class 5</option>
-                                                <option value="6">Class 6</option>
-                                                <option value="7">Class 7</option>
-                                                <option value="8">Class 8</option>
-                                                <option value="9">Class 9</option>
-                                                <option value="10">Class 10</option>
-                                                <option value="11">Class 11</option>
-                                                <option value="12">Class 12</option>
                                             </select>
                                         </div>
                                     </div>
@@ -724,11 +712,6 @@
                                             <label class="form-label">Section</label>
                                             <select class="form-control" id="studentSection" onchange="loadStudents()">
                                                 <option value="">Select Section</option>
-                                                <option value="A">Section A</option>
-                                                <option value="B">Section B</option>
-                                                <option value="C">Section C</option>
-                                                <option value="D">Section D</option>
-                                                <option value="E">Section E</option>
                                             </select>
                                         </div>
                                     </div>
@@ -752,8 +735,8 @@
                                         <strong>Current Assignment:</strong><br>
                                         ${desk.students[studentIndex] ?
                                             `Name: ${desk.students[studentIndex].name}<br>
-                                                                                                                                                                                                 Class: ${desk.students[studentIndex].class || 'Not assigned'}<br>
-                                                                                                                                                                                                 Section: ${desk.students[studentIndex].section || 'Not assigned'}` :
+                                                                                                                                                                                                             Class: ${desk.students[studentIndex].class || 'Not assigned'}<br>
+                                                                                                                                                                                                             Section: ${desk.students[studentIndex].section || 'Not assigned'}` :
                                             'No student assigned to this position'
                                         }
                                     </small>
@@ -762,7 +745,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                 <button type="button" class="btn btn-danger" onclick="removeStudent(${row}, ${col}, ${studentIndex})">Remove Student</button>
-                                <button type="button" class="btn btn-primary" onclick="saveStudentAssignment(${row}, ${col}, ${studentIndex})">Save Assignment</button>
+                                <button type="button" class="btn btn-primary" onclick="saveStudentAssignment(${row}, ${col}, ${studentIndex})">Save Seat Assignment</button>
                             </div>
                         </div>
                     </div>
@@ -778,14 +761,25 @@
             // Add modal to body
             document.body.insertAdjacentHTML('beforeend', modalHtml);
 
+            // Load classes from database
+            loadClasses();
+
             // Populate existing data if student is already assigned
             if (desk.students[studentIndex]) {
                 const student = desk.students[studentIndex];
-                document.getElementById('studentName').value = student.name || '';
-                document.getElementById('studentId').value = student.id || '';
-                document.getElementById('studentRoll').value = student.roll || '';
-                document.getElementById('studentClass').value = student.class || '';
-                document.getElementById('studentSection').value = student.section || '';
+                // Set the class and section values if they exist
+                setTimeout(() => {
+                    if (student.class) {
+                        document.getElementById('studentClass').value = student.class;
+                        loadSections();
+                        setTimeout(() => {
+                            if (student.section) {
+                                document.getElementById('studentSection').value = student.section;
+                                loadStudents();
+                            }
+                        }, 500);
+                    }
+                }, 500);
             }
 
             // Show modal
@@ -848,6 +842,42 @@
         }
 
         // Dynamic student loading functions
+        function loadClasses() {
+            const classSelect = document.getElementById('studentClass');
+            const sectionSelect = document.getElementById('studentSection');
+            const studentSelect = document.getElementById('studentSelect');
+
+            // Clear all dropdowns
+            classSelect.innerHTML = '<option value="">Select Class</option>';
+            sectionSelect.innerHTML = '<option value="">Select Section</option>';
+            studentSelect.innerHTML = '<option value="">Select Student</option>';
+            document.getElementById('studentInfo').textContent = 'Please select a student';
+
+            // Get institution ID from the current user (you may need to pass this from PHP)
+            const institutionId = {{ auth('institution')->id() }};
+
+            // Fetch classes for the institution
+            fetch(`/institution/exam-management/rooms/api/classes/${institutionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.classes.forEach(classItem => {
+                            const option = document.createElement('option');
+                            option.value = classItem.id;
+                            option.textContent = classItem.name;
+                            classSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Error loading classes:', data.error);
+                        classSelect.innerHTML = '<option value="">Error loading classes</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading classes:', error);
+                    classSelect.innerHTML = '<option value="">Error loading classes</option>';
+                });
+        }
+
         function loadSections() {
             const classId = document.getElementById('studentClass').value;
             const sectionSelect = document.getElementById('studentSection');
@@ -861,7 +891,7 @@
             if (!classId) return;
 
             // Fetch sections for the selected class
-            fetch(`/api/classes/${classId}/sections`)
+            fetch(`/institution/exam-management/rooms/api/sections/${classId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -871,18 +901,14 @@
                             option.textContent = section.name;
                             sectionSelect.appendChild(option);
                         });
+                    } else {
+                        console.error('Error loading sections:', data.error);
+                        sectionSelect.innerHTML = '<option value="">Error loading sections</option>';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading sections:', error);
-                    // Fallback to default sections
-                    const defaultSections = ['A', 'B', 'C', 'D', 'E'];
-                    defaultSections.forEach(section => {
-                        const option = document.createElement('option');
-                        option.value = section;
-                        option.textContent = `Section ${section}`;
-                        sectionSelect.appendChild(option);
-                    });
+                    sectionSelect.innerHTML = '<option value="">Error loading sections</option>';
                 });
         }
 
@@ -898,7 +924,7 @@
             if (!classId || !sectionId) return;
 
             // Fetch students for the selected class and section
-            fetch(`/api/classes/${classId}/sections/${sectionId}/students`)
+            fetch(`/institution/exam-management/rooms/api/students/${classId}/${sectionId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -909,11 +935,16 @@
                             option.dataset.studentData = JSON.stringify(student);
                             studentSelect.appendChild(option);
                         });
+                    } else {
+                        console.error('Error loading students:', data.error);
+                        studentSelect.innerHTML = '<option value="">Error loading students</option>';
+                        document.getElementById('studentInfo').textContent =
+                            'Error loading students. Please try again.';
                     }
                 })
                 .catch(error => {
                     console.error('Error loading students:', error);
-                    // Show error message
+                    studentSelect.innerHTML = '<option value="">Error loading students</option>';
                     document.getElementById('studentInfo').textContent = 'Error loading students. Please try again.';
                 });
         }
@@ -1112,6 +1143,7 @@
         window.openStudentAssignmentModal = openStudentAssignmentModal;
         window.saveStudentAssignment = saveStudentAssignment;
         window.removeStudent = removeStudent;
+        window.loadClasses = loadClasses;
         window.loadSections = loadSections;
         window.loadStudents = loadStudents;
         window.showStudentInfo = showStudentInfo;

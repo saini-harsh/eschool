@@ -1,20 +1,20 @@
-@extends('layouts.institution')
-@section('title', 'Admin | Sections Management')
-@section('content')
-    @if (session('success'))
+<?php $__env->startSection('title', 'Admin | Sections Management'); ?>
+<?php $__env->startSection('content'); ?>
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
     <!-- Start Content -->
     <div class="content">
 
@@ -40,16 +40,20 @@
                     </div>
                     <div class="card-body">
                         <form action="" method="post" id="section-form">
-                            @csrf
+                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="section_id" id="section_id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Institution <span class="text-danger">*</span></label>
-                                        <input type="hidden" name="institution_id" id="institution_id"
-                                            value="{{ $currentInstitution->id }}">
-                                        <input type="text" name="institution_name" id="institution_name"
-                                            value="{{ $currentInstitution->name }}" class="form-control" readonly>
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
+                                            <option value="">Select Institution</option>
+                                            <?php if(isset($institutions) && !empty($institutions)): ?>
+                                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endif; ?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -57,9 +61,7 @@
                                         <label class="form-label">Class <span class="text-danger">*</span></label>
                                         <select class="form-select" name="class_id" id="class_id" required>
                                             <option value="">Select Class</option>
-                                            @foreach ($classes as $class)
-                                                <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                            @endforeach
+
                                         </select>
                                     </div>
                                 </div>
@@ -67,15 +69,16 @@
                                     <div class="mb-3">
                                         <label class="form-label">Sections <span class="text-danger">*</span></label>
                                         <div class="d-flex flex-wrap gap-2">
-                                            @foreach (range('A', 'Z') as $letter)
+                                            <?php $__currentLoopData = range('A', 'Z'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $letter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="sections[]"
-                                                        id="section_{{ $letter }}" value="{{ $letter }}">
+                                                        id="section_<?php echo e($letter); ?>" value="<?php echo e($letter); ?>">
                                                     <label class="form-check-label"
-                                                        for="section_{{ $letter }}">{{ $letter }}
+                                                        for="section_<?php echo e($letter); ?>"><?php echo e($letter); ?>
+
                                                     </label>
                                                 </div>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +102,18 @@
                 </div>
             </div>
             <div class="col-9">
-
+                <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                    <div>
+                        <select class="form-select" name="filter_institution_id" id="filter_institution_id" required>
+                            <option value="">Select Institution</option>
+                            <?php if(isset($institutions) && !empty($institutions)): ?>
+                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
                         <thead class="thead-ight">
@@ -112,33 +126,7 @@
                             </tr>
                         </thead>
                         <tbody id="sections-table-body">
-                            @foreach ($lists as $list)
-                                <tr>
-                                    <td>{{ $list->institution->name }}</td>
-                                    <td>{{ $list->class->name }}</td>
-                                    <td>{{ $list->name }}</td>
-                                    <td>{{ $list->status ? 'Active' : 'Inactive' }}</td>
-                                    <td>
-                                        <div class="d-inline-flex align-items-center">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-icon btn-sm btn-outline-white border-0 edit-section"
-                                                data-section-id="{{ $list->id }}"
-                                                data-section-name="{{ $list->name }}"
-                                                data-status="{{ $list->status }}"
-                                                data-institution-id="{{ $list->institution_id }}"
-                                                data-class-id="{{ $list->class_id || '' }}">
-                                                <i class="ti ti-edit"></i>
-                                            </a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-icon btn-sm btn-outline-white border-0 delete-section"
-                                                data-section-id="{{ $list->id }}"
-                                                data-section-name="{{ $list->name }}">
-                                                <i class="ti ti-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+
                         </tbody>
                     </table>
                 </div>
@@ -164,14 +152,16 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-@endsection
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/sections.js') }}"></script>
-@endpush
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/admin/sections.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/admin/academic/section/index.blade.php ENDPATH**/ ?>

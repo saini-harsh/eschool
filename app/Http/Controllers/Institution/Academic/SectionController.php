@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Institution\Academic;
 
-use App\Http\Controllers\Controller;
 use App\Models\Section;
+use App\Models\SchoolClass;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class SectionController extends Controller
@@ -16,17 +17,21 @@ class SectionController extends Controller
 
     public function index(){
         $currentInstitution = auth('institution')->user();
-        
+
         // Sections are global, but we can filter by institution if needed
         // For now, showing all sections as they might be shared across institutions
-        $lists = Section::orderBy('created_at', 'desc')->get();
-        return view('institution.academic.section.index', compact('lists'));
+        $lists = Section::where('institution_id', $currentInstitution->id)->orderBy('created_at', 'desc')->get();
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)->get();
+        $lists->load('institution', 'class');
+
+        return view('institution.academic.section.index', compact('lists', 'classes'));
     }
 
     public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
+                'institution_id' => 'required|exists:institutions,id',
                 'name' => 'required|string|max:255|unique:sections,name',
                 'status' => 'nullable|in:0,1'
             ]);
@@ -40,6 +45,7 @@ class SectionController extends Controller
             }
 
             $section = Section::create([
+                'institution_id' => $request->institution_id,
                 'name' => $request->name,
                 'status' => $request->status ?? 1 // Default to 1 if not provided
             ]);
@@ -61,8 +67,9 @@ class SectionController extends Controller
 
     public function getSections()
     {
+        $currentInstitution = auth('institution')->user();
         try {
-            $sections = Section::orderBy('created_at', 'desc')->get();
+            $sections = Section::where('institution_id', $currentInstitution->id)->orderBy('created_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
@@ -80,7 +87,7 @@ class SectionController extends Controller
     {
         try {
             $section = Section::findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $section
@@ -133,7 +140,7 @@ class SectionController extends Controller
     {
         try {
             $section = Section::findOrFail($id);
-            
+
             // Check if section is used in any classes
             $classesUsingSection = \App\Models\SchoolClass::whereJsonContains('section_ids', $id)->count();
             if ($classesUsingSection > 0) {
@@ -142,7 +149,7 @@ class SectionController extends Controller
                     'message' => 'Cannot delete section. It is being used by one or more classes.'
                 ], 422);
             }
-            
+
             $sectionName = $section->name;
             $section->delete();
 

@@ -1,20 +1,20 @@
-@extends('layouts.institution')
-@section('title', 'Admin | School Classes')
-@section('content')
-    @if (session('success'))
+<?php $__env->startSection('title', 'Admin | School Classes'); ?>
+<?php $__env->startSection('content'); ?>
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
     <div class="content">
         <!-- Page Header -->
         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
@@ -38,22 +38,22 @@
                     </div>
                     <div class="card-body">
                         <form action="" method="post" id="class-form">
-                            @csrf
+                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="class_id" id="class_id">
                             <div class="mb-3">
                                 <label class="form-label">Institution <span class="text-danger">*</span></label>
                                 <select name="institution_id" class="select" id="institution_id" required>
-                                    @if (isset($institutions) && !empty($institutions))
-                                        @foreach ($institutions as $institution)
-                                            <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                        @endforeach
-                                    @endif
+                                    <?php if(isset($institutions) && !empty($institutions)): ?>
+                                        <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endif; ?>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Classes <span class="text-danger">*</span></label>
                                 <div class="row">
-                                    @php
+                                    <?php
                                         $grades = [
                                             'Nursery',
                                             'LKG',
@@ -71,17 +71,17 @@
                                             '11',
                                             '12',
                                         ];
-                                    @endphp
-                                    @foreach ($grades as $grade)
+                                    ?>
+                                    <?php $__currentLoopData = $grades; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $grade): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="col-4 mb-2">
                                             <div class="form-check">
-                                                <input type="checkbox" name="classes[]" value="{{ $grade }}"
-                                                    class="form-check-input class-checkbox" id="class_{{ $grade }}">
+                                                <input type="checkbox" name="classes[]" value="<?php echo e($grade); ?>"
+                                                    class="form-check-input class-checkbox" id="class_<?php echo e($grade); ?>">
                                                 <label class="form-check-label"
-                                                    for="class_{{ $grade }}">{{ $grade }}</label>
+                                                    for="class_<?php echo e($grade); ?>"><?php echo e($grade); ?></label>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
 
@@ -250,25 +250,26 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Sections</th>{{-- ✅ New column --}}
+                                <th>Sections</th>
+                                <th>Student Count</th> 
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($classes as $class)
+                            <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                <h6 class="fs-14 mb-0">{{ $class->name }}</h6>
+                                                <h6 class="fs-14 mb-0"><?php echo e($class->name); ?></h6>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                @php
+                                                <?php
                                                     $sectionIds = is_array($class->section_ids)
                                                         ? $class->section_ids
                                                         : json_decode($class->section_ids, true);
@@ -279,18 +280,25 @@
                                                     )
                                                         ->pluck('name')
                                                         ->toArray();
-                                                @endphp
-                                                <h6 class="fs-14 mb-0">{{ implode(', ', $sectionNames) ?: '-' }}</h6>
+                                                ?>
+                                                <h6 class="fs-14 mb-0"><?php echo e(implode(', ', $sectionNames) ?: '-'); ?></h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-2">
+                                                <h6 class="fs-14 mb-0"><?php echo e($class->student_count ?? 0); ?></h6>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div>
                                             <select class="form-select class-status-select"
-                                                data-class-id="{{ $class->id }}">
-                                                <option value="1" {{ $class->status == 1 ? 'selected' : '' }}>Active
+                                                data-class-id="<?php echo e($class->id); ?>">
+                                                <option value="1" <?php echo e($class->status == 1 ? 'selected' : ''); ?>>Active
                                                 </option>
-                                                <option value="0" {{ $class->status == 0 ? 'selected' : '' }}>
+                                                <option value="0" <?php echo e($class->status == 0 ? 'selected' : ''); ?>>
                                                     Inactive
                                                 </option>
                                             </select>
@@ -300,20 +308,20 @@
 
                                         <a href="javascript:void(0);"
                                             class="btn btn-icon btn-sm btn-outline-white border-0 edit-class"
-                                            data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}"
-                                            data-institution-id="{{ $class->institution_id }}"
-                                            data-section-ids="{{ json_encode($sectionIds) }}"
-                                            data-status="{{ $class->status }}">
+                                            data-class-id="<?php echo e($class->id); ?>" data-class-name="<?php echo e($class->name); ?>"
+                                            data-institution-id="<?php echo e($class->institution_id); ?>"
+                                            data-section-ids="<?php echo e(json_encode($sectionIds)); ?>"
+                                            data-status="<?php echo e($class->status); ?>">
                                             <i class="ti ti-edit"></i>
                                         </a>
                                         <a href="javascript:void(0);"
                                             class="btn btn-icon btn-sm btn-outline-white border-0 delete-class"
-                                            data-class-id="{{ $class->id }}" data-class-name="{{ $class->name }}">
+                                            data-class-id="<?php echo e($class->id); ?>" data-class-name="<?php echo e($class->name); ?>">
                                             <i class="ti ti-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -336,7 +344,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
@@ -344,8 +352,10 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/schoolclass.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/admin/schoolclass.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/admin/academic/classes/index.blade.php ENDPATH**/ ?>
