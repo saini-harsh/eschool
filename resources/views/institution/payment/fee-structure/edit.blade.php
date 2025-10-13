@@ -56,6 +56,7 @@
                                         <option value="monthly" {{ $feeStructure->fee_type == 'monthly' ? 'selected' : '' }}>Monthly</option>
                                         <option value="quarterly" {{ $feeStructure->fee_type == 'quarterly' ? 'selected' : '' }}>Quarterly</option>
                                         <option value="yearly" {{ $feeStructure->fee_type == 'yearly' ? 'selected' : '' }}>Yearly</option>
+                                        <option value="onetime" {{ $feeStructure->fee_type == 'onetime' ? 'selected' : '' }}>One Time</option>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>

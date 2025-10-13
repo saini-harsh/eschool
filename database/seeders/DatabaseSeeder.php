@@ -35,7 +35,6 @@ class DatabaseSeeder extends Seeder
             RoutineSeeder::class,         // Depends on institution, class, section, subject, teacher, classroom
             LessonPlanSeeder::class,      // Depends on institution, class, subject, teacher
             FeeStructureSeeder::class,    // Depends on institution, class, section
-            AdmissionFeeSeeder::class,     // Depends on institution, class, section
         ]);
     }
 }

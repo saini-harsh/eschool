@@ -51,7 +51,7 @@ class FeeStructureController extends Controller
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
-            'fee_type' => 'required|in:monthly,quarterly,yearly',
+            'fee_type' => 'required|in:monthly,quarterly,yearly,onetime',
             'start_date' => 'required|string|date_format:Y-m-d',
         ]);
 
@@ -130,7 +130,7 @@ class FeeStructureController extends Controller
             'class_id' => 'required|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
-            'fee_type' => 'required|in:monthly,quarterly,yearly',
+            'fee_type' => 'required|in:monthly,quarterly,yearly,onetime',
             'start_date' => 'required|string|date_format:Y-m-d',
         ]);
 
