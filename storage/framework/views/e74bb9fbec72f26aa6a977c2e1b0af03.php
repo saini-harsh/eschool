@@ -134,35 +134,93 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form action="">
+                                <form action="<?php echo e(route('institution.lesson-plans.index')); ?>" method="GET" id="filter-form">
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <label class="form-label">Institution</label>
+                                                <label class="form-label">Class</label>
                                                 <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                             </div>
                                             <div class="dropdown">
                                                 <a href="javascript:void(0);"
                                                     class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                     data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
-                                                    Select
+                                                    Select Class
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu w-100">
-                                                    <?php if(isset($institutions) && !empty($institutions)): ?>
-                                                        <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php if(isset($classes) && $classes->count() > 0): ?>
+                                                        <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <li>
                                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                    <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                    <?php echo e($institution->name); ?>
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_id[]" value="<?php echo e($class->id); ?>" <?php echo e(in_array($class->id, (array) request('class_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($class->name); ?>
 
                                                                 </label>
                                                             </li>
                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
+                                                        <li><span class="dropdown-item text-muted">No classes available</span></li>
                                                     <?php endif; ?>
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div>
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <label class="form-label">Subject</label>
+                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                            </div>
+                                            <div class="dropdown">
+                                                <a href="javascript:void(0);"
+                                                    class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
+                                                    Select Subject
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu w-100">
+                                                    <?php if(isset($subjects) && $subjects->count() > 0): ?>
+                                                        <?php $__currentLoopData = $subjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subject): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="subject_id[]" value="<?php echo e($subject->id); ?>" <?php echo e(in_array($subject->id, (array) request('subject_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($subject->name); ?>
+
+                                                                </label>
+                                                            </li>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
+                                                        <li><span class="dropdown-item text-muted">No subjects available</span></li>
+                                                    <?php endif; ?>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <label class="form-label">Teacher</label>
+                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                            </div>
+                                            <div class="dropdown">
+                                                <a href="javascript:void(0);"
+                                                    class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
+                                                    Select Teacher
+                                                </a>
+                                                <ul class="dropdown-menu dropdown-menu w-100">
+                                                    <?php if(isset($teachers) && $teachers->count() > 0): ?>
+                                                        <?php $__currentLoopData = $teachers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teacher): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="teacher_id[]" value="<?php echo e($teacher->id); ?>" <?php echo e(in_array($teacher->id, (array) request('teacher_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($teacher->first_name); ?> <?php echo e($teacher->last_name); ?>
+
+                                                                </label>
+                                                            </li>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
+                                                        <li><span class="dropdown-item text-muted">No teachers available</span></li>
+                                                    <?php endif; ?>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label class="form-label">Status</label>
                                                 <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
@@ -171,18 +229,18 @@
                                                 <a href="javascript:void(0);"
                                                     class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                     data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
-                                                    Select
+                                                    Select Status
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu w-100">
                                                     <li>
                                                         <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                            <input class="form-check-input m-0 me-2" type="checkbox">
+                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="1" <?php echo e(in_array('1', (array) request('status', [])) ? 'checked' : ''); ?>>
                                                             Active
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                            <input class="form-check-input m-0 me-2" type="checkbox">
+                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="0" <?php echo e(in_array('0', (array) request('status', [])) ? 'checked' : ''); ?>>
                                                             Inactive
                                                         </label>
                                                     </li>
@@ -347,6 +405,138 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close filter dropdown
+        document.getElementById('close-filter')?.addEventListener('click', function() {
+            const dropdown = bootstrap.Dropdown.getInstance(document.querySelector('[data-bs-toggle="dropdown"]'));
+            if (dropdown) {
+                dropdown.hide();
+            }
+        });
+
+        // Filter form submission
+        const filterForm = document.getElementById('filter-form');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(this);
+                const params = new URLSearchParams();
+                
+                // Add form data to params
+                for (let [key, value] of formData.entries()) {
+                    if (value) {
+                        params.append(key, value);
+                    }
+                }
+                
+                // Redirect with filter parameters
+                const url = new URL(window.location);
+                url.search = params.toString();
+                window.location.href = url.toString();
+            });
+        }
+
+        // Clear all filters
+        const clearAllLink = document.querySelector('a[href="javascript:void(0);"].link-danger');
+        if (clearAllLink) {
+            clearAllLink.addEventListener('click', function() {
+                window.location.href = '<?php echo e(route("institution.lesson-plans.index")); ?>';
+            });
+        }
+
+        // Reset individual filters
+        document.querySelectorAll('.link-primary').forEach(function(resetLink) {
+            if (resetLink.textContent.trim() === 'Reset') {
+                resetLink.addEventListener('click', function() {
+                    const parentDiv = this.closest('.mb-3');
+                    const checkboxes = parentDiv.querySelectorAll('input[type="checkbox"]');
+                    
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = false;
+                    });
+                });
+            }
+        });
+
+        // Sort functionality
+        const sortDropdown = document.querySelector('.dropdown:last-child .dropdown-menu');
+        if (sortDropdown) {
+            sortDropdown.querySelectorAll('a.dropdown-item').forEach(function(sortLink) {
+                sortLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const sortValue = this.textContent.trim().toLowerCase();
+                    let sortParam = 'newest';
+                    
+                    switch(sortValue) {
+                        case 'oldest':
+                            sortParam = 'oldest';
+                            break;
+                        case 'title (a-z)':
+                            sortParam = 'title_asc';
+                            break;
+                        case 'title (z-a)':
+                            sortParam = 'title_desc';
+                            break;
+                    }
+                    
+                    // Update sort button text
+                    const sortButton = document.querySelector('.dropdown:last-child [data-bs-toggle="dropdown"]');
+                    if (sortButton) {
+                        sortButton.innerHTML = '<i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : ' + this.textContent.trim();
+                    }
+                    
+                    // Redirect with sort parameter
+                    const url = new URL(window.location);
+                    url.searchParams.set('sort_by', sortParam);
+                    window.location.href = url.toString();
+                });
+            });
+        }
+
+        // Search functionality
+        const searchInput = document.querySelector('.datatable-search .input-text');
+        if (searchInput) {
+            searchInput.addEventListener('click', function() {
+                const searchBox = document.createElement('input');
+                searchBox.type = 'text';
+                searchBox.className = 'form-control form-control-sm';
+                searchBox.placeholder = 'Search lesson plans...';
+                searchBox.style.width = '200px';
+                searchBox.value = '<?php echo e(request("search")); ?>';
+                
+                this.parentNode.replaceChild(searchBox, this);
+                searchBox.focus();
+                
+                searchBox.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const url = new URL(window.location);
+                        if (this.value.trim()) {
+                            url.searchParams.set('search', this.value.trim());
+                        } else {
+                            url.searchParams.delete('search');
+                        }
+                        window.location.href = url.toString();
+                    }
+                });
+                
+                searchBox.addEventListener('blur', function() {
+                    const searchIcon = document.createElement('a');
+                    searchIcon.href = 'javascript:void(0);';
+                    searchIcon.className = 'input-text';
+                    searchIcon.innerHTML = '<i class="ti ti-search"></i>';
+                    
+                    this.parentNode.replaceChild(searchIcon, this);
+                });
+            });
+        }
+    });
+</script>
 
 <?php $__env->stopSection(); ?>
 

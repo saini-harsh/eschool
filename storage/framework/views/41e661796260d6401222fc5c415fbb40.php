@@ -203,6 +203,17 @@
     </div>
 
     <!-- Payment History -->
+    <?php if($payments->count() > 0): ?>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h6 class="mb-0">Showing <?php echo e($payments->firstItem()); ?> to <?php echo e($payments->lastItem()); ?> of <?php echo e($payments->total()); ?> payments</h6>
+            </div>
+            <div>
+                <span class="text-muted">Page <?php echo e($payments->currentPage()); ?> of <?php echo e($payments->lastPage()); ?></span>
+            </div>
+        </div>
+    <?php endif; ?>
+    
     <div class="row">
         <div class="col-12">
             <?php if($payments->count() > 0): ?>
@@ -308,10 +319,12 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-4">
-                    <?php echo e($payments->links()); ?>
+                <?php if($payments->hasPages()): ?>
+                    <div class="d-flex justify-content-center mt-4">
+                        <?php echo e($payments->links()); ?>
 
-                </div>
+                    </div>
+                <?php endif; ?>
             <?php else: ?>
                 <div class="text-center py-5">
                     <div class="mb-3">

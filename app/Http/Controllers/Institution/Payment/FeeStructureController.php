@@ -21,7 +21,7 @@ class FeeStructureController extends Controller
         $feeStructures = FeeStructure::with(['schoolClass', 'section'])
             ->where('institution_id', $institution->id)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(12); // Show 12 cards per page (4 rows of 3 cards)
 
         return view('institution.payment.fee-structure.index', compact('feeStructures'));
     }

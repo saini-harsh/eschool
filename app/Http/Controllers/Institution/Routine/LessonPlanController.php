@@ -24,20 +24,77 @@ class LessonPlanController extends Controller
     /**
      * Display lesson plans list page with create form
      */
-    public function index()
+    public function index(Request $request)
     {
         // Get the current authenticated institution
         $currentInstitution = Auth::guard('institution')->user();
         
-        $lessonPlans = LessonPlan::with(['institution', 'teacher', 'schoolClass', 'subject', 'createdBy'])
-            ->where('institution_id', $currentInstitution->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Build query for lesson plans
+        $query = LessonPlan::with(['institution', 'teacher', 'schoolClass', 'subject', 'createdBy'])
+            ->where('institution_id', $currentInstitution->id);
+
+        // Apply filters
+        if ($request->filled('class_id')) {
+            $query->whereIn('class_id', (array) $request->class_id);
+        }
+
+        if ($request->filled('subject_id')) {
+            $query->whereIn('subject_id', (array) $request->subject_id);
+        }
+
+        if ($request->filled('teacher_id')) {
+            $query->whereIn('teacher_id', (array) $request->teacher_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->whereIn('status', (array) $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Apply sorting
+        $sortBy = $request->get('sort_by', 'newest');
+        switch ($sortBy) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'title_asc':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'title_desc':
+                $query->orderBy('title', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $lessonPlans = $query->get();
         
         // Show only the currently logged-in institution
         $institutions = collect([$currentInstitution]);
+
+        // Get classes for the current institution
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)
+            ->where('status', 1)
+            ->get(['id', 'name']);
         
-        return view('institution.routines.lesson-plans.index', compact('lessonPlans', 'institutions'));
+        // Get subjects for the current institution
+        $subjects = Subject::where('institution_id', $currentInstitution->id)
+            ->where('status', 1)
+            ->get(['id', 'name', 'code', 'class_id']);
+
+        // Get teachers for the current institution
+        $teachers = Teacher::where('institution_id', $currentInstitution->id)
+            ->where('status', 1)
+            ->get(['id', 'first_name', 'last_name']);
+        
+        return view('institution.routines.lesson-plans.index', compact('lessonPlans', 'institutions', 'classes', 'subjects', 'teachers'));
     }
 
 

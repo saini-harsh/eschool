@@ -200,6 +200,17 @@
     </div>
 
     <!-- Payment History -->
+    @if($payments->count() > 0)
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h6 class="mb-0">Showing {{ $payments->firstItem() }} to {{ $payments->lastItem() }} of {{ $payments->total() }} payments</h6>
+            </div>
+            <div>
+                <span class="text-muted">Page {{ $payments->currentPage() }} of {{ $payments->lastPage() }}</span>
+            </div>
+        </div>
+    @endif
+    
     <div class="row">
         <div class="col-12">
             @if($payments->count() > 0)
@@ -302,9 +313,11 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $payments->links() }}
-                </div>
+                @if($payments->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $payments->links() }}
+                    </div>
+                @endif
             @else
                 <div class="text-center py-5">
                     <div class="mb-3">
