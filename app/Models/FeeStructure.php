@@ -15,12 +15,12 @@ class FeeStructure extends Model
         'section_id',
         'amount',
         'fee_type',
-        'start_date',
+        'due_date',
         'status',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
+        'due_date' => 'date',
         'amount' => 'decimal:2',
         'status' => 'boolean',
     ];

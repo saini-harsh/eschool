@@ -1,5 +1,5 @@
 
-<?php $__env->startSection('title', 'Admin | Lesson Plans'); ?>
+<?php $__env->startSection('title', 'Institution | Lesson Plans'); ?>
 <?php $__env->startSection('content'); ?>
 
 <?php if(session('success')): ?>
@@ -26,7 +26,7 @@
             <h5 class="fw-bold">Lesson Plans</h5>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                    <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('admin.dashboard')); ?>"><i
+                    <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('institution.dashboard')); ?>"><i
                                 class="ti ti-home me-1"></i>Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Lesson Plans</li>
                 </ol>
@@ -351,7 +351,7 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
-<script src="<?php echo e(asset('custom/js/admin/lesson-plans.js')); ?>"></script>
+<script src="<?php echo e(asset('custom/js/institution/lesson-plans.js')); ?>"></script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/admin/routines/lesson-plans/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/routines/lesson-plans/index.blade.php ENDPATH**/ ?>

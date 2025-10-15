@@ -48,11 +48,11 @@ class FeeStructureController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'class_id' => 'required|exists:classes,id',
+            'class_id' => 'nullable|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
             'fee_type' => 'required|in:monthly,quarterly,yearly,onetime',
-            'start_date' => 'required|string|date_format:Y-m-d',
+            'due_date' => 'required|string|date_format:Y-m-d',
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +73,7 @@ class FeeStructureController extends Controller
             'section_id' => $request->section_id,
             'amount' => $request->amount,
             'fee_type' => $request->fee_type,
-            'start_date' => $request->start_date,
+            'due_date' => $request->due_date,
             'status' => 1,
         ]);
 
@@ -127,11 +127,11 @@ class FeeStructureController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'class_id' => 'required|exists:classes,id',
+            'class_id' => 'nullable|exists:classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
             'fee_type' => 'required|in:monthly,quarterly,yearly,onetime',
-            'start_date' => 'required|string|date_format:Y-m-d',
+            'due_date' => 'required|string|date_format:Y-m-d',
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +153,7 @@ class FeeStructureController extends Controller
             'section_id' => $request->section_id,
             'amount' => $request->amount,
             'fee_type' => $request->fee_type,
-            'start_date' => $request->start_date,
+            'due_date' => $request->due_date,
         ]);
 
         return response()->json([

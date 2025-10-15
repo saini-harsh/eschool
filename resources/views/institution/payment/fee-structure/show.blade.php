@@ -88,8 +88,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-4">
-                                <h6 class="text-muted mb-2">Start Date</h6>
-                                <p class="fw-semibold">{{ $feeStructure->start_date->format('d M Y') }}</p>
+                                <h6 class="text-muted mb-2">Due Date</h6>
+                                <p class="fw-semibold">{{ $feeStructure->due_date->format('d M Y') }}</p>
                             </div>
                         </div>
                     </div>

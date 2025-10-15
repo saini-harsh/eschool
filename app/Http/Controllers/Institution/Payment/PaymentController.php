@@ -16,15 +16,71 @@ class PaymentController extends Controller
     /**
      * Display a listing of payments.
      */
-    public function index()
+    public function index(Request $request)
     {
         $institution = Auth::guard('institution')->user();
-        $payments = Payment::with(['student', 'feeStructure'])
-            ->where('institution_id', $institution->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        
+        $query = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section'])
+            ->where('institution_id', $institution->id);
 
-        return view('institution.payment.payments.index', compact('payments'));
+        // Apply filters
+        if ($request->filled('payment_method')) {
+            $query->whereIn('payment_method', (array) $request->payment_method);
+        }
+
+        if ($request->filled('student_name')) {
+            $query->whereHas('student', function($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->student_name . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->student_name . '%')
+                  ->orWhere('admission_number', 'like', '%' . $request->student_name . '%');
+            });
+        }
+
+        if ($request->filled('class_section')) {
+            $query->whereHas('feeStructure', function($q) use ($request) {
+                $classSectionFilters = (array) $request->class_section;
+                $q->where(function($subQuery) use ($classSectionFilters) {
+                    foreach ($classSectionFilters as $filter) {
+                        if (strpos($filter, '_') !== false) {
+                            [$classId, $sectionId] = explode('_', $filter);
+                            $subQuery->orWhere(function($q) use ($classId, $sectionId) {
+                                $q->where('class_id', $classId);
+                                if ($sectionId !== 'all') {
+                                    $q->where('section_id', $sectionId);
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        // Apply sorting
+        $sortBy = $request->get('sort_by', 'newest');
+        switch ($sortBy) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'amount_high':
+                $query->orderBy('amount', 'desc');
+                break;
+            case 'amount_low':
+                $query->orderBy('amount', 'asc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        $payments = $query->paginate(15);
+
+        // Get classes and sections for filter dropdown
+        $classes = SchoolClass::where('institution_id', $institution->id)
+            ->where('status', 1)
+            ->with('sections')
+            ->orderBy('name')
+            ->get();
+
+        return view('institution.payment.payments.index', compact('payments', 'classes'));
     }
 
     /**

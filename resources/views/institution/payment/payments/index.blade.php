@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                         </div>
-                        <form action="#">
+                        <form action="{{ route('institution.payments.index') }}" method="GET" id="filter-form">
                             <div class="card-body">
                                 <div class="mb-3">
                                     <div class="d-flex align-items-center justify-content-between">
@@ -83,25 +83,25 @@
                                         <ul class="dropdown-menu dropdown-menu w-100">
                                             <li>
                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="cash">
+                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="cash" {{ in_array('cash', (array) request('payment_method', [])) ? 'checked' : '' }}>
                                                     Cash
                                                 </label>
                                             </li>
                                             <li>
                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="online">
+                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="online" {{ in_array('online', (array) request('payment_method', [])) ? 'checked' : '' }}>
                                                     Online
                                                 </label>
                                             </li>
                                             <li>
                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="bank_transfer">
+                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="bank_transfer" {{ in_array('bank_transfer', (array) request('payment_method', [])) ? 'checked' : '' }}>
                                                     Bank Transfer
                                                 </label>
                                             </li>
                                             <li>
                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="cheque">
+                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="payment_method[]" value="cheque" {{ in_array('cheque', (array) request('payment_method', [])) ? 'checked' : '' }}>
                                                     Cheque
                                                 </label>
                                             </li>
@@ -113,7 +113,7 @@
                                         <label class="form-label">Student Name</label>
                                         <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm" name="student_name" placeholder="Search by student name...">
+                                    <input type="text" class="form-control form-control-sm" name="student_name" placeholder="Search by student name..." value="{{ request('student_name') }}">
                                 </div>
                                 <div class="mb-3">
                                     <div class="d-flex align-items-center justify-content-between">
@@ -128,42 +128,30 @@
                                             Select Class & Section
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu w-100">
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_1_a">
-                                                    Class 1 - Section A
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_1_b">
-                                                    Class 1 - Section B
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_2_a">
-                                                    Class 2 - Section A
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_2_b">
-                                                    Class 2 - Section B
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_3_a">
-                                                    Class 3 - Section A
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="class_3_b">
-                                                    Class 3 - Section B
-                                                </label>
-                                            </li>
+                                            @if(isset($classes) && $classes->count() > 0)
+                                                @foreach($classes as $class)
+                                                    <li>
+                                                        <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="{{ $class->id }}_all" {{ in_array($class->id . '_all', (array) request('class_section', [])) ? 'checked' : '' }}>
+                                                            {{ $class->name }} - All Sections
+                                                        </label>
+                                                    </li>
+                                                    @if($class->sections && $class->sections->count() > 0)
+                                                        @foreach($class->sections as $section)
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_section[]" value="{{ $class->id }}_{{ $section->id }}" {{ in_array($class->id . '_' . $section->id, (array) request('class_section', [])) ? 'checked' : '' }}>
+                                                                    {{ $class->name }} - {{ $section->name }}
+                                                                </label>
+                                                            </li>
+                                                        @endforeach
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <li>
+                                                    <span class="dropdown-item text-muted">No classes available</span>
+                                                </li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>
@@ -181,23 +169,30 @@
                 <a href="javascript:void(0);"
                     class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
+                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : 
+                    @php
+                        $sortBy = request('sort_by', 'newest');
+                        $sortLabels = [
+                            'newest' => 'Newest',
+                            'oldest' => 'Oldest', 
+                            'amount_high' => 'Amount (High to Low)',
+                            'amount_low' => 'Amount (Low to High)'
+                        ];
+                    @endphp
+                    {{ $sortLabels[$sortBy] ?? 'Newest' }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end p-1">
                     <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by', 'newest') == 'newest' ? 'active' : '' }}">Newest</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'oldest' ? 'active' : '' }}">Oldest</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Amount (High to Low)</a>
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'amount_high' ? 'active' : '' }}">Amount (High to Low)</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Amount (Low to High)</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'amount_low' ? 'active' : '' }}">Amount (Low to High)</a>
                     </li>
                 </ul>
             </div>
@@ -349,6 +344,93 @@
             }
         });
 
+        // Filter form submission
+        const filterForm = document.getElementById('filter-form');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(this);
+                const params = new URLSearchParams();
+                
+                // Add form data to params
+                for (let [key, value] of formData.entries()) {
+                    if (value) {
+                        params.append(key, value);
+                    }
+                }
+                
+                // Redirect with filter parameters
+                const url = new URL(window.location);
+                url.search = params.toString();
+                window.location.href = url.toString();
+            });
+        }
+
+        // Clear all filters
+        const clearAllLink = document.querySelector('a[href="javascript:void(0);"].link-danger');
+        if (clearAllLink) {
+            clearAllLink.addEventListener('click', function() {
+                window.location.href = '{{ route("institution.payments.index") }}';
+            });
+        }
+
+        // Reset individual filters
+        document.querySelectorAll('.link-primary').forEach(function(resetLink) {
+            if (resetLink.textContent.trim() === 'Reset') {
+                resetLink.addEventListener('click', function() {
+                    const parentDiv = this.closest('.mb-3');
+                    const checkboxes = parentDiv.querySelectorAll('input[type="checkbox"]');
+                    const textInputs = parentDiv.querySelectorAll('input[type="text"]');
+                    
+                    checkboxes.forEach(function(checkbox) {
+                        checkbox.checked = false;
+                    });
+                    
+                    textInputs.forEach(function(input) {
+                        input.value = '';
+                    });
+                });
+            }
+        });
+
+        // Sort functionality
+        const sortDropdown = document.querySelector('.dropdown:last-child .dropdown-menu');
+        if (sortDropdown) {
+            sortDropdown.querySelectorAll('a.dropdown-item').forEach(function(sortLink) {
+                sortLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const sortValue = this.textContent.trim().toLowerCase();
+                    let sortParam = 'newest';
+                    
+                    switch(sortValue) {
+                        case 'oldest':
+                            sortParam = 'oldest';
+                            break;
+                        case 'amount (high to low)':
+                            sortParam = 'amount_high';
+                            break;
+                        case 'amount (low to high)':
+                            sortParam = 'amount_low';
+                            break;
+                    }
+                    
+                    // Update sort button text
+                    const sortButton = document.querySelector('.dropdown:last-child [data-bs-toggle="dropdown"]');
+                    if (sortButton) {
+                        sortButton.innerHTML = '<i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : ' + this.textContent.trim();
+                    }
+                    
+                    // Redirect with sort parameter
+                    const url = new URL(window.location);
+                    url.searchParams.set('sort_by', sortParam);
+                    window.location.href = url.toString();
+                });
+            });
+        }
+
         // Search functionality
         const searchInput = document.querySelector('.datatable-search .input-text');
         if (searchInput) {
@@ -361,6 +443,18 @@
                 
                 this.parentNode.replaceChild(searchBox, this);
                 searchBox.focus();
+                
+                searchBox.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const url = new URL(window.location);
+                        if (this.value.trim()) {
+                            url.searchParams.set('student_name', this.value.trim());
+                        } else {
+                            url.searchParams.delete('student_name');
+                        }
+                        window.location.href = url.toString();
+                    }
+                });
                 
                 searchBox.addEventListener('blur', function() {
                     const searchIcon = document.createElement('a');
