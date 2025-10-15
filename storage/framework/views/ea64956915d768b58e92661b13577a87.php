@@ -250,7 +250,7 @@
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <div>
+                                            <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Status</label>
                                                     <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="status">Reset</a>
@@ -280,6 +280,20 @@
                                                             </label>
                                                         </li>
                                                     </ul>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Created Date Range</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="created_date_range">Reset</a>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <input type="date" name="created_date_from" class="form-control" placeholder="From Date">
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="date" name="created_date_to" class="form-control" placeholder="To Date">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
