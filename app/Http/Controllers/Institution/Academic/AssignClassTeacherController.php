@@ -16,14 +16,39 @@ class AssignClassTeacherController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $currentInstitution = auth('institution')->user();
         
         $institutions = collect([$currentInstitution]); // Only show current institution
         $teachers = Teacher::where('institution_id', $currentInstitution->id)->get();
         $classes = SchoolClass::where('institution_id', $currentInstitution->id)->get();
-        $lists = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])->where('institution_id', $currentInstitution->id)->get();
+        
+        // Apply filters if any
+        $query = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
+            ->where('institution_id', $currentInstitution->id);
+        
+        if ($request->filled('class_ids')) {
+            $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+            $query->whereIn('class_id', $classIds);
+        }
+        
+        if ($request->filled('teacher_ids')) {
+            $teacherIds = is_array($request->teacher_ids) ? $request->teacher_ids : [$request->teacher_ids];
+            $query->whereIn('teacher_id', $teacherIds);
+        }
+        
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if (is_array($status)) {
+                $query->whereIn('status', $status);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+        
+        $lists = $query->orderBy('created_at', 'desc')->get();
+        
         return view('institution.academic.assign-teacher', compact('teachers', 'classes', 'institutions','lists'));
     }
 
@@ -82,6 +107,69 @@ class AssignClassTeacherController extends Controller
         
         $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
         return response()->json(['sections' => $sections]);
+    }
+
+    // Get assignments list for AJAX
+    public function list()
+    {
+        $currentInstitution = auth('institution')->user();
+        
+        $assignments = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
+            ->where('institution_id', $currentInstitution->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return response()->json([
+            'success' => true,
+            'data' => $assignments
+        ]);
+    }
+
+    // Filter assignments
+    public function filter(Request $request)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            // Log the request for debugging
+            \Log::info('Institution assign class teacher filter request received:', $request->all());
+            
+            // Build query with filters for current institution only
+            $query = AssignClassTeacher::with(['institution', 'class', 'section', 'teacher'])
+                ->where('institution_id', $currentInstitution->id);
+            
+            if ($request->filled('class_ids')) {
+                $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+                $query->whereIn('class_id', $classIds);
+            }
+            
+            if ($request->filled('teacher_ids')) {
+                $teacherIds = is_array($request->teacher_ids) ? $request->teacher_ids : [$request->teacher_ids];
+                $query->whereIn('teacher_id', $teacherIds);
+            }
+            
+            if ($request->filled('status')) {
+                $status = $request->status;
+                if (is_array($status)) {
+                    $query->whereIn('status', $status);
+                } else {
+                    $query->where('status', $status);
+                }
+            }
+            
+            // Get filtered results
+            $assignments = $query->orderBy('created_at', 'desc')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $assignments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error filtering assignments'
+            ], 500);
+        }
     }
 
     public function store(Request $request)

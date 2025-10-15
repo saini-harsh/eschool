@@ -104,7 +104,10 @@
             <div class="col-9">
                 <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
                     <div class="datatable-search">
-                        <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" placeholder="Search assignments..." id="assignment-search">
+                            <i class="ti ti-search position-absolute top-50 end-0 translate-middle-y me-3"></i>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="dropdown me-2">
@@ -125,28 +128,58 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <form action="">
+                                    <form action="" id="filter-form">
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Name</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                                    <label class="form-label">Class</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="class_ids">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
                                                     <a href="javascript:void(0);"
                                                         class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                         data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                         aria-expanded="true">
-                                                        Select
+                                                        Select Class
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
-                                                        <?php if(isset($institutions) && !empty($institutions)): ?>
-                                                            <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php if(isset($classes) && !empty($classes)): ?>
+                                                            <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <li>
                                                                     <label
                                                                         class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                        <?php echo e($institution->name); ?>
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="class_ids[]" value="<?php echo e($class->id); ?>">
+                                                                        <?php echo e($class->name); ?>
+
+                                                                    </label>
+                                                                </li>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php endif; ?>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Teacher</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="teacher_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Teacher
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        <?php if(isset($teachers) && !empty($teachers)): ?>
+                                                            <?php $__currentLoopData = $teachers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teacher): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="teacher_ids[]" value="<?php echo e($teacher->id); ?>">
+                                                                        <?php echo e($teacher->first_name); ?> <?php echo e($teacher->last_name); ?>
 
                                                                     </label>
                                                                 </li>
@@ -158,27 +191,29 @@
                                             <div>
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Status</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="status">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
                                                     <a href="javascript:void(0);"
                                                         class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                         data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                         aria-expanded="true">
-                                                        Select
+                                                        Select Status
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="1">
                                                                 Active
                                                             </label>
                                                         </li>
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="0">
                                                                 Inactive
                                                             </label>
                                                         </li>

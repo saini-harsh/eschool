@@ -19,7 +19,7 @@ class AssignSubjectController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $currentInstitution = auth('institution')->user();
         
@@ -27,9 +27,36 @@ class AssignSubjectController extends Controller
         $teachers = Teacher::where('institution_id', $currentInstitution->id)->where('status', 1)->get();
         $classes = SchoolClass::where('institution_id', $currentInstitution->id)->where('status', 1)->get();
         $subjects = Subject::where('institution_id', $currentInstitution->id)->where('status', 1)->get();
-        $lists = AssignSubject::with(['institution', 'schoolClass', 'section', 'subject', 'teacher'])
-            ->where('institution_id', $currentInstitution->id)
-            ->get();
+        
+        // Apply filters if any
+        $query = AssignSubject::with(['institution', 'schoolClass', 'section', 'subject', 'teacher'])
+            ->where('institution_id', $currentInstitution->id);
+        
+        if ($request->filled('class_ids')) {
+            $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+            $query->whereIn('class_id', $classIds);
+        }
+        
+        if ($request->filled('teacher_ids')) {
+            $teacherIds = is_array($request->teacher_ids) ? $request->teacher_ids : [$request->teacher_ids];
+            $query->whereIn('teacher_id', $teacherIds);
+        }
+        
+        if ($request->filled('subject_ids')) {
+            $subjectIds = is_array($request->subject_ids) ? $request->subject_ids : [$request->subject_ids];
+            $query->whereIn('subject_id', $subjectIds);
+        }
+        
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if (is_array($status)) {
+                $query->whereIn('status', $status);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+        
+        $lists = $query->orderBy('created_at', 'desc')->get();
         
         return view('institution.academic.assign-subject', compact('teachers', 'classes', 'institutions', 'subjects', 'lists'));
     }
@@ -316,7 +343,9 @@ class AssignSubjectController extends Controller
     public function getAssignments()
     {
         try {
+            $currentInstitution = auth('institution')->user();
             $assignments = AssignSubject::with(['institution', 'schoolClass', 'section', 'subject', 'teacher'])
+                ->where('institution_id', $currentInstitution->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -328,6 +357,60 @@ class AssignSubjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching assignments'
+            ], 500);
+        }
+    }
+
+    /**
+     * Filter assignments via AJAX
+     */
+    public function filter(Request $request)
+    {
+        try {
+            $currentInstitution = auth('institution')->user();
+            
+            // Log the request for debugging
+            \Log::info('Institution assign subject filter request received:', $request->all());
+            
+            // Build query with filters for current institution only
+            $query = AssignSubject::with(['institution', 'schoolClass', 'section', 'subject', 'teacher'])
+                ->where('institution_id', $currentInstitution->id);
+            
+            if ($request->filled('class_ids')) {
+                $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+                $query->whereIn('class_id', $classIds);
+            }
+            
+            if ($request->filled('teacher_ids')) {
+                $teacherIds = is_array($request->teacher_ids) ? $request->teacher_ids : [$request->teacher_ids];
+                $query->whereIn('teacher_id', $teacherIds);
+            }
+            
+            if ($request->filled('subject_ids')) {
+                $subjectIds = is_array($request->subject_ids) ? $request->subject_ids : [$request->subject_ids];
+                $query->whereIn('subject_id', $subjectIds);
+            }
+            
+            if ($request->filled('status')) {
+                $status = $request->status;
+                if (is_array($status)) {
+                    $query->whereIn('status', $status);
+                } else {
+                    $query->where('status', $status);
+                }
+            }
+            
+            // Get filtered results
+            $assignments = $query->orderBy('created_at', 'desc')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $assignments
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error filtering assignments'
             ], 500);
         }
     }

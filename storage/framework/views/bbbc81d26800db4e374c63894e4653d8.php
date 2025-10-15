@@ -1,6 +1,5 @@
-@extends('layouts.institution')
-@section('title', 'Institution | Assignment Management')
-@section('content')
+<?php $__env->startSection('title', 'Institution | Assignment Management'); ?>
+<?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -11,7 +10,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                     <li class="breadcrumb-item d-flex align-items-center">
-                        <a href="{{ route('institution.dashboard') }}"><i class="ti ti-home me-1"></i>Dashboard</a>
+                        <a href="<?php echo e(route('institution.dashboard')); ?>"><i class="ti ti-home me-1"></i>Dashboard</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Academic</li>
                     <li class="breadcrumb-item active" aria-current="page">Assignments</li>
@@ -30,7 +29,7 @@
                 </div>
                 <div class="card-body">
                     <form id="assignment-form">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" name="assignment_id" id="assignment-id">
                         
                         <div class="mb-3">
@@ -44,15 +43,15 @@
                         </div>
                         
                         <!-- Institution is auto-set from logged-in institution -->
-                        <input type="hidden" name="institution_id" id="institution_id" value="{{ $currentInstitution->id }}">
+                        <input type="hidden" name="institution_id" id="institution_id" value="<?php echo e($currentInstitution->id); ?>">
                         
                         <div class="mb-3">
                             <label class="form-label">Class <span class="text-danger">*</span></label>
                             <select name="class_id" id="class_id" class="form-select" required>
                                 <option value="">Select Class</option>
-                                @foreach($classes as $class)
-                                    <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         
@@ -67,9 +66,9 @@
                             <label class="form-label">Subject <span class="text-danger">*</span></label>
                             <select name="subject_id" id="subject_id" class="form-select" required>
                                 <option value="">Select Subject</option>
-                                @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $subjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subject): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($subject->id); ?>"><?php echo e($subject->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         
@@ -77,9 +76,9 @@
                             <label class="form-label">Teacher <span class="text-danger">*</span></label>
                             <select name="teacher_id" id="teacher_id" class="form-select" required>
                                 <option value="">Select Teacher</option>
-                                @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->first_name }} {{ $teacher->last_name }}</option>
-                                @endforeach
+                                <?php $__currentLoopData = $teachers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teacher): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($teacher->id); ?>"><?php echo e($teacher->first_name); ?> <?php echo e($teacher->last_name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                         
@@ -137,44 +136,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (isset($assignments) && !empty($assignments))
-                                    @foreach ($assignments as $assignment)
-                                        <tr data-assignment-id="{{ $assignment->id }}">
+                                <?php if(isset($assignments) && !empty($assignments)): ?>
+                                    <?php $__currentLoopData = $assignments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $assignment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr data-assignment-id="<?php echo e($assignment->id); ?>">
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
-                                                        <h6 class="fs-14 mb-0">{{ $assignment->title }}</h6>
-                                                        @if($assignment->description)
-                                                            <small class="text-muted">{{ Str::limit($assignment->description, 30) }}</small>
-                                                        @endif
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->title); ?></h6>
+                                                        <?php if($assignment->description): ?>
+                                                            <small class="text-muted"><?php echo e(Str::limit($assignment->description, 30)); ?></small>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
-                                                        <h6 class="fs-14 mb-0">{{ $assignment->schoolClass->name ?? 'N/A' }}</h6>
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->schoolClass->name ?? 'N/A'); ?></h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
-                                                        <h6 class="fs-14 mb-0">{{ $assignment->section->name ?? 'N/A' }}</h6>
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->section->name ?? 'N/A'); ?></h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
-                                                        <h6 class="fs-14 mb-0">{{ $assignment->subject->name ?? 'N/A' }}</h6>
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->subject->name ?? 'N/A'); ?></h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
-                                                        <h6 class="fs-14 mb-0">{{ $assignment->teacher->first_name ?? '' }} {{ $assignment->teacher->last_name ?? '' }}</h6>
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->teacher->first_name ?? ''); ?> <?php echo e($assignment->teacher->last_name ?? ''); ?></h6>
                                                     </div>
                                                 </div>
                                             </td>
@@ -182,50 +181,51 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="ms-2">
                                                         <h6 class="fs-14 mb-0">
-                                                            <span class="badge {{ \Carbon\Carbon::parse($assignment->due_date)->isPast() ? 'bg-danger' : 'bg-success' }}">
-                                                                {{ \Carbon\Carbon::parse($assignment->due_date)->format('M d, Y') }}
+                                                            <span class="badge <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->isPast() ? 'bg-danger' : 'bg-success'); ?>">
+                                                                <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->format('M d, Y')); ?>
+
                                                             </span>
                                                         </h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                @if($assignment->assignment_file)
-                                                    <a href="{{ asset($assignment->assignment_file) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="View File">
+                                                <?php if($assignment->assignment_file): ?>
+                                                    <a href="<?php echo e(asset($assignment->assignment_file)); ?>" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="View File">
                                                         <i class="ti ti-file-text"></i>
                                                     </a>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="text-muted">No file</span>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch">
                                                     <input type="checkbox" class="form-check-input status-toggle" 
-                                                           data-assignment-id="{{ $assignment->id }}" 
-                                                           {{ $assignment->status ? 'checked' : '' }}>
+                                                           data-assignment-id="<?php echo e($assignment->id); ?>" 
+                                                           <?php echo e($assignment->status ? 'checked' : ''); ?>>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-inline-flex align-items-center">
-                                                    <a href="javascript:void(0);" data-assignment-id="{{ $assignment->id }}"
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
                                                         class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
-                                                        title="View Submissions ({{ $assignment->studentAssignments->count() }})">
+                                                        title="View Submissions (<?php echo e($assignment->studentAssignments->count()); ?>)">
                                                         <i class="ti ti-users"></i>
                                                     </a>
-                                                    <a href="javascript:void(0);" data-assignment-id="{{ $assignment->id }}"
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
                                                         class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
                                                         <i class="ti ti-edit"></i>
                                                     </a>
-                                                    <a href="javascript:void(0);" data-assignment-id="{{ $assignment->id }}"
-                                                        data-assignment-title="{{ $assignment->title }}"
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
+                                                        data-assignment-title="<?php echo e($assignment->title); ?>"
                                                         class="btn btn-icon btn-sm btn-outline-white border-0 delete-assignment">
                                                         <i class="ti ti-trash"></i>
                                                     </a>
                                                 </div>
                                             </td>
                                         </tr>
-                                    @endforeach
-                                @else
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
                                     <tr>
                                         <td colspan="9" class="text-center py-4">
                                             <div class="d-flex flex-column align-items-center">
@@ -234,7 +234,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endif
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -272,7 +272,7 @@
             </div>
             <div class="modal-body">
                 <form id="grade-form">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <input type="hidden" id="grade-student-assignment-id">
                     <input type="hidden" id="grade-assignment-id">
 
@@ -300,8 +300,10 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-<script src="{{ asset('custom/js/institution/assignments.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+<script src="<?php echo e(asset('custom/js/institution/assignments.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/academic/assignments/index.blade.php ENDPATH**/ ?>

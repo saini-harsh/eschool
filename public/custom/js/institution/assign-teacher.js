@@ -7,6 +7,11 @@ $(document).ready(function () {
     if (preSelectedInstitutionId) {
         loadClassesAndTeachers(preSelectedInstitutionId);
     }
+    
+    // Initialize filter functionality
+    initializeFilterFunctionality();
+    
+    console.log('Institution assign class teacher JavaScript loaded successfully');
 
     // Function to show toast notifications
     function showToast(type, message) {
@@ -405,3 +410,230 @@ $(document).ready(function () {
         });
     });
 });
+
+/**
+ * Initialize filter functionality
+ */
+function initializeFilterFunctionality() {
+    initializeFilterForm();
+    initializeClearFilters();
+}
+
+
+/**
+ * Initialize filter form functionality
+ */
+function initializeFilterForm() {
+    // Handle filter form submission
+    $(document).on('submit', '#filter-form', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const filters = {};
+        
+        // Collect selected class IDs
+        const classIds = [];
+        $('input[name="class_ids[]"]:checked').each(function() {
+            classIds.push($(this).val());
+        });
+        if (classIds.length > 0) {
+            filters.class_ids = classIds;
+        }
+        
+        // Collect selected teacher IDs
+        const teacherIds = [];
+        $('input[name="teacher_ids[]"]:checked').each(function() {
+            teacherIds.push($(this).val());
+        });
+        if (teacherIds.length > 0) {
+            filters.teacher_ids = teacherIds;
+        }
+        
+        // Collect selected status
+        const status = [];
+        $('input[name="status[]"]:checked').each(function() {
+            status.push($(this).val());
+        });
+        if (status.length > 0) {
+            filters.status = status;
+        }
+        
+        console.log('Applying filters:', filters);
+        applyFilters(filters);
+    });
+    
+    // Handle close filter button
+    $(document).on('click', '#close-filter', function() {
+        $('#filter-dropdown').removeClass('show');
+    });
+}
+
+/**
+ * Initialize clear filters functionality
+ */
+function initializeClearFilters() {
+    // Clear all filters
+    $(document).on('click', '.link-danger', function() {
+        $('#filter-form')[0].reset();
+        applyFilters({});
+    });
+    
+    // Clear individual filter fields
+    $(document).on('click', '.filter-reset', function() {
+        const field = $(this).data('field');
+        $(`input[name="${field}[]"]`).prop('checked', false);
+        applyFilters({});
+    });
+}
+
+/**
+ * Apply filters via AJAX
+ */
+function applyFilters(filters) {
+    console.log('Applying filters:', filters);
+    
+    $.ajax({
+        url: '/institution/academic/assign-class-teacher/filter',
+        type: 'POST',
+        data: {
+            ...filters,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        beforeSend: function() {
+            // Show loading indicator
+            $('.datatable tbody').html('<tr><td colspan="6" class="text-center">Loading...</td></tr>');
+        },
+        success: function(response) {
+            console.log('Filter response:', response);
+            console.log('Response data type:', typeof response.data);
+            console.log('Response data length:', response.data ? response.data.length : 'undefined');
+            
+            if (response.success) {
+                console.log('Calling updateAssignmentsTable with:', response.data);
+                updateAssignmentsTable(response.data);
+            } else {
+                showToast('error', response.message || 'Failed to apply filters');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Filter error:', xhr.responseText);
+            showToast('error', 'Error applying filters: ' + error);
+            // Reload original data on error
+            refreshAssignmentsList();
+        }
+    });
+}
+
+/**
+ * Function to refresh assignments list dynamically
+ */
+function refreshAssignmentsList() {
+    $.ajax({
+        url: '/institution/academic/assign-class-teacher/list',
+        type: 'GET',
+        success: function(response) {
+            if (response.success) {
+                updateAssignmentsTable(response.data);
+            } else {
+                showToast('error', 'Failed to refresh assignments list');
+            }
+        },
+        error: function() {
+            showToast('error', 'Error refreshing assignments list');
+        },
+    });
+}
+
+/**
+ * Function to update the assignments table
+ */
+function updateAssignmentsTable(assignments) {
+    console.log('updateAssignmentsTable called with:', assignments);
+    console.log('Assignments type:', typeof assignments);
+    console.log('Assignments length:', assignments ? assignments.length : 'undefined');
+    
+    const tbody = $(".datatable tbody");
+    console.log('Found tbody:', tbody.length);
+    
+    let html = "";
+
+    if (!assignments || assignments.length === 0) {
+        console.log('No assignments found, showing empty message');
+        html = '<tr><td colspan="6" class="text-center">No assignments found</td></tr>';
+    } else {
+        console.log('Processing', assignments.length, 'assignments');
+        assignments.forEach(function (assignment) {
+            const statusText = assignment.status == 1 ? "Active" : "Inactive";
+            const statusClass = assignment.status == 1 ? "active" : "";
+            
+            console.log('Processing assignment:', assignment);
+
+            html += `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${assignment.teacher.first_name} ${assignment.teacher.last_name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${assignment.institution.name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${assignment.class.name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${assignment.section.name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <select class="select status-toggle" data-assignment-id="${assignment.id}">
+                                <option value="1" ${assignment.status ? 'selected' : ''}>Active</option>
+                                <option value="0" ${!assignment.status ? 'selected' : ''}>Inactive</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-inline-flex align-items-center">
+                            <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                                class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-teacher">
+                                <i class="ti ti-edit"></i>
+                            </a>
+                            <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                                class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-teacher">
+                                <i class="ti ti-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    console.log('Generated HTML length:', html.length);
+    console.log('Setting tbody HTML...');
+    
+    tbody.html(html);
+    
+    console.log('HTML set successfully');
+}
+
+/**
+ * Test function for manual console testing
+ */
+function testFilter() {
+    applyFilters({ search: 'test' });
+}

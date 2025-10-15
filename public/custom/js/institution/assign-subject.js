@@ -153,135 +153,8 @@ $(document).ready(function () {
         });
     }
 
-    // Function to refresh assignments list dynamically
-    function refreshAssignmentsList() {
-        $.ajax({
-            url: "/institution/assign-subject/list",
-            type: "GET",
-            success: function (response) {
-                if (response.success) {
-                    updateAssignmentsTable(response.data);
-                } else {
-                    showToast("error", "Failed to refresh assignment list");
-                }
-            },
-            error: function () {
-                showToast("error", "Error refreshing assignment list");
-            },
-        });
-    }
 
-    // Function to update the assignment table
-    function updateAssignmentsTable(assignments) {
-        const tbody = $(".datatable tbody");
-        let html = "";
 
-        if (assignments.length === 0) {
-            html =
-                '<tr><td colspan="7" class="text-center">No assignments found</td></tr>';
-        } else {
-            assignments.forEach(function (assignment) {
-                const teacherName = `${assignment.teacher.first_name || ''} ${assignment.teacher.middle_name || ''} ${assignment.teacher.last_name || ''}`.trim();
-                const statusText = assignment.status == 1 ? "Active" : "Inactive";
-
-                html += `
-                    <tr data-assign-subject-id="${assignment.id}">
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${escapeHtml(teacherName)}</h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${escapeHtml(assignment.institution.name)}</h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${escapeHtml(assignment.school_class.name)}</h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${escapeHtml(assignment.section.name)}</h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-2">
-                                    <h6 class="fs-14 mb-0">${escapeHtml(assignment.subject.name)}</h6>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>
-                                <select class="form-select status-select assign-subject-status-select" data-assign-subject-id="${assignment.id}" data-original-value="${assignment.status}">
-                                    <option value="1" ${assignment.status == 1 ? "selected" : ""}>Active</option>
-                                    <option value="0" ${assignment.status == 0 ? "selected" : ""}>Inactive</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-inline-flex align-items-center">
-                                <a href="javascript:void(0);" data-assign-subject-id="${assignment.id}" class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-subject">
-                                    <i class="ti ti-edit"></i>
-                                </a>
-                                <a href="javascript:void(0);" data-assign-subject-id="${assignment.id}" 
-                                   data-teacher-name="${escapeHtml(teacherName)}" 
-                                   data-subject-name="${escapeHtml(assignment.subject.name)}" 
-                                   class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-subject">
-                                    <i class="ti ti-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        tbody.html(html);
-
-        // Reinitialize Select2 for the new dropdowns
-        initializeSelect2();
-
-        // Add event listeners for status changes
-        addStatusChangeListeners();
-    }
-
-    // Function to initialize Select2 dropdowns
-    function initializeSelect2() {
-        // Check if Select2 is available
-        if (typeof $.fn.select2 !== "undefined") {
-            // Only initialize Select2 for status selects
-            $(".status-select[data-assign-subject-id]").select2({
-                minimumResultsForSearch: Infinity, // Disable search
-                width: "100%", // Changed from "auto" to "100%"
-            });
-        }
-    }
-
-    // Function to add event listeners for status changes
-    function addStatusChangeListeners() {
-        // Remove any existing listeners to prevent conflicts
-        $(".status-select").off("change.assignSubject");
-        
-        // Only listen for status selects that have assign-subject-id data attribute
-        $(".status-select[data-assign-subject-id]").on("change.assignSubject", function () {
-            const assignSubjectId = $(this).data("assign-subject-id");
-            const newStatus = $(this).val();
-
-            // Update status via AJAX
-            updateAssignSubjectStatus(assignSubjectId, newStatus);
-        });
-    }
 
     // Function to update assign subject status
     function updateAssignSubjectStatus(assignSubjectId, status) {
@@ -494,22 +367,132 @@ $(document).ready(function () {
         });
     });
 
-    // Helper function to escape HTML
-    function escapeHtml(text) {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-    }
 
     // Initialize Select2 for existing dropdowns
     initializeSelect2();
     addStatusChangeListeners();
+    
+    // Initialize filter functionality
+    initializeFilterFunctionality();
 });
+
+/**
+ * Initialize filter functionality
+ */
+function initializeFilterFunctionality() {
+    initializeFilterForm();
+    initializeClearFilters();
+}
+
+/**
+ * Initialize filter form functionality
+ */
+function initializeFilterForm() {
+    // Handle filter form submission
+    $(document).on('submit', '#filter-form', function(e) {
+        e.preventDefault();
+        
+        const filters = {};
+        
+        // Collect selected class IDs
+        const classIds = [];
+        $('input[name="class_ids[]"]:checked').each(function() {
+            classIds.push($(this).val());
+        });
+        if (classIds.length > 0) {
+            filters.class_ids = classIds;
+        }
+        
+        // Collect selected teacher IDs
+        const teacherIds = [];
+        $('input[name="teacher_ids[]"]:checked').each(function() {
+            teacherIds.push($(this).val());
+        });
+        if (teacherIds.length > 0) {
+            filters.teacher_ids = teacherIds;
+        }
+        
+        // Collect selected subject IDs
+        const subjectIds = [];
+        $('input[name="subject_ids[]"]:checked').each(function() {
+            subjectIds.push($(this).val());
+        });
+        if (subjectIds.length > 0) {
+            filters.subject_ids = subjectIds;
+        }
+        
+        // Collect selected status
+        const status = [];
+        $('input[name="status[]"]:checked').each(function() {
+            status.push($(this).val());
+        });
+        if (status.length > 0) {
+            filters.status = status;
+        }
+        
+        console.log('Applying filters:', filters);
+        applyFilters(filters);
+    });
+    
+    // Handle close filter button
+    $(document).on('click', '#close-filter', function() {
+        $('#filter-dropdown').removeClass('show');
+    });
+}
+
+/**
+ * Initialize clear filters functionality
+ */
+function initializeClearFilters() {
+    // Clear all filters
+    $(document).on('click', '.link-danger', function() {
+        $('#filter-form')[0].reset();
+        applyFilters({});
+    });
+    
+    // Clear individual filter fields
+    $(document).on('click', '.filter-reset', function() {
+        const field = $(this).data('field');
+        $(`input[name="${field}[]"]`).prop('checked', false);
+        applyFilters({});
+    });
+}
+
+/**
+ * Apply filters via AJAX
+ */
+function applyFilters(filters) {
+    console.log('Applying filters:', filters);
+    
+    $.ajax({
+        url: '/institution/assign-subject/filter',
+        type: 'POST',
+        data: {
+            ...filters,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        beforeSend: function() {
+            // Show loading indicator
+            $('.datatable tbody').html('<tr><td colspan="7" class="text-center">Loading...</td></tr>');
+        },
+        success: function(response) {
+            console.log('Filter response:', response);
+            if (response.success) {
+                updateAssignmentsTable(response.data);
+            } else {
+                showToast('error', 'Failed to filter assignments');
+                // Reload original data
+                refreshAssignmentsList();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Filter error:', error);
+            showToast('error', 'Error filtering assignments');
+            // Reload original data
+            refreshAssignmentsList();
+        }
+    });
+}
 
 /**
  * Initialize assign subject cascading dropdowns
@@ -688,4 +671,156 @@ function loadSectionsByClass(classId) {
             showToast('error', 'Failed to load sections');
         }
     });
+}
+
+/**
+ * Function to refresh assignments list dynamically
+ */
+function refreshAssignmentsList() {
+    $.ajax({
+        url: "/institution/assign-subject/list",
+        type: "GET",
+        success: function (response) {
+            if (response.success) {
+                updateAssignmentsTable(response.data);
+            } else {
+                showToast("error", "Failed to refresh assignment list");
+            }
+        },
+        error: function () {
+            showToast("error", "Error refreshing assignment list");
+        },
+    });
+}
+
+/**
+ * Function to update the assignment table
+ */
+function updateAssignmentsTable(assignments) {
+    const tbody = $(".datatable tbody");
+    let html = "";
+
+    if (assignments.length === 0) {
+        html =
+            '<tr><td colspan="7" class="text-center">No assignments found</td></tr>';
+    } else {
+        assignments.forEach(function (assignment) {
+            const teacherName = `${assignment.teacher.first_name || ''} ${assignment.teacher.middle_name || ''} ${assignment.teacher.last_name || ''}`.trim();
+            const statusText = assignment.status == 1 ? "Active" : "Inactive";
+
+            html += `
+                <tr data-assign-subject-id="${assignment.id}">
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${escapeHtml(teacherName)}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${escapeHtml(assignment.institution.name)}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${escapeHtml(assignment.school_class.name)}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${escapeHtml(assignment.section.name)}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="ms-2">
+                                <h6 class="fs-14 mb-0">${escapeHtml(assignment.subject.name)}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <select class="form-select status-select assign-subject-status-select" data-assign-subject-id="${assignment.id}" data-original-value="${assignment.status}">
+                                <option value="1" ${assignment.status == 1 ? "selected" : ""}>Active</option>
+                                <option value="0" ${assignment.status == 0 ? "selected" : ""}>Inactive</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-inline-flex align-items-center">
+                            <a href="javascript:void(0);" data-assign-subject-id="${assignment.id}" class="btn btn-icon btn-sm btn-outline-white border-0 edit-assign-subject">
+                                <i class="ti ti-edit"></i>
+                            </a>
+                            <a href="javascript:void(0);" data-assign-subject-id="${assignment.id}" 
+                               data-teacher-name="${escapeHtml(teacherName)}" 
+                               data-subject-name="${escapeHtml(assignment.subject.name)}" 
+                               class="btn btn-icon btn-sm btn-outline-white border-0 delete-assign-subject">
+                                <i class="ti ti-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    tbody.html(html);
+
+    // Reinitialize Select2 for the new dropdowns
+    initializeSelect2();
+
+    // Add event listeners for status changes
+    addStatusChangeListeners();
+}
+
+/**
+ * Function to initialize Select2 dropdowns
+ */
+function initializeSelect2() {
+    // Check if Select2 is available
+    if (typeof $.fn.select2 !== "undefined") {
+        // Only initialize Select2 for status selects
+        $(".status-select[data-assign-subject-id]").select2({
+            minimumResultsForSearch: Infinity, // Disable search
+            width: "100%", // Changed from "auto" to "100%"
+        });
+    }
+}
+
+/**
+ * Function to add event listeners for status changes
+ */
+function addStatusChangeListeners() {
+    // Remove any existing listeners to prevent conflicts
+    $(".status-select").off("change.assignSubject");
+    
+    // Only listen for status selects that have assign-subject-id data attribute
+    $(".status-select[data-assign-subject-id]").on("change.assignSubject", function () {
+        const assignSubjectId = $(this).data("assign-subject-id");
+        const newStatus = $(this).val();
+
+        // Update status via AJAX
+        updateAssignSubjectStatus(assignSubjectId, newStatus);
+    });
+}
+
+/**
+ * Helper function to escape HTML
+ */
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }

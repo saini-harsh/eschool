@@ -132,7 +132,8 @@ Route::middleware('institution')->group(function () {
             Route::prefix('assign-class-teacher')->group(function () {
                 Route::get('/', [AssignClassTeacherController::class, 'index'])->name('institution.academic.assign-teacher.index');
                 Route::post('/', [AssignClassTeacherController::class, 'store'])->name('institution.assign-class-teacher.store');
-                Route::get('/list', [AssignClassTeacherController::class, 'getAssignments'])->name('institution.assign-class-teacher.list');
+                Route::get('/list', [AssignClassTeacherController::class, 'list'])->name('institution.assign-class-teacher.list');
+                Route::post('/filter', [AssignClassTeacherController::class, 'filter'])->name('institution.assign-class-teacher.filter');
 
                 // AJAX routes for dynamic dropdowns (must come before parameterized routes)
                 Route::get('/classes/{institutionId}', [AssignClassTeacherController::class, 'getClassesByInstitution']);
@@ -152,6 +153,7 @@ Route::middleware('institution')->group(function () {
             Route::get('/', [AssignSubjectController::class, 'index'])->name('institution.assign-subject.index');
             Route::post('/', [AssignSubjectController::class, 'store'])->name('institution.assign-subject.store');
             Route::get('/list', [AssignSubjectController::class, 'getAssignments'])->name('institution.assign-subject.list');
+            Route::post('/filter', [AssignSubjectController::class, 'filter'])->name('institution.assign-subject.filter');
 
             // AJAX routes for dynamic dropdowns (must come before parameterized routes)
             Route::get('/classes/{institutionId}', [AssignSubjectController::class, 'getClassesByInstitution']);
