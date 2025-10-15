@@ -16,10 +16,52 @@ class SubjectController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function Index()
+    public function Index(Request $request)
     {
-        // Logic to retrieve and display subjects
-        $lists = Subject::with(['institution', 'schoolClass'])->orderBy('created_at', 'desc')->get();
+        // Build query with filters
+        $query = Subject::with(['institution', 'schoolClass']);
+        
+        // Apply filters
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('code', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('type', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('institution', function($subQ) use ($searchTerm) {
+                      $subQ->where('name', 'like', '%' . $searchTerm . '%');
+                  })
+                  ->orWhereHas('schoolClass', function($subQ) use ($searchTerm) {
+                      $subQ->where('name', 'like', '%' . $searchTerm . '%');
+                  });
+            });
+        }
+        
+        if ($request->filled('institution_ids')) {
+            $institutionIds = is_array($request->institution_ids) ? $request->institution_ids : [$request->institution_ids];
+            $query->whereIn('institution_id', $institutionIds);
+        }
+        
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if (is_array($status)) {
+                $query->whereIn('status', $status);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+        
+        if ($request->filled('class_ids')) {
+            $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+            $query->whereIn('class_id', $classIds);
+        }
+        
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+        
+        // Get filtered results
+        $lists = $query->orderBy('created_at', 'desc')->get();
         $institutions = Institution::where('status', 1)->get();
         $classes = collect(); // Empty collection - classes will be loaded via AJAX
 
@@ -179,6 +221,72 @@ class SubjectController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error deleting subject'
+            ], 500);
+        }
+    }
+
+    /**
+     * Filter subjects (AJAX)
+     */
+    public function filter(Request $request)
+    {
+        try {
+            // Log the request for debugging
+            \Log::info('Filter request received:', $request->all());
+            
+            // Build query with filters
+            $query = Subject::with(['institution', 'schoolClass']);
+            
+            // Apply filters
+            if ($request->filled('search')) {
+                $searchTerm = $request->search;
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('name', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('code', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('type', 'like', '%' . $searchTerm . '%')
+                      ->orWhereHas('institution', function($subQ) use ($searchTerm) {
+                          $subQ->where('name', 'like', '%' . $searchTerm . '%');
+                      })
+                      ->orWhereHas('schoolClass', function($subQ) use ($searchTerm) {
+                          $subQ->where('name', 'like', '%' . $searchTerm . '%');
+                      });
+                });
+            }
+            
+            if ($request->filled('institution_ids')) {
+                $institutionIds = is_array($request->institution_ids) ? $request->institution_ids : [$request->institution_ids];
+                $query->whereIn('institution_id', $institutionIds);
+            }
+            
+            if ($request->filled('status')) {
+                $status = $request->status;
+                if (is_array($status)) {
+                    $query->whereIn('status', $status);
+                } else {
+                    $query->where('status', $status);
+                }
+            }
+            
+            if ($request->filled('class_ids')) {
+                $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+                $query->whereIn('class_id', $classIds);
+            }
+            
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+            
+            // Get filtered results
+            $subjects = $query->orderBy('created_at', 'desc')->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $subjects
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error filtering subjects'
             ], 500);
         }
     }

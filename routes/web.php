@@ -143,6 +143,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/', [SubjectController::class, 'Index'])->name('admin.subjects.index');
             Route::post('/store', [SubjectController::class, 'store'])->name('admin.subjects.store');
             Route::get('/list', [SubjectController::class, 'getSubjects'])->name('admin.subjects.list');
+            Route::post('/filter', [SubjectController::class, 'filter'])->name('admin.subjects.filter');
             Route::post('/{id}/status', [SubjectController::class, 'updateStatus'])->name('admin.subjects.status');
             Route::get('/edit/{id}', [SubjectController::class, 'edit'])->name('admin.subjects.edit');
             Route::post('/update/{id}', [SubjectController::class, 'update'])->name('admin.subjects.update');

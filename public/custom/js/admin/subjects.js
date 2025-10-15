@@ -128,7 +128,11 @@ $(document).ready(function () {
         $("#cancel-edit").addClass("d-none");
     }
 
-    // Function to refresh subjects list dynamically
+});
+
+/**
+ * Function to refresh subjects list dynamically
+ */
     function refreshSubjectsList() {
         $.ajax({
             url: "/admin/subjects/list",
@@ -146,19 +150,31 @@ $(document).ready(function () {
         });
     }
 
-    // Function to update the subject table
+/**
+ * Function to update the subject table
+ */
     function updateSubjectsTable(subjects) {
+    console.log('updateSubjectsTable called with:', subjects);
+    console.log('Subjects type:', typeof subjects);
+    console.log('Subjects length:', subjects ? subjects.length : 'undefined');
+    
         const tbody = $(".datatable tbody");
+    console.log('Found tbody:', tbody.length);
+    
         let html = "";
 
-        if (subjects.length === 0) {
+    if (!subjects || subjects.length === 0) {
+        console.log('No subjects found, showing empty message');
             html =
                 '<tr><td colspan="7" class="text-center">No subjects found</td></tr>';
         } else {
+        console.log('Processing', subjects.length, 'subjects');
             subjects.forEach(function (subject) {
                 const statusText = subject.status == 1 ? "Active" : "Inactive";
                 const statusClass = subject.status == 1 ? "active" : "";
                 const className = subject.school_class ? subject.school_class.name : 'N/A';
+            
+            console.log('Processing subject:', subject);
 
                 html += `
                     <tr>
@@ -199,28 +215,18 @@ $(document).ready(function () {
                         </td>
                         <td>
                             <div>
-                                <select class="form-select status-select" data-subject-id="${
-                                    subject.id
-                                }">
-                                    <option value="1" ${
-                                        subject.status == 1 ? "selected" : ""
-                                    }>Active</option>
-                                    <option value="0" ${
-                                        subject.status == 0 ? "selected" : ""
-                                    }>Inactive</option>
+                            <select class="form-select status-select" data-subject-id="${subject.id}">
+                                <option value="1" ${subject.status == 1 ? "selected" : ""}>Active</option>
+                                <option value="0" ${subject.status == 0 ? "selected" : ""}>Inactive</option>
                                 </select>
                             </div>
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
-                                <a href="javascript:void(0);" data-subject-id="${
-                                    subject.id
-                                }" class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject">
+                            <a href="javascript:void(0);" data-subject-id="${subject.id}" class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject">
                                     <i class="ti ti-edit"></i>
                                 </a>
-                                <a href="javascript:void(0);" data-subject-id="${
-                                    subject.id
-                                }" data-subject-name="${escapeHtml(subject.name)}" 
+                            <a href="javascript:void(0);" data-subject-id="${subject.id}" data-subject-name="${escapeHtml(subject.name)}" 
                                    class="btn btn-icon btn-sm btn-outline-white border-0 delete-subject">
                                     <i class="ti ti-trash"></i>
                                 </a>
@@ -231,7 +237,12 @@ $(document).ready(function () {
             });
         }
 
+    console.log('Generated HTML length:', html.length);
+    console.log('Setting tbody HTML...');
+
         tbody.html(html);
+    
+    console.log('HTML set successfully');
 
         // Reinitialize Select2 for the new dropdowns
         initializeSelect2();
@@ -240,7 +251,9 @@ $(document).ready(function () {
         addStatusChangeListeners();
     }
 
-    // Function to initialize Select2 dropdowns
+/**
+ * Function to initialize Select2 dropdowns
+ */
     function initializeSelect2() {
         // Check if Select2 is available
         if (typeof $.fn.select2 !== "undefined") {
@@ -252,7 +265,9 @@ $(document).ready(function () {
         }
     }
 
-    // Function to add event listeners for status changes
+/**
+ * Function to add event listeners for status changes
+ */
     function addStatusChangeListeners() {
         // Remove any existing listeners to prevent conflicts
         $(".status-select").off("change.subjects");
@@ -267,36 +282,38 @@ $(document).ready(function () {
         });
     }
 
-    // Function to update subject status
-    function updateSubjectStatus(subjectId, status) {
-        $.ajax({
-            url: `/admin/subjects/${subjectId}/status`,
-            type: "POST",
-            data: {
-                status: status,
-                _token: $('meta[name="csrf-token"]').attr("content"),
-            },
-            success: function (response) {
-                if (response.success) {
-                    showToast("success", "Status updated successfully");
-                    // Refresh the subject list to show updated data
-                    setTimeout(function() {
-                        refreshSubjectsList();
-                    }, 1000);
-                } else {
-                    showToast(
-                        "error",
-                        response.message || "Failed to update status"
-                    );
-                }
-            },
-            error: function () {
-                showToast("error", "Error updating status");
-                // Revert the select to previous value
-                refreshSubjectsList();
-            },
-        });
-    }
+/**
+ * Function to update subject status
+ */
+function updateSubjectStatus(subjectId, status) {
+    $.ajax({
+        url: `/admin/subjects/${subjectId}/status`,
+        type: "POST",
+        data: {
+            status: status,
+            _token: $('meta[name="csrf-token"]').attr("content"),
+        },
+        success: function (response) {
+            if (response.success) {
+                showToast("success", "Status updated successfully");
+                // Refresh the subject list to show updated data
+                setTimeout(function() {
+                    refreshSubjectsList();
+                }, 1000);
+            } else {
+                showToast(
+                    "error",
+                    response.message || "Failed to update status"
+                );
+            }
+        },
+        error: function () {
+            showToast("error", "Error updating status");
+            // Revert the select to previous value
+            refreshSubjectsList();
+        },
+    });
+}
 
     // Edit subject
     $(document).on("click", ".edit-subject", function (e) {
@@ -491,7 +508,190 @@ $(document).ready(function () {
     // refreshSubjectsList();
     initializeSelect2(); // Initialize Select2 for existing dropdowns
     addStatusChangeListeners(); // Add event listeners for status changes
+    
+    // Initialize filter functionality
+    initializeFilterFunctionality();
+    
+    // Test function to verify JavaScript is working
+    console.log('Admin subjects JavaScript loaded successfully');
 });
+
+/**
+ * Initialize filter functionality
+ */
+function initializeFilterFunctionality() {
+    // Search functionality
+    initializeSearch();
+    
+    // Filter form functionality
+    initializeFilterForm();
+    
+    // Clear filters functionality
+    initializeClearFilters();
+}
+
+/**
+ * Initialize search functionality
+ */
+function initializeSearch() {
+    // Create search input if it doesn't exist
+    if ($('.datatable-search input').length === 0) {
+        $('.datatable-search').html(`
+            <div class="position-relative">
+                <input type="text" class="form-control" placeholder="Search subjects..." id="subject-search">
+                <i class="ti ti-search position-absolute top-50 end-0 translate-middle-y me-3"></i>
+            </div>
+        `);
+    }
+    
+    // Add search event listener with debouncing
+    let searchTimeout;
+    $(document).on('input', '#subject-search', function() {
+        const searchTerm = $(this).val();
+        
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Set new timeout for debounced search
+        searchTimeout = setTimeout(function() {
+            applyFilters({ search: searchTerm });
+        }, 300);
+    });
+}
+
+/**
+ * Initialize filter form functionality
+ */
+function initializeFilterForm() {
+    // Filter form submission
+    $(document).on('submit', '#filter-dropdown form', function(e) {
+        e.preventDefault();
+        console.log('Filter form submitted');
+        
+        const formData = new FormData(this);
+        const filters = {};
+        
+        // Get institution filters
+        const institutionIds = [];
+        $(this).find('input[name="institution_ids[]"]:checked').each(function() {
+            institutionIds.push($(this).val());
+        });
+        if (institutionIds.length > 0) {
+            filters.institution_ids = institutionIds;
+        }
+        
+        // Get status filters
+        const status = [];
+        $(this).find('input[name="status[]"]:checked').each(function() {
+            status.push($(this).val());
+        });
+        if (status.length > 0) {
+            filters.status = status;
+        }
+        
+        // Get class filters
+        const classIds = [];
+        $(this).find('input[name="class_ids[]"]:checked').each(function() {
+            classIds.push($(this).val());
+        });
+        if (classIds.length > 0) {
+            filters.class_ids = classIds;
+        }
+        
+        // Get type filter
+        const type = $(this).find('select[name="type"]').val();
+        if (type) {
+            filters.type = type;
+        }
+        
+        console.log('Applied filters:', filters);
+        
+        // Apply filters
+        applyFilters(filters);
+        
+        // Close filter dropdown
+        $('#filter-dropdown').removeClass('show');
+    });
+    
+    // Close filter button
+    $(document).on('click', '#close-filter', function() {
+        $('#filter-dropdown').removeClass('show');
+    });
+}
+
+/**
+ * Initialize clear filters functionality
+ */
+function initializeClearFilters() {
+    // Clear all filters
+    $('a[href="javascript:void(0);"]:contains("Clear All")').on('click', function() {
+        // Clear search
+        $('#subject-search').val('');
+        
+        // Clear filter form
+        $('#filter-dropdown form')[0].reset();
+        
+        // Clear all checkboxes
+        $('#filter-dropdown input[type="checkbox"]').prop('checked', false);
+        
+        // Apply empty filters (show all)
+        applyFilters({});
+    });
+    
+    // Reset individual filter sections
+    $('a[href="javascript:void(0);"]:contains("Reset")').on('click', function() {
+        const section = $(this).closest('.mb-3');
+        section.find('input[type="checkbox"]').prop('checked', false);
+        section.find('select').val('');
+    });
+}
+
+/**
+ * Apply filters to subjects
+ */
+function applyFilters(filters) {
+    console.log('Applying filters:', filters);
+    
+    $.ajax({
+        url: '/admin/subjects/filter',
+        type: 'POST',
+        data: {
+            ...filters,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        beforeSend: function() {
+            // Show loading indicator
+            $('.datatable tbody').html('<tr><td colspan="7" class="text-center">Loading...</td></tr>');
+        },
+        success: function(response) {
+            console.log('Filter response:', response);
+            console.log('Response data type:', typeof response.data);
+            console.log('Response data length:', response.data ? response.data.length : 'undefined');
+            
+            if (response.success) {
+                console.log('Calling updateSubjectsTable with:', response.data);
+                updateSubjectsTable(response.data);
+            } else {
+                showToast('error', response.message || 'Failed to apply filters');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Filter error:', xhr.responseText);
+            showToast('error', 'Error applying filters: ' + error);
+            // Reload original data on error
+            refreshSubjectsList();
+        }
+    });
+}
+
+/**
+ * Test function to verify filter functionality
+ * Call this from browser console: testFilter()
+ */
+function testFilter() {
+    console.log('Testing filter functionality...');
+    applyFilters({ search: 'test' });
+}
 
 /**
  * Initialize institution-class cascading dropdowns

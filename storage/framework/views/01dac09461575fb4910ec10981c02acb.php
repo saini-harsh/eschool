@@ -1,20 +1,20 @@
-@extends('layouts.admin')
-@section('title', 'Admin | Subject Management')
-@section('content')
-    @if (session('success'))
+<?php $__env->startSection('title', 'Admin | Subject Management'); ?>
+<?php $__env->startSection('content'); ?>
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
     <!-- Start Content -->
     <div class="content">
 
@@ -24,7 +24,7 @@
                 <h5 class="fw-bold">Subjects</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="index.html"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('institution.dashboard')); ?>"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Subjects</li>
                     </ol>
@@ -40,33 +40,32 @@
                     </div>
                     <div class="card-body">
                         <form action="" method="post" id="subject-form">
-                            @csrf
+                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="id" id="subject-id">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Institutions <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="institution_id" id="institution_id" required>
-                                            <option value="">Select Institution</option>
-                                            @if (isset($institutions) && !empty($institutions))
-                                                @foreach ($institutions as $institution)
-                                                    <option value="{{ $institution->id }}">{{ $institution->name }}
-                                                    </option>
-                                                @endforeach
-                                            @endif
+                                        <label class="form-label">Institution</label>
+                                        <select class="form-select" name="institution_id" readonly disabled>
+                                            <?php if(isset($institutions) && !empty($institutions)): ?>
+                                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($institution->id); ?>" selected><?php echo e($institution->name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endif; ?>
                                         </select>
+                                        <input type="hidden" name="institution_id" value="<?php echo e($institutions->first()->id ?? ''); ?>">
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Class</label>
-                                        <select class="form-select" name="class_id" id="class_id" disabled>
+                                        <select class="form-select" name="class_id">
                                             <option value="">Select Class</option>
-                                            @if (isset($classes) && !empty($classes))
-                                                @foreach ($classes as $class)
-                                                    <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                                @endforeach
-                                            @endif
+                                            <?php if(isset($classes) && !empty($classes)): ?>
+                                                <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endif; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -140,7 +139,7 @@
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Institution</label>
+                                                    <label class="form-label">Class</label>
                                                     <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
@@ -148,21 +147,22 @@
                                                         class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                         data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                         aria-expanded="true">
-                                                        Select Institution
+                                                        Select Class
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($institutions) && !empty($institutions))
-                                                            @foreach ($institutions as $institution)
+                                                        <?php if(isset($classes) && !empty($classes)): ?>
+                                                            <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <li>
                                                                     <label
                                                                         class="dropdown-item px-2 d-flex align-items-center rounded-1">
                                                                         <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="institution_ids[]" value="{{ $institution->id }}">
-                                                                        {{ $institution->name }}
+                                                                               name="class_ids[]" value="<?php echo e($class->id); ?>">
+                                                                        <?php echo e($class->name); ?>
+
                                                                     </label>
                                                                 </li>
-                                                            @endforeach
-                                                        @endif
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php endif; ?>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -262,66 +262,66 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if (isset($lists) && !empty($lists))
-                                @foreach ($lists as $list)
+                            <?php if(isset($lists) && !empty($lists)): ?>
+                                <?php $__currentLoopData = $lists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->name }}</h6>
+                                                    <h6 class="fs-14 mb-0"><?php echo e($list->name); ?></h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->code }}</h6>
+                                                    <h6 class="fs-14 mb-0"><?php echo e($list->code); ?></h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ ucfirst($list->type) }}</h6>
+                                                    <h6 class="fs-14 mb-0"><?php echo e(ucfirst($list->type)); ?></h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->institution->name }}</h6>
+                                                    <h6 class="fs-14 mb-0"><?php echo e($list->institution->name); ?></h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->schoolClass ? $list->schoolClass->name : 'N/A' }}</h6>
+                                                    <h6 class="fs-14 mb-0"><?php echo e($list->schoolClass ? $list->schoolClass->name : 'N/A'); ?></h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="form-select status-select" data-subject-id="{{ $list->id }}">
-                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
-                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
+                                                <select class="form-select status-select" data-subject-id="<?php echo e($list->id); ?>">
+                                                    <option value="1" <?php echo e($list->status == 1 ? 'selected' : ''); ?>>Active</option>
+                                                    <option value="0" <?php echo e($list->status == 0 ? 'selected' : ''); ?>>Inactive</option>
                                                 </select>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="d-inline-flex align-items-center">
-                                                <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
+                                                <a href="javascript:void(0);" data-subject-id="<?php echo e($list->id); ?>"
                                                     class="btn btn-icon btn-sm btn-outline-white border-0 edit-subject"><i
                                                         class="ti ti-edit"></i></a>
-                                                <a href="javascript:void(0);" data-subject-id="{{ $list->id }}"
-                                                    data-subject-name="{{ $list->name }}"
+                                                <a href="javascript:void(0);" data-subject-id="<?php echo e($list->id); ?>"
+                                                    data-subject-name="<?php echo e($list->name); ?>"
                                                     class="btn btn-icon btn-sm btn-outline-white border-0 delete-subject"><i
                                                         class="ti ti-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
-                            @endif
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -347,15 +347,16 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/subjects.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/institution/subjects.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/academic/subject/index.blade.php ENDPATH**/ ?>
