@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'Create Fee Structure'); ?>
+<?php $__env->startSection('title', 'Edit Fee Structure'); ?>
 <?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
@@ -7,7 +7,7 @@
     <!-- Page Header -->
     <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
         <div class="flex-grow-1">
-            <h5 class="fw-bold">Create Fee Structure</h5>
+            <h5 class="fw-bold">Edit Fee Structure</h5>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
                     <li class="breadcrumb-item d-flex align-items-center">
@@ -16,7 +16,7 @@
                     <li class="breadcrumb-item">
                         <a href="<?php echo e(route('institution.fee-structure.index')); ?>">Fee Structure</a>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
                 </ol>
             </nav>
         </div>
@@ -28,21 +28,22 @@
     </div>
     <!-- End Page Header -->
 
-    <!-- Create Fee Structure Form -->
+    <!-- Edit Fee Structure Form -->
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Fee Structure Information</h5>
+                    <h5 class="card-title mb-0">Edit Fee Structure Information</h5>
                 </div>
                 <div class="card-body">
                     <form id="feeStructureForm">
                         <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Fee Structure Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo e($feeStructure->name); ?>" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -51,10 +52,10 @@
                                     <label for="fee_type" class="form-label">Fee Type <span class="text-danger">*</span></label>
                                     <select class="form-select" id="fee_type" name="fee_type" required>
                                         <option value="">Select Fee Type</option>
-                                        <option value="monthly">Monthly</option>
-                                        <option value="quarterly">Quarterly</option>
-                                        <option value="yearly">Yearly</option>
-                                        <option value="onetime">One Time</option>
+                                        <option value="monthly" <?php echo e($feeStructure->fee_type == 'monthly' ? 'selected' : ''); ?>>Monthly</option>
+                                        <option value="quarterly" <?php echo e($feeStructure->fee_type == 'quarterly' ? 'selected' : ''); ?>>Quarterly</option>
+                                        <option value="yearly" <?php echo e($feeStructure->fee_type == 'yearly' ? 'selected' : ''); ?>>Yearly</option>
+                                        <option value="onetime" <?php echo e($feeStructure->fee_type == 'onetime' ? 'selected' : ''); ?>>One Time</option>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -68,7 +69,7 @@
                                     <select class="form-select" id="class_id" name="class_id" required>
                                         <option value="">Select Class</option>
                                         <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
+                                            <option value="<?php echo e($class->id); ?>" <?php echo e($feeStructure->class_id == $class->id ? 'selected' : ''); ?>><?php echo e($class->name); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                     <div class="invalid-feedback"></div>
@@ -79,6 +80,9 @@
                                     <label for="section_id" class="form-label">Section</label>
                                     <select class="form-select" id="section_id" name="section_id">
                                         <option value="">Select Section (Optional)</option>
+                                        <?php $__currentLoopData = $sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($section->id); ?>" <?php echo e($feeStructure->section_id == $section->id ? 'selected' : ''); ?>><?php echo e($section->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                     <div class="invalid-feedback"></div>
                                 </div>
@@ -89,14 +93,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="amount" class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required>
+                                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" value="<?php echo e($feeStructure->amount); ?>" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control flatpickr" id="start_date" name="start_date" placeholder="Select start date" required>
+                                    <input type="text" class="form-control flatpickr" id="start_date" name="start_date" value="<?php echo e($feeStructure->start_date->format('Y-m-d')); ?>" placeholder="Select start date" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -104,13 +108,13 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter fee structure description (optional)"></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter fee structure description (optional)"><?php echo e($feeStructure->description); ?></textarea>
                             <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="ti ti-device-floppy me-1"></i>Create Fee Structure
+                                <i class="ti ti-device-floppy me-1"></i>Update Fee Structure
                             </button>
                             <a href="<?php echo e(route('institution.fee-structure.index')); ?>" class="btn btn-outline-secondary">
                                 <i class="ti ti-x me-1"></i>Cancel
@@ -121,7 +125,7 @@
             </div>
         </div>
     </div>
-    <!-- End Create Fee Structure Form -->
+    <!-- End Edit Fee Structure Form -->
 
 </div>
 <!-- End Content -->
@@ -142,6 +146,7 @@ $(document).ready(function() {
     $('#class_id').change(function() {
         const classId = $(this).val();
         const sectionSelect = $('#section_id');
+        const currentSectionId = '<?php echo e($feeStructure->section_id); ?>';
         
         sectionSelect.html('<option value="">Loading sections...</option>');
         
@@ -152,7 +157,8 @@ $(document).ready(function() {
                 success: function(response) {
                     sectionSelect.html('<option value="">Select Section (Optional)</option>');
                     response.forEach(function(section) {
-                        sectionSelect.append(`<option value="${section.id}">${section.name}</option>`);
+                        const selected = section.id == currentSectionId ? 'selected' : '';
+                        sectionSelect.append(`<option value="${section.id}" ${selected}>${section.name}</option>`);
                     });
                 },
                 error: function() {
@@ -175,7 +181,7 @@ $(document).ready(function() {
         const formData = new FormData(this);
         
         $.ajax({
-            url: '<?php echo e(route("institution.fee-structure.store")); ?>',
+            url: '<?php echo e(route("institution.fee-structure.update", $feeStructure->id)); ?>',
             method: 'POST',
             data: formData,
             processData: false,
@@ -185,7 +191,7 @@ $(document).ready(function() {
                     toastr.success(response.message);
                     window.location.href = '<?php echo e(route("institution.fee-structure.index")); ?>';
                 } else {
-                    toastr.error(response.message || 'Failed to create fee structure');
+                    toastr.error(response.message || 'Failed to update fee structure');
                 }
             },
             error: function(xhr) {
@@ -197,7 +203,7 @@ $(document).ready(function() {
                         field.siblings('.invalid-feedback').text(errors[key][0]);
                     });
                 } else {
-                    toastr.error('An error occurred while creating the fee structure');
+                    toastr.error('An error occurred while updating the fee structure');
                 }
             }
         });
@@ -205,4 +211,4 @@ $(document).ready(function() {
 });
 </script>
 <?php $__env->stopPush(); ?>
-<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/institution/payment/fee-structure/create.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/institution/payment/fee-structure/edit.blade.php ENDPATH**/ ?>

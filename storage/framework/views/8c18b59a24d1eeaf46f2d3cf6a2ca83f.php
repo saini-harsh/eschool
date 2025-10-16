@@ -25,81 +25,112 @@
     </div>
     <!-- End Page Header -->
 
-    <!-- Fee Structure List -->
+    <!-- Fee Structure Cards -->
     <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Fee Structure List</h5>
-                </div>
-                <div class="card-body">
-                    <?php if($feeStructures->count() > 0): ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Class</th>
-                                        <th>Section</th>
-                                        <th>Amount</th>
-                                        <th>Fee Type</th>
-                                        <th>Start Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php $__currentLoopData = $feeStructures; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $feeStructure): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <tr>
-                                            <td>
-                                                <div>
-                                                    <h6 class="mb-0"><?php echo e($feeStructure->name); ?></h6>
-                                                    <?php if($feeStructure->description): ?>
-                                                        <small class="text-muted"><?php echo e(Str::limit($feeStructure->description, 50)); ?></small>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </td>
-                                            <td><?php echo e($feeStructure->schoolClass->name ?? 'N/A'); ?></td>
-                                            <td><?php echo e($feeStructure->section->name ?? 'All Sections'); ?></td>
-                                            <td>
-                                                <span class="fw-semibold">₹<?php echo e(number_format($feeStructure->amount, 2)); ?></span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-<?php echo e($feeStructure->fee_type == 'monthly' ? 'primary' : ($feeStructure->fee_type == 'quarterly' ? 'info' : 'success')); ?>">
-                                                    <?php echo e(ucfirst($feeStructure->fee_type)); ?>
-
-                                                </span>
-                                            </td>
-                                            <td><?php echo e($feeStructure->start_date->format('d M Y')); ?></td>
-                                            <td>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input status-toggle" type="checkbox" 
-                                                           data-id="<?php echo e($feeStructure->id); ?>" 
-                                                           <?php echo e($feeStructure->status ? 'checked' : ''); ?>>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex gap-2">
-                                                    <a href="<?php echo e(route('institution.fee-structure.show', $feeStructure->id)); ?>" 
-                                                       class="btn btn-sm btn-outline-primary" title="View">
-                                                        <i class="ti ti-eye"></i>
-                                                    </a>
-                                                    <a href="<?php echo e(route('institution.fee-structure.edit', $feeStructure->id)); ?>" 
-                                                       class="btn btn-sm btn-outline-warning" title="Edit">
-                                                        <i class="ti ti-edit"></i>
-                                                    </a>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn" 
-                                                            data-id="<?php echo e($feeStructure->id); ?>" title="Delete">
-                                                        <i class="ti ti-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </tbody>
-                            </table>
+        <?php if($feeStructures->count() > 0): ?>
+            <?php $__currentLoopData = $feeStructures; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $feeStructure): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar avatar-sm bg-primary text-white rounded-circle me-2">
+                                    <i class="ti ti-receipt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold"><?php echo e($feeStructure->name); ?></h6>
+                                    <small class="text-muted"><?php echo e($feeStructure->schoolClass->name ?? 'N/A'); ?></small>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input status-toggle" type="checkbox" 
+                                       data-id="<?php echo e($feeStructure->id); ?>" 
+                                       <?php echo e($feeStructure->status ? 'checked' : ''); ?>>
+                            </div>
                         </div>
-                    <?php else: ?>
+                        <div class="card-body">
+                            <?php if($feeStructure->description): ?>
+                                <p class="text-muted mb-3"><?php echo e(Str::limit($feeStructure->description, 80)); ?></p>
+                            <?php endif; ?>
+                            
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-school text-primary me-2"></i>
+                                        <div>
+                                            <small class="text-muted d-block">Class</small>
+                                            <span class="fw-semibold"><?php echo e($feeStructure->schoolClass->name ?? 'N/A'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-users text-info me-2"></i>
+                                        <div>
+                                            <small class="text-muted d-block">Section</small>
+                                            <span class="fw-semibold"><?php echo e($feeStructure->section->name ?? 'All Sections'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-calendar text-success me-2"></i>
+                                        <div>
+                                            <small class="text-muted d-block">Start Date</small>
+                                            <span class="fw-semibold"><?php echo e($feeStructure->start_date->format('d M Y')); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-credit-card text-warning me-2"></i>
+                                        <div>
+                                            <small class="text-muted d-block">Fee Type</small>
+                                            <span class="badge bg-<?php echo e($feeStructure->fee_type == 'monthly' ? 'primary' : ($feeStructure->fee_type == 'quarterly' ? 'info' : ($feeStructure->fee_type == 'yearly' ? 'success' : 'warning'))); ?>">
+                                                <?php echo e($feeStructure->fee_type == 'onetime' ? 'One Time' : ucfirst($feeStructure->fee_type)); ?>
+
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mb-3">
+                                <div class="bg-light rounded p-3">
+                                    <small class="text-muted d-block">Amount</small>
+                                    <h4 class="mb-0 text-primary fw-bold">₹<?php echo e(number_format($feeStructure->amount, 2)); ?></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                <a href="<?php echo e(route('institution.payments.record', $feeStructure->id)); ?>" 
+                                   class="btn btn-sm btn-success" title="Record Payment">
+                                    <i class="ti ti-credit-card me-1"></i>Record Payment
+                                </a>
+                                <a href="<?php echo e(route('institution.fee-structure.show', $feeStructure->id)); ?>" 
+                                   class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="ti ti-eye me-1"></i>View
+                                </a>
+                                <a href="<?php echo e(route('institution.fee-structure.edit', $feeStructure->id)); ?>" 
+                                   class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="ti ti-edit me-1"></i>Edit
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-btn" 
+                                        data-id="<?php echo e($feeStructure->id); ?>" title="Delete">
+                                    <i class="ti ti-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php else: ?>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
                         <div class="text-center py-5">
                             <div class="mb-3">
                                 <i class="ti ti-receipt-off" style="font-size: 3rem; color: #ccc;"></i>
@@ -110,12 +141,12 @@
                                 <i class="ti ti-plus me-1"></i>Add Fee Structure
                             </a>
                         </div>
-                    <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
-    <!-- End Fee Structure List -->
+    <!-- End Fee Structure Cards -->
 
 </div>
 <!-- End Content -->
