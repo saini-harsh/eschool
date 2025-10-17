@@ -251,6 +251,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Sections</th>
+                                <th>Student Count</th> 
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -281,6 +282,13 @@
                                                         ->toArray();
                                                 ?>
                                                 <h6 class="fs-14 mb-0"><?php echo e(implode(', ', $sectionNames) ?: '-'); ?></h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-2">
+                                                <h6 class="fs-14 mb-0"><?php echo e($class->student_count ?? 0); ?></h6>
                                             </div>
                                         </div>
                                     </td>
@@ -350,4 +358,4 @@
     <script src="<?php echo e(asset('custom/js/admin/schoolclass.js')); ?>"></script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/academic/classes/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/admin/academic/classes/index.blade.php ENDPATH**/ ?>

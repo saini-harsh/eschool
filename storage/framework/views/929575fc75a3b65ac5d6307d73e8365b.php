@@ -46,10 +46,14 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Institution <span class="text-danger">*</span></label>
-                                        <input type="hidden" name="institution_id" id="institution_id"
-                                            value="<?php echo e($currentInstitution->id); ?>">
-                                        <input type="text" name="institution_name" id="institution_name"
-                                            value="<?php echo e($currentInstitution->name); ?>" class="form-control" readonly>
+                                        <select class="form-select" name="institution_id" id="institution_id" required>
+                                            <option value="">Select Institution</option>
+                                            <?php if(isset($institutions) && !empty($institutions)): ?>
+                                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endif; ?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -57,9 +61,7 @@
                                         <label class="form-label">Class <span class="text-danger">*</span></label>
                                         <select class="form-select" name="class_id" id="class_id" required>
                                             <option value="">Select Class</option>
-                                            <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
                                         </select>
                                     </div>
                                 </div>
@@ -100,7 +102,18 @@
                 </div>
             </div>
             <div class="col-9">
-
+                <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                    <div>
+                        <select class="form-select" name="filter_institution_id" id="filter_institution_id" required>
+                            <option value="">Select Institution</option>
+                            <?php if(isset($institutions) && !empty($institutions)): ?>
+                                <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
                         <thead class="thead-ight">
@@ -113,33 +126,7 @@
                             </tr>
                         </thead>
                         <tbody id="sections-table-body">
-                            <?php $__currentLoopData = $lists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $list): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <tr>
-                                    <td><?php echo e($list->institution->name); ?></td>
-                                    <td><?php echo e($list->class->name); ?></td>
-                                    <td><?php echo e($list->name); ?></td>
-                                    <td><?php echo e($list->status ? 'Active' : 'Inactive'); ?></td>
-                                    <td>
-                                        <div class="d-inline-flex align-items-center">
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-icon btn-sm btn-outline-white border-0 edit-section"
-                                                data-section-id="<?php echo e($list->id); ?>"
-                                                data-section-name="<?php echo e($list->name); ?>"
-                                                data-status="<?php echo e($list->status); ?>"
-                                                data-institution-id="<?php echo e($list->institution_id); ?>"
-                                                data-class-id="<?php echo e($list->class_id || ''); ?>">
-                                                <i class="ti ti-edit"></i>
-                                            </a>
-                                            <a href="javascript:void(0);"
-                                                class="btn btn-icon btn-sm btn-outline-white border-0 delete-section"
-                                                data-section-id="<?php echo e($list->id); ?>"
-                                                data-section-name="<?php echo e($list->name); ?>">
-                                                <i class="ti ti-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
                         </tbody>
                     </table>
                 </div>
@@ -177,4 +164,4 @@
     <script src="<?php echo e(asset('custom/js/admin/sections.js')); ?>"></script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/academic/section/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/admin/academic/section/index.blade.php ENDPATH**/ ?>

@@ -139,7 +139,7 @@
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Name</label>
+                                                    <label class="form-label">Class</label>
                                                     <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
@@ -147,22 +147,34 @@
                                                         class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                         data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                         aria-expanded="true">
-                                                        Select
+                                                        Select Class
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($institutions) && !empty($institutions))
-                                                            @foreach ($institutions as $institution)
+                                                        @if(isset($classes) && !empty($classes))
+                                                            @foreach ($classes as $class)
                                                                 <li>
                                                                     <label
                                                                         class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                                        {{ $institution->name }}
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="class_ids[]" value="{{ $class->id }}">
+                                                                        {{ $class->name }}
                                                                     </label>
                                                                 </li>
                                                             @endforeach
                                                         @endif
                                                     </ul>
                                                 </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Type</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                                </div>
+                                                <select class="form-select" name="type">
+                                                    <option value="">All Types</option>
+                                                    <option value="theory">Theory</option>
+                                                    <option value="practical">Practical</option>
+                                                </select>
                                             </div>
                                             <div>
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -174,20 +186,22 @@
                                                         class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
                                                         data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                                         aria-expanded="true">
-                                                        Select
+                                                        Select Status
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="1">
                                                                 Active
                                                             </label>
                                                         </li>
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="0">
                                                                 Inactive
                                                             </label>
                                                         </li>

@@ -25,6 +25,11 @@ class SchoolClass extends Model
         return $this->hasMany(Section::class);
     }
 
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'class_id');
+    }
+
     public function assignClassTeachers()
     {
         return $this->hasMany(AssignClassTeacher::class, 'class_id');

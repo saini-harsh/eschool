@@ -66,9 +66,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="class_id" class="form-label">Class <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="class_id" name="class_id" required>
-                                        <option value="">Select Class</option>
+                                    <label for="class_id" class="form-label">Class</label>
+                                    <select class="form-select" id="class_id" name="class_id">
+                                        <option value="">Select Class (Optional)</option>
                                         @foreach($classes as $class)
                                             <option value="{{ $class->id }}" {{ $feeStructure->class_id == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
                                         @endforeach
@@ -100,8 +100,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control flatpickr" id="start_date" name="start_date" value="{{ $feeStructure->start_date->format('Y-m-d') }}" placeholder="Select start date" required>
+                                    <label for="due_date" class="form-label">Due Date <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control flatpickr" id="due_date" name="due_date" value="{{ $feeStructure->due_date->format('Y-m-d') }}" placeholder="Select due date" required>
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
@@ -137,10 +137,10 @@
 <script>
 $(document).ready(function() {
     // Initialize Flatpickr for date input
-    flatpickr("#start_date", {
+    flatpickr("#due_date", {
         dateFormat: "Y-m-d",
         allowInput: true,
-        placeholder: "Select start date"
+        placeholder: "Select due date"
     });
 
     // Load sections when class is selected

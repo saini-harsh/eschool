@@ -509,7 +509,137 @@ $(document).ready(function () {
     // Initialize Select2 for existing dropdowns
     initializeSelect2();
     addStatusChangeListeners();
+    
+    // Initialize filter functionality
+    initializeFilterFunctionality();
 });
+
+/**
+ * Initialize filter functionality
+ */
+function initializeFilterFunctionality() {
+    initializeFilterForm();
+    initializeClearFilters();
+}
+
+/**
+ * Initialize filter form functionality
+ */
+function initializeFilterForm() {
+    // Handle filter form submission
+    $(document).on('submit', '#filter-form', function(e) {
+        e.preventDefault();
+        
+        const filters = {};
+        
+        // Collect selected institution IDs
+        const institutionIds = [];
+        $('input[name="institution_ids[]"]:checked').each(function() {
+            institutionIds.push($(this).val());
+        });
+        if (institutionIds.length > 0) {
+            filters.institution_ids = institutionIds;
+        }
+        
+        // Collect selected class IDs
+        const classIds = [];
+        $('input[name="class_ids[]"]:checked').each(function() {
+            classIds.push($(this).val());
+        });
+        if (classIds.length > 0) {
+            filters.class_ids = classIds;
+        }
+        
+        // Collect selected teacher IDs
+        const teacherIds = [];
+        $('input[name="teacher_ids[]"]:checked').each(function() {
+            teacherIds.push($(this).val());
+        });
+        if (teacherIds.length > 0) {
+            filters.teacher_ids = teacherIds;
+        }
+        
+        // Collect selected subject IDs
+        const subjectIds = [];
+        $('input[name="subject_ids[]"]:checked').each(function() {
+            subjectIds.push($(this).val());
+        });
+        if (subjectIds.length > 0) {
+            filters.subject_ids = subjectIds;
+        }
+        
+        // Collect selected status
+        const status = [];
+        $('input[name="status[]"]:checked').each(function() {
+            status.push($(this).val());
+        });
+        if (status.length > 0) {
+            filters.status = status;
+        }
+        
+        console.log('Applying filters:', filters);
+        applyFilters(filters);
+    });
+    
+    // Handle close filter button
+    $(document).on('click', '#close-filter', function() {
+        $('#filter-dropdown').removeClass('show');
+    });
+}
+
+/**
+ * Initialize clear filters functionality
+ */
+function initializeClearFilters() {
+    // Clear all filters
+    $(document).on('click', '.link-danger', function() {
+        $('#filter-form')[0].reset();
+        applyFilters({});
+    });
+    
+    // Clear individual filter fields
+    $(document).on('click', '.filter-reset', function() {
+        const field = $(this).data('field');
+        $(`input[name="${field}[]"]`).prop('checked', false);
+        applyFilters({});
+    });
+}
+
+/**
+ * Apply filters via AJAX
+ */
+function applyFilters(filters) {
+    console.log('Applying filters:', filters);
+    
+    $.ajax({
+        url: '/admin/assign-subject/filter',
+        type: 'POST',
+        data: {
+            ...filters,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        beforeSend: function() {
+            // Show loading indicator
+            $('.datatable tbody').html('<tr><td colspan="7" class="text-center">Loading...</td></tr>');
+        },
+        success: function(response) {
+            console.log('Filter response:', response);
+            if (response.success) {
+                updateAssignmentsTable(response.data);
+            } else {
+                showToast('error', 'Failed to filter assignments');
+                // Reload original data
+                refreshAssignmentsList();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Filter error:', error);
+            showToast('error', 'Error filtering assignments');
+            // Reload original data
+            refreshAssignmentsList();
+        }
+    });
+}
 
 /**
  * Initialize assign subject cascading dropdowns

@@ -121,8 +121,8 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-nowrap datatable">
+                            <thead class="thead-light">
                                 <tr>
                                     <th>Title</th>
                                     <th>Class</th>
@@ -130,63 +130,102 @@
                                     <th>Subject</th>
                                     <th>Teacher</th>
                                     <th>Due Date</th>
-                                    <th>Submissions</th>
+                                    <th>File</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th class="no-sort">Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="assignments-table-body">
-                                <?php $__empty_1 = true; $__currentLoopData = $assignments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $assignment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                    <tr data-assignment-id="<?php echo e($assignment->id); ?>">
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <span class="fw-semibold"><?php echo e($assignment->title); ?></span>
-                                                <?php if($assignment->assignment_file): ?>
-                                                    <small class="text-muted">
-                                                        <i class="ti ti-file-text me-1"></i>
-                                                        <a href="<?php echo e(asset($assignment->assignment_file)); ?>" target="_blank" class="text-decoration-none">View File</a>
-                                                    </small>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                        <td><?php echo e($assignment->schoolClass->name ?? 'N/A'); ?></td>
-                                        <td><?php echo e($assignment->section->name ?? 'N/A'); ?></td>
-                                        <td><?php echo e($assignment->subject->name ?? 'N/A'); ?></td>
-                                        <td><?php echo e($assignment->teacher->first_name ?? ''); ?> <?php echo e($assignment->teacher->last_name ?? ''); ?></td>
-                                        <td>
-                                            <span class="badge <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->isPast() ? 'bg-danger' : 'bg-success'); ?>">
-                                                <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->format('M d, Y')); ?>
+                            <tbody>
+                                <?php if(isset($assignments) && !empty($assignments)): ?>
+                                    <?php $__currentLoopData = $assignments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $assignment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr data-assignment-id="<?php echo e($assignment->id); ?>">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->title); ?></h6>
+                                                        <?php if($assignment->description): ?>
+                                                            <small class="text-muted"><?php echo e(Str::limit($assignment->description, 30)); ?></small>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->schoolClass->name ?? 'N/A'); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->section->name ?? 'N/A'); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->subject->name ?? 'N/A'); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0"><?php echo e($assignment->teacher->first_name ?? ''); ?> <?php echo e($assignment->teacher->last_name ?? ''); ?></h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="ms-2">
+                                                        <h6 class="fs-14 mb-0">
+                                                            <span class="badge <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->isPast() ? 'bg-danger' : 'bg-success'); ?>">
+                                                                <?php echo e(\Carbon\Carbon::parse($assignment->due_date)->format('M d, Y')); ?>
 
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
-                                                class="btn btn-icon btn-sm btn-outline-primary border-0 view-submissions"
-                                                title="View Submissions (<?php echo e($assignment->studentAssignments->count()); ?>)">
-                                                <i class="ti ti-users"></i>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <div class="form-check form-switch">
-                                                <input type="checkbox" class="form-check-input status-toggle" 
-                                                       data-assignment-id="<?php echo e($assignment->id); ?>" 
-                                                       <?php echo e($assignment->status ? 'checked' : ''); ?>>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-1">
-                                                <button class="btn btn-icon btn-sm btn-outline-primary border-0 edit-assignment" 
-                                                        data-assignment-id="<?php echo e($assignment->id); ?>" title="Edit">
-                                                    <i class="ti ti-edit"></i>
-                                                </button>
-                                                <button class="btn btn-icon btn-sm btn-outline-danger border-0 delete-assignment" 
-                                                        data-assignment-id="<?php echo e($assignment->id); ?>" title="Delete">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                                            </span>
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <?php if($assignment->assignment_file): ?>
+                                                    <a href="<?php echo e(asset($assignment->assignment_file)); ?>" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="View File">
+                                                        <i class="ti ti-file-text"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-muted">No file</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input type="checkbox" class="form-check-input status-toggle" 
+                                                           data-assignment-id="<?php echo e($assignment->id); ?>" 
+                                                           <?php echo e($assignment->status ? 'checked' : ''); ?>>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex align-items-center">
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
+                                                        class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
+                                                        title="View Submissions (<?php echo e($assignment->studentAssignments->count()); ?>)">
+                                                        <i class="ti ti-users"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
+                                                        class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
+                                                        <i class="ti ti-edit"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" data-assignment-id="<?php echo e($assignment->id); ?>"
+                                                        data-assignment-title="<?php echo e($assignment->title); ?>"
+                                                        class="btn btn-icon btn-sm btn-outline-white border-0 delete-assignment">
+                                                        <i class="ti ti-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
                                     <tr>
                                         <td colspan="9" class="text-center py-4">
                                             <div class="d-flex flex-column align-items-center">

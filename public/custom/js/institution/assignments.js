@@ -11,6 +11,8 @@ $(document).ready(function() {
         return;
     }
     
+    // DataTable will be initialized automatically by the main script.js file
+    
     // Check if we're on an assignment page
     if ($('#class_id').length > 0) {
         // Initialize assignment functionality
@@ -42,6 +44,7 @@ $(document).ready(function() {
         initGradeAssignment();
     }
 });
+
 
 function initInstitutionAssignmentForm() {
     // Global variables
@@ -287,15 +290,105 @@ function resetForm() {
 }
 
 function addAssignmentRow(assignment) {
-    const tbody = $('#assignments-table-body');
+    const className = assignment.school_class?.name || 'N/A';
+    const sectionName = assignment.section?.name || 'N/A';
+    const subjectName = assignment.subject?.name || 'N/A';
+    const teacherName = `${assignment.teacher?.first_name || ''} ${assignment.teacher?.last_name || ''}`.trim();
     
-    // Remove empty row if exists
-    tbody.find('tr:has(td[colspan="9"])').remove();
+    const dueDate = new Date(assignment.due_date);
+    const isOverdue = dueDate < new Date();
+    const statusBadge = isOverdue ? 'bg-danger' : 'bg-success';
+    const formattedDate = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     
-    const row = createAssignmentRow(assignment);
-    tbody.prepend(row);
+    const fileButtons = assignment.assignment_file ? 
+        `<a href="${assignment.assignment_file}" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="View File">
+            <i class="ti ti-file-text"></i>
+        </a>` : 
+        '<span class="text-muted">No file</span>';
+
+    const newRow = `
+        <tr data-assignment-id="${assignment.id}">
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${assignment.title}</h6>
+                        ${assignment.description ? `<small class="text-muted">${assignment.description.substring(0, 30)}${assignment.description.length > 30 ? '...' : ''}</small>` : ''}
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${className}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${sectionName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${subjectName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${teacherName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">
+                            <span class="badge ${statusBadge}">${formattedDate}</span>
+                        </h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                ${fileButtons}
+            </td>
+            <td>
+                <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input status-toggle" 
+                           data-assignment-id="${assignment.id}" 
+                           ${assignment.status ? 'checked' : ''}>
+                </div>
+            </td>
+            <td>
+                <div class="d-inline-flex align-items-center">
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
+                        title="View Submissions (${assignment.student_assignments?.length || 0})">
+                        <i class="ti ti-users"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
+                        <i class="ti ti-edit"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        data-assignment-title="${assignment.title}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 delete-assignment">
+                        <i class="ti ti-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    `;
     
-    // Initialize row event handlers
+    // Add to table (prepend to show newest first)
+    $('.datatable tbody').prepend(newRow);
+    
+    // Initialize event handlers for the new row
+    const row = $(`tr[data-assignment-id="${assignment.id}"]`);
     initRowEventHandlers(row);
 }
 
@@ -308,40 +401,71 @@ function updateAssignmentRow(assignment) {
 }
 
 function createAssignmentRow(assignment) {
+    const className = assignment.school_class?.name || 'N/A';
+    const sectionName = assignment.section?.name || 'N/A';
+    const subjectName = assignment.subject?.name || 'N/A';
+    const teacherName = `${assignment.teacher?.first_name || ''} ${assignment.teacher?.last_name || ''}`.trim();
+    
     const dueDate = new Date(assignment.due_date);
     const isOverdue = dueDate < new Date();
     const statusBadge = isOverdue ? 'bg-danger' : 'bg-success';
-    const statusText = isOverdue ? 'Overdue' : 'Active';
+    const formattedDate = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     
-    const fileLink = assignment.assignment_file ? 
-        `<small class="text-muted">
-            <i class="ti ti-file-text me-1"></i>
-            <a href="${assignment.assignment_file}" target="_blank" class="text-decoration-none">View File</a>
-        </small>` : '';
-    
+    const fileButtons = assignment.assignment_file ? 
+        `<a href="${assignment.assignment_file}" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="View File">
+            <i class="ti ti-file-text"></i>
+        </a>` : 
+        '<span class="text-muted">No file</span>';
+
     return `
         <tr data-assignment-id="${assignment.id}">
             <td>
-                <div class="d-flex flex-column">
-                    <span class="fw-semibold">${assignment.title}</span>
-                    ${fileLink}
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${assignment.title}</h6>
+                        ${assignment.description ? `<small class="text-muted">${assignment.description.substring(0, 30)}${assignment.description.length > 30 ? '...' : ''}</small>` : ''}
+                    </div>
                 </div>
             </td>
-            <td>${assignment.school_class?.name || 'N/A'}</td>
-            <td>${assignment.section?.name || 'N/A'}</td>
-            <td>${assignment.subject?.name || 'N/A'}</td>
-            <td>${assignment.teacher?.first_name || ''} ${assignment.teacher?.last_name || ''}</td>
             <td>
-                <span class="badge ${statusBadge}">
-                    ${dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${className}</h6>
+                    </div>
+                </div>
             </td>
             <td>
-                <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
-                    class="btn btn-icon btn-sm btn-outline-primary border-0 view-submissions"
-                    title="View Submissions (${assignment.student_assignments?.length || 0})">
-                    <i class="ti ti-users"></i>
-                </a>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${sectionName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${subjectName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">${teacherName}</h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="ms-2">
+                        <h6 class="fs-14 mb-0">
+                            <span class="badge ${statusBadge}">${formattedDate}</span>
+                        </h6>
+                    </div>
+                </div>
+            </td>
+            <td>
+                ${fileButtons}
             </td>
             <td>
                 <div class="form-check form-switch">
@@ -351,20 +475,27 @@ function createAssignmentRow(assignment) {
                 </div>
             </td>
             <td>
-                <div class="d-flex gap-1">
-                    <button class="btn btn-icon btn-sm btn-outline-primary border-0 edit-assignment" 
-                            data-assignment-id="${assignment.id}" title="Edit">
+                <div class="d-inline-flex align-items-center">
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 view-submissions" 
+                        title="View Submissions (${assignment.student_assignments?.length || 0})">
+                        <i class="ti ti-users"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 edit-assignment">
                         <i class="ti ti-edit"></i>
-                    </button>
-                    <button class="btn btn-icon btn-sm btn-outline-danger border-0 delete-assignment" 
-                            data-assignment-id="${assignment.id}" title="Delete">
+                    </a>
+                    <a href="javascript:void(0);" data-assignment-id="${assignment.id}"
+                        data-assignment-title="${assignment.title}"
+                        class="btn btn-icon btn-sm btn-outline-white border-0 delete-assignment">
                         <i class="ti ti-trash"></i>
-                    </button>
+                    </a>
                 </div>
             </td>
         </tr>
     `;
 }
+
 
 function initRowEventHandlers(row) {
     // Initialize status toggle
@@ -538,8 +669,8 @@ function deleteAssignment(assignmentId) {
                     $(`tr[data-assignment-id="${assignmentId}"]`).remove();
                     
                     // Check if table is empty
-                    if ($('#assignments-table-body tr').length === 0) {
-                        $('#assignments-table-body').html(`
+                    if ($('.datatable tbody tr').length === 0) {
+                        $('.datatable tbody').html(`
                             <tr>
                                 <td colspan="9" class="text-center py-4">
                                     <div class="d-flex flex-column align-items-center">

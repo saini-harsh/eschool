@@ -84,7 +84,7 @@ class FeeStructureSeeder extends Seeder
                     'section_id' => $sections->isNotEmpty() && $faker->boolean(60) ? $sections->random()->id : null,
                     'amount' => $amount,
                     'fee_type' => $feeType,
-                    'start_date' => $faker->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d'),
+                    'due_date' => $faker->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d'),
                     'status' => $faker->boolean(85), // 85% chance of being active
                 ]);
             }

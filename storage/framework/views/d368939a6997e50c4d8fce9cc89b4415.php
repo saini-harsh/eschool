@@ -78,8 +78,8 @@
                                     <div class="d-flex align-items-center">
                                         <i class="ti ti-calendar text-success me-2"></i>
                                         <div>
-                                            <small class="text-muted d-block">Start Date</small>
-                                            <span class="fw-semibold"><?php echo e($feeStructure->start_date->format('d M Y')); ?></span>
+                                            <small class="text-muted d-block">Due Date</small>
+                                            <span class="fw-semibold"><?php echo e($feeStructure->due_date->format('d M Y')); ?></span>
                                         </div>
                                     </div>
                                 </div>

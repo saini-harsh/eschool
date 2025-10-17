@@ -1,21 +1,22 @@
-@extends('layouts.admin')
-@section('title', 'Admin | Lesson Plans')
-@section('content')
 
-@if (session('success'))
+<?php $__env->startSection('title', 'Institution | Lesson Plans'); ?>
+<?php $__env->startSection('content'); ?>
+
+<?php if(session('success')): ?>
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
         <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
             aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
-                    {{ session('success') }}
+                    <?php echo e(session('success')); ?>
+
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                     aria-label="Close"></button>
             </div>
         </div>
     </div>
-@endif
+<?php endif; ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -25,7 +26,7 @@
             <h5 class="fw-bold">Lesson Plans</h5>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                    <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.dashboard') }}"><i
+                    <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('institution.dashboard')); ?>"><i
                                 class="ti ti-home me-1"></i>Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Lesson Plans</li>
                 </ol>
@@ -43,7 +44,7 @@
                 </div>
                 <div class="card-body">
                     <form action="" method="post" id="lesson-plan-form" enctype="multipart/form-data">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" name="id" id="lesson-plan-id">
                         
                         <div class="mb-3">
@@ -60,11 +61,11 @@
                             <label class="form-label">Institution <span class="text-danger">*</span></label>
                             <select name="institution_id" id="institution_id" class="form-select" required>
                                 <option value="">Select Institution</option>
-                                @if (isset($institutions) && !empty($institutions))
-                                    @foreach ($institutions as $institution)
-                                        <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                    @endforeach
-                                @endif
+                                <?php if(isset($institutions) && !empty($institutions)): ?>
+                                    <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php endif; ?>
                             </select>
                         </div>
                         
@@ -133,35 +134,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form action="{{ route('admin.lesson-plans.index') }}" method="GET" id="filter-form">
+                                <form action="<?php echo e(route('institution.lesson-plans.index')); ?>" method="GET" id="filter-form">
                                     <div class="card-body">
-                                        <div class="mb-3">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <label class="form-label">Institution</label>
-                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                            </div>
-                                            <div class="dropdown">
-                                                <a href="javascript:void(0);"
-                                                    class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
-                                                    Select Institution
-                                                </a>
-                                                <ul class="dropdown-menu dropdown-menu w-100">
-                                                    @if(isset($institutions) && $institutions->count() > 0)
-                                                        @foreach($institutions as $institution)
-                                                            <li>
-                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="institution_id[]" value="{{ $institution->id }}" {{ in_array($institution->id, (array) request('institution_id', [])) ? 'checked' : '' }}>
-                                                                    {{ $institution->name }}
-                                                                </label>
-                                                            </li>
-                                                        @endforeach
-                                                    @else
-                                                        <li><span class="dropdown-item text-muted">No institutions available</span></li>
-                                                    @endif
-                                                </ul>
-                                            </div>
-                                        </div>
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label class="form-label">Class</label>
@@ -174,18 +148,19 @@
                                                     Select Class
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu w-100">
-                                                    @if(isset($classes) && $classes->count() > 0)
-                                                        @foreach($classes as $class)
+                                                    <?php if(isset($classes) && $classes->count() > 0): ?>
+                                                        <?php $__currentLoopData = $classes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <li>
                                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_id[]" value="{{ $class->id }}" {{ in_array($class->id, (array) request('class_id', [])) ? 'checked' : '' }}>
-                                                                    {{ $class->name }}
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="class_id[]" value="<?php echo e($class->id); ?>" <?php echo e(in_array($class->id, (array) request('class_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($class->name); ?>
+
                                                                 </label>
                                                             </li>
-                                                        @endforeach
-                                                    @else
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
                                                         <li><span class="dropdown-item text-muted">No classes available</span></li>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </ul>
                                             </div>
                                         </div>
@@ -201,18 +176,19 @@
                                                     Select Subject
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu w-100">
-                                                    @if(isset($subjects) && $subjects->count() > 0)
-                                                        @foreach($subjects as $subject)
+                                                    <?php if(isset($subjects) && $subjects->count() > 0): ?>
+                                                        <?php $__currentLoopData = $subjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subject): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <li>
                                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="subject_id[]" value="{{ $subject->id }}" {{ in_array($subject->id, (array) request('subject_id', [])) ? 'checked' : '' }}>
-                                                                    {{ $subject->name }}
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="subject_id[]" value="<?php echo e($subject->id); ?>" <?php echo e(in_array($subject->id, (array) request('subject_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($subject->name); ?>
+
                                                                 </label>
                                                             </li>
-                                                        @endforeach
-                                                    @else
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
                                                         <li><span class="dropdown-item text-muted">No subjects available</span></li>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </ul>
                                             </div>
                                         </div>
@@ -228,18 +204,19 @@
                                                     Select Teacher
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-menu w-100">
-                                                    @if(isset($teachers) && $teachers->count() > 0)
-                                                        @foreach($teachers as $teacher)
+                                                    <?php if(isset($teachers) && $teachers->count() > 0): ?>
+                                                        <?php $__currentLoopData = $teachers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teacher): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <li>
                                                                 <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="teacher_id[]" value="{{ $teacher->id }}" {{ in_array($teacher->id, (array) request('teacher_id', [])) ? 'checked' : '' }}>
-                                                                    {{ $teacher->first_name }} {{ $teacher->last_name }}
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="teacher_id[]" value="<?php echo e($teacher->id); ?>" <?php echo e(in_array($teacher->id, (array) request('teacher_id', [])) ? 'checked' : ''); ?>>
+                                                                    <?php echo e($teacher->first_name); ?> <?php echo e($teacher->last_name); ?>
+
                                                                 </label>
                                                             </li>
-                                                        @endforeach
-                                                    @else
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php else: ?>
                                                         <li><span class="dropdown-item text-muted">No teachers available</span></li>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </ul>
                                             </div>
                                         </div>
@@ -257,13 +234,13 @@
                                                 <ul class="dropdown-menu dropdown-menu w-100">
                                                     <li>
                                                         <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="1" {{ in_array('1', (array) request('status', [])) ? 'checked' : '' }}>
+                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="1" <?php echo e(in_array('1', (array) request('status', [])) ? 'checked' : ''); ?>>
                                                             Active
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="0" {{ in_array('0', (array) request('status', [])) ? 'checked' : '' }}>
+                                                            <input class="form-check-input m-0 me-2" type="checkbox" name="status[]" value="0" <?php echo e(in_array('0', (array) request('status', [])) ? 'checked' : ''); ?>>
                                                             Inactive
                                                         </label>
                                                     </li>
@@ -313,23 +290,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (isset($lessonPlans) && !empty($lessonPlans))
-                            @foreach ($lessonPlans as $lessonPlan)
-                                <tr data-lesson-plan-id="{{ $lessonPlan->id }}">
+                        <?php if(isset($lessonPlans) && !empty($lessonPlans)): ?>
+                            <?php $__currentLoopData = $lessonPlans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lessonPlan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr data-lesson-plan-id="<?php echo e($lessonPlan->id); ?>">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                <h6 class="fs-14 mb-0">{{ $lessonPlan->title }}</h6>
-                                                @if($lessonPlan->description)
-                                                    <small class="text-muted">{{ Str::limit($lessonPlan->description, 30) }}</small>
-                                                @endif
+                                                <h6 class="fs-14 mb-0"><?php echo e($lessonPlan->title); ?></h6>
+                                                <?php if($lessonPlan->description): ?>
+                                                    <small class="text-muted"><?php echo e(Str::limit($lessonPlan->description, 30)); ?></small>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                <h6 class="fs-14 mb-0">{{ $lessonPlan->institution->name ?? 'N/A' }}</h6>
+                                                <h6 class="fs-14 mb-0"><?php echo e($lessonPlan->institution->name ?? 'N/A'); ?></h6>
                                             </div>
                                         </div>
                                     </td>
@@ -337,9 +314,10 @@
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
                                                 <h6 class="fs-14 mb-0">
-                                                    {{ $lessonPlan->teacher->first_name ?? '' }} 
-                                                    {{ $lessonPlan->teacher->middle_name ?? '' }} 
-                                                    {{ $lessonPlan->teacher->last_name ?? '' }}
+                                                    <?php echo e($lessonPlan->teacher->first_name ?? ''); ?> 
+                                                    <?php echo e($lessonPlan->teacher->middle_name ?? ''); ?> 
+                                                    <?php echo e($lessonPlan->teacher->last_name ?? ''); ?>
+
                                                 </h6>
                                             </div>
                                         </div>
@@ -347,55 +325,55 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                <h6 class="fs-14 mb-0">{{ $lessonPlan->schoolClass->name ?? 'N/A' }}</h6>
+                                                <h6 class="fs-14 mb-0"><?php echo e($lessonPlan->schoolClass->name ?? 'N/A'); ?></h6>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="ms-2">
-                                                <h6 class="fs-14 mb-0">{{ $lessonPlan->subject->name ?? 'N/A' }}</h6>
+                                                <h6 class="fs-14 mb-0"><?php echo e($lessonPlan->subject->name ?? 'N/A'); ?></h6>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        @if($lessonPlan->lesson_plan_file)
-                                            <a href="{{ asset($lessonPlan->lesson_plan_file) }}" 
+                                        <?php if($lessonPlan->lesson_plan_file): ?>
+                                            <a href="<?php echo e(asset($lessonPlan->lesson_plan_file)); ?>" 
                                                target="_blank" class="btn btn-sm btn-outline-primary me-1" title="View PDF">
                                                 <i class="ti ti-eye"></i>
                                             </a>
-                                            <a href="{{ route('admin.lesson-plans.download', $lessonPlan->id) }}" 
+                                            <a href="<?php echo e(route('admin.lesson-plans.download', $lessonPlan->id)); ?>" 
                                                class="btn btn-sm btn-outline-success" title="Download PDF">
                                                 <i class="ti ti-download"></i>
                                             </a>
-                                        @else
+                                        <?php else: ?>
                                             <span class="text-muted">No file</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <div>
-                                            <select class="form-select status-select lesson-plan-status-select" data-lesson-plan-id="{{ $lessonPlan->id }}" data-original-value="{{ $lessonPlan->status }}">
-                                                <option value="1" {{ $lessonPlan->status == 1 ? 'selected' : '' }}>Active</option>
-                                                <option value="0" {{ $lessonPlan->status == 0 ? 'selected' : '' }}>Inactive</option>
+                                            <select class="form-select status-select lesson-plan-status-select" data-lesson-plan-id="<?php echo e($lessonPlan->id); ?>" data-original-value="<?php echo e($lessonPlan->status); ?>">
+                                                <option value="1" <?php echo e($lessonPlan->status == 1 ? 'selected' : ''); ?>>Active</option>
+                                                <option value="0" <?php echo e($lessonPlan->status == 0 ? 'selected' : ''); ?>>Inactive</option>
                                             </select>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-inline-flex align-items-center">
-                                            <a href="javascript:void(0);" data-lesson-plan-id="{{ $lessonPlan->id }}"
+                                            <a href="javascript:void(0);" data-lesson-plan-id="<?php echo e($lessonPlan->id); ?>"
                                                 class="btn btn-icon btn-sm btn-outline-white border-0 edit-lesson-plan">
                                                 <i class="ti ti-edit"></i>
                                             </a>
-                                            <a href="javascript:void(0);" data-lesson-plan-id="{{ $lessonPlan->id }}"
-                                                data-lesson-plan-title="{{ $lessonPlan->title }}"
+                                            <a href="javascript:void(0);" data-lesson-plan-id="<?php echo e($lessonPlan->id); ?>"
+                                                data-lesson-plan-title="<?php echo e($lessonPlan->title); ?>"
                                                 class="btn btn-icon btn-sm btn-outline-white border-0 delete-lesson-plan">
                                                 <i class="ti ti-trash"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
-                        @endif
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -420,7 +398,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form id="deleteForm" method="POST" style="display: inline;">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
@@ -467,7 +445,7 @@
         const clearAllLink = document.querySelector('a[href="javascript:void(0);"].link-danger');
         if (clearAllLink) {
             clearAllLink.addEventListener('click', function() {
-                window.location.href = '{{ route("admin.lesson-plans.index") }}';
+                window.location.href = '<?php echo e(route("institution.lesson-plans.index")); ?>';
             });
         }
 
@@ -530,7 +508,7 @@
                 searchBox.className = 'form-control form-control-sm';
                 searchBox.placeholder = 'Search lesson plans...';
                 searchBox.style.width = '200px';
-                searchBox.value = '{{ request("search") }}';
+                searchBox.value = '<?php echo e(request("search")); ?>';
                 
                 this.parentNode.replaceChild(searchBox, this);
                 searchBox.focus();
@@ -560,8 +538,10 @@
     });
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-<script src="{{ asset('custom/js/admin/lesson-plans.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+<script src="<?php echo e(asset('custom/js/institution/lesson-plans.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/institution/routines/lesson-plans/index.blade.php ENDPATH**/ ?>
