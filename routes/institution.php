@@ -239,6 +239,7 @@ Route::middleware('institution')->group(function () {
         Route::prefix('exam-management')->group(function () {
             Route::get('/exams',[ExamController::class,'index'])->name('institution.exam-management.exams');
             Route::get('/exams/get-classes-sections/{institution}', [ExamController::class, 'getClassesSections'])->name('institution.exams.getClassesSections');
+            Route::get('/exams/get-exam-type/{institution}', [ExamController::class, 'getExamType'])->name('institution.exams.getExamType');
 
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('institution.exam-management.exam-type');

@@ -25,12 +25,16 @@ class ExamController extends Controller
             $query->where('institution_id', $request->institution);
         }
 
-        if ($request->filled('class')) {
-            $query->where('class_id', $request->class);
-        }
+        // if ($request->filled('class')) {
+        //     $query->where('class_id', $request->class);
+        // }
 
-        if ($request->filled('section')) {
-            $query->where('section_id', $request->section);
+        // if ($request->filled('section')) {
+        //     $query->where('section_id', $request->section);
+        // }
+
+        if ($request->filled('exam_type')) {
+            $query->where('exam_type_id', $request->exam_type);
         }
 
         // Get filtered results
@@ -73,6 +77,33 @@ class ExamController extends Controller
         } catch (\Exception $e) {
             Log::error('Error in getClassesSections: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch classes and sections'], 500);
+        }
+    }
+
+    public function getExamType($institutionId){
+        try {
+            // Get institution with classes and sections
+            $institution = Institution::with(['examTypes'])->find($institutionId);
+
+            if (!$institution) {
+                return response()->json(['types' => []]);
+            }
+
+            // Get classes for this institution
+            $types = $institution->examTypes->map(function($type) {
+                return [
+                    'id' => $type->id,
+                    'title' => $type->title,
+                    'code' => $type->code,
+                ];
+            });
+
+            return response()->json([
+                'types' => $types,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getExamTypes: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch ExamTypes'], 500);
         }
     }
 }

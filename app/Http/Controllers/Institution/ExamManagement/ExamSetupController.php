@@ -40,7 +40,8 @@ class ExamSetupController extends Controller
 
     public function fetchSubjects(Request $request)
     {
-        $institutionId = $request->input('institution_id');
+        // $institutionId = $request->input('institution_id');
+        $institutionId = auth()->user()->id;
         $classId = $request->input('class_id');
         $subjects = Subject::where(['class_id' => $classId, 'institution_id' => $institutionId])->get(['id', 'name']);
         return response()->json(['subjects' => $subjects]);
@@ -64,24 +65,24 @@ class ExamSetupController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'institution_id' => 'required|exists:institutions,id',
-            'exam_type' => 'required|exists:exam_types,id',
-            'title' => 'required|string|max:255',
-            'code' => 'required|string|max:255',
-            'class_id' => 'nullable|exists:classes,id',
-            'section_id' => 'nullable|exists:sections,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'morning_time' => 'nullable|date_format:H:i',
-            'evening_time' => 'nullable|date_format:H:i',
-            'subject_dates' => 'required|array',
-            'morning_subjects' => 'required|array',
-            'evening_subjects' => 'required|array',
-        ]);
+        // $request->validate([
+        //     'institution_id' => 'required|exists:institutions,id',
+        //     'exam_type' => 'required|exists:exam_types,id',
+        //     'title' => 'required|string|max:255',
+        //     'code' => 'required|string|max:255',
+        //     'class_id' => 'nullable|exists:classes,id',
+        //     'section_id' => 'nullable|exists:sections,id',
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date|after_or_equal:start_date',
+        //     'morning_time' => 'nullable|date_format:H:i',
+        //     'evening_time' => 'nullable|date_format:H:i',
+        //     'subject_dates' => 'required|array',
+        //     'morning_subjects' => 'required|array',
+        //     'evening_subjects' => 'required|array',
+        // ]);
 
         Exam::create([
-            'institution_id' => $request->institution_id,
+            'institution_id' => auth('institution')->user()->id,
             'exam_type_id' => $request->exam_type,
             'title' => $request->title,
             'code' => $request->code,

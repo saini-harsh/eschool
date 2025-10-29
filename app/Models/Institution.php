@@ -74,6 +74,9 @@ class Institution extends Authenticatable
         return $this->hasMany(FeeStructure::class, 'institution_id');
     }
 
+    public function examTypes(){
+        return $this->hasMany(ExamType::class,'institution_id');
+    }
 
 
 }
