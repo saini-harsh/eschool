@@ -1,21 +1,21 @@
-@extends('layouts.admin')
-@section('title', 'Admin | Exam Management | Exam Setup')
-@section('content')
+<?php $__env->startSection('title', 'Admin | Exam Management | Exam Setup'); ?>
+<?php $__env->startSection('content'); ?>
 
-    @if (session('success'))
+    <?php if(session('success')): ?>
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Start Content -->
     <div class="content">
@@ -25,7 +25,7 @@
                 <h5 class="fw-bold">Exam Setup</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.dashboard') }}"><i
+                        <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('admin.dashboard')); ?>"><i
                                     class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Exam Setup</li>
                     </ol>
@@ -41,31 +41,31 @@
                         <h6 class="fw-bold">Add Exam</h6>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.exam-management.exam-setup.store') }}" method="post"
+                        <form action="<?php echo e(route('admin.exam-management.exam-setup.store')); ?>" method="post"
                             id="exam-type-form">
-                            @csrf
+                            <?php echo csrf_field(); ?>
                             <input type="hidden" name="id" id="exam-type-id">
                             <div class="row">
                                 <div class="col-3 mb-3">
                                     <label class="form-label">Institution <span class="text-danger">*</span></label>
                                     <select name="institution_id" id="institution_id" class="form-select">
                                         <option value="">Select Institution</option>
-                                        @if (isset($institutions) && !empty($institutions))
-                                            @foreach ($institutions as $institution)
-                                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                            @endforeach
-                                        @endif
+                                        <?php if(isset($institutions) && !empty($institutions)): ?>
+                                            <?php $__currentLoopData = $institutions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $institution): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($institution->id); ?>"><?php echo e($institution->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-3 mb-3">
                                     <label class="form-label">Exam Type <span class="text-danger">*</span></label>
                                     <select name="exam_type" id="exam_type" class="form-select" required>
                                         <option value="">Select Exam Type</option>
-                                        @if (isset($data['exam_types']) && !empty($data['exam_types']))
-                                            @foreach ($data['exam_types'] as $examType)
-                                                <option value="{{ $examType->id }}">{{ $examType->title }}</option>
-                                            @endforeach
-                                        @endif
+                                        <?php if(isset($data['exam_types']) && !empty($data['exam_types'])): ?>
+                                            <?php $__currentLoopData = $data['exam_types']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $examType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($examType->id); ?>"><?php echo e($examType->title); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-3 mb-3">
@@ -85,11 +85,11 @@
                                     <label class="form-label">Class</label>
                                     <select name="class_id" id="class_id" class="form-select">
                                         <option value="">Select Class</option>
-                                        @if (isset($data['classes']) && !empty($data['classes']))
-                                            @foreach ($data['classes'] as $class)
-                                                <option value="{{ $class->id }}">{{ $class->name }}</option>
-                                            @endforeach
-                                        @endif
+                                        <?php if(isset($data['classes']) && !empty($data['classes'])): ?>
+                                            <?php $__currentLoopData = $data['classes']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $class): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($class->id); ?>"><?php echo e($class->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
 
@@ -155,7 +155,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form id="deleteForm" method="POST" style="display: inline;">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
@@ -163,8 +163,10 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
-    <script src="{{ asset('custom/js/admin/exam-setup.js') }}"></script>
-@endpush
+<?php $__env->startPush('scripts'); ?>
+    <script src="<?php echo e(asset('custom/js/admin/exam-setup.js')); ?>"></script>
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\eschool\resources\views/admin/examination/exam/setup.blade.php ENDPATH**/ ?>

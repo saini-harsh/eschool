@@ -5,11 +5,12 @@ $(document).ready(function () {
     var currentSection = $("#section").val();
 
     if (currentInstitution) {
-        loadClassesAndSections(
-            currentInstitution,
-            currentClass,
-            currentSection
-        );
+        // loadClassesAndSections(
+        //     currentInstitution,
+        //     currentClass,
+        //     currentSection
+        // );
+        loadExamType(currentInstitution);
     }
 
     $("#institution").on("change", function () {
@@ -20,11 +21,54 @@ $(document).ready(function () {
         $("#section").html('<option value="">Select Section</option>');
 
         if (institutionId) {
-            loadClassesAndSections(institutionId);
+            loadExamType(institutionId);
+            // loadClassesAndSections(institutionId);
         } else {
             console.log("No institution selected, clearing dropdowns");
         }
     });
+
+    function loadExamType(institutionId, selectedExamType = null) {
+        $.ajax({
+            url: "/admin/exam-management/exams/get-exam-type/" + institutionId,
+            type: "GET",
+            beforeSend: function () {
+                // Optional: Show loading spinner
+                console.log("Loading exam type for:", institutionId);
+            },
+            success: function (response) {
+                console.log("AJAX Response:", response);
+
+                if (response.types.length > 0) {
+                    $.each(response.types, function (index, cls) {
+                        var selected =
+                            selectedExamType && cls.id == selectedExamType
+                                ? "selected"
+                                : "";
+                        $("#exam-type").append(
+                            '<option value="' +
+                                cls.id +
+                                '" ' +
+                                selected +
+                                ">" +
+                                cls.title +
+                                "</option>"
+                        );
+                    });
+                } else {
+                    $("#exam-type").append(
+                        '<option value="">No Exam Type found</option>'
+                    );
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", error);
+                console.error("Response:", xhr.responseText);
+                // Show user-friendly error message
+                alert("Error loading classes and sections. Please try again.");
+            },
+        });
+    }
 
     function loadClassesAndSections(
         institutionId,

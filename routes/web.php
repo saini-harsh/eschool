@@ -215,22 +215,13 @@ Route::middleware('admin')->group(function () {
         });
 
         // Class Room Routes
-        Route::prefix('rooms')->group(function () {
-            Route::get('/', [ClassRoomController::class, 'index'])->name('admin.rooms.index');
-            Route::get('/create', [ClassRoomController::class, 'create'])->name('admin.rooms.create');
-            Route::post('/store', [ClassRoomController::class, 'store'])->name('admin.rooms.store');
-            Route::post('/store-with-seatmap', [ClassRoomController::class, 'storeWithSeatmap'])->name('admin.rooms.store-with-seatmap');
-            Route::get('/{id}', [ClassRoomController::class, 'show'])->name('admin.rooms.show');
-            Route::get('/{id}/edit', [ClassRoomController::class, 'edit'])->name('admin.rooms.edit');
-            Route::put('/{id}', [ClassRoomController::class, 'update'])->name('admin.rooms.update');
-            Route::put('/{id}/seatmap', [ClassRoomController::class, 'updateSeatmap'])->name('admin.rooms.update-seatmap');
-            Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('admin.rooms.destroy');
-        });
+
 
         // EXAM MANAGEMENT
         Route::prefix('exam-management')->group(function () {
             Route::get('/exams',[ExamController::class,'index'])->name('admin.exam-management.exams');
             Route::get('/exams/get-classes-sections/{institution}', [ExamController::class, 'getClassesSections'])->name('admin.exams.getClassesSections');
+            Route::get('/exams/get-exam-type/{institution}', [ExamController::class, 'getExamType'])->name('admin.exams.getExamType');
 
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('admin.exam-management.exam-type');
@@ -241,6 +232,19 @@ Route::middleware('admin')->group(function () {
             Route::get('/exam-setup/fetch-data',[ExamSetupController::class,'fetchData'])->name('admin.exam-management.exam-setup.fetchdata');
             Route::get('/exam-setup/fetch-subjects', [ExamSetupController::class, 'fetchSubjects'])->name('admin.exam-management.exam-setup.fetch-subjects');
             Route::post('/exam-setup/store',[ExamSetupController::class,'store'])->name('admin.exam-management.exam-setup.store');
+
+            Route::prefix('rooms')->group(function () {
+                Route::get('/', [ClassRoomController::class, 'index'])->name('admin.exam-management.rooms.index');
+                Route::get('/create', [ClassRoomController::class, 'create'])->name('admin.exam-management.rooms.create');
+                Route::post('/store', [ClassRoomController::class, 'store'])->name('admin.exam-management.rooms.store');
+                Route::post('/store-with-layout', [ClassRoomController::class, 'storeWithLayout'])->name('admin.exam-management.rooms.store-with-layout');
+                Route::get('/{id}', [ClassRoomController::class, 'show'])->name('admin.exam-management.rooms.show');
+                Route::get('/{id}/edit', [ClassRoomController::class, 'edit'])->name('admin.exam-management.rooms.edit');
+                Route::get('/{id}/design-layout', [ClassRoomController::class, 'designLayout'])->name('admin.exam-management.rooms.design-layout');
+                Route::post('/{id}/update', [ClassRoomController::class, 'update'])->name('admin.exam-management.rooms.update');
+                Route::post('/{id}/update-layout', [ClassRoomController::class, 'updateLayout'])->name('admin.exam-management.rooms.update-layout');
+                Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('admin.exam-management.rooms.destroy');
+            });
         });
 
         // Academic Calendar Routes
