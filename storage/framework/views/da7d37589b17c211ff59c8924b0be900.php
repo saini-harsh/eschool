@@ -75,11 +75,6 @@
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
-                                <li class="">
-                                    <a class="" href="">
-                                        <i class="ti ti-files"></i><span>Classes</span>
-                                    </a>
-                                </li>
 
                             </ul>
                         </li>
