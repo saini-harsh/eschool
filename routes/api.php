@@ -24,12 +24,12 @@ Route::prefix('Teacher')->group(function () {
     Route::prefix('Academic')->group(function () {
         Route::post('/Classes', [SchoolClassController::class, 'Classes'])->name('teacher.academic.Classes');
         
-        // Attendance Management Routes
+        // Attendance Management Route
         Route::prefix('Attendance')->group(function () {
-            Route::post('/GetAttendanceData', [AttendanceController::class, 'getAttendanceData'])->name('teacher.academic.attendance.data');
-            Route::post('/GetClassSectionAttendance', [AttendanceController::class, 'getClassSectionAttendance'])->name('teacher.academic.attendance.classSection');
-            Route::post('/MarkAttendance', [AttendanceController::class, 'markAttendance'])->name('teacher.academic.attendance.mark');
-            Route::post('/GetAttendanceSummary', [AttendanceController::class, 'getAttendanceSummary'])->name('teacher.academic.attendance.summary');
+            Route::post('/FilterAttendance', [AttendanceController::class, 'filterAttendance']);
+            Route::post('/GetStudentsForAttendance', [AttendanceController::class, 'getStudentsForAttendance']);
+            Route::post('/MarkAttendanceStudent', [AttendanceController::class, 'markAttendanceStudent']);
+            Route::post('/MarkAttendanceTeacher', [AttendanceController::class, 'markAttendanceTeacher']);
         });
     });
 });

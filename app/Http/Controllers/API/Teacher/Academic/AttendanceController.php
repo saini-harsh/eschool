@@ -16,29 +16,19 @@ use Carbon\Carbon;
 class AttendanceController extends Controller
 {
     /**
-     * Get attendance data with filtering options
+     * Filter attendance data by date range and return student attendance records
      */
-    public function getAttendanceData(Request $request)
+    public function filterAttendance(Request $request)
     {
         try {
-            $teacher = Teacher::where('email', $request->email)->first();
-            
-            if (!$teacher) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No teacher found with this email',
-                    'data' => []
-                ], 404);
-            }
-
+            // Validate request
             $validator = Validator::make($request->all(), [
-                'class_id' => 'nullable|exists:school_classes,id',
-                'section_id' => 'nullable|exists:sections,id',
-                'date' => 'nullable|date',
-                'start_date' => 'nullable|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
-                'status' => 'nullable|in:present,absent,late',
-                'student_id' => 'nullable|exists:students,id'
+                'email' => 'required|email',
+                'role' => 'required|in:student,teacher',
+                'class_id' => 'required_if:role,student|exists:classes,id',
+                'section_id' => 'required_if:role,student|exists:sections,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date'
             ]);
 
             if ($validator->fails()) {
@@ -49,72 +39,206 @@ class AttendanceController extends Controller
                 ], 422);
             }
 
-            // Get assigned classes for the teacher
-            $assignedClasses = AssignClassTeacher::where('teacher_id', $teacher->id)
-                ->pluck('class_id')
-                ->unique()
-                ->toArray();
+            // Get teacher by email
+            $teacher = Teacher::where('email', $request->email)->first();
+            
+            if (!$teacher) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No teacher found with this email',
+                    'data' => []
+                ], 404);
+            }
 
-            if (empty($assignedClasses)) {
+            // Parse date range
+            $startDate = Carbon::parse($request->start_date);
+            $endDate = Carbon::parse($request->end_date);
+
+            if ($request->role === 'teacher') {
+                // Get teacher attendance
+                $attendanceRecords = Attendance::where('institution_id', $teacher->institution_id)
+                    ->where('role', 'teacher')
+                    ->where('user_id', $teacher->id)
+                    ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+                    ->get()
+                    ->keyBy(function ($record) {
+                        return $record->date->format('Y-m-d');
+                    });
+
+                $teacherAttendance = [];
+                $currentDate = $startDate->copy();
+                while ($currentDate <= $endDate) {
+                    $dateString = $currentDate->format('Y-m-d');
+                    $record = $attendanceRecords->get($dateString);
+
+                    if ($record) {
+                        $teacherAttendance[] = [
+                            'date' => $dateString,
+                            'status' => $record->status,
+                            'remarks' => $record->remarks,
+                            'is_confirmed' => $record->is_confirmed,
+                            'marked_at' => $record->created_at->format('Y-m-d H:i:s')
+                        ];
+                    } else {
+                        $teacherAttendance[] = [
+                            'date' => $dateString,
+                            'status' => 'not_marked',
+                            'remarks' => null,
+                            'is_confirmed' => false,
+                            'marked_at' => null
+                        ];
+                    }
+                    $currentDate->addDay();
+                }
+
+                $totalDays = count($teacherAttendance);
+                $presentDays = collect($teacherAttendance)->where('status', 'present')->count();
+                $absentDays = collect($teacherAttendance)->where('status', 'absent')->count();
+                $lateDays = collect($teacherAttendance)->where('status', 'late')->count();
+                $notMarkedDays = collect($teacherAttendance)->where('status', 'not_marked')->count();
+
+                $data = [
+                    'teacher_name' => $teacher->first_name . ' ' . $teacher->last_name,
+                    'attendance' => $teacherAttendance,
+                    'summary' => [
+                        'total_days' => $totalDays,
+                        'present_days' => $presentDays,
+                        'absent_days' => $absentDays,
+                        'late_days' => $lateDays,
+                        'not_marked_days' => $notMarkedDays,
+                        'attendance_percentage' => $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0
+                    ]
+                ];
+
                 return response()->json([
                     'success' => true,
-                    'message' => 'No assigned classes found',
-                    'data' => [
-                        'attendance' => [],
-                        'summary' => []
-                    ]
+                    'message' => 'Teacher attendance retrieved successfully',
+                    'data' => $data
                 ]);
             }
 
-            // Build query
-            $query = Attendance::with(['student', 'schoolClass', 'section'])
-                ->where('institution_id', $teacher->institution_id)
-                ->where('role', 'student')
-                ->whereIn('class_id', $assignedClasses);
+            // Check if teacher is assigned to this class
+            $isAssigned = AssignClassTeacher::where('teacher_id', $teacher->id)
+                ->where('class_id', $request->class_id)
+                ->exists();
 
-            // Apply filters
-            if ($request->filled('class_id')) {
-                $query->where('class_id', $request->class_id);
+            if (!$isAssigned) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not assigned to this class'
+                ], 403);
             }
 
-            if ($request->filled('section_id')) {
-                $query->where('section_id', $request->section_id);
-            }
-
-            if ($request->filled('student_id')) {
-                $query->where('user_id', $request->student_id);
-            }
-
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
-
-            // Date filtering
-            if ($request->filled('date')) {
-                $query->whereDate('date', $request->date);
-            } elseif ($request->filled('start_date') && $request->filled('end_date')) {
-                $query->whereBetween('date', [$request->start_date, $request->end_date]);
-            } else {
-                // Default to current month
-                $query->whereMonth('date', Carbon::now()->month)
-                      ->whereYear('date', Carbon::now()->year);
-            }
-
-            $attendance = $query->orderBy('date', 'desc')
-                ->orderBy('class_id')
-                ->orderBy('section_id')
+            // Get all students in the class and section
+            $students = Student::where('institution_id', $teacher->institution_id)
+                ->where('class_id', $request->class_id)
+                ->where('section_id', $request->section_id)
+                ->where('status', 1)
+                ->orderBy('first_name')
                 ->get();
 
-            // Calculate summary statistics
-            $summary = $this->calculateAttendanceSummary($attendance);
+            if ($students->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No students found in this class and section',
+                    'data' => []
+                ], 404);
+            }
+
+            // Parse date range
+            $startDate = Carbon::parse($request->start_date);
+            $endDate = Carbon::parse($request->end_date);
+
+            // Get attendance records for the date range
+            $attendanceRecords = Attendance::where('institution_id', $teacher->institution_id)
+                ->where('role', 'student')
+                ->where('class_id', $request->class_id)
+                ->where('section_id', $request->section_id)
+                ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+                ->get()
+                ->groupBy('user_id')
+                ->map(function ($userRecords) {
+                    return $userRecords->keyBy(function ($record) {
+                        return $record->date->format('Y-m-d');
+                    });
+                });
+
+            // Prepare response data
+            $studentsData = [];
+            
+            foreach ($students as $student) {
+                $studentAttendance = [];
+                
+                // Generate all dates in the range
+                $currentDate = $startDate->copy();
+                while ($currentDate <= $endDate) {
+                    $dateString = $currentDate->format('Y-m-d');
+                    
+                    // Check if attendance exists for this student on this date
+                    $record = $attendanceRecords->get($student->id, collect())->get($dateString);
+                    
+                    if ($record) {
+                        $studentAttendance[] = [
+                            'date' => $dateString,
+                            'status' => $record->status,
+                            'remarks' => $record->remarks,
+                            'is_confirmed' => $record->is_confirmed,
+                            'marked_at' => $record->created_at->format('Y-m-d H:i:s')
+                        ];
+                    } else {
+                        // No attendance record for this date
+                        $studentAttendance[] = [
+                            'date' => $dateString,
+                            'status' => 'not_marked',
+                            'remarks' => null,
+                            'is_confirmed' => false,
+                            'marked_at' => null
+                        ];
+                    }
+                    
+                    $currentDate->addDay();
+                }
+
+                // Calculate summary statistics
+                $totalDays = count($studentAttendance);
+                $presentDays = collect($studentAttendance)->where('status', 'present')->count();
+                $absentDays = collect($studentAttendance)->where('status', 'absent')->count();
+                $lateDays = collect($studentAttendance)->where('status', 'late')->count();
+                $notMarkedDays = collect($studentAttendance)->where('status', 'not_marked')->count();
+
+                $studentsData[] = [
+                    'student_id' => $student->id,
+                    'student_name' => $student->first_name . ' ' . $student->last_name,
+                    'student_roll_no' => $student->roll_no,
+                    'attendance' => $studentAttendance,
+                    'summary' => [
+                        'total_days' => $totalDays,
+                        'present_days' => $presentDays,
+                        'absent_days' => $absentDays,
+                        'late_days' => $lateDays,
+                        'not_marked_days' => $notMarkedDays,
+                        'attendance_percentage' => $totalDays > 0 ? round(($presentDays / $totalDays) * 100, 2) : 0
+                    ]
+                ];
+            }
+
+            // Get class and section names
+            $className = SchoolClass::find($request->class_id)->name;
+            $sectionName = Section::find($request->section_id)->name;
 
             return response()->json([
                 'success' => true,
                 'message' => 'Attendance data retrieved successfully',
                 'data' => [
-                    'attendance' => $attendance,
-                    'summary' => $summary,
-                    'total_records' => $attendance->count()
+                    'class_name' => $className,
+                    'section_name' => $sectionName,
+                    'date_range' => [
+                        'start_date' => $startDate->format('Y-m-d'),
+                        'end_date' => $endDate->format('Y-m-d'),
+                        'total_days' => $startDate->diffInDays($endDate) + 1
+                    ],
+                    'total_students' => count($studentsData),
+                    'students' => $studentsData
                 ]
             ]);
 
@@ -126,353 +250,175 @@ class AttendanceController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Get attendance by class and section
-     */
-    public function getClassSectionAttendance(Request $request)
+    public function getStudentsForAttendance(Request $request)
     {
-        try {
-            $teacher = Teacher::where('email', $request->email)->first();
-            
-            if (!$teacher) {
-                return response()->json([
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'class_id' => 'required|integer',
+            'section_id' => 'required|integer',
+            'date' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error retrieving attendance data',
+                'error' => $validator->errors()
+            ], 422);
+        }
+
+        $teacher = Teacher::where('email', $request->email)->first();
+        if (!$teacher) {
+             return response()->json([
                     'success' => false,
                     'message' => 'No teacher found with this email',
                     'data' => []
                 ], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'class_id' => 'required|exists:school_classes,id',
-                'section_id' => 'required|exists:sections,id',
-                'date' => 'required|date'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Check if teacher is assigned to this class
-            $isAssigned = AssignClassTeacher::where('teacher_id', $teacher->id)
-                ->where('class_id', $request->class_id)
-                ->exists();
-
-            if (!$isAssigned) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not assigned to this class'
-                ], 403);
-            }
-
-            // Get students in the class and section
-            $students = Student::where('institution_id', $teacher->institution_id)
-                ->where('class_id', $request->class_id)
-                ->where('section_id', $request->section_id)
-                ->where('status', 1)
-                ->orderBy('first_name')
-                ->get();
-
-            // Get existing attendance for the date
-            $existingAttendance = Attendance::where('institution_id', $teacher->institution_id)
-                ->where('role', 'student')
-                ->where('class_id', $request->class_id)
-                ->where('section_id', $request->section_id)
-                ->whereDate('date', $request->date)
-                ->get()
-                ->keyBy('user_id');
-
-            $attendanceData = $students->map(function ($student) use ($existingAttendance) {
-                $attendance = $existingAttendance->get($student->id);
-                return [
-                    'student_id' => $student->id,
-                    'student_name' => $student->first_name . ' ' . $student->last_name,
-                    'student_roll_no' => $student->roll_no,
-                    'attendance_id' => $attendance ? $attendance->id : null,
-                    'status' => $attendance ? $attendance->status : 'present',
-                    'remarks' => $attendance ? $attendance->remarks : '',
-                    'is_confirmed' => $attendance ? $attendance->is_confirmed : false,
-                    'marked_at' => $attendance ? $attendance->created_at->format('Y-m-d H:i:s') : null
-                ];
-            });
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Class attendance retrieved successfully',
-                'data' => [
-                    'students' => $attendanceData,
-                    'class_name' => SchoolClass::find($request->class_id)->name,
-                    'section_name' => Section::find($request->section_id)->name,
-                    'date' => $request->date,
-                    'total_students' => $students->count()
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving class attendance',
-                'error' => $e->getMessage()
-            ], 500);
         }
-    }
 
-    /**
-     * Mark or update attendance
-     */
-    public function markAttendance(Request $request)
-    {
-        try {
-            $teacher = Teacher::where('email', $request->email)->first();
-            
-            if (!$teacher) {
-                return response()->json([
+        $class = SchoolClass::find($request->class_id);
+        if (!$class) {
+             return response()->json([
                     'success' => false,
-                    'message' => 'No teacher found with this email',
+                    'message' => 'No class found with this ID',
                     'data' => []
                 ], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'class_id' => 'required|exists:school_classes,id',
-                'section_id' => 'required|exists:sections,id',
-                'date' => 'required|date',
-                'attendance' => 'required|array',
-                'attendance.*.student_id' => 'required|exists:students,id',
-                'attendance.*.status' => 'required|in:present,absent,late',
-                'attendance.*.remarks' => 'nullable|string|max:255'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Check if teacher is assigned to this class
-            $isAssigned = AssignClassTeacher::where('teacher_id', $teacher->id)
-                ->where('class_id', $request->class_id)
-                ->exists();
-
-            if (!$isAssigned) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not assigned to this class'
-                ], 403);
-            }
-
-            $attendanceData = [];
-            $date = Carbon::parse($request->date);
-
-            foreach ($request->attendance as $attendance) {
-                // Check if student exists and belongs to the class/section
-                $student = Student::where('id', $attendance['student_id'])
-                    ->where('class_id', $request->class_id)
-                    ->where('section_id', $request->section_id)
-                    ->first();
-
-                if (!$student) {
-                    continue;
-                }
-
-                $attendanceRecord = Attendance::updateOrCreate(
-                    [
-                        'user_id' => $student->id,
-                        'role' => 'student',
-                        'institution_id' => $teacher->institution_id,
-                        'class_id' => $request->class_id,
-                        'section_id' => $request->section_id,
-                        'date' => $date->format('Y-m-d')
-                    ],
-                    [
-                        'teacher_id' => $teacher->id,
-                        'status' => $attendance['status'],
-                        'remarks' => $attendance['remarks'] ?? null,
-                        'marked_by' => $teacher->id,
-                        'marked_by_role' => 'teacher',
-                        'is_confirmed' => false
-                    ]
-                );
-
-                $attendanceData[] = $attendanceRecord;
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance marked successfully',
-                'data' => [
-                    'attendance' => $attendanceData,
-                    'total_marked' => count($attendanceData)
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error marking attendance',
-                'error' => $e->getMessage()
-            ], 500);
         }
-    }
-
-    /**
-     * Get attendance summary/statistics
-     */
-    public function getAttendanceSummary(Request $request)
-    {
-        try {
-            $teacher = Teacher::where('email', $request->email)->first();
-            
-            if (!$teacher) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No teacher found with this email',
-                    'data' => []
-                ], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'class_id' => 'nullable|exists:school_classes,id',
-                'section_id' => 'nullable|exists:sections,id',
-                'start_date' => 'nullable|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
-                'student_id' => 'nullable|exists:students,id'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Get assigned classes for the teacher
-            $assignedClasses = AssignClassTeacher::where('teacher_id', $teacher->id)
-                ->pluck('class_id')
-                ->unique()
-                ->toArray();
-
-            if (empty($assignedClasses)) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'No assigned classes found',
-                    'data' => [
-                        'summary' => [],
-                        'statistics' => []
-                    ]
-                ]);
-            }
-
-            // Build query
-            $query = Attendance::where('institution_id', $teacher->institution_id)
-                ->where('role', 'student')
-                ->whereIn('class_id', $assignedClasses);
-
-            // Apply filters
-            if ($request->filled('class_id')) {
-                $query->where('class_id', $request->class_id);
-            }
-
-            if ($request->filled('section_id')) {
-                $query->where('section_id', $request->section_id);
-            }
-
-            if ($request->filled('student_id')) {
-                $query->where('user_id', $request->student_id);
-            }
-
-            // Date filtering
-            if ($request->filled('start_date') && $request->filled('end_date')) {
-                $query->whereBetween('date', [$request->start_date, $request->end_date]);
-            } else {
-                // Default to current month
-                $query->whereMonth('date', Carbon::now()->month)
-                      ->whereYear('date', Carbon::now()->year);
-            }
-
-            $attendance = $query->get();
-
-            // Calculate detailed summary
-            $summary = $this->calculateDetailedSummary($attendance);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance summary retrieved successfully',
-                'data' => [
-                    'summary' => $summary,
-                    'date_range' => [
-                        'start_date' => $request->start_date ?? Carbon::now()->startOfMonth()->format('Y-m-d'),
-                        'end_date' => $request->end_date ?? Carbon::now()->endOfMonth()->format('Y-m-d')
-                    ]
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving attendance summary',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Calculate basic attendance summary
-     */
-    private function calculateAttendanceSummary($attendance)
-    {
-        $total = $attendance->count();
-        $present = $attendance->where('status', 'present')->count();
-        $absent = $attendance->where('status', 'absent')->count();
-        $late = $attendance->where('status', 'late')->count();
-
-        return [
-            'total_records' => $total,
-            'present' => $present,
-            'absent' => $absent,
-            'late' => $late,
-            'present_percentage' => $total > 0 ? round(($present / $total) * 100, 2) : 0,
-            'absent_percentage' => $total > 0 ? round(($absent / $total) * 100, 2) : 0,
-            'late_percentage' => $total > 0 ? round(($late / $total) * 100, 2) : 0
-        ];
-    }
-
-    /**
-     * Calculate detailed attendance summary
-     */
-    private function calculateDetailedSummary($attendance)
-    {
-        $summary = $this->calculateAttendanceSummary($attendance);
         
-        // Group by class
-        $byClass = $attendance->groupBy('class_id')->map(function ($classAttendance) {
-            return $this->calculateAttendanceSummary($classAttendance);
+        $section = Section::find($request->section_id);
+        if (!$section) {
+             return response()->json([
+                    'success' => false,
+                    'message' => 'No section found with this ID',
+                    'data' => []
+                ], 404);
+        }
+
+        $students = Student::where('class_id', $request->class_id)
+            ->where('section_id', $request->section_id)
+            ->get(['students.first_name', 'students.last_name', 'students.admission_number', 'students.roll_number', 'students.id as student_id']);
+
+        $attendance_date = Carbon::parse($request->date)->format('Y-m-d');
+
+        $students->each(function ($student) use ($attendance_date) {
+            $attendance = Attendance::where('user_id', $student->student_id)
+                ->where('date', $attendance_date)
+                ->first();
+
+            $student->status = $attendance ? $attendance->status : 'not_marked';
+            $student->remarks = $attendance ? $attendance->remarks : '';
         });
 
-        // Group by section
-        $bySection = $attendance->groupBy('section_id')->map(function ($sectionAttendance) {
-            return $this->calculateAttendanceSummary($sectionAttendance);
-        });
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance data retrieved successfully',
+            'data' => $students
+        ], 200);
+    }
+    public function markAttendanceStudent(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'attendance_data' => 'required|array',
+            'attendance_data.*.student_id' => 'required|integer',
+            'attendance_data.*.class_id' => 'required|integer',
+            'attendance_data.*.section_id' => 'required|integer',
+            'attendance_data.*.date' => 'required|date',
+            'attendance_data.*.status' => 'required|string|in:present,absent,late,excused,not_marked',
+            'attendance_data.*.remarks' => 'nullable|string',
+        ]);
 
-        // Group by date
-        $byDate = $attendance->groupBy(function ($record) {
-            return Carbon::parse($record->date)->format('Y-m-d');
-        })->map(function ($dateAttendance) {
-            return $this->calculateAttendanceSummary($dateAttendance);
-        });
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+                'data' => []
+            ], 422);
+        }
 
-        return [
-            'overall' => $summary,
-            'by_class' => $byClass,
-            'by_section' => $bySection,
-            'by_date' => $byDate
-        ];
+        $teacher = Teacher::where('email', $request->email)->first();
+        if (!$teacher) {
+             return response()->json([
+                    'success' => false,
+                    'message' => 'No teacher found with this email',
+                    'data' => []
+                ], 404);    
+        }
+
+        foreach ($request->attendance_data as $data) {
+            Attendance::updateOrCreate(
+                [
+                    'user_id' => $data['student_id'],
+                    'date' => Carbon::parse($data['date'])->format('Y-m-d'),
+                ],
+                [
+                    'role' => 'student',
+                    'institution_id' => $teacher->institution_id,
+                    'class_id' => $data['class_id'],
+                    'section_id' => $data['section_id'],
+                    'status' => $data['status'],
+                    'remarks' => $data['remarks'],
+                    'marked_by' => $teacher->id,
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance marked successfully',
+            'data' => []
+        ], 200);
+    }
+     public function markAttendanceTeacher(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'date' => 'required|date',
+            'status' => 'required|string|in:present,absent,late,excused,not_marked',
+            'remarks' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+                'data' => []
+            ], 422);
+        }
+
+        $teacher = Teacher::where('email', $request->email)->first();
+        if (!$teacher) {
+             return response()->json([
+                    'success' => false,
+                    'message' => 'No teacher found with this email',
+                    'data' => []
+                ], 404);    
+        }
+        
+
+        Attendance::updateOrCreate(
+            [
+                'user_id' => $teacher->id,
+                'date' => Carbon::parse($request['date'])->format('Y-m-d'),
+            ],
+            [
+                'role' => 'teacher',
+                'institution_id' => $teacher->institution_id,
+                'class_id' => $request['class_id'],
+                'section_id' => $request['section_id'],
+                'status' => $request['status'],
+                'remarks' => $request['remarks'],
+                'marked_by' => $teacher->institution_id,
+                'marked_by_role' => 'teacher'
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance marked successfully',
+            'data' => []
+        ], 200);
     }
 }
+
+
