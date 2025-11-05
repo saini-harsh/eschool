@@ -11,6 +11,7 @@ use App\Models\Section;
 use App\Models\AssignClassTeacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -296,7 +297,12 @@ class AttendanceController extends Controller
 
         $students = Student::where('class_id', $request->class_id)
             ->where('section_id', $request->section_id)
-            ->get(['students.first_name', 'students.last_name', 'students.admission_number', 'students.roll_number', 'students.id as student_id']);
+            ->get([
+                DB::raw("CONCAT_WS(' ', students.first_name, students.middle_name, students.last_name) as name"),
+                'students.admission_number',
+                'students.roll_number',
+                'students.id as student_id'
+            ]);
 
         $attendance_date = Carbon::parse($request->date)->format('Y-m-d');
 

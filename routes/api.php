@@ -3,6 +3,8 @@ use App\Http\Controllers\API\Teacher\LoginController;
 use App\Http\Controllers\API\Teacher\Administration\StudentController;
 use App\Http\Controllers\API\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\API\Teacher\Academic\AttendanceController;
+use App\Http\Controllers\API\Teacher\Academic\RoutineController;
+use App\Http\Controllers\API\Teacher\Academic\LessonPlanController;
 
 
 Route::prefix('Teacher')->group(function () {
@@ -30,6 +32,18 @@ Route::prefix('Teacher')->group(function () {
             Route::post('/GetStudentsForAttendance', [AttendanceController::class, 'getStudentsForAttendance']);
             Route::post('/MarkAttendanceStudent', [AttendanceController::class, 'markAttendanceStudent']);
             Route::post('/MarkAttendanceTeacher', [AttendanceController::class, 'markAttendanceTeacher']);
+        });
+
+        // Routine Management Route
+        Route::prefix('Routine')->group(function () {
+            Route::post('/ClassRoutineReport', [RoutineController::class, 'getRoutineReport']);
+        });
+
+        // Lesson Plans Management Route
+        Route::prefix('LessonPlans')->group(function () {
+            Route::post('/LessonPlanList', [LessonPlanController::class, 'lessonPlanList']);
+            Route::post('/AddLessonPlan', [LessonPlanController::class, 'addLessonPlan']);
+            Route::post('/EditLessonPlan', [LessonPlanController::class, 'editLessonPlan']);
         });
     });
 });
