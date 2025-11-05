@@ -2,6 +2,7 @@
 use App\Http\Controllers\API\Teacher\LoginController;
 use App\Http\Controllers\API\Teacher\Administration\StudentController;
 use App\Http\Controllers\API\Teacher\Academic\SchoolClassController;
+use App\Http\Controllers\API\Teacher\Academic\AttendanceController;
 
 
 Route::prefix('Teacher')->group(function () {
@@ -22,5 +23,13 @@ Route::prefix('Teacher')->group(function () {
 
     Route::prefix('Academic')->group(function () {
         Route::post('/Classes', [SchoolClassController::class, 'Classes'])->name('teacher.academic.Classes');
+        
+        // Attendance Management Routes
+        Route::prefix('Attendance')->group(function () {
+            Route::post('/GetAttendanceData', [AttendanceController::class, 'getAttendanceData'])->name('teacher.academic.attendance.data');
+            Route::post('/GetClassSectionAttendance', [AttendanceController::class, 'getClassSectionAttendance'])->name('teacher.academic.attendance.classSection');
+            Route::post('/MarkAttendance', [AttendanceController::class, 'markAttendance'])->name('teacher.academic.attendance.mark');
+            Route::post('/GetAttendanceSummary', [AttendanceController::class, 'getAttendanceSummary'])->name('teacher.academic.attendance.summary');
+        });
     });
 });

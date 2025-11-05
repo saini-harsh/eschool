@@ -20,9 +20,14 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
+        if($request->type == 'teacher'){
+            // Find teacher by email
+            $teacher = Teacher::where('email', $request->email)->first();
 
-        // Find teacher by email
-        $teacher = Teacher::where('email', $request->email)->first();
+        } else{
+            // Find student by email
+            $teacher = Student::where('email', $request->email)->first();
+        }
 
         // Check if teacher exists and password is correct
         if (!$teacher || !Hash::check($request->password, $teacher->password)) {
@@ -45,7 +50,14 @@ class LoginController extends Controller
         // Optional: Create token if using Sanctum
         $token = Str::random(60);
 
-        $teacher->profile_image = $teacher->profile_image ? URL::to($teacher->profile_image) : null;
+         if($request->type == 'teacher'){
+
+            $teacher->profile_image = $teacher->profile_image ? URL::to($teacher->profile_image) : null;
+
+        } else{
+            // Find student by email
+            $teacher->photo = $teacher->photo ? URL::to($teacher->photo) : null;
+        }
 
         // Return success response
         return response()->json([
