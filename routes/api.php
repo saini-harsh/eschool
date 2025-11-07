@@ -5,6 +5,9 @@ use App\Http\Controllers\API\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\API\Teacher\Academic\AttendanceController;
 use App\Http\Controllers\API\Teacher\Academic\RoutineController;
 use App\Http\Controllers\API\Teacher\Academic\LessonPlanController;
+use App\Http\Controllers\API\Teacher\Academic\AssignmentController;
+use App\Http\Controllers\API\Teacher\Academic\EventController;
+
 
 
 Route::prefix('Teacher')->group(function () {
@@ -44,6 +47,18 @@ Route::prefix('Teacher')->group(function () {
             Route::post('/LessonPlanList', [LessonPlanController::class, 'lessonPlanList']);
             Route::post('/AddLessonPlan', [LessonPlanController::class, 'addLessonPlan']);
             Route::post('/EditLessonPlan', [LessonPlanController::class, 'editLessonPlan']);
+        });
+
+        Route::prefix('Assignment')->group(function () {
+            Route::post('/Lists', [AssignmentController::class, 'Lists']);
+            Route::post('/Create', [AssignmentController::class, 'createAssignment']);
+            Route::post('/Edit/{id}', [AssignmentController::class, 'editAssignment']);
+            Route::post('/Update/{id}', [AssignmentController::class, 'updateAssignment']);
+            Route::post('/Delete/{id}', [AssignmentController::class, 'deleteAssignment']);
+            Route::post('/Grade/{id}', [AssignmentController::class, 'gradeAssignment']);
+        });
+        Route::prefix('Event')->group(function () {
+            Route::post('/Lists', [EventController::class, 'getEvents']);
         });
     });
 });
