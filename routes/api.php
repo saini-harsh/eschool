@@ -62,3 +62,32 @@ Route::prefix('Teacher')->group(function () {
         });
     });
 });
+
+
+Route::prefix('Student')->group(function () {
+    Route::prefix('Academic')->group(function () {
+        
+        // Attendance Management Route
+        Route::prefix('Attendance')->group(function () {
+            Route::post('/FilterAttendance', [App\Http\Controllers\API\Student\Academic\AttendanceController::class, 'filterAttendance']);
+        });
+        
+        // Routine Management Route
+        Route::prefix('Routine')->group(function () {
+            Route::post('/ClassRoutineReport', [App\Http\Controllers\API\Student\Academic\RoutineController::class, 'getRoutineReport']);
+        });
+        Route::prefix('Assignment')->group(function () {
+            Route::post('/Lists', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'Lists']);
+            Route::post('/Show/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'show']);
+            Route::post('/Submit/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'submit']);
+            Route::post('/DownloadAssignment/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'downloadAssignment']);
+            Route::post('/DownloadSubmission/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'downloadSubmission']);
+        });
+        Route::prefix('Event')->group(function () {
+            Route::post('/Lists', [App\Http\Controllers\API\Student\Academic\EventController::class, 'getEvents']);
+        });
+      
+    });
+
+    
+});

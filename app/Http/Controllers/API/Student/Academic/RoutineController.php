@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API\Teacher\Academic;
+namespace App\Http\Controllers\API\Student\Academic;
 
 use App\Http\Controllers\Controller;
 use App\Models\Routine;
 use App\Models\Section;
 use App\Models\SchoolClass;
-use App\Models\Teacher;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,9 +20,7 @@ class RoutineController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|exists:teachers,email',
-                'class_id' => 'required|exists:classes,id',
-                'section_id' => 'required|exists:sections,id',
+                'email' => 'required|exists:students,email'
             ]);
 
             if ($validator->fails()) {
@@ -33,11 +31,11 @@ class RoutineController extends Controller
                 ], 422);
             }
 
-            $teacher = Teacher::where('email', $request->email)->first();
-            if (!$teacher) {
+            $student = Student::where('email', $request->email)->first();
+            if (!$student) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Teacher not found',
+                    'message' => 'Student not found',
                     'data' => [],
                 ], 404);
             }
@@ -47,9 +45,9 @@ class RoutineController extends Controller
                     'teacher:id,first_name,last_name',
                     'classRoom:id,room_no,room_name',
                 ])
-                ->where('institution_id', $teacher->institution_id)
-                ->where('class_id', $request->class_id)
-                ->where('section_id', $request->section_id)
+                ->where('institution_id', $student->institution_id)
+                ->where('class_id', $student->class_id)
+                ->where('section_id', $student->section_id)
                 ->where('status', 1)
                 ->orderBy('day')
                 ->orderBy('start_time')
@@ -63,8 +61,8 @@ class RoutineController extends Controller
                 return $items->map(function ($routine) {
                     return [
                         'day' => $routine->day,
-                        'start_time' => \Carbon\Carbon::parse($routine->start_time)->format('h:i A'),
-                        'end_time'   => \Carbon\Carbon::parse($routine->end_time)->format('h:i A'),
+                        'start_time' => $routine->start_time,
+                        'end_time' => $routine->end_time,
                         'is_break' => (bool) $routine->is_break,
                         'subject' => optional($routine->subject)->name,
                         'subject_code' => optional($routine->subject)->code,
