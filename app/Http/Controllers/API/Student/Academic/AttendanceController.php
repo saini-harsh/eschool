@@ -22,23 +22,7 @@ class AttendanceController extends Controller
     public function filterAttendance(Request $request)
     {
         try {
-            // Validate request
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                // 'role' => 'required|in:student,teacher',
-                // 'class_id' => 'required_if:role,student|exists:classes,id',
-                // 'section_id' => 'required_if:role,student|exists:sections,id',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
+           
 
             // Get teacher by email
             $student = Student::where('email', $request->email)->first();

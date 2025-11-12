@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Student\Academic;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\URL; // make sure this is at the top
 use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\SchoolClass;
@@ -40,6 +41,56 @@ class AssignmentController extends Controller
         ->where('status', 1)
         ->orderBy('created_at', 'desc')
         ->get();
+
+        $assignments->map(function ($assignment) {
+            // Convert file URLs
+            $assignment->assignment_file = $assignment->assignment_file 
+                ? URL::to($assignment->assignment_file) 
+                : null;
+
+            if ($assignment->institution) {
+                $assignment->institution->logo = $assignment->institution->logo 
+                    ? URL::to($assignment->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->section && $assignment->section->institution) {
+                $assignment->section->institution->logo = $assignment->section->institution->logo 
+                    ? URL::to($assignment->section->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->teacher) {
+                $assignment->teacher->profile_image = $assignment->teacher->profile_image 
+                    ? URL::to($assignment->teacher->profile_image) 
+                    : null;
+            }
+
+            // ✅ Fix for studentAssignments (handle as collection)
+            $assignment->studentAssignments = $assignment->studentAssignments->map(function ($studentAssignment) {
+                $studentAssignment->submitted_file = $studentAssignment->submitted_file 
+                    ? URL::to($studentAssignment->submitted_file) 
+                    : null;
+                return $studentAssignment;
+            });
+
+            // ✅ Decode section_ids safely
+            if ($assignment->schoolClass) {
+                $sectionIds = $assignment->schoolClass->section_ids;
+
+                if (is_string($sectionIds)) {
+                    $assignment->schoolClass->section_ids = json_decode($sectionIds, true);
+                } elseif (is_array($sectionIds)) {
+                    $assignment->schoolClass->section_ids = $sectionIds;
+                } else {
+                    $assignment->schoolClass->section_ids = [];
+                }
+            }
+
+
+            return $assignment;
+        });
+            
         
         return response()->json([
             'success' => true,
@@ -52,17 +103,7 @@ class AssignmentController extends Controller
     }
     public function show(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+       
         $student = Student::where('email', $request->email)->first();
 
         if (!$student) {
@@ -93,6 +134,35 @@ class AssignmentController extends Controller
             ->where('student_id', $student->id)
             ->first();
 
+        $studentSubmission->submitted_file = $studentSubmission->submitted_file 
+            ? URL::to($studentSubmission->submitted_file) 
+            : null;
+        
+        $assignment->assignment_file = $assignment->assignment_file 
+            ? URL::to($assignment->assignment_file) 
+            : null;
+        
+        $assignment->institution->logo = $assignment->institution->logo 
+            ? URL::to($assignment->institution->logo) 
+            : null;
+        
+        $assignment->section->institution->logo = $assignment->section->institution->logo 
+        ? URL::to($assignment->section->institution->logo) 
+        : null;
+
+        $assignment->teacher->profile_image = $assignment->teacher->profile_image 
+        ? URL::to($assignment->teacher->profile_image) 
+        : null;
+
+          // ✅ Decode section_ids from JSON string to array
+        if ($assignment->schoolClass && $assignment->schoolClass->section_ids) {
+            $assignment->schoolClass->section_ids = json_decode($assignment->schoolClass->section_ids, true);
+        }
+
+        if ($assignment->section && $assignment->section->class && $assignment->section->class->section_ids) {
+            $assignment->section->class->section_ids = json_decode($assignment->section->class->section_ids, true);
+        }
+
             return response()->json([
             'success' => true,
             'message' => 'Assignment retrieved successfully',
@@ -106,18 +176,6 @@ class AssignmentController extends Controller
     public function submit(Request $request, $id)
     {
         
-        $validator = Validator::make($request->all(), [
-            'submitted_file' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
-            'remarks' => 'nullable|string|max:1000',
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
         $student = Student::where('email', $request->email)->first();
 
         if (!$student) {
@@ -175,6 +233,10 @@ class AssignmentController extends Controller
             'remarks' => $request->remarks,
         ]);
 
+        $studentAssignment->submitted_file = $studentAssignment->submitted_file 
+            ? URL::to($studentAssignment->submitted_file) 
+            : null;
+
         return response()->json([
             'success' => true,
             'message' => $isLate ? 'Assignment submitted successfully (Late submission)' : 'Assignment submitted successfully',
@@ -183,18 +245,7 @@ class AssignmentController extends Controller
     }
     public function downloadAssignment(Request $request, $id)
     {   
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
+        
         $student = Student::where('email', $request->email)->first();
         
         if (!$student) {
@@ -231,25 +282,14 @@ class AssignmentController extends Controller
             'success' => true,
             'message' => 'Assignment file downloaded successfully',
             'data' => [
-                'file' => public_path($assignment->assignment_file)
+                'file' => URL::to($assignment->assignment_file)
             ]
         ]);
     }
 
     public function downloadSubmission(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
+       
         $student = Student::where('email', $request->email)->first();
 
         if (!$student) {
@@ -284,7 +324,7 @@ class AssignmentController extends Controller
             'success' => true,
             'message' => 'Submission file downloaded successfully',
             'data' => [
-                'file' => public_path($studentAssignment->submitted_file)
+                'file' => URL::to($studentAssignment->submitted_file)
             ]
         ]);
     }

@@ -19,17 +19,7 @@ class RoutineController extends Controller
     public function getRoutineReport(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|exists:students,email'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'data' => $validator->errors(),
-                ], 422);
-            }
+           
 
             $student = Student::where('email', $request->email)->first();
             if (!$student) {

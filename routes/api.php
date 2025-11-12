@@ -65,6 +65,14 @@ Route::prefix('Teacher')->group(function () {
 
 
 Route::prefix('Student')->group(function () {
+
+     Route::prefix('Profile')->group(function () {
+        Route::post('/ForgotPassword', [App\Http\Controllers\API\Student\LoginController::class, 'ForgotPassword']);
+        Route::post('/ResetPassword', [App\Http\Controllers\API\Student\LoginController::class, 'ResetPassword']);
+        Route::post('/ChangePassword', [App\Http\Controllers\API\Student\LoginController::class, 'ChangePassword']);
+        Route::post('/UpdateProfile', [App\Http\Controllers\API\Student\LoginController::class, 'UpdateProfile']);
+        Route::post('/GetProfile', [App\Http\Controllers\API\Student\LoginController::class, 'GetProfile']);
+    });
     Route::prefix('Academic')->group(function () {
         
         // Attendance Management Route
