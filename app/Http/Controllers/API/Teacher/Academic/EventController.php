@@ -49,6 +49,10 @@ class EventController extends Controller
                 ->orderBy('academic_events.start_date', 'asc')
                 ->get();
 
+            $events->map(function($event) {
+                $event->file_path = $event->file_path ? URL::to($event->file_path) : null;
+            });
+
             return response()->json([
                 'success' => true,
                 'message' => 'Events fetched successfully',

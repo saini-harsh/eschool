@@ -22,24 +22,7 @@ class AttendanceController extends Controller
     public function filterAttendance(Request $request)
     {
         try {
-            // Validate request
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'role' => 'required|in:student,teacher',
-                'class_id' => 'required_if:role,student|exists:classes,id',
-                'section_id' => 'required_if:role,student|exists:sections,id',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
+            
             // Get teacher by email
             $teacher = Teacher::where('email', $request->email)->first();
             
@@ -253,20 +236,6 @@ class AttendanceController extends Controller
     }
     public function getStudentsForAttendance(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'class_id' => 'required|integer',
-            'section_id' => 'required|integer',
-            'date' => 'required|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving attendance data',
-                'error' => $validator->errors()
-            ], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {
@@ -323,24 +292,6 @@ class AttendanceController extends Controller
     }
     public function markAttendanceStudent(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'attendance_data' => 'required|array',
-            'attendance_data.*.student_id' => 'required|integer',
-            'attendance_data.*.class_id' => 'required|integer',
-            'attendance_data.*.section_id' => 'required|integer',
-            'attendance_data.*.date' => 'required|date',
-            'attendance_data.*.status' => 'required|string|in:present,absent,late,excused,not_marked',
-            'attendance_data.*.remarks' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors(),
-                'data' => []
-            ], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {
@@ -377,20 +328,6 @@ class AttendanceController extends Controller
     }
      public function markAttendanceTeacher(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'date' => 'required|date',
-            'status' => 'required|string|in:present,absent,late,excused,not_marked',
-            'remarks' => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors(),
-                'data' => []
-            ], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {

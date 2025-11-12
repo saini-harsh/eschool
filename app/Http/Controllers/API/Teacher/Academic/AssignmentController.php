@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\StudentAssignment;
+use Illuminate\Support\Facades\URL;
+
+
 
 class AssignmentController extends Controller
 {
@@ -32,6 +35,10 @@ class AssignmentController extends Controller
             ], 404);
         }
         $institutionId = $currentTeacher->institution_id;
+
+        $currentTeacher->profile_image = $currentTeacher->profile_image 
+                    ? URL::to($currentTeacher->profile_image) 
+                    : null;
         
         // Get assignments for the teacher's institution
         $assignments = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
@@ -58,6 +65,55 @@ class AssignmentController extends Controller
             ->values(); // Reset array keys
         
         $subjects = $assignedSubjects;
+
+        $assignments->map(function ($assignment) {
+            // Convert file URLs
+            $assignment->assignment_file = $assignment->assignment_file 
+                ? URL::to($assignment->assignment_file) 
+                : null;
+
+            if ($assignment->institution) {
+                $assignment->institution->logo = $assignment->institution->logo 
+                    ? URL::to($assignment->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->section && $assignment->section->institution) {
+                $assignment->section->institution->logo = $assignment->section->institution->logo 
+                    ? URL::to($assignment->section->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->teacher) {
+                $assignment->teacher->profile_image = $assignment->teacher->profile_image 
+                    ? URL::to($assignment->teacher->profile_image) 
+                    : null;
+            }
+
+            // ✅ Fix for studentAssignments (handle as collection)
+            $assignment->studentAssignments = $assignment->studentAssignments->map(function ($studentAssignment) {
+                $studentAssignment->submitted_file = $studentAssignment->submitted_file 
+                    ? URL::to($studentAssignment->submitted_file) 
+                    : null;
+                return $studentAssignment;
+            });
+
+            // ✅ Decode section_ids safely
+            if ($assignment->schoolClass) {
+                $sectionIds = $assignment->schoolClass->section_ids;
+
+                if (is_string($sectionIds)) {
+                    $assignment->schoolClass->section_ids = json_decode($sectionIds, true);
+                } elseif (is_array($sectionIds)) {
+                    $assignment->schoolClass->section_ids = $sectionIds;
+                } else {
+                    $assignment->schoolClass->section_ids = [];
+                }
+            }
+
+
+            return $assignment;
+        });
         
         return response()->json([
             'success' => true,
@@ -74,33 +130,6 @@ class AssignmentController extends Controller
     public function createAssignment(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'class_id' => 'required|exists:classes,id',
-                'section_id' => 'required|exists:sections,id',
-                'subject_id' => 'required|exists:subjects,id',
-                'due_date' => 'required|string|after:today',
-                // 'assignment_file' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
-                'status' => 'boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-             if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation errors',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
 
             // Get teacher by email
             $currentTeacher = Teacher::where('email', $request->email)->first();
@@ -197,6 +226,52 @@ class AssignmentController extends Controller
                 ], 404);
             }
 
+            
+            // Convert file URLs
+            $assignment->assignment_file = $assignment->assignment_file 
+                ? URL::to($assignment->assignment_file) 
+                : null;
+
+            if ($assignment->institution) {
+                $assignment->institution->logo = $assignment->institution->logo 
+                    ? URL::to($assignment->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->section && $assignment->section->institution) {
+                $assignment->section->institution->logo = $assignment->section->institution->logo 
+                    ? URL::to($assignment->section->institution->logo) 
+                    : null;
+            }
+
+            if ($assignment->teacher) {
+                $assignment->teacher->profile_image = $assignment->teacher->profile_image 
+                    ? URL::to($assignment->teacher->profile_image) 
+                    : null;
+            }
+
+            // ✅ Fix for studentAssignments (handle as collection)
+            $assignment->studentAssignments = $assignment->studentAssignments->map(function ($studentAssignment) {
+                $studentAssignment->submitted_file = $studentAssignment->submitted_file 
+                    ? URL::to($studentAssignment->submitted_file) 
+                    : null;
+                return $studentAssignment;
+            });
+
+            // ✅ Decode section_ids safely
+            if ($assignment->schoolClass) {
+                $sectionIds = $assignment->schoolClass->section_ids;
+
+                if (is_string($sectionIds)) {
+                    $assignment->schoolClass->section_ids = json_decode($sectionIds, true);
+                } elseif (is_array($sectionIds)) {
+                    $assignment->schoolClass->section_ids = $sectionIds;
+                } else {
+                    $assignment->schoolClass->section_ids = [];
+                }
+            }
+
+
             return response()->json([
                 'success' => true,
                 'message' => 'Assignment found',
@@ -214,26 +289,7 @@ class AssignmentController extends Controller
     public function updateAssignment(Request $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'class_id' => 'required|exists:classes,id',
-                'section_id' => 'required|exists:sections,id',
-                'subject_id' => 'required|exists:subjects,id',
-                'due_date' => 'required|string',
-                // 'assignment_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-                'status' => 'boolean',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
+          
             $currentTeacher = Teacher::where('email', $request->email)->first();
             
             if (!$currentTeacher) {
@@ -415,10 +471,31 @@ class AssignmentController extends Controller
                 'status' => 'graded'
             ]);
 
+             $studentAssignment->submitted_file = $studentAssignment->submitted_file 
+                    ? URL::to($studentAssignment->submitted_file) 
+                    : null;
+            $studentAssignment = $studentAssignment->load('student');
+
+
+            $studentAssignment->photo = $studentAssignment->photo ? URL::to($studentAssignment->photo) : null;
+            $studentAssignment->father_photo = $studentAssignment->father_photo ? URL::to($studentAssignment->father_photo) : null;
+            $studentAssignment->mother_photo = $studentAssignment->mother_photo ? URL::to($studentAssignment->mother_photo) : null;
+            $studentAssignment->guardian_photo = $studentAssignment->guardian_photo ? URL::to($studentAssignment->guardian_photo) : null;
+            $studentAssignment->aadhaar_front = $studentAssignment->aadhaar_front ? URL::to($studentAssignment->aadhaar_front) : null;
+            $studentAssignment->aadhaar_back = $studentAssignment->aadhaar_back ? URL::to($studentAssignment->aadhaar_back) : null;
+            $studentAssignment->pan_front = $studentAssignment->pan_front ? URL::to($studentAssignment->pan_front) : null;
+            $studentAssignment->pan_back = $studentAssignment->pan_back ? URL::to($studentAssignment->pan_back) : null;
+            $studentAssignment->document_01_file = $studentAssignment->document_01_file ? URL::to($studentAssignment->document_01_file) : null;
+            $studentAssignment->document_02_file = $studentAssignment->document_02_file ? URL::to($studentAssignment->document_02_file) : null;
+            $studentAssignment->document_03_file = $studentAssignment->document_03_file ? URL::to($studentAssignment->document_03_file) : null;
+            $studentAssignment->document_04_file = $studentAssignment->document_04_file ? URL::to($studentAssignment->document_04_file) : null;
+            $studentAssignment->profile_image = $studentAssignment->profile_image ? URL::to($studentAssignment->profile_image) : null;
+
+
             return response()->json([
                 'success' => true,
                 'message' => 'Assignment graded successfully',
-                'data' => $studentAssignment->load('student')
+                'data' => $studentAssignment
             ]);
 
         } catch (\Exception $e) {

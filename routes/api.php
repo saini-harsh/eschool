@@ -47,6 +47,7 @@ Route::prefix('Teacher')->group(function () {
             Route::post('/LessonPlanList', [LessonPlanController::class, 'lessonPlanList']);
             Route::post('/AddLessonPlan', [LessonPlanController::class, 'addLessonPlan']);
             Route::post('/EditLessonPlan', [LessonPlanController::class, 'editLessonPlan']);
+            Route::post('/Subjects', [LessonPlanController::class, 'getSubjectsByInstitutionClass']);
         });
 
         Route::prefix('Assignment')->group(function () {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Teacher;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Teacher;
+use App\Models\Student;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL; // make sure this is at the top
 use Illuminate\Support\Str;
@@ -57,8 +58,19 @@ class LoginController extends Controller
         } else{
             // Find student by email
             $teacher->photo = $teacher->photo ? URL::to($teacher->photo) : null;
+            $teacher->father_photo = $teacher->father_photo ? URL::to($teacher->father_photo) : null;
+            $teacher->mother_photo = $teacher->mother_photo ? URL::to($teacher->mother_photo) : null;
+            $teacher->guardian_photo = $teacher->guardian_photo ? URL::to($teacher->guardian_photo) : null;
+            $teacher->aadhaar_front = $teacher->aadhaar_front ? URL::to($teacher->aadhaar_front) : null;
+            $teacher->aadhaar_back = $teacher->aadhaar_back ? URL::to($teacher->aadhaar_back) : null;
+            $teacher->pan_front = $teacher->pan_front ? URL::to($teacher->pan_front) : null;
+            $teacher->pan_back = $teacher->pan_back ? URL::to($teacher->pan_back) : null;
+            $teacher->document_01_file = $teacher->document_01_file ? URL::to($teacher->document_01_file) : null;
+            $teacher->document_02_file = $teacher->document_02_file ? URL::to($teacher->document_02_file) : null;
+            $teacher->document_03_file = $teacher->document_03_file ? URL::to($teacher->document_03_file) : null;
+            $teacher->document_04_file = $teacher->document_04_file ? URL::to($teacher->document_04_file) : null;
+            $teacher->profile_image = $teacher->profile_image ? URL::to($teacher->profile_image) : null;
         }
-
         // Return success response
         return response()->json([
             'success' => true,
@@ -68,6 +80,7 @@ class LoginController extends Controller
                 'Teacher' => $teacher
             ],
         ]);
+
     }
     public function ForgotPassword(Request $request)
     {
