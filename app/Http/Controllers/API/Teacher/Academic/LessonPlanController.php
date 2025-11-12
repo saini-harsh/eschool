@@ -209,10 +209,9 @@ class LessonPlanController extends Controller
             if (!$teacher) {
                 return response()->json(['success' => false, 'message' => 'Teacher not found for provided email','data'=>[]], 404);
             }
-            $institutionId = $request->institution_id;
             $classId = $request->class_id;
             
-            $subjects = Subject::where('institution_id', $institutionId)
+            $subjects = Subject::where('institution_id', $teacher->institution_id)
                               ->where('class_id', $classId)
                               ->where('status', 1)
                               ->get(['id', 'name', 'code']);
