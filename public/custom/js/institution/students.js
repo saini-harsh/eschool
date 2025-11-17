@@ -836,6 +836,11 @@ function displayStudents(students) {
                            title="Delete">
                             <i class="ti ti-trash"></i>
                         </a>
+                        <a href="/institution/students/download-pdf/${
+                            student.id
+                        }" class="btn btn-icon btn-sm btn-outline-success border-0" title="Download PDF">
+                            <i class="ti ti-file-type-pdf"></i>
+                        </a>
                     </div>
                 </td>
             </tr>

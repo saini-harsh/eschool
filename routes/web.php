@@ -79,6 +79,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
+            Route::get('/download-pdf/{student}', [StudentController::class, 'downloadPdf'])->name('admin.students.download-pdf');
             Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('admin.students.classes');
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');

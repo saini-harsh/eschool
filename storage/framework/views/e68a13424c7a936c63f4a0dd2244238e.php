@@ -285,7 +285,7 @@
                                     </td>
                                     <td>
                                         <?php if($assignment->assignment_file): ?>
-                                            <a href="<?php echo e(asset('storage/' . $assignment->assignment_file)); ?>" 
+                                            <a href="<?php echo e(asset('/' . $assignment->assignment_file)); ?>" 
                                                target="_blank" class="btn btn-sm btn-outline-primary me-1" title="View File">
                                                 <i class="ti ti-eye"></i>
                                             </a>

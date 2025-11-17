@@ -223,7 +223,7 @@
                 password = 'teacher123';
             } else if (role === 'student') {
                 email = 'rohit.gupta@example.com'; // example
-                password = 'password';
+                password = 'student123';
             }
             document.querySelector('input[name="email"]').value = email;
             document.querySelector('input[name="password"]').value = password;

@@ -34,6 +34,7 @@ Route::middleware('teacher')->group(function () {
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('teacher.students.index');
             Route::get('/show/{student}', [StudentController::class, 'Show'])->name('teacher.students.show');
+            Route::get('/download-pdf/{student}', [StudentController::class, 'downloadPdf'])->name('teacher.students.download-pdf');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('teacher.students.sections');
             Route::post('/get-by-class-section', [StudentController::class, 'getStudentsByClassSection'])->name('teacher.students.get-by-class-section');
         });

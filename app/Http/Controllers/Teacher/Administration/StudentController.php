@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentController extends Controller
 {
@@ -159,6 +160,33 @@ class StudentController extends Controller
             ->get();
             
         return response()->json(['students' => $students]);
+    }
+
+    public function downloadPdf(Student $student)
+    {
+        $currentUser = auth('teacher')->user();
+        if ($student->institution_id !== $currentUser->institution_id) {
+            abort(403);
+        }
+
+        $student->load([
+            'institution:id,name',
+            'teacher:id,first_name,last_name',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.pdf', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->download($fileName);
     }
 
 
