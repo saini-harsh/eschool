@@ -270,6 +270,8 @@ class AttendanceController extends Controller
                 DB::raw("CONCAT_WS(' ', students.first_name, students.middle_name, students.last_name) as name"),
                 'students.admission_number',
                 'students.roll_number',
+                'students.class_id',
+                'students.section_id',
                 'students.id as student_id'
             ]);
 

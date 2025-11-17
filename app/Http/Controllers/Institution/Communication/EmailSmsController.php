@@ -25,32 +25,37 @@ class EmailSmsController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index()
+   public function index(Request $request)
     {
-        // Get the current authenticated institution
-        $currentInstitution = Auth::guard('institution')->user();
-        
-        // Filter email SMS records by current institution
-        $lists = EmailSms::where('institution_id', $currentInstitution->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $currentInstitution = auth('institution')->user();
+
+        // Base query restricted to current institution
+        $query = EmailSms::where('institution_id', $currentInstitution->id);
+
+        // Optional filter: types (send_through)
+        if ($request->filled('types')) {
+            $types = is_array($request->types) ? $request->types : [$request->types];
+            $query->whereIn('send_through', $types);
+        }
+
+        // Optional filter: subject or message (if needed)
+        if ($request->filled('subject')) {
+            $query->where('subject', 'like', '%' . trim($request->subject) . '%');
+        }
+
+        $lists = $query->orderBy('created_at', 'desc')->get();
 
         // Ensure all records have valid recipients data for the view
         $lists->each(function ($item) {
             if (!is_array($item->recipients)) {
-                // Try to decode if it's a JSON string
                 $decoded = json_decode($item->recipients, true);
-                if (is_array($decoded)) {
-                    $item->recipients = $decoded;
-                } else {
-                    // Set to empty array if invalid
-                    $item->recipients = [];
-                }
+                $item->recipients = is_array($decoded) ? $decoded : [];
             }
         });
 
         return view('institution.communication.emailsms.index', compact('lists'));
     }
+
 
     public function store(Request $request)
     {

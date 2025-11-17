@@ -24,9 +24,23 @@ class EmailSmsController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $lists = EmailSms::orderBy('created_at', 'desc')->get();
+        $institutions = Institution::where('status', 1)->orderBy('name')->get();
+
+        $query = EmailSms::query();
+
+        if ($request->filled('institution_ids')) {
+            $institutionIds = is_array($request->institution_ids) ? $request->institution_ids : [$request->institution_ids];
+            $query->whereIn('institution_id', $institutionIds);
+        }
+
+        if ($request->filled('types')) {
+            $types = is_array($request->types) ? $request->types : [$request->types];
+            $query->whereIn('send_through', $types);
+        }
+
+        $lists = $query->orderBy('created_at', 'desc')->get();
 
         // Ensure all records have valid recipients data for the view
         $lists->each(function ($item) {
@@ -42,7 +56,7 @@ class EmailSmsController extends Controller
             }
         });
 
-        return view('admin.communication.emailsms.index', compact('lists'));
+        return view('admin.communication.emailsms.index', compact('lists', 'institutions'));
     }
 
     public function store(Request $request)

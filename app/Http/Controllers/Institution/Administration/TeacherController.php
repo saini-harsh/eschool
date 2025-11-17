@@ -17,11 +17,39 @@ class TeacherController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function Index(){
+    public function Index(Request $request)
+    {
         $institutionId = auth('institution')->id();
-        $teachers = Teacher::where('institution_id', $institutionId)->get();
-        return view('institution.administration.teachers.index',compact('teachers'));
+
+        // Base query
+        $query = Teacher::where('institution_id', $institutionId);
+
+        // Filter by name
+        if ($request->filled('name')) {
+            $query->whereRaw(
+                "CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", 
+                ['%' . trim($request->name) . '%']
+            );
+        }
+
+        // Filter by email
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . trim($request->email) . '%');
+        }
+
+        // Get filtered teachers
+        $teachers = $query->get();
+
+        // Get all teacher names (filtered by institution)
+        $allTeacherNames = Teacher::where('institution_id', $institutionId)
+            ->selectRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) as full_name")
+            ->distinct()
+            ->orderBy('full_name')
+            ->pluck('full_name');
+
+        return view('institution.administration.teachers.index', compact('teachers', 'allTeacherNames'));
     }
+
     
     public function Show(Teacher $teacher)
     {

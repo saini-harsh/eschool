@@ -18,11 +18,57 @@ class NonWorkingStaffController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function Index(){
+    public function Index(Request $request)
+    {
         $institutionId = auth()->id();
-        $staff = NonWorkingStaff::where('institution_id', $institutionId)->get();
-        return view('institution.administration.nonworkingstaff.index', compact('staff'));
+
+        // Base query restricted to logged-in institution
+        $query = NonWorkingStaff::where('institution_id', $institutionId);
+
+        // Filter by name
+        if ($request->filled('name')) {
+            $query->whereRaw(
+                "CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", 
+                ['%' . trim($request->name) . '%']
+            );
+        }
+
+        // Filter by designation
+        if ($request->filled('designation')) {
+            $query->where('designation', $request->designation);
+        }
+
+        // Filter by email
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . trim($request->email) . '%');
+        }
+
+        // Fetch filtered data
+        $staff = $query->get();
+
+        // All staff names (within same institution only)
+        $allStaffNames = NonWorkingStaff::where('institution_id', $institutionId)
+            ->select(['first_name','last_name'])
+            ->get()
+            ->map(function ($s) {
+                return trim(($s->first_name ?? '') . ' ' . ($s->last_name ?? ''));
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        // All designations (also filtered by institution)
+        $designations = NonWorkingStaff::where('institution_id', $institutionId)
+            ->select('designation')
+            ->whereNotNull('designation')
+            ->distinct()
+            ->orderBy('designation')
+            ->pluck('designation');
+
+        return view('institution.administration.nonworkingstaff.index', compact('staff', 'allStaffNames', 'designations'));
     }
+
     public function Create(){
         $institutionId = auth()->id();
         $institution = Institution::find($institutionId);

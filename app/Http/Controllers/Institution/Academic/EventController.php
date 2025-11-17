@@ -17,20 +17,38 @@ class EventController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $currentInstitution = auth('institution')->user();
-        
-        $events = DB::table('academic_events')
+
+        // Base query restricted to logged-in institution
+        $query = DB::table('academic_events')
             ->leftJoin('institutions', 'academic_events.institution_id', '=', 'institutions.id')
             ->select('academic_events.*', 'institutions.name as institution_name')
             ->where('academic_events.status', 1)
-            ->where('academic_events.institution_id', $currentInstitution->id)
-            ->orderBy('academic_events.created_at', 'desc')
-            ->get();
+            ->where('academic_events.institution_id', $currentInstitution->id);
+
+        // Optional filter: roles
+        if ($request->filled('roles')) {
+            $roles = is_array($request->roles) ? $request->roles : [$request->roles];
+            $query->where(function ($q) use ($roles) {
+                $q->whereIn('academic_events.role', $roles);
+                if (in_array('all', $roles)) {
+                    $q->orWhereNull('academic_events.role');
+                }
+            });
+        }
+
+        // Optional filter: event name
+        if ($request->filled('name')) {
+            $query->where('academic_events.name', 'like', '%' . trim($request->name) . '%');
+        }
+
+        $events = $query->orderBy('academic_events.created_at', 'desc')->get();
 
         return view('institution.academic.events.index', compact('events'));
     }
+
 
     public function store(Request $request)
     {

@@ -101,114 +101,130 @@
         <!-- Right Side - List -->
         <div class="col-9">
             <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
-                <div class="datatable-search">
-                    <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
-                </div>
-                <div class="d-flex align-items-center">
-                    <div class="dropdown me-2">
-                        <a href="javascript:void(0);"
-                            class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                            data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                            <i class="ti ti-filter me-1"></i>Filter
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
-                            <div class="card mb-0">
-                                <div class="card-header">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-bold mb-0">Filter</h6>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="link-danger text-decoration-underline">Clear All</a>
+                    <div class="datatable-search">
+                        <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown me-2">
+                            <a href="javascript:void(0);"
+                                class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                <i class="ti ti-filter me-1"></i>Filter
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                                <div class="card mb-0">
+                                    <div class="card-header">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h6 class="fw-bold mb-0">Filter</h6>
+                                            <div class="d-flex align-items-center">
+                                                <a href="{{ route('teacher.assignments.index') }}"
+                                                    class="link-danger text-decoration-underline">Clear
+                                                    All</a>
+                                            </div>
                                         </div>
                                     </div>
+                                    <form action="{{ route('teacher.assignments.index') }}" method="GET" id="filter-form">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Class</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="class_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Class
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        @if(isset($classes) && !empty($classes))
+                                                            @foreach ($classes as $class)
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="class_ids[]" value="{{ $class->id }}" {{ is_array(request('class_ids')) && in_array($class->id, request('class_ids')) ? 'checked' : '' }}>
+                                                                        {{ $class->name }}
+                                                                    </label>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Subject</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="subject_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Subject
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        @if(isset($subjects) && !empty($subjects))
+                                                            @foreach ($subjects as $subject)
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="subject_ids[]" value="{{ $subject->id }}" {{ is_array(request('subject_ids')) && in_array($subject->id, request('subject_ids')) ? 'checked' : '' }}>
+                                                                        {{ $subject->name }}
+                                                                    </label>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Status</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="status">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Status
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        <li>
+                                                            <label
+                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="1" {{ is_array(request('status')) && in_array('1', request('status')) ? 'checked' : '' }}>
+                                                                Active
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label
+                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="0" {{ is_array(request('status')) && in_array('0', request('status')) ? 'checked' : '' }}>
+                                                                Inactive
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex align-items-center justify-content-end">
+                                            <button type="button" class="btn btn-outline-white me-2"
+                                                id="close-filter">Close</button>
+                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <form action="">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <label class="form-label">Class</label>
-                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                            </div>
-                                            <div class="dropdown">
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                                    <span class="text-truncate">All Classes</span>
-                                                </a>
-                                                <ul class="dropdown-menu w-100">
-                                                    <li><a href="javascript:void(0);" class="dropdown-item">All Classes</a></li>
-                                                    @if(isset($classes) && !empty($classes))
-                                                        @foreach($classes as $class)
-                                                            <li><a href="javascript:void(0);" class="dropdown-item">{{ $class->name }}</a></li>
-                                                        @endforeach
-                                                    @endif
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <label class="form-label">Subject</label>
-                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                            </div>
-                                            <div class="dropdown">
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                                    <span class="text-truncate">All Subjects</span>
-                                                </a>
-                                                <ul class="dropdown-menu w-100">
-                                                    <li><a href="javascript:void(0);" class="dropdown-item">All Subjects</a></li>
-                                                    @if(isset($subjects) && !empty($subjects))
-                                                        @foreach($subjects as $subject)
-                                                            <li><a href="javascript:void(0);" class="dropdown-item">{{ $subject->name }}</a></li>
-                                                        @endforeach
-                                                    @endif
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <label class="form-label">Status</label>
-                                                <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
-                                            </div>
-                                            <div class="dropdown">
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                                                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
-                                                    <span class="text-truncate">All Status</span>
-                                                </a>
-                                                <ul class="dropdown-menu w-100">
-                                                    <li><a href="javascript:void(0);" class="dropdown-item">All Status</a></li>
-                                                    <li><a href="javascript:void(0);" class="dropdown-item">Active</a></li>
-                                                    <li><a href="javascript:void(0);" class="dropdown-item">Inactive</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <button type="button" class="btn btn-primary w-100">Apply Filter</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <div class="dropdown">
-                            <a href="javascript:void(0);"
-                                class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                data-bs-toggle="dropdown">
-                                <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end p-1">
-                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a></li>
-                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
             <div class="table-responsive">
                 <table class="table table-nowrap datatable">

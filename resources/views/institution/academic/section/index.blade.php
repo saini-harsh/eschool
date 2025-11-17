@@ -99,7 +99,12 @@
                 </div>
             </div>
             <div class="col-9">
-
+                <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                    <div class="datatable-search">
+                        <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                    </div>
+                    
+                </div>
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
                         <thead class="thead-ight">

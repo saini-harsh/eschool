@@ -62,9 +62,36 @@ class StudentController extends Controller
         ]);
     }
 
-    public function Index(){
-        $students = Student::all();
-        return view('admin.administration.students.index',compact('students'));
+    public function Index(Request $request){
+        $query = Student::with(['institution', 'teacher']);
+
+        if ($request->filled('name')) {
+            $query->whereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%' . $request->name . '%']);
+        }
+
+        if ($request->filled('institution_id')) {
+            $query->where('institution_id', $request->institution_id);
+        }
+
+        if ($request->filled('teacher_id')) {
+            $query->where('teacher_id', $request->teacher_id);
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $students = $query->get();
+
+        $allStudentNames = Student::selectRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) as full_name")
+            ->distinct()
+            ->orderBy('full_name')
+            ->pluck('full_name');
+
+        $institutions = Institution::orderBy('name')->get(['id', 'name']);
+        $teachers = Teacher::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+
+        return view('admin.administration.students.index', compact('students', 'allStudentNames', 'institutions', 'teachers'));
     }
     public function Create(){
         $institutions = Institution::all();

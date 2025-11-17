@@ -162,7 +162,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="mb-3">
+                                        <!-- <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label class="form-label">Class</label>
                                                 <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
@@ -188,7 +188,7 @@
                                                     @endif
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label class="form-label">Subject</label>

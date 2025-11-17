@@ -532,40 +532,40 @@ function initializeFilterForm() {
         
         const filters = {};
         
-        // Collect selected institution IDs
-        const institutionIds = [];
-        $('input[name="institution_ids[]"]:checked').each(function() {
-            institutionIds.push($(this).val());
-        });
-        if (institutionIds.length > 0) {
-            filters.institution_ids = institutionIds;
+        if ($('#filter-institution').length) {
+            const instVal = $('#filter-institution').val();
+            if (instVal) filters.institution_ids = instVal;
+        } else {
+            const institutionIds = [];
+            $('input[name="institution_ids[]"]:checked').each(function() { institutionIds.push($(this).val()); });
+            if (institutionIds.length > 0) filters.institution_ids = institutionIds;
         }
         
-        // Collect selected class IDs
-        const classIds = [];
-        $('input[name="class_ids[]"]:checked').each(function() {
-            classIds.push($(this).val());
-        });
-        if (classIds.length > 0) {
-            filters.class_ids = classIds;
+        if ($('#filter-class').length) {
+            const classVal = $('#filter-class').val();
+            if (classVal) filters.class_ids = classVal;
+        } else {
+            const classIds = [];
+            $('input[name="class_ids[]"]:checked').each(function() { classIds.push($(this).val()); });
+            if (classIds.length > 0) filters.class_ids = classIds;
         }
         
-        // Collect selected teacher IDs
-        const teacherIds = [];
-        $('input[name="teacher_ids[]"]:checked').each(function() {
-            teacherIds.push($(this).val());
-        });
-        if (teacherIds.length > 0) {
-            filters.teacher_ids = teacherIds;
+        if ($('#filter-teacher').length) {
+            const teacherVal = $('#filter-teacher').val();
+            if (teacherVal) filters.teacher_ids = teacherVal;
+        } else {
+            const teacherIds = [];
+            $('input[name="teacher_ids[]"]:checked').each(function() { teacherIds.push($(this).val()); });
+            if (teacherIds.length > 0) filters.teacher_ids = teacherIds;
         }
         
-        // Collect selected subject IDs
-        const subjectIds = [];
-        $('input[name="subject_ids[]"]:checked').each(function() {
-            subjectIds.push($(this).val());
-        });
-        if (subjectIds.length > 0) {
-            filters.subject_ids = subjectIds;
+        if ($('#filter-subject').length) {
+            const subjectVal = $('#filter-subject').val();
+            if (subjectVal) filters.subject_ids = subjectVal;
+        } else {
+            const subjectIds = [];
+            $('input[name="subject_ids[]"]:checked').each(function() { subjectIds.push($(this).val()); });
+            if (subjectIds.length > 0) filters.subject_ids = subjectIds;
         }
         
         // Collect selected status
@@ -594,6 +594,9 @@ function initializeClearFilters() {
     // Clear all filters
     $(document).on('click', '.link-danger', function() {
         $('#filter-form')[0].reset();
+        $('#filter-class').prop('disabled', true).html('<option value="">Select Class</option>');
+        $('#filter-subject').prop('disabled', true).html('<option value="">Select Subject</option>');
+        $('#filter-teacher').prop('disabled', true).html('<option value="">Select Teacher</option>');
         applyFilters({});
     });
     
@@ -681,6 +684,47 @@ function initAssignSubjectDropdowns() {
         }
     });
 }
+
+$(document).on('change', '#filter-institution', function() {
+    const institutionId = $(this).val();
+    const classSelect = $('#filter-class');
+    const teacherSelect = $('#filter-teacher');
+    const subjectSelect = $('#filter-subject');
+    if (!institutionId) {
+        classSelect.prop('disabled', true).html('<option value="">Select Class</option>');
+        teacherSelect.prop('disabled', true).html('<option value="">Select Teacher</option>');
+        subjectSelect.prop('disabled', true).html('<option value="">Select Subject</option>');
+        return;
+    }
+    classSelect.prop('disabled', true).html('<option value="">Loading classes...</option>');
+    $.get(`/admin/assign-subject/classes/${institutionId}`, function(response) {
+        let options = '<option value="">Select Class</option>';
+        (response.classes || []).forEach(function(cls){ options += `<option value="${cls.id}">${cls.name}</option>`; });
+        classSelect.html(options).prop('disabled', false);
+    });
+    teacherSelect.prop('disabled', true).html('<option value="">Loading teachers...</option>');
+    $.get(`/admin/assign-subject/teachers/${institutionId}`, function(response) {
+        let options = '<option value="">Select Teacher</option>';
+        (response.teachers || []).forEach(function(t){ const name = `${t.first_name} ${t.middle_name || ''} ${t.last_name}`.trim(); options += `<option value="${t.id}">${name}</option>`; });
+        teacherSelect.html(options).prop('disabled', false);
+    });
+});
+
+$(document).on('change', '#filter-class', function() {
+    const classId = $(this).val();
+    const institutionId = $('#filter-institution').val();
+    const subjectSelect = $('#filter-subject');
+    if (!classId || !institutionId) {
+        subjectSelect.prop('disabled', true).html('<option value="">Select Subject</option>');
+        return;
+    }
+    subjectSelect.prop('disabled', true).html('<option value="">Loading subjects...</option>');
+    $.get(`/admin/assign-subject/subjects/${institutionId}/${classId}`, function(response) {
+        let options = '<option value="">Select Subject</option>';
+        (response.subjects || []).forEach(function(s){ options += `<option value="${s.id}">${s.name} (${s.code})</option>`; });
+        subjectSelect.html(options).prop('disabled', false);
+    });
+});
 
 /**
  * Load classes by institution via AJAX

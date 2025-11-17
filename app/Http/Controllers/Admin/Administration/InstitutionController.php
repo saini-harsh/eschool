@@ -15,9 +15,25 @@ class InstitutionController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function Index(){
-        $institutions = Institution::all();
-        return view('admin.administration.institutions.index',compact('institutions'));
+    public function Index(Request $request){
+        $query = Institution::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $institutions = $query->get();
+
+        $allInstitutionNames = Institution::select('name')
+            ->distinct()
+            ->orderBy('name')
+            ->pluck('name');
+
+        return view('admin.administration.institutions.index', compact('institutions', 'allInstitutionNames'));
     }
     public function Create(){
         return view('admin.administration.institutions.create');

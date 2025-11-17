@@ -52,7 +52,12 @@ class StudentController extends Controller
                 }
                 
                 if (is_array($sectionIds) && !empty($sectionIds)) {
-                    $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+                    $sections = Section::whereIn('id', $sectionIds)
+                        ->where('institution_id', $institutionId)
+                        ->where('status', 1)
+                        ->get(['id', 'name'])
+                        ->unique('name')
+                        ->values();
                 }
             }
         }
@@ -64,7 +69,12 @@ class StudentController extends Controller
     public function getSectionsByClass($classId)
     {
         try {
-            $class = SchoolClass::find($classId);
+            $currentUser = auth('teacher')->user();
+            $institutionId = $currentUser->institution_id;
+
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
             if (!$class) {
                 return response()->json(['sections' => []]);
             }
@@ -82,7 +92,12 @@ class StudentController extends Controller
                 return response()->json(['sections' => []]);
             }
             
-            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+            $sections = Section::whereIn('id', $sectionIds)
+                ->where('institution_id', $institutionId)
+                ->where('status', 1)
+                ->get(['id', 'name'])
+                ->unique('name')
+                ->values();
             
             return response()->json(['sections' => $sections]);
         } catch (\Exception $e) {

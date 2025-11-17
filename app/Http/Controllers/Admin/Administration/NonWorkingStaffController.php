@@ -18,9 +18,45 @@ class NonWorkingStaffController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function Index(){
-        $staff = NonWorkingStaff::all();
-        return view('admin.administration.nonworkingstaff.index', compact('staff'));
+    public function Index(Request $request){
+        $query = NonWorkingStaff::query();
+
+        if ($request->filled('name')) {
+            $query->whereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%' . $request->name . '%']);
+        }
+
+        if ($request->filled('institution_id')) {
+            $query->where('institution_id', $request->institution_id);
+        }
+
+        if ($request->filled('designation')) {
+            $query->where('designation', $request->designation);
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $staff = $query->get();
+
+        $allStaffNames = NonWorkingStaff::select(['first_name','last_name'])
+            ->get()
+            ->map(function($s){
+                return trim(($s->first_name ?? '') . ' ' . ($s->last_name ?? ''));
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $institutions = Institution::orderBy('name')->get(['id', 'name']);
+        $designations = NonWorkingStaff::select('designation')
+            ->whereNotNull('designation')
+            ->distinct()
+            ->orderBy('designation')
+            ->pluck('designation');
+
+        return view('admin.administration.nonworkingstaff.index', compact('staff', 'allStaffNames', 'institutions', 'designations'));
     }
     public function Create(){
         $institutions = Institution::all();

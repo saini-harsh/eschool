@@ -12,16 +12,16 @@
         content="ESchool Institution Management System - Manage your educational institution efficiently">
     <meta name="keywords"
         content="institution, school, management, dashboard, education, students, teachers, academic">
-        <title> TripgoOnline</title>
-    <!-- <title><?php echo $__env->yieldContent('title', 'Institution Dashboard'); ?> - ESchool</title> -->
+
+    <title><?php echo $__env->yieldContent('title', 'Institution Dashboard'); ?> - ESchool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="https://tripgoonline.com/favicon.ico">
-    <!-- <link rel="shortcut icon" href="<?php echo e(URL::asset('/adminpanel/img/favicon.png')); ?>"> -->
+    
+    <link rel="shortcut icon" href="<?php echo e(URL::asset('/adminpanel/img/favicon.png')); ?>">
 
     <!-- Apple Icon -->
     <link rel="apple-touch-icon" href="<?php echo e(URL::asset('/adminpanel/img/apple-icon.png')); ?>">
