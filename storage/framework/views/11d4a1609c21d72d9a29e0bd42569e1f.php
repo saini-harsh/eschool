@@ -1,6 +1,5 @@
-@extends('layouts.student')
-@section('title', 'Student Dashboard')
-@section('content')
+<?php $__env->startSection('title', 'Student Dashboard'); ?>
+<?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -19,8 +18,8 @@
             </nav>
         </div>
         <div>
-            <span class="text-muted">Welcome back, {{ Auth::guard('student')->user()->name }}</span>
-            <a href="{{ route('student.id-card') }}" target="_blank" class="btn btn-sm btn-primary ms-3">
+            <span class="text-muted">Welcome back, <?php echo e(Auth::guard('student')->user()->name); ?></span>
+            <a href="<?php echo e(route('student.id-card')); ?>" target="_blank" class="btn btn-sm btn-primary ms-3">
                 <i class="ti ti-printer me-1"></i> Print ID Card
             </a>
         </div>
@@ -32,7 +31,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="avatar avtar-lg bg-teal mb-2"><img src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}" class="w-auto h-auto" alt="Icon"></div>
+                            <div class="avatar avtar-lg bg-teal mb-2"><img src="<?php echo e(asset('adminpanel/img/icons/dashboard-card-icon-01.svg')); ?>" class="w-auto h-auto" alt="Icon"></div>
                             <h6 class="fs-14 fw-semibold mb-0">Assignments</h6>
                             <div class="fs-18 fw-bold" id="stat_assignments">0</div>
                         </div>
@@ -46,7 +45,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="avatar avtar-lg bg-warning mb-2"><img src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}" class="w-auto h-auto" alt="Icon"></div>
+                            <div class="avatar avtar-lg bg-warning mb-2"><img src="<?php echo e(asset('adminpanel/img/icons/dashboard-card-icon-01.svg')); ?>" class="w-auto h-auto" alt="Icon"></div>
                             <h6 class="fs-14 fw-semibold mb-0">Pending</h6>
                             <div class="fs-18 fw-bold" id="stat_pending">0</div>
                         </div>
@@ -60,7 +59,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="avatar avtar-lg bg-orange mb-2"><img src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}" class="w-auto h-auto" alt="Icon"></div>
+                            <div class="avatar avtar-lg bg-orange mb-2"><img src="<?php echo e(asset('adminpanel/img/icons/dashboard-card-icon-01.svg')); ?>" class="w-auto h-auto" alt="Icon"></div>
                             <h6 class="fs-14 fw-semibold mb-0">Subjects</h6>
                             <div class="fs-18 fw-bold" id="stat_subjects">0</div>
                         </div>
@@ -74,7 +73,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <div class="avatar avtar-lg bg-teal mb-2"><img src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}" class="w-auto h-auto" alt="Icon"></div>
+                            <div class="avatar avtar-lg bg-teal mb-2"><img src="<?php echo e(asset('adminpanel/img/icons/dashboard-card-icon-01.svg')); ?>" class="w-auto h-auto" alt="Icon"></div>
                             <h6 class="fs-14 fw-semibold mb-0">Routine</h6>
                             <div class="fs-18 fw-bold" id="stat_routines">0</div>
                         </div>
@@ -109,12 +108,12 @@
 </div>
 <!-- End Content -->
 
-@endsection
-@push('scripts')
-<script src="{{ asset('adminpanel/plugins/chartjs/chart.min.js') }}"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('scripts'); ?>
+<script src="<?php echo e(asset('adminpanel/plugins/chartjs/chart.min.js')); ?>"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('{{ route('student.dashboard.data') }}')
+    fetch('<?php echo e(route('student.dashboard.data')); ?>')
         .then(res => res.json())
         .then(data => {
             document.getElementById('stat_assignments').textContent = (data.stats?.assignmentsTotal ?? 0).toLocaleString();
@@ -162,4 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(err => console.error('Student dashboard data error', err));
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.student', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/student/index.blade.php ENDPATH**/ ?>

@@ -19,7 +19,7 @@
     <!-- Datatable JS -->
     <script src="{{URL::asset('/adminpanel/js/jquery.dataTables.min.js')}}" type=""></script>
     <script src="{{URL::asset('/adminpanel/js/dataTables.bootstrap5.min.js')}}" type=""></script>
-    @if(request()->routeIs('institution.dashboard') || request()->routeIs('admin.dashboard') || request()->routeIs('teacher.dashboard'))
+    @if(request()->routeIs('institution.dashboard') || request()->routeIs('admin.dashboard') || request()->routeIs('teacher.dashboard') || request()->routeIs('student.dashboard'))
     <!-- Chart JS -->
     <script src="{{URL::asset('/adminpanel/plugins/apexchart/apexcharts.min.js')}}" type=""></script>
     <script src="{{URL::asset('/adminpanel/plugins/apexchart/chart-data.js')}}" type=""></script>

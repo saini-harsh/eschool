@@ -31,7 +31,7 @@
                                     <h6 class="fs-14 fw-semibold mb-0">Students</h6>
                                     <div class="fs-18 fw-bold"><?php echo e(number_format($stats['students'] ?? 0)); ?></div>
                                 </div>
-                                <div id="circle_chart_1"></div>
+                                <div id="circle_chart_1" style="width:120px;height:120px"></div>
                             </div>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                                     <h6 class="fs-14 fw-semibold mb-0">Teachers</h6>
                                     <div class="fs-18 fw-bold"><?php echo e(number_format($stats['teachers'] ?? 0)); ?></div>
                                 </div>
-                                <div id="circle_chart_2"></div>
+                                <div id="circle_chart_2" style="width:120px;height:120px"></div>
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                                     <h6 class="fs-14 fw-semibold mb-0">Classes</h6>
                                     <div class="fs-18 fw-bold"><?php echo e(number_format($stats['classes'] ?? 0)); ?></div>
                                 </div>
-                                <div id="circle_chart_3"></div>
+                                <div id="circle_chart_3" style="width:120px;height:120px"></div>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                                     <h6 class="fs-14 fw-semibold mb-0">Sections</h6>
                                     <div class="fs-18 fw-bold"><?php echo e(number_format($stats['sections'] ?? 0)); ?></div>
                                 </div>
-                                <div id="circle_chart_7"></div>
+                                <div id="circle_chart_7" style="width:120px;height:120px"></div>
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     <div class="index-profile text-center">
                         <img src="<?php echo e($teacher->profile_image ? asset($teacher->profile_image) : ''); ?>" alt="img" class="avatar avatar-xxl rounded-circle shadow">
                         <div class="text-center mb-0">
-                            <h5 class="fw-bold mb-1">Welcome <?php echo e(Auth::guard('teacher')->user()->name); ?></h5>
+                            <h5 class="fw-bold mb-1">Welcome <?php echo e(Auth::guard('teacher')->user()->first_name); ?></h5>
                             <p class="mb-0"><?php echo e($stats['dateToday'] ?? ''); ?></p>
                         </div>
                     </div>
@@ -168,8 +168,8 @@
                 <div class="card-header"><h5 class="fw-bold mb-0">Structure</h5></div>
                 <div class="card-body">
                     <div class="d-flex d-xl-block align-items-center justify-content-center flex-wrap text-center">
-                        <div><div id="chart_male"></div><p class="text-center fw-semibold text-dark mb-0">Male</p></div>
-                        <div><div id="chart_female"></div><p class="text-center fw-semibold text-dark mb-0">Female</p></div>
+                        <div><div id="chart_male" style="width:120px;height:120px"></div><p class="text-center fw-semibold text-dark mb-0">Male</p></div>
+                        <div><div id="chart_female" style="width:120px;height:120px"></div><p class="text-center fw-semibold text-dark mb-0">Female</p></div>
                     </div>
                 </div>
             </div>
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cv = document.createElement('canvas');
                 el.innerHTML = '';
                 el.appendChild(cv);
-                new Chart(cv, { type: 'doughnut', data: { labels: ['Present','Absent','Late'], datasets: [{ data: [roleData.present, roleData.absent, roleData.late], backgroundColor: ['#22c55e','#ef4444','#f59e0b'] }] }, options: { plugins:{legend:{display:false}}, cutout: '70%' } });
+                new Chart(cv, { type: 'doughnut', data: { labels: ['Present','Absent','Late'], datasets: [{ data: [roleData.present, roleData.absent, roleData.late], backgroundColor: ['#22c55e','#ef4444','#f59e0b'] }] }, options: { plugins:{legend:{display:false}}, cutout: '70%', maintainAspectRatio: false } });
             }
             if (data.attendanceToday) {
                 renderCircle('circle_chart_1', data.attendanceToday.student);
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const cv7 = document.createElement('canvas');
                     el7.innerHTML = '';
                     el7.appendChild(cv7);
-                    new Chart(cv7, { type: 'doughnut', data: { labels: ['Sections','Subjects'], datasets: [{ data: [data.stats.sections, data.stats.subjects], backgroundColor: ['#06b6d4','#a78bfa'] }] }, options: { plugins:{legend:{display:false}}, cutout: '70%' } });
+                    new Chart(cv7, { type: 'doughnut', data: { labels: ['Sections','Subjects'], datasets: [{ data: [data.stats.sections, data.stats.subjects], backgroundColor: ['#06b6d4','#a78bfa'] }] }, options: { plugins:{legend:{display:false}}, cutout: '70%', maintainAspectRatio: false } });
                 }
             }
 
