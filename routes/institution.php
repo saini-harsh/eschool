@@ -28,6 +28,7 @@ Route::middleware('institution')->group(function () {
 
     Route::prefix('institution')->group(function () {
         Route::get('/dashboard', [InstitutionController::class, 'dashboard'])->name('institution.dashboard');
+        Route::get('/dashboard/data', [InstitutionController::class, 'dashboardData'])->name('institution.dashboard.data');
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('institution.settings.index');

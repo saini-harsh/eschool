@@ -16,6 +16,7 @@ Route::middleware('teacher')->group(function () {
     Route::prefix('teacher')->group(function () {
 
         Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+        Route::get('/dashboard/data', [TeacherController::class, 'dashboardData'])->name('teacher.dashboard.data');
         
         // Events Management
         Route::prefix('events')->group(function () {

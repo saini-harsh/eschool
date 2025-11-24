@@ -44,6 +44,7 @@ Route::middleware('admin')->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('admin.settings.index');
