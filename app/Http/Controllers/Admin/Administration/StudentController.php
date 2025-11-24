@@ -638,6 +638,26 @@ class StudentController extends Controller
         $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
         return $pdf->download($fileName);
     }
+    public function printIdCard(Student $student)
+    {
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
+    }
     public function Delete($id)
     {
         $student = Student::findOrFail($id);
