@@ -44,10 +44,10 @@ return [
     ],
 
     'sms' => [
-        'from' => env('SMS_FROM_NUMBER', 'ESchool'),
+        'from' => env('SMS_FROM_NUMBER', 'EnvisionTechSolution'),
     ],
     'whatsapp' => [
-        'from' => env('WHATSAPP_FROM_NUMBER', 'ESchool'),
+        'from' => env('WHATSAPP_FROM_NUMBER', 'EnvisionTechSolution'),
     ],
 
 ];

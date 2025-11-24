@@ -12,7 +12,7 @@
         content="Dleohr is a clean and modern human resource management admin dashboard template which is based on HTML 5, Bootstrap 5. Try Demo and Buy Now!">
     <meta name="keywords"
         content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
-    <title> Dashboard - | ESchool</title>
+    <title> Dashboard - | EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">

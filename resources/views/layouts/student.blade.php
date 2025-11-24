@@ -9,11 +9,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description"
-        content="ESchool Institution Management System - Manage your educational institution efficiently">
+        content="EnvisionTechSolution Institution Management System - Manage your educational institution efficiently">
     <meta name="keywords"
         content="institution, school, management, dashboard, education, students, teachers, academic">
 
-    <title>@yield('title', 'Institution Dashboard') - ESchool</title>
+    <title>@yield('title', 'Institution Dashboard') - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">

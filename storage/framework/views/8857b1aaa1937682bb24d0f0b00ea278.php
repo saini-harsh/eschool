@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="<?php echo e(URL::asset('/admin/img/favicon.png')); ?>">
-    <title>Login - ESchool</title>
+    <link rel="shortcut icon" href="<?php echo e(URL::asset('/adminpanel/img/favicon.png')); ?>">
+    <title>Login - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
@@ -158,7 +158,7 @@
 
 <body>
     <div class="login-container">
-        <img src="<?php echo e(asset('/admin/img/logo.png')); ?>" alt="ESchool Logo" />
+        <img src="<?php echo e(asset('/adminpanel/img/logo.png')); ?>" alt="EnvisionTechSolution Logo" />
         <h2>Login Details</h2>
         <?php if(session('error')): ?>
             <div class="alert alert-danger">
