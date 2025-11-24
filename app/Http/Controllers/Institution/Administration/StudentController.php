@@ -747,6 +747,32 @@ class StudentController extends Controller
         return $pdf->download($fileName);
     }
 
+    public function printIdCard(Student $student)
+    {
+        $institutionId = auth('institution')->id();
+        if ($student->institution_id !== $institutionId) {
+            abort(403);
+        }
+
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
+    }
+
     /**
      * Import students from CSV file
      */

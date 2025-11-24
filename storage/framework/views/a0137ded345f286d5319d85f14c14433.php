@@ -126,8 +126,8 @@
     <div class="card back">
 
         <div class="contact-info">
-            <p><strong>Phone :</strong> <?php echo e($student->institution->phone ?? 'N/A'); ?></p>
-            <p><strong>Email :</strong> <?php echo e($student->institution->email ?? 'N/A'); ?></p>
+            <p><strong>Phone :</strong> <?php echo e($student->phone ?? 'N/A'); ?></p>
+            <p><strong>Email :</strong> <?php echo e($student->email ?? 'N/A'); ?></p>
             <p><strong>Website :</strong> <?php echo e($student->institution->website ?? 'N/A'); ?></p>
         </div>
 

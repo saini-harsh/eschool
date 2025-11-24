@@ -1,6 +1,5 @@
-@extends('layouts.student')
-@section('title', 'Student Dashboard')
-@section('content')
+<?php $__env->startSection('title', 'Student Dashboard'); ?>
+<?php $__env->startSection('content'); ?>
 
 <!-- Start Content -->
 <div class="content">
@@ -19,8 +18,8 @@
             </nav>
         </div>
         <div>
-            <span class="text-muted">Welcome back, {{ Auth::guard('student')->user()->name }}</span>
-            <a href="{{ route('student.id-card') }}" target="_blank" class="btn btn-sm btn-primary ms-3">
+            <span class="text-muted">Welcome back, <?php echo e(Auth::guard('student')->user()->name); ?></span>
+            <a href="<?php echo e(route('student.id-card')); ?>" target="_blank" class="btn btn-sm btn-primary ms-3">
                 <i class="ti ti-printer me-1"></i> Print ID Card
             </a>
         </div>
@@ -33,8 +32,8 @@
 </div>
 <!-- End Content -->
 
-@endsection
-@push('scripts')
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('scripts'); ?>
 <script>
     // Add any dashboard-specific JavaScript here
     document.addEventListener('DOMContentLoaded', function() {
@@ -42,4 +41,6 @@
         console.log('Student Dashboard loaded');
     });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.student', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\eschool\resources\views/student/index.blade.php ENDPATH**/ ?>

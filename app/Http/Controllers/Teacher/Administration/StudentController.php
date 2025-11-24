@@ -141,6 +141,34 @@ class StudentController extends Controller
         return view('teacher.administration.students.show', compact('student'));
     }
 
+    public function printIdCard(Student $student)
+    {
+        $currentUser = auth('teacher')->user();
+        $institutionId = $currentUser->institution_id;
+
+        if ($student->institution_id !== $institutionId) {
+            abort(403, 'Unauthorized access to student data.');
+        }
+
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
+    }
+
     // AJAX method to get students by class and section
     public function getStudentsByClassSection(Request $request)
     {

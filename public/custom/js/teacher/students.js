@@ -175,6 +175,9 @@ function initTeacherStudentsPage() {
                             <a href="/teacher/students/download-pdf/${student.id}" class="btn btn-icon btn-sm btn-outline-success border-0" title="Download PDF">
                                 <i class="ti ti-file-type-pdf"></i>
                             </a>
+                            <a href="/teacher/students/print-id-card/${student.id}" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="Print ID Card">
+                                <i class="ti ti-printer"></i>
+                            </a>
                         </div>
                     </td>
                 </tr>

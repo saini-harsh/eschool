@@ -126,8 +126,8 @@
     <div class="card back">
 
         <div class="contact-info">
-            <p><strong>Phone :</strong> {{ $student->institution->phone ?? 'N/A' }}</p>
-            <p><strong>Email :</strong> {{ $student->institution->email ?? 'N/A' }}</p>
+            <p><strong>Phone :</strong> {{ $student->phone ?? 'N/A' }}</p>
+            <p><strong>Email :</strong> {{ $student->email ?? 'N/A' }}</p>
             <p><strong>Website :</strong> {{ $student->institution->website ?? 'N/A' }}</p>
         </div>
 
