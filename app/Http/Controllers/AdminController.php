@@ -136,4 +136,118 @@ class AdminController extends Controller
             'recentActivities' => $activities,
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+        if (mb_strlen($q) < 2) {
+            return response()->json(['groups' => []]);
+        }
+
+        $limit = 5;
+
+        $institutions = Institution::where('name', 'like', '%'.$q.'%')
+            ->limit($limit)
+            ->get(['id','name'])
+            ->map(function ($i) {
+                return [
+                    'label' => $i->name ?? 'Institution',
+                    'sub' => '',
+                    'url' => route('admin.institutions.edit', ['institution' => $i->id]),
+                ];
+            });
+
+        $teachers = Teacher::where(function ($qr) use ($q) {
+                $qr->where('first_name', 'like', '%'.$q.'%')
+                   ->orWhere('last_name', 'like', '%'.$q.'%')
+                   ->orWhereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%'.$q.'%'])
+                   ->orWhere('email', 'like', '%'.$q.'%');
+            })
+            ->limit($limit)
+            ->get(['id','first_name','last_name','email'])
+            ->map(function ($t) {
+                return [
+                    'label' => trim(($t->first_name ?? '').' '.($t->last_name ?? '')) ?: ($t->email ?? 'Teacher'),
+                    'sub' => $t->email ?? '',
+                    'url' => route('admin.teachers.show', ['teacher' => $t->id]),
+                ];
+            });
+
+        $students = Student::where(function ($qr) use ($q) {
+                $qr->where('first_name', 'like', '%'.$q.'%')
+                   ->orWhere('last_name', 'like', '%'.$q.'%')
+                   ->orWhereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%'.$q.'%'])
+                   ->orWhere('email', 'like', '%'.$q.'%');
+            })
+            ->limit($limit)
+            ->get(['id','first_name','last_name','email'])
+            ->map(function ($s) {
+                return [
+                    'label' => trim(($s->first_name ?? '').' '.($s->last_name ?? '')) ?: ($s->email ?? 'Student'),
+                    'sub' => $s->email ?? '',
+                    'url' => route('admin.students.show', ['student' => $s->id]),
+                ];
+            });
+
+        $subjects = Subject::where(function ($qr) use ($q) {
+                $qr->where('name', 'like', '%'.$q.'%')
+                   ->orWhere('code', 'like', '%'.$q.'%');
+            })
+            ->limit($limit)
+            ->get(['id','name','code'])
+            ->map(function ($subj) {
+                $label = $subj->name ?? 'Subject';
+                $sub = $subj->code ? ('#'.$subj->code) : '';
+                return [
+                    'label' => $label,
+                    'sub' => $sub,
+                    'url' => route('admin.subjects.edit', ['id' => $subj->id]),
+                ];
+            });
+
+        $assignments = Assignment::where('title', 'like', '%'.$q.'%')
+            ->limit($limit)
+            ->get(['id','title'])
+            ->map(function ($a) {
+                return [
+                    'label' => $a->title ?? 'Assignment',
+                    'sub' => '',
+                    'url' => route('admin.assignments.edit', ['id' => $a->id]),
+                ];
+            });
+
+        $classes = SchoolClass::where('name', 'like', '%'.$q.'%')
+            ->limit($limit)
+            ->get(['id','name'])
+            ->map(function ($c) {
+                return [
+                    'label' => $c->name ?? 'Class',
+                    'sub' => '',
+                    'url' => route('admin.classes.edit', ['id' => $c->id]),
+                ];
+            });
+
+        $sections = Section::where('name', 'like', '%'.$q.'%')
+            ->limit($limit)
+            ->get(['id','name'])
+            ->map(function ($sec) {
+                return [
+                    'label' => $sec->name ?? 'Section',
+                    'sub' => '',
+                    'url' => route('admin.sections.edit', ['id' => $sec->id]),
+                ];
+            });
+
+        $groups = [
+            'Institutions' => $institutions,
+            'Teachers' => $teachers,
+            'Students' => $students,
+            'Subjects' => $subjects,
+            'Assignments' => $assignments,
+            'Classes' => $classes,
+            'Sections' => $sections,
+        ];
+
+        return response()->json(['groups' => $groups]);
+    }
 }

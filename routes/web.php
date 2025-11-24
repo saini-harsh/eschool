@@ -42,9 +42,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protected page example
 Route::middleware('admin')->group(function () {
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-        Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
+        Route::prefix('admin')->group(function () {
+            Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+            Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
+            Route::get('/search', [AdminController::class, 'search'])->name('admin.search');
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('admin.settings.index');
