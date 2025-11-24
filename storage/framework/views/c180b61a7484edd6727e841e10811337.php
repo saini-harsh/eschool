@@ -51,44 +51,6 @@
                  </button>
              </div>
 
-             <!-- Flag -->
-             <div class="header-item">
-                 <div class="dropdown me-2">
-                     <button class="topbar-link btn" data-bs-toggle="dropdown" data-bs-offset="0,24" type="button"
-                         aria-haspopup="false" aria-expanded="false">
-                         <img src="<?php echo e(asset('/adminpanel/img/flags/us.svg')); ?>" alt="Language" height="16">
-                     </button>
-
-                     <div class="dropdown-menu dropdown-menu-end">
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="<?php echo e(asset('/adminpanel/img/flags/us.svg')); ?>" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">English</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="<?php echo e(asset('/adminpanel/img/flags/de.svg')); ?>" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">German</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="<?php echo e(asset('/adminpanel/img/flags/fr.svg')); ?>" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">French</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="<?php echo e(asset('/adminpanel/img/flags/ae.svg')); ?>" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">Arabic</span>
-                         </a>
-
-                     </div>
-                 </div>
-             </div>
-
              <!-- Full Screen -->
              <div class="header-item">
                  <div class="me-2">
@@ -113,7 +75,7 @@
              </div>
 
              <!-- Notification Dropdown -->
-             <div class="header-item">
+             <div class="header-item d-none">
                  <div class="dropdown me-2">
 
                      <button class="topbar-link btn btn-icon topbar-link dropdown-toggle drop-arrow-none"

@@ -4,17 +4,17 @@
          <div class="d-flex align-items-center gap-2">
 
              <!-- Logo -->
-             <a href="{{ route('admin.dashboard') }}" class="logo">
+             <a href="<?php echo e(route('institution.dashboard')); ?>" class="logo">
 
                  <!-- Logo Normal -->
                  <span class="logo-light">
-                     <span class="logo-lg"><img src="{{ asset('/adminpanel/img/logo.svg') }}" alt="logo"></span>
-                     <span class="logo-sm"><img src="{{ asset('/adminpanel/img/logo-small.svg') }}" alt="small logo"></span>
+                     <span class="logo-lg"><img src="<?php echo e(asset('/adminpanel/img/logo.svg')); ?>" alt="logo"></span>
+                     <span class="logo-sm"><img src="<?php echo e(asset('/adminpanel/img/logo-small.svg')); ?>" alt="small logo"></span>
                  </span>
 
                  <!-- Logo Dark -->
                  <span class="logo-dark">
-                     <span class="logo-lg"><img src="{{ asset('/adminpanel/img/logo-white.svg') }}" alt="dark logo"></span>
+                     <span class="logo-lg"><img src="<?php echo e(asset('/adminpanel/img/logo-white.svg')); ?>" alt="dark logo"></span>
                  </span>
              </a>
 
@@ -51,6 +51,7 @@
                  </button>
              </div>
 
+
              <!-- Full Screen -->
              <div class="header-item">
                  <div class="me-2">
@@ -69,7 +70,7 @@
              <!-- Calendar -->
              <div class="header-item">
                  <div class="me-2">
-                     <a href="{{ route('admin.events.index') }}" class="btn topbar-link"><i
+                     <a href="<?php echo e(route('institution.events.index')); ?>" class="btn topbar-link"><i
                              class="ti ti-calendar-star fs-16"></i></a>
                  </div>
              </div>
@@ -103,7 +104,7 @@
                                  id="notification-1">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/adminpanel/img/users/avatar-2.jpg') }}"
+                                         <img src="<?php echo e(asset('/adminpanel/img/users/avatar-2.jpg')); ?>"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -136,7 +137,7 @@
                                  id="notification-2">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/adminpanel/img/users/user-02.jpg') }}"
+                                         <img src="<?php echo e(asset('/adminpanel/img/users/user-02.jpg')); ?>"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -169,7 +170,7 @@
                                  id="notification-3">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/adminpanel/img/users/user-04.jpg') }}"
+                                         <img src="<?php echo e(asset('/adminpanel/img/users/user-04.jpg')); ?>"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -201,7 +202,7 @@
                              <div class="dropdown-item notification-item py-3 text-wrap" id="notification-4">
                                  <div class="d-flex">
                                      <div class="me-2 position-relative flex-shrink-0">
-                                         <img src="{{ asset('/adminpanel/img/users/user-24.jpg') }}"
+                                         <img src="<?php echo e(asset('/adminpanel/img/users/user-24.jpg')); ?>"
                                              class="avatar-md rounded-circle" alt="">
                                      </div>
                                      <div class="flex-grow-1">
@@ -245,7 +246,7 @@
              <!-- Settings -->
              <div class="header-item">
                  <div>
-                     <a href="{{ route('admin.settings.index') }}" class="btn topbar-link"><i class="ti ti-settings fs-16"></i></a>
+                     <a href="<?php echo e(route('institution.settings.index')); ?>" class="btn topbar-link"><i class="ti ti-settings fs-16"></i></a>
                  </div>
              </div>
 
@@ -269,3 +270,4 @@
          </div>
      </div>
  </div>
+<?php /**PATH E:\eschool\resources\views////elements/institution/header.blade.php ENDPATH**/ ?>
