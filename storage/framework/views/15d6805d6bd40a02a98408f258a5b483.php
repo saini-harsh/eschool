@@ -63,7 +63,7 @@
     <!-- jQuery -->
     <?php echo $__env->make('components.dashboard.scripts', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
-    <?php echo $__env->yieldPushContent('scripts'); ?>
+    <!-- <?php echo $__env->yieldPushContent('scripts'); ?> -->
 </body>
 
 </html>

@@ -14,6 +14,7 @@ use App\Models\Assignment;
 use App\Models\AcademicEvent;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use App\Models\Teacher;
 
 class TeacherController extends Controller
 {
@@ -42,6 +43,7 @@ class TeacherController extends Controller
 
         $stats = [
             'students' => $studentsCountQuery->count(),
+            'teachers' => Teacher::where('institution_id', $institutionId)->count(),
             'classes' => $classIds->count(),
             'sections' => $sectionIds->count(),
             'subjects' => $subjectIds->count(),
@@ -79,6 +81,7 @@ class TeacherController extends Controller
 
         $stats = [
             'students' => $studentsCountQuery->count(),
+            'teachers' => Teacher::where('institution_id', $institutionId)->count(),
             'classes' => $classIds->count(),
             'sections' => $sectionIds->count(),
             'subjects' => $subjectIds->count(),
@@ -143,6 +146,21 @@ class TeacherController extends Controller
             ->map(function ($row) { return ['type'=>$row['type'],'text'=>$row['text'],'time'=>$row['time'],'time_formatted'=>$row['time'] ? Carbon::parse($row['time'])->diffForHumans() : '' ]; })
             ->take(10);
 
+        $maleCount = Student::where('institution_id', $institutionId)
+            ->when($classIds->isNotEmpty(), function($q) use ($classIds) { $q->whereIn('class_id', $classIds); })
+            ->when($sectionIds->isNotEmpty(), function($q) use ($sectionIds) { $q->whereIn('section_id', $sectionIds); })
+            ->whereRaw('LOWER(COALESCE(gender, "")) = ?', ['male'])
+            ->count();
+        $femaleCount = Student::where('institution_id', $institutionId)
+            ->when($classIds->isNotEmpty(), function($q) use ($classIds) { $q->whereIn('class_id', $classIds); })
+            ->when($sectionIds->isNotEmpty(), function($q) use ($sectionIds) { $q->whereIn('section_id', $sectionIds); })
+            ->whereRaw('LOWER(COALESCE(gender, "")) = ?', ['female'])
+            ->count();
+        $structure = [
+            'male' => $maleCount,
+            'female' => $femaleCount,
+        ];
+
         return response()->json([
             'stats' => $stats,
             'studentsPerClass' => $studentsPerClass,
@@ -150,6 +168,7 @@ class TeacherController extends Controller
             'attendanceToday' => $attendanceToday,
             'upcomingEvents' => $upcomingEvents,
             'recentActivities' => $activities,
+            'structure' => $structure,
         ]);
     }
 }

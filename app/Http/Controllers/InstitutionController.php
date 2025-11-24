@@ -107,6 +107,18 @@ class InstitutionController extends Controller
         $recentTeachers = Teacher::where('institution_id', $institutionId)->orderBy('created_at', 'desc')->limit(5)->get(['id','first_name','last_name','created_at']);
         $recentAssignments = Assignment::where('institution_id', $institutionId)->orderBy('created_at', 'desc')->limit(5)->get(['id','title','created_at']);
 
+        // Structure: Male/Female counts
+        $maleCount = Student::where('institution_id', $institutionId)
+            ->whereRaw('LOWER(COALESCE(gender, "")) = ?', ['male'])
+            ->count();
+        $femaleCount = Student::where('institution_id', $institutionId)
+            ->whereRaw('LOWER(COALESCE(gender, "")) = ?', ['female'])
+            ->count();
+        $structure = [
+            'male' => $maleCount,
+            'female' => $femaleCount,
+        ];
+
         $activities = collect([])
             ->merge($recentStudents->map(function ($s) { return ['type' => 'Student', 'text' => trim(($s->first_name ?? '').' '.($s->last_name ?? '')), 'time' => $s->created_at]; }))
             ->merge($recentTeachers->map(function ($t) { return ['type' => 'Teacher', 'text' => trim(($t->first_name ?? '').' '.($t->last_name ?? '')), 'time' => $t->created_at]; }))
@@ -131,6 +143,7 @@ class InstitutionController extends Controller
             'attendanceToday' => $attendanceToday,
             'upcomingEvents' => $upcomingEvents,
             'recentActivities' => $activities,
+            'structure' => $structure,
         ]);
     }
 }
