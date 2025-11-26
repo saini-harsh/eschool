@@ -102,6 +102,7 @@ class EmailSmsController extends Controller
             if ($request->send_through === 'whatsapp') {
                 $sendStatus = $this->sendWhatsApp($request);
             }
+            
 
             // Step 3: Update DB status based on result
             $emailSms->update([
@@ -189,32 +190,38 @@ class EmailSmsController extends Controller
             $recipients = is_array($request->recipients)
                 ? $request->recipients
                 : explode(',', $request->recipients);
-
-            $success = true;
-
+                $success = true;
+                
             foreach ($recipients as $recipient) {
-                $response = Http::asForm()->withHeaders([
-                    'X-RapidAPI-Key'  => config('services.rapidapi.key'),
-                    'X-RapidAPI-Host' => config('services.rapidapi.whatsapp_host'),
-                ])->post(config('services.rapidapi.whatsapp_url'), [
-                    "account"   => config('services.rapidapi.whatsapp_account'), // 👈 your unique account ID
-                    "recipient" => "+91" . (is_array($recipient) ? $recipient['phone'] : $recipient), // format as E.164
-                    "message"   => strip_tags($request->description),
-                    "type"      => "text", // text / media / document
+                    
+                    $phone = is_array($recipient) ? $recipient['phone'] : $recipient;
+                    
+
+                $url = "https://api.ultramsg.com/" . env('ULTRAMSG_INSTANCE') . "/messages/chat";
+
+                $message = env('APP_NAME') . ",\n" .
+                    $request->title . ",\n" .
+                    strip_tags($request->description);
+
+                $response = Http::asForm()->post($url, [
+                    'token' => env('ULTRAMSG_TOKEN'),
+                    'to' => "+91" . $phone,
+                    'body' => $message,
                 ]);
-                    dd($response->json());
+                
                 if ($response->failed()) {
                     $success = false;
-                    \Log::error('WhatsApp sending failed', [
-                        'recipient' => $recipient,
-                        'response'  => $response->body()
+                    \Log::error('UltraMsg WhatsApp Failed', [
+                        'recipient' => $phone,
+                        'response'  => $response->body(),
                     ]);
                 }
             }
-
+            
             return $success;
+
         } catch (\Exception $e) {
-            \Log::error('WhatsApp exception: ' . $e->getMessage());
+            \Log::error('WhatsApp exception: '.$e->getMessage());
             return false;
         }
     }
@@ -616,7 +623,6 @@ class EmailSmsController extends Controller
         try {
             $class = SchoolClass::findOrFail($classId);
             $sectionIds = $class->section_ids ?? [];
-
             if (empty($sectionIds)) {
                 return response()->json([
                     'success' => false,
@@ -624,7 +630,20 @@ class EmailSmsController extends Controller
                     'data' => []
                 ], 404);
             }
+            if (is_string($sectionIds)) {
+                $sectionIds = json_decode($sectionIds, true);
+            }
 
+            // Ensure it's an array
+            if (!is_array($sectionIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid section_ids format',
+                    'data' => []
+                ], 422);
+            }
+            
+            
             $sections = Section::whereIn('id', $sectionIds)
             ->where('status', 1)
             ->select('id', 'name')
