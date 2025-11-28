@@ -41,6 +41,7 @@ Route::middleware('institution')->group(function () {
             Route::get('/show/{teacher}', [TeacherController::class, 'Show'])->name('institution.teachers.show');
             Route::get('/create', [TeacherController::class, 'Create'])->name('institution.teachers.create');
             Route::post('/store', [TeacherController::class, 'Store'])->name('institution.teachers.store');
+            
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('institution.teachers.edit');
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('institution.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('institution.teachers.delete');
