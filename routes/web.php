@@ -42,8 +42,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 // Protected page example
 Route::middleware('admin')->group(function () {
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::prefix('admin')->group(function () {
+            Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+            Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
+            Route::get('/search', [AdminController::class, 'search'])->name('admin.search');
 
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('admin.settings.index');
@@ -79,6 +81,8 @@ Route::middleware('admin')->group(function () {
             Route::get('/edit/{student}', [StudentController::class, 'Edit'])->name('admin.students.edit');
             Route::post('/update/{student}', [StudentController::class, 'Update'])->name('admin.students.update');
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('admin.students.delete');
+            Route::get('/download-pdf/{student}', [StudentController::class, 'downloadPdf'])->name('admin.students.download-pdf');
+            Route::get('/print-id-card/{student}', [StudentController::class, 'printIdCard'])->name('admin.students.print-id-card');
             Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('admin.students.classes');
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');

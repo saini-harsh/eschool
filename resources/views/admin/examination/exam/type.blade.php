@@ -48,8 +48,14 @@
                             <div class="mb-3">
                                 <label class="form-label">Institution <span class="text-danger">*</span></label>
 
-                                <input type="text" name="institution_id" id="institution_id" class="form-control"
-                                    value="{{ auth('institution')->user()->name }}" readonly>
+                                <select name="institution_id" id="institution_id" class="form-select" required>
+                                    <option value="">Select Institution</option>
+                                    @if (isset($institutions) && !empty($institutions))
+                                        @foreach ($institutions as $institution)
+                                            <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Title <span class="text-danger">*</span></label>
@@ -194,5 +200,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('custom/js/institution/exam-types.js') }}"></script>
+    <script src="{{ asset('custom/js/admin/exam-types.js') }}"></script>
 @endpush

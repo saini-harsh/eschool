@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentController extends Controller
 {
@@ -52,7 +53,12 @@ class StudentController extends Controller
                 }
                 
                 if (is_array($sectionIds) && !empty($sectionIds)) {
-                    $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+                    $sections = Section::whereIn('id', $sectionIds)
+                        ->where('institution_id', $institutionId)
+                        ->where('status', 1)
+                        ->get(['id', 'name'])
+                        ->unique('name')
+                        ->values();
                 }
             }
         }
@@ -64,7 +70,12 @@ class StudentController extends Controller
     public function getSectionsByClass($classId)
     {
         try {
-            $class = SchoolClass::find($classId);
+            $currentUser = auth('teacher')->user();
+            $institutionId = $currentUser->institution_id;
+
+            $class = SchoolClass::where('id', $classId)
+                ->where('institution_id', $institutionId)
+                ->first();
             if (!$class) {
                 return response()->json(['sections' => []]);
             }
@@ -82,7 +93,12 @@ class StudentController extends Controller
                 return response()->json(['sections' => []]);
             }
             
-            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
+            $sections = Section::whereIn('id', $sectionIds)
+                ->where('institution_id', $institutionId)
+                ->where('status', 1)
+                ->get(['id', 'name'])
+                ->unique('name')
+                ->values();
             
             return response()->json(['sections' => $sections]);
         } catch (\Exception $e) {
@@ -125,6 +141,34 @@ class StudentController extends Controller
         return view('teacher.administration.students.show', compact('student'));
     }
 
+    public function printIdCard(Student $student)
+    {
+        $currentUser = auth('teacher')->user();
+        $institutionId = $currentUser->institution_id;
+
+        if ($student->institution_id !== $institutionId) {
+            abort(403, 'Unauthorized access to student data.');
+        }
+
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
+    }
+
     // AJAX method to get students by class and section
     public function getStudentsByClassSection(Request $request)
     {
@@ -144,6 +188,33 @@ class StudentController extends Controller
             ->get();
             
         return response()->json(['students' => $students]);
+    }
+
+    public function downloadPdf(Student $student)
+    {
+        $currentUser = auth('teacher')->user();
+        if ($student->institution_id !== $currentUser->institution_id) {
+            abort(403);
+        }
+
+        $student->load([
+            'institution:id,name',
+            'teacher:id,first_name,last_name',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.pdf', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->download($fileName);
     }
 
 

@@ -5,6 +5,9 @@ use App\Http\Controllers\API\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\API\Teacher\Academic\AttendanceController;
 use App\Http\Controllers\API\Teacher\Academic\RoutineController;
 use App\Http\Controllers\API\Teacher\Academic\LessonPlanController;
+use App\Http\Controllers\API\Teacher\Academic\AssignmentController;
+use App\Http\Controllers\API\Teacher\Academic\EventController;
+
 
 
 Route::prefix('Teacher')->group(function () {
@@ -44,6 +47,56 @@ Route::prefix('Teacher')->group(function () {
             Route::post('/LessonPlanList', [LessonPlanController::class, 'lessonPlanList']);
             Route::post('/AddLessonPlan', [LessonPlanController::class, 'addLessonPlan']);
             Route::post('/EditLessonPlan', [LessonPlanController::class, 'editLessonPlan']);
+            Route::post('/Subjects', [LessonPlanController::class, 'getSubjectsByInstitutionClass']);
+        });
+
+        Route::prefix('Assignment')->group(function () {
+            Route::post('/Lists', [AssignmentController::class, 'Lists']);
+            Route::post('/Create', [AssignmentController::class, 'createAssignment']);
+            Route::post('/Edit/{id}', [AssignmentController::class, 'editAssignment']);
+            Route::post('/Update/{id}', [AssignmentController::class, 'updateAssignment']);
+            Route::post('/Delete/{id}', [AssignmentController::class, 'deleteAssignment']);
+            Route::post('/Grade/{id}', [AssignmentController::class, 'gradeAssignment']);
+        });
+        Route::prefix('Event')->group(function () {
+            Route::post('/Lists', [EventController::class, 'getEvents']);
         });
     });
+});
+
+
+Route::prefix('Student')->group(function () {
+
+     Route::prefix('Profile')->group(function () {
+        Route::post('/ForgotPassword', [App\Http\Controllers\API\Student\LoginController::class, 'ForgotPassword']);
+        Route::post('/ResetPassword', [App\Http\Controllers\API\Student\LoginController::class, 'ResetPassword']);
+        Route::post('/ChangePassword', [App\Http\Controllers\API\Student\LoginController::class, 'ChangePassword']);
+        Route::post('/UpdateProfile', [App\Http\Controllers\API\Student\LoginController::class, 'UpdateProfile']);
+        Route::post('/GetProfile', [App\Http\Controllers\API\Student\LoginController::class, 'GetProfile']);
+    });
+    Route::prefix('Academic')->group(function () {
+        
+        // Attendance Management Route
+        Route::prefix('Attendance')->group(function () {
+            Route::post('/FilterAttendance', [App\Http\Controllers\API\Student\Academic\AttendanceController::class, 'filterAttendance']);
+        });
+        
+        // Routine Management Route
+        Route::prefix('Routine')->group(function () {
+            Route::post('/ClassRoutineReport', [App\Http\Controllers\API\Student\Academic\RoutineController::class, 'getRoutineReport']);
+        });
+        Route::prefix('Assignment')->group(function () {
+            Route::post('/Lists', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'Lists']);
+            Route::post('/Show/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'show']);
+            Route::post('/Submit/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'submit']);
+            Route::post('/DownloadAssignment/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'downloadAssignment']);
+            Route::post('/DownloadSubmission/{id}', [App\Http\Controllers\API\Student\Academic\AssignmentController::class, 'downloadSubmission']);
+        });
+        Route::prefix('Event')->group(function () {
+            Route::post('/Lists', [App\Http\Controllers\API\Student\Academic\EventController::class, 'getEvents']);
+        });
+      
+    });
+
+    
 });

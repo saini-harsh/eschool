@@ -37,7 +37,8 @@
                                         <div class="avatar avtar-lg bg-teal mb-2"><img
                                                 src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
-                                        <h6 class="fs-14 fw-semibold mb-0">Employees</h6>
+                                        <h6 class="fs-14 fw-semibold mb-0">Students</h6>
+                                        <div class="fs-18 fw-bold">{{ number_format($stats['students'] ?? 0) }}</div>
                                     </div>
                                     <div id="circle_chart_1"></div>
                                 </div>
@@ -53,7 +54,8 @@
                                         <div class="avatar avtar-lg bg-warning mb-2"><img
                                                 src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
-                                        <h6 class="fs-14 fw-semibold mb-0">Companies</h6>
+                                        <h6 class="fs-14 fw-semibold mb-0">Teachers</h6>
+                                        <div class="fs-18 fw-bold">{{ number_format($stats['teachers'] ?? 0) }}</div>
                                     </div>
                                     <div id="circle_chart_2"></div>
                                 </div>
@@ -69,7 +71,8 @@
                                         <div class="avatar avtar-lg bg-orange mb-2"><img
                                                 src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
-                                        <h6 class="fs-14 fw-semibold mb-0">Leaves</h6>
+                                        <h6 class="fs-14 fw-semibold mb-0">Institutions</h6>
+                                        <div class="fs-18 fw-bold">{{ number_format($stats['institutions'] ?? 0) }}</div>
                                     </div>
                                     <div id="circle_chart_3"></div>
                                 </div>
@@ -85,7 +88,8 @@
                                         <div class="avatar avtar-lg bg-teal mb-2"><img
                                                 src="{{ asset('adminpanel/img/icons/dashboard-card-icon-01.svg') }}"
                                                 class="w-auto h-auto" alt="Icon"></div>
-                                        <h6 class="fs-14 fw-semibold mb-0">Salary</h6>
+                                        <h6 class="fs-14 fw-semibold mb-0">Classes</h6>
+                                        <div class="fs-18 fw-bold">{{ number_format($stats['classes'] ?? 0) }}</div>
                                     </div>
                                     <div id="circle_chart_7"></div>
                                 </div>
@@ -105,8 +109,8 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="mb-1">
-                                            <p class="mb-1 text-dark">Total Applications</p>
-                                            <h6 class="fs-16 fw-semibold mb-1">5,358</h6>
+                                            <p class="mb-1 text-dark">Total Sections</p>
+                                            <h6 class="fs-16 fw-semibold mb-1">{{ number_format($stats['sections'] ?? 0) }}</h6>
                                         </div>
                                         <p class="fs-12 text-truncate text-dark mb-0"><span class="text-success me-1"><i
                                                     class="ti ti-trending-up"></i></span>+1.4% from last week</p>
@@ -123,8 +127,8 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="mb-1">
-                                            <p class="mb-1 text-dark">Total Shortlisted</p>
-                                            <h6 class="fs-16 fw-semibold mb-1">4,280</h6>
+                                            <p class="mb-1 text-dark">Total Subjects</p>
+                                            <h6 class="fs-16 fw-semibold mb-1">{{ number_format($stats['subjects'] ?? 0) }}</h6>
                                         </div>
                                         <p class="fs-12 text-truncate text-dark mb-0"><span class="text-success me-1"><i
                                                     class="ti ti-trending-up"></i></span>+1.4% from last week</p>
@@ -141,8 +145,8 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="mb-1">
-                                            <p class="mb-1 text-dark">Total Rejected</p>
-                                            <h6 class="fs-16 fw-semibold mb-1">1078</h6>
+                                            <p class="mb-1 text-dark">Total Assignments</p>
+                                            <h6 class="fs-16 fw-semibold mb-1">{{ number_format($stats['assignments'] ?? 0) }}</h6>
                                         </div>
                                         <p class="fs-12 text-truncate tex-dark mb-0"><span class="text-success me-1"><i
                                                     class="ti ti-trending-up"></i></span>+1.4% from last week</p>
@@ -166,7 +170,7 @@
                                 class="avatar avatar-xxl rounded-circle shadow">
                             <div class="text-center mb-0">
                                 <h5 class="fw-bold mb-1">Welcome Admin</h5>
-                                <p class="mb-0">17 Apr 2025</p>
+                                <p class="mb-0">{{ $stats['dateToday'] ?? '' }}</p>
                             </div>
                         </div>
                         <div class="index-profile-links">
@@ -799,3 +803,96 @@
        
 @endsection
 
+@push('scripts')
+<script src="{{ asset('adminpanel/plugins/chartjs/chart.min.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('{{ route('admin.dashboard.data') }}')
+        .then(res => res.json())
+        .then(data => {
+            const polarTarget = document.getElementById('polarchart');
+            if (polarTarget) {
+                const c = document.createElement('canvas');
+                polarTarget.innerHTML = '';
+                polarTarget.appendChild(c);
+                new Chart(c, {
+                    type: 'polarArea',
+                    data: {
+                        labels: data.studentsPerClass.labels,
+                        datasets: [{
+                            data: data.studentsPerClass.series,
+                            backgroundColor: ['#6366f1','#22c55e','#f59e0b','#ef4444','#06b6d4','#a78bfa','#84cc16','#f97316']
+                        }]
+                    },
+                    options: {plugins:{legend:{display:true}}}
+                });
+            }
+
+            const appsTarget = document.getElementById('applications_chart');
+            if (appsTarget) {
+                const c2 = document.createElement('canvas');
+                appsTarget.innerHTML = '';
+                appsTarget.appendChild(c2);
+                new Chart(c2, {
+                    type: 'bar',
+                    data: {
+                        labels: data.assignmentsTrend.labels,
+                        datasets: [{ label: 'Assignments', data: data.assignmentsTrend.series, backgroundColor: '#6366f1' }]
+                    },
+                    options: { responsive: true, plugins:{legend:{display:false}} }
+                });
+            }
+
+            function renderCircle(id, roleData) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const cv = document.createElement('canvas');
+                el.innerHTML = '';
+                el.appendChild(cv);
+                new Chart(cv, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Present','Absent','Late'],
+                        datasets: [{ data: [roleData.present, roleData.absent, roleData.late], backgroundColor: ['#22c55e','#ef4444','#f59e0b'] }]
+                    },
+                    options: { plugins:{legend:{display:false}}, cutout: '70%' }
+                });
+            }
+            if (data.attendanceToday) {
+                renderCircle('circle_chart_1', data.attendanceToday.student);
+                renderCircle('circle_chart_2', data.attendanceToday.teacher);
+                renderCircle('circle_chart_3', data.attendanceToday.nonworkingstaff);
+                if (document.getElementById('circle_chart_7')) {
+                    const el7 = document.getElementById('circle_chart_7');
+                    const cv7 = document.createElement('canvas');
+                    el7.innerHTML = '';
+                    el7.appendChild(cv7);
+                    new Chart(cv7, {
+                        type: 'doughnut',
+                        data: { labels: ['Students','Teachers'], datasets: [{ data: [data.stats.students, data.stats.teachers], backgroundColor: ['#06b6d4','#a78bfa'] }] },
+                        options: { plugins:{legend:{display:false}}, cutout: '70%' }
+                    });
+                }
+            }
+
+            const activitiesCard = document.querySelector('.card .card-header h6.fw-bold.mb-0');
+            const recentActivitiesList = document.createElement('ul');
+            recentActivitiesList.className = 'list-unstyled mb-0';
+            if (Array.isArray(data.recentActivities)) {
+                recentActivitiesList.innerHTML = data.recentActivities.map(a => `
+                    <li class="d-flex align-items-center justify-content-between py-1 border-bottom">
+                        <span><span class="badge bg-light text-dark me-2">${a.type}</span>${a.text}</span>
+                        <span class="text-muted">${a.time_formatted}</span>
+                    </li>
+                `).join('');
+                const activitiesContainer = document.querySelector('.card.shadow.flex-fill .card-body');
+                if (activitiesContainer) {
+                    activitiesContainer.innerHTML = '';
+                    activitiesContainer.appendChild(recentActivitiesList);
+                }
+            }
+        })
+        .catch(err => console.error('Dashboard data error', err));
+});
+</script>
+@endpush

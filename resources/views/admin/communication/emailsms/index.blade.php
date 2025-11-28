@@ -507,6 +507,107 @@
                         <h6 class="fw-bold">Message History</h6>
                     </div>
                     <div class="card-body">
+                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                            <div class="datatable-search">
+                                <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                            </div>
+                            <div class="d-flex align-items-center">
+                            <div class="dropdown">
+                                <a href="javascript:void(0);"
+                                    class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                    <i class="ti ti-filter me-1"></i>Filter
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                                    <div class="card mb-0">
+                                        <div class="card-header">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <h6 class="fw-bold mb-0">Filter</h6>
+                                                <div class="d-flex align-items-center">
+                                                    <a href="{{ route('admin.email-sms.index') }}"
+                                                        class="link-danger text-decoration-underline">Clear All</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <form action="" id="filter-form" method="GET">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <label class="form-label">Institution</label>
+                                                        <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="institution_ids">Reset</a>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <a href="javascript:void(0);"
+                                                            class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                            aria-expanded="true">
+                                                            Select Institution
+                                                        </a>
+                                                        <ul class="dropdown-menu dropdown-menu w-100">
+                                                            @if(isset($institutions) && !empty($institutions))
+                                                                @foreach ($institutions as $institution)
+                                                                    <li>
+                                                                        <label
+                                                                            class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                            <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                                name="institution_ids[]" value="{{ $institution->id }}" 
+                                                                                {{ in_array($institution->id, request('institution_ids', [])) ? 'checked' : '' }}>
+                                                                            {{ $institution->name }}
+                                                                        </label>
+                                                                    </li>
+                                                                @endforeach
+                                                            @endif
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <label class="form-label">Type</label>
+                                                        <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="types">Reset</a>
+                                                    </div>
+                                                    <div class="dropdown">
+                                                        <a href="javascript:void(0);"
+                                                            class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                            aria-expanded="true">
+                                                            Select Type
+                                                        </a>
+                                                        <ul class="dropdown-menu dropdown-menu w-100">
+                                                            @php $typeSelections = (array) request('types', []); @endphp
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="types[]" value="email" {{ in_array('email', $typeSelections) ? 'checked' : '' }}>
+                                                                    Email
+                                                                </label>
+                                                            </li>
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="types[]" value="sms" {{ in_array('sms', $typeSelections) ? 'checked' : '' }}>
+                                                                    SMS
+                                                                </label>
+                                                            </li>
+                                                            <li>
+                                                                <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                    <input class="form-check-input m-0 me-2" type="checkbox" name="types[]" value="whatsapp" {{ in_array('whatsapp', $typeSelections) ? 'checked' : '' }}>
+                                                                    WhatsApp
+                                                                </label>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                            <div class="card-footer d-flex align-items-center justify-content-end">
+                                                <button type="button" class="btn btn-outline-white me-2"
+                                                    id="close-filter">Close</button>
+                                                <button type="submit" class="btn btn-primary">Filter</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-nowrap datatable">
                                 <thead class="thead-light">

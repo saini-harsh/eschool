@@ -17,9 +17,25 @@ class TeacherController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function Index(){
-        $teachers = Teacher::all();
-        return view('admin.administration.teachers.index',compact('teachers'));
+    public function Index(Request $request){
+        $query = Teacher::query();
+
+        if ($request->filled('name')) {
+            $query->whereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%' . $request->name . '%']);
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $teachers = $query->get();
+
+        $allTeacherNames = Teacher::selectRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) as full_name")
+            ->distinct()
+            ->orderBy('full_name')
+            ->pluck('full_name');
+
+        return view('admin.administration.teachers.index', compact('teachers', 'allTeacherNames'));
     }
     
     public function Show(Teacher $teacher)

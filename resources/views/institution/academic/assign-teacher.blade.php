@@ -107,7 +107,7 @@
                         <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
                     </div>
                     <div class="d-flex align-items-center">
-                        <div class="dropdown me-2">
+                        <div class="dropdown">
                             <a href="javascript:void(0);"
                                 class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
                                 data-bs-toggle="dropdown" data-bs-auto-close="outside">
@@ -223,32 +223,6 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);"
-                                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                    data-bs-toggle="dropdown">
-                                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end p-1">
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>

@@ -24,40 +24,61 @@ class AssignmentController extends Controller
     /**
      * Display assignment list page
      */
-    public function index()
+   public function index(Request $request)
     {
-        // Get the logged-in teacher
-        $currentTeacher = Auth::guard('teacher')->user();
+        $currentTeacher = auth('teacher')->user();
         $institutionId = $currentTeacher->institution_id;
-        
-        // Get assignments for the teacher's institution
-        $assignments = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
-            ->where('institution_id', $institutionId)
-            ->orderBy('created_at', 'desc')
-            ->get();
-        
-        // Get classes for the teacher's institution
+
+        // Base query: assignments for teacher's institution
+        $query = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
+            ->where('institution_id', $institutionId);
+
+        // Optional filter: class
+        if ($request->filled('class_ids')) {
+            $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+            $query->whereIn('class_id', $classIds);
+        }
+
+        // Optional filter: status
+        if ($request->filled('status')) {
+            $statusVals = is_array($request->status) ? $request->status : [$request->status];
+            $query->whereIn('status', $statusVals);
+        }
+
+        // Subject filter: limit to subjects assigned to this teacher, honor selection
+        $assignedSubjectIds = AssignSubject::where('institution_id', $institutionId)
+            ->where('teacher_id', $currentTeacher->id)
+            ->where('status', 1)
+            ->pluck('subject_id')
+            ->toArray();
+
+        if ($request->filled('subject_ids')) {
+            $selectedSubjectIds = is_array($request->subject_ids) ? $request->subject_ids : [$request->subject_ids];
+            // Intersect selected with assigned to avoid unauthorized subjects
+            $allowedSubjectIds = array_values(array_intersect($assignedSubjectIds, $selectedSubjectIds));
+            $query->whereIn('subject_id', !empty($allowedSubjectIds) ? $allowedSubjectIds : [-1]);
+        } else {
+            // No selection: default to all subjects assigned to this teacher
+            $query->whereIn('subject_id', !empty($assignedSubjectIds) ? $assignedSubjectIds : [-1]);
+        }
+
+
+        // Fetch assignments
+        $assignments = $query->orderBy('created_at', 'desc')->get();
+
+        // Classes for teacher's institution
         $classes = SchoolClass::where('institution_id', $institutionId)
             ->where('status', 1)
             ->get(['id', 'name']);
-        
-        // Get subjects assigned to the logged-in teacher
-        $assignedSubjects = AssignSubject::where('institution_id', $institutionId)
-            ->where('teacher_id', $currentTeacher->id)
+
+        // Subjects assigned to teacher
+        $subjects = Subject::whereIn('id', $assignedSubjectIds)
             ->where('status', 1)
-            ->with(['subject' => function($query) {
-                $query->where('status', 1)->select('id', 'name', 'code', 'class_id');
-            }])
-            ->get()
-            ->pluck('subject')
-            ->filter() // Remove null subjects
-            ->unique('id') // Remove duplicates
-            ->values(); // Reset array keys
-        
-        $subjects = $assignedSubjects;
-        
+            ->get(['id', 'name', 'code', 'class_id']);
+
         return view('teacher.routines.assignments.index', compact('assignments', 'classes', 'subjects', 'currentTeacher'));
     }
+
 
     /**
      * Store assignment data
@@ -394,8 +415,8 @@ class AssignmentController extends Controller
                     'message' => 'Class not found'
                 ], 404);
             }
-
-            $sectionIds = $class->section_ids ?? [];
+            $sectionIds = json_decode($class->section_ids) ?? [];
+            
             
             if (empty($sectionIds) || !is_array($sectionIds)) {
                 return response()->json([

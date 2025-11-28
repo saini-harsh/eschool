@@ -27,7 +27,7 @@ class AssignmentController extends Controller
     /**
      * Display a listing of assignments.
      */
-    public function index()
+    public function index(Request $request)
     {
         $currentAdmin = Auth::guard('admin')->user();
         
@@ -46,10 +46,14 @@ class AssignmentController extends Controller
         // Get all teachers for dropdown
         $teachers = Teacher::where('status', 1)->get();
         
-        // Get assignments with relationships
-        $assignments = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments']);
+
+        if ($request->filled('institution_ids')) {
+            $institutionIds = is_array($request->institution_ids) ? $request->institution_ids : [$request->institution_ids];
+            $query->whereIn('institution_id', $institutionIds);
+        }
+
+        $assignments = $query->orderBy('created_at', 'desc')->get();
 
         return view('admin.academic.assignments.index', compact(
             'assignments', 

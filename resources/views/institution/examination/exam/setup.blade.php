@@ -103,6 +103,26 @@
                                     <input type="date" name="end_date" id="end_date" class="form-control" required>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-3 mb-3">
+                                    <label class="form-label">Month <span class="text-danger">*</span></label>
+                                    <select name="exam_month" id="exam_month" class="form-select" required>
+                                        <option value="">Select Month</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                            </div>
                             <hr>
 
                             <h6 class="fw-bold">Schedule Subjects</h6>

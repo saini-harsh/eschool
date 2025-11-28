@@ -125,7 +125,7 @@
                                         <div class="d-flex align-items-center justify-content-between">
                                             <h6 class="fw-bold mb-0">Filter</h6>
                                             <div class="d-flex align-items-center">
-                                                <a href="javascript:void(0);"
+                                                <a href="{{ route('admin.assign-subject.index') }}"
                                                     class="link-danger text-decoration-underline">Clear
                                                     All</a>
                                             </div>
@@ -136,119 +136,48 @@
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Institution</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="institution_ids">Reset</a>
+                                                    <a href="{{ route('admin.assign-subject.index') }}" class="link-primary mb-1">Reset</a>
                                                 </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select Institution
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($institutions) && !empty($institutions))
-                                                            @foreach ($institutions as $institution)
-                                                                <li>
-                                                                    <label
-                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="institution_ids[]" value="{{ $institution->id }}">
-                                                                        {{ $institution->name }}
-                                                                    </label>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </div>
+                                                <select class="form-select" id="filter-institution">
+                                                    <option value="">Select Institution</option>
+                                                    @if(isset($institutions) && !empty($institutions))
+                                                        @foreach ($institutions as $institution)
+                                                            <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Class</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="class_ids">Reset</a>
+                                                    <a href="{{ route('admin.assign-subject.index') }}" class="link-primary mb-1">Reset</a>
                                                 </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select Class
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($classes) && !empty($classes))
-                                                            @foreach ($classes as $class)
-                                                                <li>
-                                                                    <label
-                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="class_ids[]" value="{{ $class->id }}">
-                                                                        {{ $class->name }}
-                                                                    </label>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Teacher</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="teacher_ids">Reset</a>
-                                                </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select Teacher
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($teachers) && !empty($teachers))
-                                                            @foreach ($teachers as $teacher)
-                                                                <li>
-                                                                    <label
-                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="teacher_ids[]" value="{{ $teacher->id }}">
-                                                                        {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                                                    </label>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </div>
+                                                <select class="form-select" id="filter-class" disabled>
+                                                    <option value="">Select Class</option>
+                                                </select>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Subject</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="subject_ids">Reset</a>
+                                                    <a href="{{ route('admin.assign-subject.index') }}" class="link-primary mb-1">Reset</a>
                                                 </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select Subject
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($subjects) && !empty($subjects))
-                                                            @foreach ($subjects as $subject)
-                                                                <li>
-                                                                    <label
-                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="subject_ids[]" value="{{ $subject->id }}">
-                                                                        {{ $subject->name }}
-                                                                    </label>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
+                                                <select class="form-select" id="filter-subject" disabled>
+                                                    <option value="">Select Subject</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Teacher</label>
+                                                    <a href="{{ route('admin.assign-subject.index') }}" class="link-primary mb-1">Reset</a>
                                                 </div>
+                                                <select class="form-select" id="filter-teacher" disabled>
+                                                    <option value="">Select Teacher</option>
+                                                </select>
                                             </div>
                                             <div>
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <label class="form-label">Status</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="status">Reset</a>
+                                                    <a href="{{ route('admin.assign-subject.index') }}" class="link-primary mb-1">Reset</a>
                                                 </div>
                                                 <div class="dropdown">
                                                     <a href="javascript:void(0);"
@@ -285,32 +214,6 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);"
-                                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                    data-bs-toggle="dropdown">
-                                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end p-1">
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>

@@ -14,13 +14,32 @@ class SchoolClassController extends Controller
 
     // Removed duplicate middleware since it's already applied in the route group
 
-    public function index()
+    public function index(Request $request)
     {
-        $classes = SchoolClass::orderBy('created_at', 'desc')->get();
+        $query = SchoolClass::query();
 
-        $institutions = Institution::where('status', 1)->get();
+        if ($request->filled('institution_id')) {
+            $query->where('institution_id', $request->institution_id);
+        }
 
-        return view('admin.academic.classes.index', compact('classes','institutions'));
+        if ($request->filled('name')) {
+            $query->where('name', $request->name);
+        }
+
+        $classes = $query->orderBy('created_at', 'desc')->get();
+
+        $institutions = Institution::where('status', 1)->orderBy('name')->get();
+
+        $classNamesQuery = SchoolClass::query();
+        if ($request->filled('institution_id')) {
+            $classNamesQuery->where('institution_id', $request->institution_id);
+        }
+        $classNames = $classNamesQuery->select('name')
+            ->distinct()
+            ->orderBy('name')
+            ->pluck('name');
+
+        return view('admin.academic.classes.index', compact('classes','institutions','classNames'));
     }
 
     public function store(Request $request)

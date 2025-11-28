@@ -25,17 +25,36 @@ class AssignmentController extends Controller
     /**
      * Display assignment list page
      */
-    public function index()
+    public function index(Request $request)
     {
         // Get the logged-in institution
         $currentInstitution = Auth::guard('institution')->user();
         $institutionId = $currentInstitution->id;
         
-        // Get assignments for the institution
-        $assignments = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
-            ->where('institution_id', $institutionId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Assignment::with(['institution', 'schoolClass', 'section', 'subject', 'teacher', 'studentAssignments'])
+            ->where('institution_id', $institutionId);
+
+        if ($request->filled('class_ids')) {
+            $classIds = is_array($request->class_ids) ? $request->class_ids : [$request->class_ids];
+            $query->whereIn('class_id', $classIds);
+        }
+
+        if ($request->filled('teacher_ids')) {
+            $teacherIds = is_array($request->teacher_ids) ? $request->teacher_ids : [$request->teacher_ids];
+            $query->whereIn('teacher_id', $teacherIds);
+        }
+
+        if ($request->filled('subject_ids')) {
+            $subjectIds = is_array($request->subject_ids) ? $request->subject_ids : [$request->subject_ids];
+            $query->whereIn('subject_id', $subjectIds);
+        }
+
+        if ($request->filled('status')) {
+            $statusVals = is_array($request->status) ? $request->status : [$request->status];
+            $query->whereIn('status', $statusVals);
+        }
+
+        $assignments = $query->orderBy('created_at', 'desc')->get();
         
         // Get classes for the institution
         $classes = SchoolClass::where('institution_id', $institutionId)

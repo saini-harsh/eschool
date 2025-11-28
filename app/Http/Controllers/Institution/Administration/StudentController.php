@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentController extends Controller
 {
@@ -717,6 +718,59 @@ class StudentController extends Controller
             Log::error('Error in getStudentsByClassAndSection: ' . $e->getMessage());
             return response()->json(['students' => [], 'error' => 'An error occurred while fetching students']);
         }
+    }
+
+    public function downloadPdf(Student $student)
+    {
+        $institutionId = auth('institution')->id();
+        if ($student->institution_id !== $institutionId) {
+            abort(403);
+        }
+
+        $student->load([
+            'institution:id,name',
+            'teacher:id,first_name,last_name',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.pdf', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->download($fileName);
+    }
+
+    public function printIdCard(Student $student)
+    {
+        $institutionId = auth('institution')->id();
+        if ($student->institution_id !== $institutionId) {
+            abort(403);
+        }
+
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
     }
 
     /**

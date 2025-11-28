@@ -40,11 +40,7 @@
                 <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
             </div>
             <div class="d-flex align-items-center">
-                <div class="d-flex align-items-center border rounded table-grid me-2">
-                    <a href="employees.html" class="btn p-1 btn-primary"><i class="ti ti-list"></i></a>
-                    <a href="employees-grid.html" class="btn p-1"><i class="ti ti-layout-grid"></i></a>
-                </div>
-                <div class="dropdown me-2">
+                <div class="dropdown">
                     <a href="javascript:void(0);"
                         class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
                         data-bs-toggle="dropdown" data-bs-auto-close="outside">
@@ -56,93 +52,61 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="fw-bold mb-0">Filter</h6>
                                     <div class="d-flex align-items-center">
-                                        <a href="javascript:void(0);"
+                                        <a href="{{ route('admin.students.index') }}"
                                             class="link-danger text-decoration-underline">Clear All</a>
                                     </div>
                                 </div>
                             </div>
-                            <form action="#">
+                            <form action="{{ route('admin.students.index') }}" method="GET">
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Name</label>
-                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                            <a href="{{ route('admin.students.index') }}" class="link-primary mb-1">Reset</a>
                                         </div>
-                                        <div class="dropdown">
-                                            <a href="javascript:void(0);"
-                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                aria-expanded="true">
-                                                Select
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100">
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        John Carter
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Sophia White
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Michael Johnson
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Emily Clark
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        David Anderson
-                                                    </label>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <select name="name" id="filter-name" class="form-select">
+                                            <option value="">Select</option>
+                                            @if(isset($allStudentNames) && $allStudentNames->count())
+                                                @foreach ($allStudentNames as $n)
+                                                    <option value="{{ $n }}" {{ request('name') == $n ? 'selected' : '' }}>{{ $n }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
-                                    <div>
+                                    <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
-                                            <label class="form-label">Status</label>
-                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                            <label class="form-label">Institution</label>
+                                            <a href="{{ route('admin.students.index') }}" class="link-primary mb-1">Reset</a>
                                         </div>
-                                        <div class="dropdown">
-                                            <a href="javascript:void(0);"
-                                                class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                aria-expanded="true">
-                                                Select
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100">
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Active
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                    <label
-                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                        <input class="form-check-input m-0 me-2" type="checkbox">
-                                                        Inactive
-                                                    </label>
-                                                </li>
-                                            </ul>
+                                        <select name="institution_id" id="filter-institution" class="form-select">
+                                            <option value="">Select</option>
+                                            @if(isset($institutions) && $institutions->count())
+                                                @foreach ($institutions as $inst)
+                                                    <option value="{{ $inst->id }}" {{ request('institution_id') == $inst->id ? 'selected' : '' }}>{{ $inst->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <label class="form-label">Teacher</label>
+                                            <a href="{{ route('admin.students.index') }}" class="link-primary mb-1">Reset</a>
                                         </div>
+                                        <select name="teacher_id" id="filter-teacher" class="form-select">
+                                            <option value="">Select</option>
+                                            @if(isset($teachers) && $teachers->count())
+                                                @foreach ($teachers as $t)
+                                                    <option value="{{ $t->id }}" {{ request('teacher_id') == $t->id ? 'selected' : '' }}>{{ $t->first_name }} {{ $t->last_name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <label class="form-label">Email</label>
+                                            <a href="{{ route('admin.students.index') }}" class="link-primary mb-1">Reset</a>
+                                        </div>
+                                        <input type="text" name="email" id="filter-email" class="form-control" placeholder="Student email" value="{{ request('email') }}">
                                     </div>
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-end">
@@ -153,30 +117,6 @@
                             </form>
                         </div>
                     </div>
-                </div>
-                <div class="dropdown">
-                    <a href="javascript:void(0);"
-                        class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                        data-bs-toggle="dropdown">
-                        <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end p-1">
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -262,6 +202,12 @@
                                    data-student-name="{{ $student->first_name }} {{ $student->last_name }}"
                                    title="Delete">
                                     <i class="ti ti-trash"></i>
+                                </a>
+                                <a href="{{ route('admin.students.download-pdf', $student->id) }}" class="btn btn-icon btn-sm btn-outline-success border-0" title="Download PDF">
+                                    <i class="ti ti-file-type-pdf"></i>
+                                </a>
+                                <a href="{{ route('admin.students.print-id-card', $student->id) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-primary border-0" title="Print ID Card">
+                                    <i class="ti ti-printer"></i>
                                 </a>
                             </div>
                         </td>

@@ -120,7 +120,161 @@
                 <div class="card-header">
                     <h6 class="fw-bold mb-0">Assignment List</h6>
                 </div>
+                
                 <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                    <div class="datatable-search">
+                        <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown me-2">
+                            <a href="javascript:void(0);"
+                                class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                                <i class="ti ti-filter me-1"></i>Filter
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                                <div class="card mb-0">
+                                    <div class="card-header">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h6 class="fw-bold mb-0">Filter</h6>
+                                            <div class="d-flex align-items-center">
+                                                <a href="{{ route('institution.assignments.index') }}"
+                                                    class="link-danger text-decoration-underline">Clear
+                                                    All</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form action="{{ route('institution.assignments.index') }}" method="GET" id="filter-form">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Class</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="class_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Class
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        @if(isset($classes) && !empty($classes))
+                                                            @foreach ($classes as $class)
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="class_ids[]" value="{{ $class->id }}" {{ is_array(request('class_ids')) && in_array($class->id, request('class_ids')) ? 'checked' : '' }}>
+                                                                        {{ $class->name }}
+                                                                    </label>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Teacher</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="teacher_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Teacher
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        @if(isset($teachers) && !empty($teachers))
+                                                            @foreach ($teachers as $teacher)
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="teacher_ids[]" value="{{ $teacher->id }}" {{ is_array(request('teacher_ids')) && in_array($teacher->id, request('teacher_ids')) ? 'checked' : '' }}>
+                                                                        {{ $teacher->first_name }} {{ $teacher->last_name }}
+                                                                    </label>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Subject</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="subject_ids">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Subject
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        @if(isset($subjects) && !empty($subjects))
+                                                            @foreach ($subjects as $subject)
+                                                                <li>
+                                                                    <label
+                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                               name="subject_ids[]" value="{{ $subject->id }}" {{ is_array(request('subject_ids')) && in_array($subject->id, request('subject_ids')) ? 'checked' : '' }}>
+                                                                        {{ $subject->name }}
+                                                                    </label>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <label class="form-label">Status</label>
+                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="status">Reset</a>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a href="javascript:void(0);"
+                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
+                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                                        aria-expanded="true">
+                                                        Select Status
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu w-100">
+                                                        <li>
+                                                            <label
+                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="1" {{ is_array(request('status')) && in_array('1', request('status')) ? 'checked' : '' }}>
+                                                                Active
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label
+                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
+                                                                       name="status[]" value="0" {{ is_array(request('status')) && in_array('0', request('status')) ? 'checked' : '' }}>
+                                                                Inactive
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex align-items-center justify-content-end">
+                                            <button type="button" class="btn btn-outline-white me-2"
+                                                id="close-filter">Close</button>
+                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                     <div class="table-responsive">
                         <table class="table table-nowrap datatable">
                             <thead class="thead-light">

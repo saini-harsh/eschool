@@ -24,9 +24,23 @@ class EmailSmsController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $lists = EmailSms::orderBy('created_at', 'desc')->get();
+        $institutions = Institution::where('status', 1)->orderBy('name')->get();
+
+        $query = EmailSms::query();
+
+        if ($request->filled('institution_ids')) {
+            $institutionIds = is_array($request->institution_ids) ? $request->institution_ids : [$request->institution_ids];
+            $query->whereIn('institution_id', $institutionIds);
+        }
+
+        if ($request->filled('types')) {
+            $types = is_array($request->types) ? $request->types : [$request->types];
+            $query->whereIn('send_through', $types);
+        }
+
+        $lists = $query->orderBy('created_at', 'desc')->get();
 
         // Ensure all records have valid recipients data for the view
         $lists->each(function ($item) {
@@ -42,7 +56,7 @@ class EmailSmsController extends Controller
             }
         });
 
-        return view('admin.communication.emailsms.index', compact('lists'));
+        return view('admin.communication.emailsms.index', compact('lists', 'institutions'));
     }
 
     public function store(Request $request)
@@ -167,41 +181,86 @@ class EmailSmsController extends Controller
         }
     }
 
+    // private function sendWhatsApp($request)
+    // {
+    //     try {
+    //         $recipients = is_array($request->recipients)
+    //             ? $request->recipients
+    //             : explode(',', $request->recipients);
+
+    //         $success = true;
+
+    //         foreach ($recipients as $recipient) {
+    //             $response = Http::asForm()->withHeaders([
+    //                 'X-RapidAPI-Key'  => config('services.rapidapi.key'),
+    //                 'X-RapidAPI-Host' => config('services.rapidapi.whatsapp_host'),
+    //             ])->post(config('services.rapidapi.whatsapp_url'), [
+    //                 "account"   => config('services.rapidapi.whatsapp_account'), // 👈 your unique account ID
+    //                 "recipient" => "+91" . (is_array($recipient) ? $recipient['phone'] : $recipient), // format as E.164
+    //                 "message"   => strip_tags($request->description),
+    //                 "type"      => "text", // text / media / document
+    //             ]);
+    //             dd($response->json());
+    //             if ($response->failed()) {
+    //                 $success = false;
+    //                 \Log::error('WhatsApp sending failed', [
+    //                     'recipient' => $recipient,
+    //                     'response'  => $response->body()
+    //                 ]);
+    //             }
+    //         }
+
+    //         return $success;
+    //     } catch (\Exception $e) {
+    //         \Log::error('WhatsApp exception: ' . $e->getMessage());
+    //         return false;
+    //     }
+    // }
     private function sendWhatsApp($request)
     {
         try {
             $recipients = is_array($request->recipients)
                 ? $request->recipients
                 : explode(',', $request->recipients);
+                $success = true;
+                
+                foreach ($recipients as $recipient) {
+                    
+                    $phone = is_array($recipient) ? $recipient['phone'] : $recipient;
+                    
 
-            $success = true;
+                $url = "https://api.ultramsg.com/" . env('ULTRAMSG_INSTANCE') . "/messages/chat";
 
-            foreach ($recipients as $recipient) {
-                $response = Http::asForm()->withHeaders([
-                    'X-RapidAPI-Key'  => config('services.rapidapi.key'),
-                    'X-RapidAPI-Host' => config('services.rapidapi.whatsapp_host'),
-                ])->post(config('services.rapidapi.whatsapp_url'), [
-                    "account"   => config('services.rapidapi.whatsapp_account'), // 👈 your unique account ID
-                    "recipient" => "+91" . (is_array($recipient) ? $recipient['phone'] : $recipient), // format as E.164
-                    "message"   => strip_tags($request->description),
-                    "type"      => "text", // text / media / document
+               $message = env('APP_NAME') . ",\n" .
+                    $request->title . ",\n" .
+                    strip_tags($request->description);
+
+
+                $response = Http::asForm()->post($url, [
+                    'token' => env('ULTRAMSG_TOKEN'),
+                    'to' => "+91" . $phone,
+                    'body' => $message,
                 ]);
-                    dd($response->json());
+                
                 if ($response->failed()) {
                     $success = false;
-                    \Log::error('WhatsApp sending failed', [
-                        'recipient' => $recipient,
-                        'response'  => $response->body()
+                    \Log::error('UltraMsg WhatsApp Failed', [
+                        'recipient' => $phone,
+                        'response'  => $response->body(),
                     ]);
                 }
             }
 
             return $success;
+
         } catch (\Exception $e) {
-            \Log::error('WhatsApp exception: ' . $e->getMessage());
+            \Log::error('WhatsApp exception: '.$e->getMessage());
             return false;
         }
     }
+
+
+
 
 
 

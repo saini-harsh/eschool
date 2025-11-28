@@ -12,6 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\URL;
 
 class StudentController extends Controller
 {
@@ -62,9 +64,36 @@ class StudentController extends Controller
         ]);
     }
 
-    public function Index(){
-        $students = Student::all();
-        return view('admin.administration.students.index',compact('students'));
+    public function Index(Request $request){
+        $query = Student::with(['institution', 'teacher']);
+
+        if ($request->filled('name')) {
+            $query->whereRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", ['%' . $request->name . '%']);
+        }
+
+        if ($request->filled('institution_id')) {
+            $query->where('institution_id', $request->institution_id);
+        }
+
+        if ($request->filled('teacher_id')) {
+            $query->where('teacher_id', $request->teacher_id);
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->email . '%');
+        }
+
+        $students = $query->get();
+
+        $allStudentNames = Student::selectRaw("CONCAT(TRIM(first_name), ' ', TRIM(last_name)) as full_name")
+            ->distinct()
+            ->orderBy('full_name')
+            ->pluck('full_name');
+
+        $institutions = Institution::orderBy('name')->get(['id', 'name']);
+        $teachers = Teacher::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+
+        return view('admin.administration.students.index', compact('students', 'allStudentNames', 'institutions', 'teachers'));
     }
     public function Create(){
         $institutions = Institution::all();
@@ -586,6 +615,48 @@ class StudentController extends Controller
         $student->save();
 
         return redirect()->route('admin.students.index')->with('success', 'Student updated successfully!');
+    }
+
+    public function downloadPdf(Student $student)
+    {
+        $student->load([
+            'institution:id,name',
+            'teacher:id,first_name,last_name',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.pdf', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->download($fileName);
+    }
+    public function printIdCard(Student $student)
+    {
+        $student->load([
+            'institution:id,name,logo,address,email,phone,website,board,district,state,pincode',
+            'schoolClass:id,name',
+            'section:id,name'
+        ]);
+
+        $primaryColor = '#6366f1';
+        $secondaryColor = '#0d6efd';
+
+        $pdf = Pdf::loadView('admin.administration.students.id-card', [
+            'student' => $student,
+            'primaryColor' => $primaryColor,
+            'secondaryColor' => $secondaryColor,
+        ])->setPaper('a4');
+
+        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        return $pdf->stream($fileName);
     }
     public function Delete($id)
     {

@@ -37,17 +37,14 @@ return [
         'email_host' => env('RAPIDAPI_EMAIL_HOST', 'rapid-send-email.p.rapidapi.com'),
         'email_url' => env('RAPIDAPI_EMAIL_URL', 'https://rapid-send-email.p.rapidapi.com/send'),
         'sms_host' => env('RAPIDAPI_SMS_HOST', 'rapid-sms.p.rapidapi.com'),
-        'sms_url' => env('RAPIDAPI_SMS_URL', 'https://rapid-sms.p.rapidapi.com/send'),
-        'whatsapp_host' => env('RAPIDAPI_WHATSAPP_HOST', 'rapid-send-whatsapp.p.rapidapi.com'),
-        'whatsapp_url' => env('RAPIDAPI_WHATSAPP_URL', 'https://rapid-send-whatsapp.p.rapidapi.com/send'),
-        'whatsapp_account' => env('WHATSAPP_ACCOUNT_ID'),
+        'sms_url' => env('RAPIDAPI_SMS_URL', 'https://rapid-sms.p.rapidapi.com/send')
     ],
 
     'sms' => [
-        'from' => env('SMS_FROM_NUMBER', 'ESchool'),
+        'from' => env('SMS_FROM_NUMBER', 'EnvisionTechSolution'),
     ],
     'whatsapp' => [
-        'from' => env('WHATSAPP_FROM_NUMBER', 'ESchool'),
+        'from' => env('WHATSAPP_FROM_NUMBER', 'EnvisionTechSolution'),
     ],
 
 ];

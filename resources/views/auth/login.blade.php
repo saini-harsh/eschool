@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="{{ URL::asset('/admin/img/favicon.png') }}">
-    <title>Login - ESchool</title>
+    <link rel="shortcut icon" href="{{ URL::asset('/adminpanel/img/favicon.png') }}">
+    <title>Login - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
@@ -158,7 +158,7 @@
 
 <body>
     <div class="login-container">
-        <img src="{{ asset('/admin/img/logo.png') }}" alt="ESchool Logo" />
+        <img src="{{ asset('/adminpanel/img/logo.png') }}" alt="EnvisionTechSolution Logo" />
         <h2>Login Details</h2>
         @if (session('error'))
             <div class="alert alert-danger">
@@ -222,8 +222,8 @@
                 email = 'rajesh.green@example.com'; // example
                 password = 'teacher123';
             } else if (role === 'student') {
-                email = 'rohit.jain@example.com'; // example
-                password = 'password';
+                email = 'rohit.gupta@example.com'; // example
+                password = 'student123';
             }
             document.querySelector('input[name="email"]').value = email;
             document.querySelector('input[name="password"]').value = password;

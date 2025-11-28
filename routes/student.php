@@ -12,6 +12,8 @@ Route::middleware('student')->group(function () {
     Route::prefix('student')->group(function () {
         // Dashboard
         Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+        Route::get('/dashboard/data', [StudentController::class, 'dashboardData'])->name('student.dashboard.data');
+        Route::get('/id-card', [StudentController::class, 'printIdCard'])->name('student.id-card');
         
         // Events Management
         Route::prefix('events')->group(function () {

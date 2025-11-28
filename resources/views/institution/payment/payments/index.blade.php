@@ -45,11 +45,7 @@
             <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
         </div>
         <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center border rounded table-grid me-2">
-                <a href="javascript:void(0);" class="btn p-1 btn-primary"><i class="ti ti-list"></i></a>
-                <a href="javascript:void(0);" class="btn p-1"><i class="ti ti-layout-grid"></i></a>
-            </div>
-            <div class="dropdown me-2">
+            <div class="dropdown">
                 <a href="javascript:void(0);"
                     class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
                     data-bs-toggle="dropdown" data-bs-auto-close="outside">
@@ -164,37 +160,6 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            <div class="dropdown">
-                <a href="javascript:void(0);"
-                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : 
-                    @php
-                        $sortBy = request('sort_by', 'newest');
-                        $sortLabels = [
-                            'newest' => 'Newest',
-                            'oldest' => 'Oldest', 
-                            'amount_high' => 'Amount (High to Low)',
-                            'amount_low' => 'Amount (Low to High)'
-                        ];
-                    @endphp
-                    {{ $sortLabels[$sortBy] ?? 'Newest' }}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end p-1">
-                    <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by', 'newest') == 'newest' ? 'active' : '' }}">Newest</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'oldest' ? 'active' : '' }}">Oldest</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'amount_high' ? 'active' : '' }}">Amount (High to Low)</a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);" class="dropdown-item rounded-1 {{ request('sort_by') == 'amount_low' ? 'active' : '' }}">Amount (Low to High)</a>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 # Email/SMS Communication System
 
-This system provides email and SMS functionality for the ESchool application using RapidAPI services.
+This system provides email and SMS functionality for the EnvisionTechSolution application using RapidAPI services.
 
 ## Features
 
@@ -25,7 +25,7 @@ RAPIDAPI_SMS_HOST=rapid-sms.p.rapidapi.com
 RAPIDAPI_SMS_URL=https://rapid-sms.p.rapidapi.com/send
 
 # SMS Configuration
-SMS_FROM_NUMBER=ESchool
+SMS_FROM_NUMBER=EnvisionTechSolution
 ```
 
 ### 2. Database Migration

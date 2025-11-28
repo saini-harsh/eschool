@@ -39,6 +39,89 @@
     </div>
     <!-- End Page Header -->
 
+    <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+        <div class="datatable-search">
+            <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="dropdown me-2">
+                <a href="javascript:void(0);" class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
+                    data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <i class="ti ti-filter me-1"></i>Filter
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                    <div class="card mb-0">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h6 class="fw-bold mb-0">Filter</h6>
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ route('admin.nonworkingstaff.index') }}" class="link-danger text-decoration-underline">Clear
+                                        All</a>
+                                </div>
+                            </div>
+                        </div>
+                        <form action="{{ route('admin.nonworkingstaff.index') }}" method="GET">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <label class="form-label">Name</label>
+                                        <a href="{{ route('admin.nonworkingstaff.index') }}" class="link-primary mb-1">Reset</a>
+                                    </div>
+                                    <select name="name" id="filter-name" class="form-select">
+                                        <option value="">Select</option>
+                                        @if(isset($allStaffNames) && $allStaffNames->count())
+                                            @foreach ($allStaffNames as $n)
+                                                <option value="{{ $n }}" {{ request('name') == $n ? 'selected' : '' }}>{{ $n }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <label class="form-label">Institution</label>
+                                        <a href="{{ route('admin.nonworkingstaff.index') }}" class="link-primary mb-1">Reset</a>
+                                    </div>
+                                    <select name="institution_id" id="filter-institution" class="form-select">
+                                        <option value="">Select</option>
+                                        @if(isset($institutions) && $institutions->count())
+                                            @foreach ($institutions as $inst)
+                                                <option value="{{ $inst->id }}" {{ request('institution_id') == $inst->id ? 'selected' : '' }}>{{ $inst->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <label class="form-label">Designation</label>
+                                        <a href="{{ route('admin.nonworkingstaff.index') }}" class="link-primary mb-1">Reset</a>
+                                    </div>
+                                    <select name="designation" id="filter-designation" class="form-select">
+                                        <option value="">Select</option>
+                                        @if(isset($designations) && $designations->count())
+                                            @foreach ($designations as $d)
+                                                <option value="{{ $d }}" {{ request('designation') == $d ? 'selected' : '' }}>{{ $d }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <label class="form-label">Email</label>
+                                        <a href="{{ route('admin.nonworkingstaff.index') }}" class="link-primary mb-1">Reset</a>
+                                    </div>
+                                    <input type="text" name="email" id="filter-email" class="form-control" placeholder="Email" value="{{ request('email') }}">
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-end">
+                                <button type="button" class="btn btn-outline-white me-2" id="close-filter">Close</button>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-nowrap datatable">
             <thead>

@@ -16,6 +16,7 @@ Route::middleware('teacher')->group(function () {
     Route::prefix('teacher')->group(function () {
 
         Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+        Route::get('/dashboard/data', [TeacherController::class, 'dashboardData'])->name('teacher.dashboard.data');
         
         // Events Management
         Route::prefix('events')->group(function () {
@@ -34,6 +35,8 @@ Route::middleware('teacher')->group(function () {
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('teacher.students.index');
             Route::get('/show/{student}', [StudentController::class, 'Show'])->name('teacher.students.show');
+            Route::get('/download-pdf/{student}', [StudentController::class, 'downloadPdf'])->name('teacher.students.download-pdf');
+            Route::get('/print-id-card/{student}', [StudentController::class, 'printIdCard'])->name('teacher.students.print-id-card');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('teacher.students.sections');
             Route::post('/get-by-class-section', [StudentController::class, 'getStudentsByClassSection'])->name('teacher.students.get-by-class-section');
         });

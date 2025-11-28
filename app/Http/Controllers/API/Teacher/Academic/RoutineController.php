@@ -63,8 +63,8 @@ class RoutineController extends Controller
                 return $items->map(function ($routine) {
                     return [
                         'day' => $routine->day,
-                        'start_time' => $routine->start_time,
-                        'end_time' => $routine->end_time,
+                        'start_time' => \Carbon\Carbon::parse($routine->start_time)->format('h:i A'),
+                        'end_time'   => \Carbon\Carbon::parse($routine->end_time)->format('h:i A'),
                         'is_break' => (bool) $routine->is_break,
                         'subject' => optional($routine->subject)->name,
                         'subject_code' => optional($routine->subject)->code,

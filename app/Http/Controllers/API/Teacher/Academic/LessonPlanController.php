@@ -11,6 +11,9 @@ use App\Models\Teacher;
 use App\Models\LessonPlan;
 use App\Models\SchoolClass;
 use App\Models\Subject;
+use Illuminate\Support\Facades\URL;
+
+
 
 class LessonPlanController extends Controller
 {
@@ -20,13 +23,6 @@ class LessonPlanController extends Controller
      */
     public function lessonPlanList(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors(),'data'=>[]], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {
@@ -52,7 +48,7 @@ class LessonPlanController extends Controller
                     'class_id' => $plan->class_id,
                     'subject' => optional($plan->subject)->name ?? null,
                     'subject_id' => $plan->subject_id,
-                    'file' => $plan->lesson_plan_file ? url($plan->lesson_plan_file) : null,
+                    'file' => $plan->lesson_plan_file ? URL::to($plan->lesson_plan_file) : null,
                     'status' => $plan->status,
                 ];
             }),
@@ -65,19 +61,6 @@ class LessonPlanController extends Controller
      */
     public function addLessonPlan(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'class_id' => 'required|integer',
-            'subject_id' => 'required|integer',
-            'lesson_plan_file' => 'nullable|file|mimes:pdf|max:10240', // 10MB
-            'status' => 'required|in:1,0',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors(),'data'=>[]], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {
@@ -130,7 +113,7 @@ class LessonPlanController extends Controller
                 'title' => $plan->title,
                 'class_id' => $plan->class_id,
                 'subject_id' => $plan->subject_id,
-                'file' => $plan->lesson_plan_file ? url($plan->lesson_plan_file) : null,
+                'file' => $plan->lesson_plan_file ? URL::to($plan->lesson_plan_file) : null,
                 'status' => $plan->status,
             ],
         ], 201);
@@ -142,20 +125,6 @@ class LessonPlanController extends Controller
      */
     public function editLessonPlan(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'id' => 'required|integer|exists:lesson_plans,id',
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'class_id' => 'nullable|integer',
-            'subject_id' => 'nullable|integer',
-            'lesson_plan_file' => 'nullable|file|mimes:pdf|max:10240',
-            'status' => 'nullable|in:1,0',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors(),'data'=>[]], 422);
-        }
 
         $teacher = Teacher::where('email', $request->email)->first();
         if (!$teacher) {
@@ -227,10 +196,40 @@ class LessonPlanController extends Controller
                 'title' => $plan->title,
                 'class_id' => $plan->class_id,
                 'subject_id' => $plan->subject_id,
-                'file' => $plan->lesson_plan_file ? url($plan->lesson_plan_file) : null,
+                'file' => $plan->lesson_plan_file ? URL::to($plan->lesson_plan_file) : null,
                 'status' => $plan->status,
             ],
         ], 200);
+    }
+
+     public function getSubjectsByInstitutionClass(Request $request)
+    {
+        try {
+             $teacher = Teacher::where('email', $request->email)->first();
+            if (!$teacher) {
+                return response()->json(['success' => false, 'message' => 'Teacher not found for provided email','data'=>[]], 404);
+            }
+            $classId = $request->class_id;
+            
+            $subjects = Subject::where('institution_id', $teacher->institution_id)
+                              ->where('class_id', $classId)
+                              ->where('status', 1)
+                              ->get(['id', 'name', 'code']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subjects retrieved successfully',
+                'data' => $subjects,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving subjects',
+                'data' => [
+                    'error' => $e->getMessage(),
+                ],
+            ]); 
+        }
     }
 }
 

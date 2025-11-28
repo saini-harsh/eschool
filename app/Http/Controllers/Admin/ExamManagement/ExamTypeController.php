@@ -19,7 +19,7 @@ class ExamTypeController extends Controller
         // Code to list invigilators
         $institutions = Institution::all();
         $lists = ExamType::with('institution')->get();
-        return view('institution.examination.exam.type',compact('institutions','lists'));
+        return view('admin.examination.exam.type',compact('institutions','lists'));
     }
 
     public function store(Request $request)

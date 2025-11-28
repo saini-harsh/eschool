@@ -27,19 +27,20 @@
                  <i class="ti ti-chevron-left-pipe"></i>
              </button>
 
-             <!-- Search -->
-             <div class="me-auto d-flex align-items-center header-search d-lg-flex d-none">
-                 <div class="input-icon-start position-relative">
-                     <span class="input-icon-addon">
-                         <i class="ti ti-search"></i>
-                     </span>
-                     <input type="text" class="form-control" placeholder="Search Keyword">
-                     <span class="input-icon-addon text-dark fs-18 d-inline-flex p-0 header-search-icon"><i
-                             class="ti ti-command"></i></span>
-                 </div>
-             </div>
+            <!-- Search -->
+            <div class="me-auto d-flex align-items-center header-search d-lg-flex d-none">
+                <div class="input-icon-start position-relative">
+                    <span class="input-icon-addon">
+                        <i class="ti ti-search"></i>
+                    </span>
+                    <input type="text" class="form-control" placeholder="Search Keyword" id="admin_global_search" autocomplete="off">
+                    <span class="input-icon-addon text-dark fs-18 d-inline-flex p-0 header-search-icon"><i
+                            class="ti ti-command"></i></span>
+                    <div class="position-absolute top-100 start-0 w-100" id="admin_search_results" style="z-index:1050"></div>
+                </div>
+            </div>
 
-         </div>
+</div>
 
          <div class="d-flex align-items-center">
 
@@ -49,45 +50,53 @@
                      type="button">
                      <i class="ti ti-search fs-16"></i>
                  </button>
-             </div>
+</div>
 
-             <!-- Flag -->
-             <div class="header-item">
-                 <div class="dropdown me-2">
-                     <button class="topbar-link btn" data-bs-toggle="dropdown" data-bs-offset="0,24" type="button"
-                         aria-haspopup="false" aria-expanded="false">
-                         <img src="{{ asset('/adminpanel/img/flags/us.svg') }}" alt="Language" height="16">
-                     </button>
-
-                     <div class="dropdown-menu dropdown-menu-end">
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/adminpanel/img/flags/us.svg') }}" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">English</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/adminpanel/img/flags/de.svg') }}" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">German</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/adminpanel/img/flags/fr.svg') }}" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">French</span>
-                         </a>
-
-                         <!-- item-->
-                         <a href="javascript:void(0);" class="dropdown-item">
-                             <img src="{{ asset('/adminpanel/img/flags/ae.svg') }}" alt="" class="me-1"
-                                 height="16"> <span class="align-middle">Arabic</span>
-                         </a>
-
-                     </div>
-                 </div>
-             </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('admin_global_search');
+    var box = document.getElementById('admin_search_results');
+    var t;
+    function clearBox(){ box.innerHTML = ''; box.style.display = 'none'; }
+    function render(groups){
+        var html = '';
+        var empty = true;
+        for (var k in groups){
+            var arr = groups[k] || [];
+            if (arr.length){
+                empty = false;
+                html += '<div class="card"><div class="card-body p-2">';
+                html += '<div class="fw-semibold px-2 py-1">'+k+'</div>';
+                for (var i=0;i<arr.length;i++){
+                    var r = arr[i];
+                    var sub = r.sub ? ('<div class="text-muted fs-12">'+r.sub+'</div>') : '';
+                    html += '<a class="dropdown-item py-2" href="'+r.url+'"><div class="fw-medium">'+r.label+'</div>'+sub+'</a>';
+                }
+                html += '</div></div>';
+            }
+        }
+        if (empty) { clearBox(); return; }
+        box.innerHTML = '<div class="dropdown-menu d-block w-100">'+html+'</div>';
+        box.style.display = 'block';
+    }
+    function search(q){
+        if (!q || q.length < 2){ clearBox(); return; }
+        var url = '{{ route('admin.search') }}' + '?q=' + encodeURIComponent(q);
+        fetch(url).then(function(res){ return res.json(); }).then(function(data){
+            render(data.groups || {});
+        }).catch(function(){ clearBox(); });
+    }
+    if (input){
+        input.addEventListener('input', function(){
+            var v = this.value;
+            clearTimeout(t);
+            t = setTimeout(function(){ search(v); }, 250);
+        });
+        input.addEventListener('blur', function(){ setTimeout(clearBox, 200); });
+        input.addEventListener('focus', function(){ if (this.value && this.value.length >= 2) search(this.value); });
+    }
+});
+</script>
 
              <!-- Full Screen -->
              <div class="header-item">
@@ -113,7 +122,7 @@
              </div>
 
              <!-- Notification Dropdown -->
-             <div class="header-item">
+             <div class="header-item d-none">
                  <div class="dropdown me-2">
 
                      <button class="topbar-link btn btn-icon topbar-link dropdown-toggle drop-arrow-none"

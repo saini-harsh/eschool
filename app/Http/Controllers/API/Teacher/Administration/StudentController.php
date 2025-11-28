@@ -134,10 +134,7 @@ class StudentController extends Controller
     public function studentDetail(Request $request)
     {
         try {
-            // Validate required input
-            $request->validate([
-                'email' => 'required|email'
-            ]);
+           
 
             // Find student by email with related info
             $student = Student::with([
@@ -158,24 +155,19 @@ class StudentController extends Controller
             $student->name = trim($student->first_name . ' ' . $student->last_name);
 
             // List of file/photo fields to prepend URL if not null
-            $fileFields = [
-                'photo',
-                'father_photo',
-                'mother_photo',
-                'guardian_photo',
-                'pan_front',
-                'pan_back',
-                'document_01_file',
-                'document_02_file',
-                'document_03_file',
-                'document_04_file'
-            ];
-
-            foreach ($fileFields as $field) {
-                if (!empty($student->$field)) {
-                    $student->$field = URL::to($student->$field);
-                }
-            }
+            $student->photo = $student->photo ? URL::to($student->photo) : null;
+            $student->father_photo = $student->father_photo ? URL::to($student->father_photo) : null;
+            $student->mother_photo = $student->mother_photo ? URL::to($student->mother_photo) : null;
+            $student->guardian_photo = $student->guardian_photo ? URL::to($student->guardian_photo) : null;
+            $student->aadhaar_front = $student->aadhaar_front ? URL::to($student->aadhaar_front) : null;
+            $student->aadhaar_back = $student->aadhaar_back ? URL::to($student->aadhaar_back) : null;
+            $student->pan_front = $student->pan_front ? URL::to($student->pan_front) : null;
+            $student->pan_back = $student->pan_back ? URL::to($student->pan_back) : null;
+            $student->document_01_file = $student->document_01_file ? URL::to($student->document_01_file) : null;
+            $student->document_02_file = $student->document_02_file ? URL::to($student->document_02_file) : null;
+            $student->document_03_file = $student->document_03_file ? URL::to($student->document_03_file) : null;
+            $student->document_04_file = $student->document_04_file ? URL::to($student->document_04_file) : null;
+            $student->profile_image = $student->profile_image ? URL::to($student->profile_image) : null;
 
             return response()->json([
                 'success' => true,

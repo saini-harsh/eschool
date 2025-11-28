@@ -61,12 +61,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <form action="#">
+                            <form action="{{ route('institution.teachers.index') }}" method="GET">
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Name</label>
-                                            <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
+                                            <a href="{{ route('admin.teachers.index') }}"
+                                                class="link-primary mb-1">Reset</a>
                                         </div>
                                         <div class="dropdown">
                                             <a href="javascript:void(0);"
@@ -74,25 +75,43 @@
                                                 data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
                                                 Select
                                             </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100" id="name-filter-dropdown">
-                                                @if (isset($teachers) && !empty($teachers))
-                                                    @foreach ($teachers as $teacher)
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox"
-                                                                    value="{{ $teacher->first_name }} {{ $teacher->last_name }}">
-                                                                {{ $teacher->first_name }} {{ $teacher->last_name }}
-                                                            </label>
-                                                        </li>
-                                                    @endforeach
-                                                @endif
+                                            <ul class="dropdown-menu dropdown-menu w-100">
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        John Carter
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        Sophia White
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        Michael Johnson
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        Emily Clark
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        David Anderson
+                                                    </label>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
-                                            <label class="form-label">Email</label>
+                                            <label class="form-label">Status</label>
                                             <a href="javascript:void(0);" class="link-primary mb-1">Reset</a>
                                         </div>
                                         <div class="dropdown">
@@ -101,19 +120,19 @@
                                                 data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
                                                 Select
                                             </a>
-                                            <ul class="dropdown-menu dropdown-menu w-100" id="email-filter-dropdown">
-                                                @if (isset($teachers) && !empty($teachers))
-                                                    @foreach ($teachers as $teacher)
-                                                        <li>
-                                                            <label
-                                                                class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox"
-                                                                    value="{{ $teacher->email }}">
-                                                                {{ $teacher->email }}
-                                                            </label>
-                                                        </li>
-                                                    @endforeach
-                                                @endif
+                                            <ul class="dropdown-menu dropdown-menu w-100">
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        Active
+                                                    </label>
+                                                </li>
+                                                <li>
+                                                    <label class="dropdown-item px-2 d-flex align-items-center rounded-1">
+                                                        <input class="form-check-input m-0 me-2" type="checkbox">
+                                                        Inactive
+                                                    </label>
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -126,30 +145,6 @@
                             </form>
                         </div>
                     </div>
-                </div>
-                <div class="dropdown">
-                    <a href="javascript:void(0);"
-                        class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                        data-bs-toggle="dropdown">
-                        <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end p-1">
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -186,8 +181,8 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <!-- <a href="javascript:void(0);" class="avatar avatar-sm avatar-rounded">
-                                                    <img src="{{ asset('admin/img/managers/manager-01.jpg') }}" alt="img">
-                                                </a> -->
+                                                            <img src="{{ asset('admin/img/managers/manager-01.jpg') }}" alt="img">
+                                                        </a> -->
                                         <div class="ms-2">
                                             <h6 class="fs-14 mb-0"><a
                                                     href="javascript:void(0);">{{ $teacher->email }}</a></h6>

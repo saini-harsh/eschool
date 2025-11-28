@@ -20,6 +20,7 @@ class Exam extends Model
         'subject_dates',
         'morning_subjects',
         'evening_subjects',
+        'month',
     ];
 
     public function institution()

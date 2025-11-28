@@ -107,7 +107,7 @@
                         <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
                     </div>
                     <div class="d-flex align-items-center">
-                        <div class="dropdown me-2">
+                        <div class="dropdown">
                             <a href="javascript:void(0);"
                                 class="btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
                                 data-bs-toggle="dropdown" data-bs-auto-close="outside">
@@ -148,34 +148,6 @@
                                                                         <input class="form-check-input m-0 me-2" type="checkbox" 
                                                                                name="institution_ids[]" value="{{ $institution->id }}">
                                                                         {{ $institution->name }}
-                                                                    </label>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <label class="form-label">Class</label>
-                                                    <a href="javascript:void(0);" class="link-primary mb-1 filter-reset" data-field="class_ids">Reset</a>
-                                                </div>
-                                                <div class="dropdown">
-                                                    <a href="javascript:void(0);"
-                                                        class="dropdown-toggle justify-content-between btn bg-light justify-content-start border w-100"
-                                                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                                                        aria-expanded="true">
-                                                        Select Class
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($classes) && !empty($classes))
-                                                            @foreach ($classes as $class)
-                                                                <li>
-                                                                    <label
-                                                                        class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="class_ids[]" value="{{ $class->id }}">
-                                                                        {{ $class->name }}
                                                                     </label>
                                                                 </li>
                                                             @endforeach
@@ -251,32 +223,6 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);"
-                                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                                    data-bs-toggle="dropdown">
-                                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end p-1">
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
