@@ -100,8 +100,8 @@ class InvigilatorController extends Controller
             [
                 'teacher_id' => $request->teacher_id,
                 'time' => null,
-                'class_id' => 1,
-                'section_id' => 0,
+                'class_id' => null,
+                'section_id' => null,
             ]
         );
 
