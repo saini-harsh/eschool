@@ -8,6 +8,7 @@ use App\Http\Controllers\Teacher\Administration\StudentController;
 use App\Http\Controllers\Teacher\Routine\LessonPlanController;
 use App\Http\Controllers\Teacher\Routine\AssignmentController;
 use App\Http\Controllers\Teacher\Routine\RoutineController;
+use App\Http\Controllers\Teacher\ExamManagement\ExamRoutineController;
 use App\Http\Controllers\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\Teacher\Academic\EventController;
 
@@ -65,6 +66,12 @@ Route::middleware('teacher')->group(function () {
 
             // API routes for dynamic dropdowns
             Route::get('/sections/{classId}', [RoutineController::class, 'getSectionsByClass'])->name('teacher.routines.sections');
+        });
+        // EXAM ROUTINES
+        Route::prefix('exam-routines')->group(function () {
+            Route::get('/', [ExamRoutineController::class, 'index'])->name('teacher.exam-routines.index');
+            Route::get('/report', [ExamRoutineController::class, 'getExamRoutineReport'])->name('teacher.exam-routines.report');
+            Route::get('/sections/{classId}', [ExamRoutineController::class, 'getSectionsByClass'])->name('teacher.exam-routines.sections');
         });
         // LESSON PLANS
         Route::prefix('lesson-plans')->group(function () {

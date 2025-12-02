@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('invigilators', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('teacher_id');
-            $table->unsignedBigInteger('class_id');
-            $table->unsignedBigInteger('section_id');
+            $table->unsignedBigInteger('class_id')->nullable();
+            $table->unsignedBigInteger('section_id')->nullable();
             $table->unsignedBigInteger('exam_id');
-            $table->date('date');
-            $table->time('time');
+            $table->date('date')->nullable();
+            $table->time('time')->nullable();
             $table->unsignedBigInteger('institution_id');
             $table->timestamps();
 
