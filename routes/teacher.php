@@ -114,3 +114,4 @@ Route::middleware('teacher')->group(function () {
     // Route::post('logout', [TeacherController::class, 'logout'])->name('teacher.logout');
 
 });
+        Route::get('/coming-soon', function() { return view('teacher.coming-soon'); })->name('teacher.coming-soon');

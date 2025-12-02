@@ -14,12 +14,30 @@ class ExamTypeController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Code to list invigilators
-        $institutions = Institution::all();
-        $lists = ExamType::with('institution')->get();
-        return view('institution.examination.exam.type',compact('institutions','lists'));
+        $currentInstitutionId = Auth::guard('institution')->id();
+        $institutions = Institution::where('id', $currentInstitutionId)->get(['id','name']);
+
+        $query = ExamType::with('institution')
+            ->where('institution_id', $currentInstitutionId);
+
+        if ($request->filled('status')) {
+            $statusVals = is_array($request->status) ? $request->status : [$request->status];
+            $query->whereIn('status', array_map('intval', $statusVals));
+        }
+
+        if ($request->filled('search')) {
+            $s = trim($request->search);
+            $query->where(function($q) use ($s) {
+                $q->where('title', 'like', '%'.$s.'%')
+                  ->orWhere('code', 'like', '%'.$s.'%')
+                  ->orWhere('description', 'like', '%'.$s.'%');
+            });
+        }
+
+        $lists = $query->orderBy('title')->get();
+        return view('institution.examination.exam.type', compact('institutions', 'lists'));
     }
 
     public function store(Request $request)

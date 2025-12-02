@@ -84,22 +84,6 @@
                 </div>
             </div>
         </div>
-        <div>
-            <div class="dropdown">
-                <a href="javascript:void(0);"
-                    class="dropdown-toggle btn fs-14 py-1 btn-outline-white d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    <i class="ti ti-sort-descending-2 text-dark me-1"></i>Sort By : Newest
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end p-1">
-                    <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Newest</a></li>
-                    <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Oldest</a></li>
-                    <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a></li>
-                    <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a></li>
-                    <li><a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a></li>
-                </ul>
-            </div>
-        </div>
     </div>
 </div>
 <?php /**PATH E:\eschool\resources\views/components/dashboard/filters.blade.php ENDPATH**/ ?>
