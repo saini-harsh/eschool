@@ -197,7 +197,8 @@ $institution = Auth::guard('institution')->user();
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="#">
+                                    <a class=""
+                                        href="<?php echo e(route('institution.exam-management.invigilator.index')); ?>">
                                         <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                                     </a>
                                 </li>
@@ -307,4 +308,4 @@ $institution = Auth::guard('institution')->user();
 
 </div>
 <!-- Sidenav Menu End -->
-<?php /**PATH E:\eschool\resources\views////elements/institution/left-side-bar.blade.php ENDPATH**/ ?>
+<?php /**PATH F:\Github\eschool\resources\views////elements/institution/left-side-bar.blade.php ENDPATH**/ ?>

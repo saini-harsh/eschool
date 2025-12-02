@@ -21,6 +21,7 @@ use App\Http\Controllers\Institution\Communication\EmailSmsController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
+use App\Http\Controllers\Institution\ExamManagement\InvigilatorController;
 use App\Http\Controllers\Institution\Payment\FeeStructureController;
 use App\Http\Controllers\Institution\Payment\PaymentController;
 
@@ -42,6 +43,7 @@ Route::middleware('institution')->group(function () {
             Route::get('/show/{teacher}', [TeacherController::class, 'Show'])->name('institution.teachers.show');
             Route::get('/create', [TeacherController::class, 'Create'])->name('institution.teachers.create');
             Route::post('/store', [TeacherController::class, 'Store'])->name('institution.teachers.store');
+
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('institution.teachers.edit');
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('institution.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('institution.teachers.delete');
@@ -272,6 +274,11 @@ Route::middleware('institution')->group(function () {
                 Route::get('/api/sections/{classId}', [ClassRoomController::class, 'getSectionsByClass'])->name('institution.exam-management.rooms.sections');
                 Route::get('/api/students/{classId}/{sectionId}', [ClassRoomController::class, 'getStudentsByClassAndSection'])->name('institution.exam-management.rooms.students');
                 Route::delete('/{id}', [ClassRoomController::class, 'destroy'])->name('institution.exam-management.rooms.destroy');
+            });
+            Route::prefix('invigilator')->group(function () {
+                Route::get('/',[InvigilatorController::class,'index'])->name('institution.exam-management.invigilator.index');
+                Route::post('/assign',[InvigilatorController::class,'assign'])->name('institution.exam-management.invigilator.assign');
+                Route::get('/assignments',[InvigilatorController::class,'assignments'])->name('institution.exam-management.invigilator.assignments');
             });
         });
 

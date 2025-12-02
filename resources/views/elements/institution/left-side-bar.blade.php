@@ -197,7 +197,8 @@ $institution = Auth::guard('institution')->user();
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a class="" href="#">
+                                    <a class=""
+                                        href="{{ route('institution.exam-management.invigilator.index') }}">
                                         <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                                     </a>
                                 </li>

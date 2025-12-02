@@ -39,4 +39,4 @@ function confirmDelete(url) {
 }
 </script>
 <!-- End Modal -->
-<?php /**PATH E:\eschool\resources\views////elements/teacher/footer.blade.php ENDPATH**/ ?>
+<?php /**PATH F:\Github\eschool\resources\views////elements/institution/footer.blade.php ENDPATH**/ ?>

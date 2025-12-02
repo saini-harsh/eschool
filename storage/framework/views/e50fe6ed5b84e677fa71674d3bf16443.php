@@ -30,4 +30,4 @@
 
     <link rel="stylesheet" href="<?php echo e(URL::asset('/adminpanel/css/style.css')); ?>" id="app-style">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<?php /**PATH E:\eschool\resources\views/components/dashboard/styles.blade.php ENDPATH**/ ?>
+<?php /**PATH F:\Github\eschool\resources\views/components/dashboard/styles.blade.php ENDPATH**/ ?>

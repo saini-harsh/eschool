@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Institution\Administration;
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Teacher;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -27,7 +28,7 @@ class TeacherController extends Controller
         // Filter by name
         if ($request->filled('name')) {
             $query->whereRaw(
-                "CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?", 
+                "CONCAT(TRIM(first_name), ' ', TRIM(last_name)) LIKE ?",
                 ['%' . trim($request->name) . '%']
             );
         }
@@ -50,7 +51,7 @@ class TeacherController extends Controller
         return view('institution.administration.teachers.index', compact('teachers', 'allTeacherNames'));
     }
 
-    
+
     public function Show(Teacher $teacher)
     {
         $institutionId = auth('institution')->id();
@@ -58,7 +59,7 @@ class TeacherController extends Controller
         if ($teacher->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to teacher data.');
         }
-        
+
         $teacher->load(['institution', 'admin']);
         return view('institution.administration.teachers.show', compact('teacher'));
     }
@@ -88,17 +89,17 @@ class TeacherController extends Controller
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
 
-            
+
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            
+
             $destinationPath = public_path('admin/uploads/teachers');
-            
+
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
-            
+
             $file->move($destinationPath, $fileName);
-            
+
             $photoPath = 'admin/uploads/teachers/' . $fileName;
         } else {
             $photoPath = null;
@@ -143,7 +144,7 @@ class TeacherController extends Controller
         if ($teacher->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to teacher data.');
         }
-        
+
         $institution = Institution::find($institutionId);
         return view('institution.administration.teachers.edit', compact('teacher', 'institution'));
     }
@@ -154,7 +155,7 @@ class TeacherController extends Controller
         if ($teacher->institution_id !== $institutionId) {
             abort(403, 'Unauthorized access to teacher data.');
         }
-        
+
         $request->validate([
             'first_name'      => 'required|string|max:255',
             'middle_name'     => 'nullable|string|max:255',
@@ -170,8 +171,8 @@ class TeacherController extends Controller
             'profile_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'status'          => 'required|boolean',
         ]);
-        
-        
+
+
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -184,7 +185,7 @@ class TeacherController extends Controller
         }
 
         $institution = Institution::find($institutionId);
-        
+
         $teacher->first_name       = $request->first_name;
         $teacher->middle_name      = $request->middle_name;
         $teacher->last_name        = $request->last_name;
@@ -209,7 +210,7 @@ class TeacherController extends Controller
 
         return redirect()->route('institution.teachers.index')->with('success', 'Teacher updated successfully!');
     }
-    
+
     public function updateStatus(Request $request, $id)
     {
         try {
@@ -219,7 +220,7 @@ class TeacherController extends Controller
                             ->firstOrFail();
             $teacher->status = $request->status;
             $teacher->save();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Teacher status updated successfully'
@@ -231,7 +232,7 @@ class TeacherController extends Controller
             ], 500);
         }
     }
-    
+
     public function Delete($id)
     {
         $institutionId = auth('institution')->id();
@@ -243,6 +244,8 @@ class TeacherController extends Controller
         return redirect()->route('institution.teachers.index')->with('success', 'Teacher deleted successfully!');
     }
 
+
+
     /**
      * Generate a unique employee ID for the teacher
      */
@@ -250,19 +253,19 @@ class TeacherController extends Controller
     {
         // Get the current year
         $currentYear = date('Y');
-        
+
         // Get the count of teachers for this institution
         $teacherCount = Teacher::where('institution_id', $institutionId)->count();
-        
+
         // Generate employee ID: EMP + Year + Institution ID (3 digits) + Teacher Count (3 digits)
         $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
-        
+
         // Check if this employee ID already exists (very unlikely but just in case)
         while (Teacher::where('employee_id', $employeeId)->exists()) {
             $teacherCount++;
             $employeeId = 'EMP' . $currentYear . str_pad($institutionId, 3, '0', STR_PAD_LEFT) . str_pad($teacherCount + 1, 3, '0', STR_PAD_LEFT);
         }
-        
+
         return $employeeId;
     }
 }

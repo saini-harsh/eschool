@@ -8,6 +8,7 @@ use App\Models\Teacher;
 use App\Models\SchoolClass;
 use App\Models\Section;
 use App\Models\Exam;
+use App\Models\ClassRoom;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
 
@@ -38,34 +39,50 @@ class InvigilatorSeeder extends Seeder
                 continue;
             }
 
-            // Create invigilator assignments for exams
+            // Rooms are global; pick active rooms to assign invigilators per exam date
+            $rooms = ClassRoom::where('status', true)->get();
+            if ($rooms->isEmpty()) {
+                $this->command->info("Skipping institution {$institution->id} - no rooms available");
+                continue;
+            }
+
             foreach ($institutionExams as $exam) {
-                $examClass = $institutionClasses->where('id', $exam->class_id)->first();
-                $examSections = $institutionSections->where('class_id', $exam->class_id);
-                
-                if (!$examClass || $examSections->isEmpty()) {
-                    continue;
+                $dates = [];
+                if ($exam->subject_dates) {
+                    $decoded = is_array($exam->subject_dates) ? $exam->subject_dates : json_decode($exam->subject_dates, true);
+                    if (is_array($decoded)) {
+                        $dates = $decoded;
+                    }
                 }
 
-                // Assign 1-2 invigilators per exam
-                $invigilatorsPerExam = rand(1, 2);
-                $selectedTeachers = $institutionTeachers->random(min($invigilatorsPerExam, $institutionTeachers->count()));
-                
-                foreach ($selectedTeachers as $teacher) {
-                    $randomSection = $examSections->random();
-                    
-                    // Check if invigilator assignment already exists
-                    if (!Invigilator::where('teacher_id', $teacher->id)
-                        ->where('exam_id', $exam->id)
-                        ->where('date', $exam->start_date)
-                        ->exists()) {
-                        
+                // Fallback: use start_date if no subject_dates present
+                if (empty($dates) && $exam->start_date) {
+                    $dates = [$exam->start_date];
+                }
+
+                foreach ($dates as $date) {
+                    // Assign 2-3 rooms per date (or less if not enough rooms)
+                    $roomsForDate = $rooms->shuffle()->take(min(3, $rooms->count()));
+                    foreach ($roomsForDate as $room) {
+                        $teacher = $institutionTeachers->random();
+
+                        // Avoid duplicates per exam/date/room
+                        $exists = Invigilator::where('institution_id', $institution->id)
+                            ->where('exam_id', $exam->id)
+                            ->where('date', $date)
+                            ->where('class_room_id', $room->id)
+                            ->exists();
+                        if ($exists) {
+                            continue;
+                        }
+
                         Invigilator::create([
                             'teacher_id' => $teacher->id,
-                            'class_id' => $exam->class_id,
-                            'section_id' => $randomSection->id,
+                            'class_id' => null,
+                            'section_id' => null,
+                            'class_room_id' => $room->id,
                             'exam_id' => $exam->id,
-                            'date' => $exam->start_date,
+                            'date' => $date,
                             'time' => $exam->morning_time ?? '09:00:00',
                             'institution_id' => $institution->id,
                         ]);

@@ -36,4 +36,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <?php echo $__env->yieldPushContent('scripts'); ?>
-<?php /**PATH E:\eschool\resources\views/components/dashboard/scripts.blade.php ENDPATH**/ ?>
+<?php /**PATH F:\Github\eschool\resources\views/components/dashboard/scripts.blade.php ENDPATH**/ ?>

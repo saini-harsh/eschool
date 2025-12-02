@@ -1,164 +1,142 @@
-/**
- * Teachers Management JavaScript
- * Handles teacher status updates and delete confirmations
- */
-
-$(document).ready(function() {
-    console.log('Teachers.js loaded successfully');
-    
-    // Check if jQuery is available
-    if (typeof $ === 'undefined') {
-        console.error('jQuery is not loaded!');
-        return;
-    }
-    
-    // Initialize teacher functionality
-    initTeachersForm();
-});
-
-function initTeachersForm() {
-    console.log('Initializing teacher form...');
-    
-    // Handle status changes
-    $(document).on('change', '.status-select', function() {
-        const teacherId = $(this).data('teacher-id');
-        const newStatus = $(this).val();
-        const selectElement = $(this);
-        const originalValue = selectElement.find('option[selected]').val() || selectElement.val();
-        
-        console.log('Teacher status changed:', teacherId, newStatus);
-        updateTeacherStatus(teacherId, newStatus, selectElement, originalValue);
+$(function () {
+    const table = $(".datatable").DataTable({
+        paging: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        responsive: true,
+        columnDefs: [
+            {
+                targets: "no-sort",
+                orderable: false,
+            },
+        ],
     });
-    
-    // Handle delete confirmations
-    $(document).on('click', '.delete-teacher', function(e) {
+
+    // Custom search input
+    $("#custom-search-input").on("keyup", function () {
+        table.search(this.value).draw();
+    });
+
+    // Filter dropdown submission
+    $('form[action="#"]').on("submit", function (e) {
         e.preventDefault();
-        const deleteUrl = $(this).data('delete-url');
-        const teacherName = $(this).data('teacher-name');
-        
-        showDeleteConfirmation(deleteUrl, teacherName);
+        applyFilters();
     });
-}
 
-function updateTeacherStatus(teacherId, status, selectElement, originalValue) {
-    $.ajax({
-        url: `/institution/teachers/status/${teacherId}`,
-        type: 'POST',
-        data: {
-            status: status,
-            _token: $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            if (response.success) {
-                if (typeof toastr !== 'undefined') {
-                    toastr.success('Teacher status updated successfully');
-                } else {
-                    showToast('Teacher status updated successfully', 'success');
-                }
-                // Update the selected attribute
-                selectElement.find('option').removeAttr('selected');
-                selectElement.find('option[value="' + status + '"]').attr('selected', 'selected');
-            } else {
-                if (typeof toastr !== 'undefined') {
-                    toastr.error(response.message || 'Failed to update status');
-                } else {
-                    showToast(response.message || 'Failed to update status', 'error');
-                }
-                // Revert the selection on error
-                selectElement.val(originalValue);
+    function applyFilters() {
+        var nameFilters = [];
+        $('#name-filter-dropdown input[type="checkbox"]:checked').each(
+            function () {
+                nameFilters.push($(this).val().toLowerCase());
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error updating teacher status:', xhr.responseText);
-            if (typeof toastr !== 'undefined') {
-                toastr.error('Error updating teacher status');
-            } else {
-                showToast('Error updating teacher status', 'error');
+        );
+        
+        var emailFilters = [];
+        $('#email-filter-dropdown input[type="checkbox"]:checked').each(
+            function () {
+                emailFilters.push($(this).val().toLowerCase());
             }
-            // Revert the selection on error
-            selectElement.val(originalValue);
-        }
-    });
-}
+        );
 
-function showDeleteConfirmation(deleteUrl, teacherName) {
-    // Create a simple confirmation dialog
-    if (confirm(`Are you sure you want to delete the teacher "${teacherName}"?`)) {
-        // Create a form and submit it
-        const form = $('<form>', {
-            'method': 'POST',
-            'action': deleteUrl
-        });
+        // Use DataTables custom filtering
+        $.fn.dataTable.ext.search.push(
+            function(settings, data, dataIndex) {
+                var nameMatch = true;
+                var emailMatch = true;
+                
+                // Check name filter
+                if (nameFilters.length > 0) {
+                    var name = data[0].toLowerCase(); // Name column
+                    nameMatch = nameFilters.some(function(filter) {
+                        return name.indexOf(filter) !== -1;
+                    });
+                }
+                
+                // Check email filter
+                if (emailFilters.length > 0) {
+                    var email = data[1].toLowerCase(); // Email column
+                    emailMatch = emailFilters.some(function(filter) {
+                        return email.indexOf(filter) !== -1;
+                    });
+                }
+                
+                return nameMatch && emailMatch;
+            }
+        );
         
-        form.append($('<input>', {
-            'type': 'hidden',
-            'name': '_token',
-            'value': $('meta[name="csrf-token"]').attr('content')
-        }));
+        table.draw();
         
-        $('body').append(form);
-        form.submit();
+        // Remove the custom filter after drawing to avoid affecting other searches
+        $.fn.dataTable.ext.search.pop();
     }
-}
 
-/**
- * Show toast notification
- */
-function showToast(message, type) {
-    // Use toastr if available, otherwise fallback to custom toast
-    if (typeof toastr !== 'undefined') {
-        if (type === 'success') {
-            toastr.success(message);
-        } else {
-            toastr.error(message);
-        }
-    } else {
-        // Fallback to custom toast
-        var toastHtml = `
-            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-                <div class="toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        `;
+    // Clear all filters
+    $(".clear-all-filters").on("click", function () {
+        $('#name-filter-dropdown input[type="checkbox"]').prop(
+            "checked",
+            false
+        );
+        $('#email-filter-dropdown input[type="checkbox"]').prop(
+            "checked",
+            false
+        );
         
-        // Add toast to page
-        $('body').append(toastHtml);
-        
-        // Auto-hide after 3 seconds
-        setTimeout(function() {
-            $('.toast').remove();
-        }, 3000);
-    }
-}
-
-// Handle form submissions for create/edit
-$(document).ready(function() {
-    // Handle teacher form submission
-    $('#teacher-form').on('submit', function(e) {
-        const submitBtn = $(this).find('button[type="submit"]');
-        const originalText = submitBtn.text();
-        
-        // Show loading state
-        submitBtn.prop('disabled', true).text('Saving...');
-        
-        // Form will submit normally, re-enable button on page load
-        setTimeout(function() {
-            submitBtn.prop('disabled', false).text(originalText);
-        }, 2000);
+        // Clear any column searches and reset the table
+        table.columns().search('').draw();
+        table.search('').draw();
     });
-    
-    // Handle institution change for cascading dropdowns
-    $('#institution_id').on('change', function() {
-        const institutionId = $(this).val();
-        console.log('Institution changed to:', institutionId);
-        
-        // You can add cascading dropdown logic here if needed
-        // For example, loading subjects or other institution-specific data
+
+    // Close the filter dropdown when clicking outside
+    $(document).on("click", function (event) {
+        if (!$(event.target).closest(".filter-dropdown").length) {
+            $(".filter-dropdown").hide();
+        }
     });
 });
+
+// Teacher status update
+function change_status(teacher_id, status) {
+    var a = confirm("Are you sure you want to change status?");
+    if (a) {
+        var url =
+            "http://127.0.0.1:8000/institution/teachers/change_status/" +
+            teacher_id;
+        $.ajax({
+            url: url,
+            type: "post",
+            data: { status: status },
+            success: function (response) {
+                if (response.status == "success") {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+        });
+    }
+}
+
+// Teacher delete
+function delete_teacher(teacher_id) {
+    var a = confirm("Are you sure you want to delete this teacher?");
+    if (a) {
+        var url =
+            "http://127.0.0.1:8000/institution/teachers/delete/" + teacher_id;
+        $.ajax({
+            url: url,
+            type: "post",
+            success: function (response) {
+                if (response.status == "success") {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+        });
+    }
+}

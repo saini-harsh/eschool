@@ -92,6 +92,7 @@ class ExamSetupController extends Controller
             'end_date' => $request->end_date,
             'morning_time' => $request->morning_time,
             'evening_time' => $request->evening_time,
+             'month' => $request->exam_month,
             'subject_dates' => json_encode($request->subject_dates),
             'morning_subjects' => json_encode($request->morning_subjects),
             'evening_subjects' => json_encode($request->evening_subjects),

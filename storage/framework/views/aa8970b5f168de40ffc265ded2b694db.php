@@ -12,7 +12,7 @@
         content="EnvisionTechSolution Institution Management System - Manage your educational institution efficiently">
     <meta name="keywords"
         content="institution, school, management, dashboard, education, students, teachers, academic">
-
+    
     <title><?php echo $__env->yieldContent('title', 'Institution Dashboard'); ?> - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
@@ -38,18 +38,18 @@
     <div class="main-wrapper">
 
         <!--Header-->
-        <?php echo $__env->make('../elements/student/header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('../elements/institution/header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         <!--Content-->
         <!--Left Side Bar-->
-        <?php echo $__env->make('../elements/student/left-side-bar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('../elements/institution/left-side-bar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         
         <div class="page-wrapper">
 
             <?php echo $__env->yieldContent('content'); ?>
 
             <!--Footer-->
-            <?php echo $__env->make('../elements/student/footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+            <?php echo $__env->make('../elements/institution/footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         </div>
 
@@ -60,4 +60,4 @@
 </body>
 
 </html>
-<?php /**PATH E:\eschool\resources\views/layouts/student.blade.php ENDPATH**/ ?>
+<?php /**PATH F:\Github\eschool\resources\views/layouts/institution.blade.php ENDPATH**/ ?>
