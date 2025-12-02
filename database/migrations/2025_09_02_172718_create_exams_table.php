@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('section_id')->nullable();
             $table->date('start_date');
             $table->date('end_date');
-            $table->unsignedTinyInteger('month')->comment('1-12 representing exam month');
+            $table->unsignedTinyInteger('month')->nullable()->comment('1-12 representing exam month');
             $table->time('morning_time')->nullable();
             $table->time('evening_time')->nullable();
             $table->text('subject_dates')->nullable(); // JSON or serialized data for subjects
