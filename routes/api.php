@@ -7,6 +7,9 @@ use App\Http\Controllers\API\Teacher\Academic\RoutineController;
 use App\Http\Controllers\API\Teacher\Academic\LessonPlanController;
 use App\Http\Controllers\API\Teacher\Academic\AssignmentController;
 use App\Http\Controllers\API\Teacher\Academic\EventController;
+use App\Http\Controllers\API\Teacher\ExamManagement\ExamRoutineController as ApiTeacherExamRoutineController;
+use App\Http\Controllers\API\Teacher\ExamManagement\MarksEntryController as ApiTeacherMarksEntryController;
+use App\Http\Controllers\API\Student\ExamManagement\ExamController as ApiStudentExamController;
 
 
 
@@ -62,6 +65,14 @@ Route::prefix('Teacher')->group(function () {
             Route::post('/Lists', [EventController::class, 'getEvents']);
         });
     });
+
+    Route::prefix('ExamManagement')->group(function () {
+        Route::post('/ExamRoutine/Report', [ApiTeacherExamRoutineController::class, 'report']);
+        Route::post('/MarksEntry/Students', [ApiTeacherMarksEntryController::class, 'students']);
+        Route::post('/MarksEntry/Store', [ApiTeacherMarksEntryController::class, 'store']);
+        Route::post('/ExamTypes', [ApiTeacherExamRoutineController::class, 'examTypes']);
+        Route::post('/Subjects', [ApiTeacherMarksEntryController::class, 'subjects']);
+    });
 });
 
 
@@ -96,6 +107,10 @@ Route::prefix('Student')->group(function () {
             Route::post('/Lists', [App\Http\Controllers\API\Student\Academic\EventController::class, 'getEvents']);
         });
       
+    });
+
+    Route::prefix('ExamManagement')->group(function () {
+        Route::post('/ExamRoutine/Report', [ApiStudentExamController::class, 'report']);
     });
 
     
