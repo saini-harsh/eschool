@@ -7,6 +7,7 @@ use App\Http\Controllers\Student\AssignmentController;
 use App\Http\Controllers\Student\Setting\SettingsController;
 use App\Http\Controllers\Student\Academic\EventController;
 use App\Http\Controllers\Student\Academic\RoutineController;
+use App\Http\Controllers\Student\Academic\ExamController as StudentExamController;
 
 Route::middleware('student')->group(function () {
     Route::prefix('student')->group(function () {
@@ -26,6 +27,12 @@ Route::middleware('student')->group(function () {
         Route::prefix('routine')->group(function () {
             Route::get('/', [RoutineController::class, 'index'])->name('student.routine.index');
             Route::get('/api', [RoutineController::class, 'getRoutineData'])->name('student.routine.api');
+        });
+
+        // Examination - Exams (month filter)
+        Route::prefix('exams')->group(function () {
+            Route::get('/', [StudentExamController::class, 'index'])->name('student.exams.index');
+            Route::get('/schedule', [StudentExamController::class, 'getSchedule'])->name('student.exams.schedule');
         });
 
         // Attendance Management
@@ -57,3 +64,5 @@ Route::middleware('student')->group(function () {
     // Logout
     // Route::post('logout', [StudentController::class, 'logout'])->name('student.logout');
 });
+
+Route::get('/coming-soon', function() { return view('student.coming-soon'); })->name('student.coming-soon');

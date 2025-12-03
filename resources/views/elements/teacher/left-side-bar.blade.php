@@ -125,7 +125,7 @@
                 <li>
                     <ul>
                         <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.exams*') || request()->routeIs('teacher.marks-entries*') || request()->routeIs('teacher.exam-routines*') ? 'active subdrop' : '' }}">
+                        <a href="javascript:void(0);" class="{{ request()->routeIs('teacher.marks-entries*') || request()->routeIs('teacher.exam-routines*') ? 'active subdrop' : '' }}">
                                 <i class="ti ti-layout-dashboard"></i><span>Exams</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -137,7 +137,7 @@
                                 </li>
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.exam-routines*') ? 'active' : '' }}" href="{{ route('teacher.exam-routines.index') }}">
-                                        <i class="ti ti-calendar-event"></i><span>Exam Routine</span>
+                                        <i class="ti ti-calendar-event"></i><span>Teacher Routine</span>
                                     </a>
                                 </li>
                             </ul>

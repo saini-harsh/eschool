@@ -9,6 +9,7 @@ use App\Http\Controllers\Teacher\Routine\LessonPlanController;
 use App\Http\Controllers\Teacher\Routine\AssignmentController;
 use App\Http\Controllers\Teacher\Routine\RoutineController;
 use App\Http\Controllers\Teacher\ExamManagement\ExamRoutineController;
+use App\Http\Controllers\Teacher\ExamManagement\MarksEntryController;
 use App\Http\Controllers\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\Teacher\Academic\EventController;
 
@@ -73,6 +74,14 @@ Route::middleware('teacher')->group(function () {
             Route::get('/report', [ExamRoutineController::class, 'getExamRoutineReport'])->name('teacher.exam-routines.report');
             Route::get('/sections/{classId}', [ExamRoutineController::class, 'getSectionsByClass'])->name('teacher.exam-routines.sections');
         });
+        // MARKS ENTRY
+        Route::prefix('marks-entries')->group(function () {
+            Route::get('/', [MarksEntryController::class, 'index'])->name('teacher.marks-entries.index');
+            Route::get('/sections/{classId}', [MarksEntryController::class, 'getSectionsByClass'])->name('teacher.marks-entries.sections');
+            Route::get('/subjects/{classId}', [MarksEntryController::class, 'getSubjectsByClass'])->name('teacher.marks-entries.subjects');
+            Route::get('/report', [MarksEntryController::class, 'getStudentsForEntry'])->name('teacher.marks-entries.report');
+            Route::post('/store', [MarksEntryController::class, 'store'])->name('teacher.marks-entries.store');
+        });
         // LESSON PLANS
         Route::prefix('lesson-plans')->group(function () {
             Route::get('/', [LessonPlanController::class, 'index'])->name('teacher.lesson-plans.index');
@@ -114,4 +123,4 @@ Route::middleware('teacher')->group(function () {
     // Route::post('logout', [TeacherController::class, 'logout'])->name('teacher.logout');
 
 });
-        Route::get('/coming-soon', function() { return view('teacher.coming-soon'); })->name('teacher.coming-soon');
+Route::get('/coming-soon', function() { return view('teacher.coming-soon'); })->name('teacher.coming-soon');
