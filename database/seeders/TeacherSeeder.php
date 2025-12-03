@@ -19,7 +19,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'Rajesh',
                 'last_name' => 'Sharma',
                 'dob' => '1985-03-20',
-                'email' => 'rajesh.green@example.com',
+                'email' => 'teacher@gmail.com',
                 'phone' => '9876501234',
                 'institution_code' => 'INS001',
                 'gender' => 'Male',
@@ -120,8 +120,8 @@ class TeacherSeeder extends Seeder
                     'pincode' => '110001',
                     'caste_tribe' => 'General',
                     'admin_id' => 1,
-                    'password' => Hash::make('teacher123'),
-                    'decrypt_pw' => 'teacher123',
+                    'password' => Hash::make('123456'),
+                    'decrypt_pw' => '123456',
                     'status' => 1
                 ]));
             }

@@ -22,7 +22,7 @@ class InstitutionSeeder extends Seeder
                 'board' => 'CBSE',
                 'state' => 'Delhi',
                 'district' => 'New Delhi',
-                'email' => 'greenvalley@example.com',
+                'email' => 'insitution@gmail.com',
                 'website' => 'http://greenvalley.edu',
                 'phone' => '9876543210',
             ],
@@ -70,8 +70,8 @@ class InstitutionSeeder extends Seeder
                 Institution::create(array_merge($inst, [
                     'admin_id' => 1,
                     'logo' => 1,
-                    'password' => Hash::make('school123'),
-                    'decrypt_pw' => 'school123',
+                    'password' => Hash::make('123456'),
+                    'decrypt_pw' => '123456',
                     'status' => 1
                 ]));
             }

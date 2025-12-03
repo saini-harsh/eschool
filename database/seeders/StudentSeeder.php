@@ -48,7 +48,7 @@ class StudentSeeder extends Seeder
                     for ($i = 1; $i <= $studentsPerSection; $i++) {
                         $firstName = $this->getRandomFirstName();
                         $lastName = $this->getRandomLastName();
-                        $email = strtolower($firstName . '.' . $lastName . '@example.com');
+                        $email = strtolower($firstName . '.' . $lastName . '@gmail.com');
                         
                         // Check if student already exists
                         if (!Student::where('email', $email)->exists()) {
@@ -87,8 +87,8 @@ class StudentSeeder extends Seeder
                                 'aadhaar_no' => $this->generateAadhaarNumber(),
                                 'pan_no' => $this->generatePANNumber(),
                                 'pen_no' => 'PEN' . rand(100000, 999999),
-                                'password' => Hash::make('password'),
-                                'decrypt_pw' => 'password', // Plain text password for reference
+                                'password' => Hash::make('123456'),
+                                'decrypt_pw' => '123456', // Plain text password for reference
                                 'admin_id' => 1, // Default admin ID
                                 'status' => 1,
                             ]);
