@@ -201,7 +201,7 @@ var woocommerce_params = {"ajax_url":"\/learning\/wp-admin\/admin-ajax.php","wc_
 		<!--<div class="col-lg-2 col-md-3 col-sm-3">-->
 				<div class="pro_logo">
 		    <a href="https://traininginstitute.kamleshyadav.com/learning/">
-			<img src="{{URL::asset('/frontend/images/Logo.png')}}" style="max-width: 263px;" alt="logo"></a>
+			<img src="{{URL::asset('/frontend/images/logo.png')}}" style="max-width: 263px;" alt="logo"></a>
 			<button class="ed_menu_btn"><i class="fa fa-bars" aria-hidden="true"></i></button>
 		</div>
 				<!--</div>-->
