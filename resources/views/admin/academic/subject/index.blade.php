@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Class</label>
+                                        <label class="form-label" for="class_id">Class</label>
                                         <select class="form-select" name="class_id" id="class_id" disabled>
                                             <option value="">Select Class</option>
                                             @if (isset($classes) && !empty($classes))
@@ -87,7 +87,7 @@
                                 <div class="col-sm-12">
                                     <div class="mb-3">
                                         <label class="form-label">Type</label>
-                                       <select class="form-select" name="type">
+                                        <select class="form-select" name="type">
                                             <option value="theory">Theory</option>
                                             <option value="practical">Practical</option>
                                         </select>
@@ -124,7 +124,8 @@
                                 data-bs-toggle="dropdown" data-bs-auto-close="outside">
                                 <i class="ti ti-filter me-1"></i>Filter
                             </a>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0" id="filter-dropdown">
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 border-0"
+                                id="filter-dropdown">
                                 <div class="card mb-0">
                                     <div class="card-header">
                                         <div class="d-flex align-items-center justify-content-between">
@@ -151,13 +152,14 @@
                                                         Select Institution
                                                     </a>
                                                     <ul class="dropdown-menu dropdown-menu w-100">
-                                                        @if(isset($institutions) && !empty($institutions))
+                                                        @if (isset($institutions) && !empty($institutions))
                                                             @foreach ($institutions as $institution)
                                                                 <li>
                                                                     <label
                                                                         class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                        <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                               name="institution_ids[]" value="{{ $institution->id }}">
+                                                                        <input class="form-check-input m-0 me-2"
+                                                                            type="checkbox" name="institution_ids[]"
+                                                                            value="{{ $institution->id }}">
                                                                         {{ $institution->name }}
                                                                     </label>
                                                                 </li>
@@ -193,16 +195,16 @@
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                       name="status[]" value="1">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox"
+                                                                    name="status[]" value="1">
                                                                 Active
                                                             </label>
                                                         </li>
                                                         <li>
                                                             <label
                                                                 class="dropdown-item px-2 d-flex align-items-center rounded-1">
-                                                                <input class="form-check-input m-0 me-2" type="checkbox" 
-                                                                       name="status[]" value="0">
+                                                                <input class="form-check-input m-0 me-2" type="checkbox"
+                                                                    name="status[]" value="0">
                                                                 Inactive
                                                             </label>
                                                         </li>
@@ -296,15 +298,19 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $list->schoolClass ? $list->schoolClass->name : 'N/A' }}</h6>
+                                                    <h6 class="fs-14 mb-0">
+                                                        {{ $list->schoolClass ? $list->schoolClass->name : 'N/A' }}</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                <select class="form-select status-select" data-subject-id="{{ $list->id }}">
-                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>Active</option>
-                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>Inactive</option>
+                                                <select class="form-select status-select"
+                                                    data-subject-id="{{ $list->id }}">
+                                                    <option value="1" {{ $list->status == 1 ? 'selected' : '' }}>
+                                                        Active</option>
+                                                    <option value="0" {{ $list->status == 0 ? 'selected' : '' }}>
+                                                        Inactive</option>
                                                 </select>
                                             </div>
                                         </td>

@@ -29,13 +29,33 @@ class ExamSetupController extends Controller
         $institutionId = $request->input('institution_id');
         $examTypes = ExamType::where('institution_id', $institutionId)->get(['id', 'title']);
         $classes = SchoolClass::where('institution_id', $institutionId)->get(['id', 'name']);
-        $sections = Section::all();
+        $sections = Section::where('institution_id', $institutionId)->get(['id', 'name', 'class_id']);
 
         return response()->json([
             'exam_types' => $examTypes,
             'classes' => $classes,
             'sections' => $sections,
         ]);
+    }
+
+    public function fetchSections(Request $request, $classId)
+    {
+        $class = SchoolClass::find($classId);
+
+        if (!$class) {
+            return response()->json(['sections' => []]);
+        }
+
+        if ($request->filled('institution_id') && (int) $request->institution_id !== (int) $class->institution_id) {
+            return response()->json(['sections' => []]);
+        }
+
+        $sections = Section::where([
+            'class_id' => $classId,
+            'institution_id' => $class->institution_id,
+        ])->get(['id', 'name']);
+
+        return response()->json(['sections' => $sections]);
     }
 
     public function fetchSubjects(Request $request)

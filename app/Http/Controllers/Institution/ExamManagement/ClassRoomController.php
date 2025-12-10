@@ -271,4 +271,55 @@ class ClassRoomController extends Controller
             return response()->json(['success' => false, 'error' => 'An error occurred while fetching students', 'message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Get active students for multiple classes (all sections) for shuffling
+     */
+    public function getStudentsByClasses(Request $request)
+    {
+        $validated = $request->validate([
+            'class_ids' => 'required|array|min:1',
+            'class_ids.*' => 'integer'
+        ]);
+
+        $institutionId = auth('institution')->id();
+
+        // Ensure the classes belong to the current institution
+        $classIds = SchoolClass::where('institution_id', $institutionId)
+            ->whereIn('id', $validated['class_ids'])
+            ->pluck('id');
+
+        if ($classIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'No valid classes selected for this institution'
+            ], 422);
+        }
+
+        $students = Student::where('institution_id', $institutionId)
+            ->whereIn('class_id', $classIds)
+            ->where('status', 1)
+            ->with(['schoolClass', 'section'])
+            ->orderBy('class_id')
+            ->orderBy('section_id')
+            ->orderBy('roll_number')
+            ->get(['id', 'first_name', 'last_name', 'roll_number', 'class_id', 'section_id', 'student_id']);
+
+        $formattedStudents = $students->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->first_name . ' ' . $student->last_name,
+                'roll_number' => $student->roll_number,
+                'student_id' => $student->student_id,
+                'class_name' => optional($student->schoolClass)->name ?? 'N/A',
+                'section_name' => optional($student->section)->name ?? 'N/A',
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'count' => $formattedStudents->count(),
+            'students' => $formattedStudents
+        ]);
+    }
 }

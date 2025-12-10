@@ -65,6 +65,52 @@ class SectionController extends Controller
         }
     }
 
+    public function store(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'institution_id' => 'required|exists:institutions,id',
+                'class_id' => 'required|exists:classes,id',
+                'sections' => 'required|array|min:1',
+                'sections.*' => 'string|max:255',
+                'status' => 'nullable|in:0,1'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $createdSections = [];
+            foreach ($request->sections as $sectionName) {
+                $section = Section::create([
+                    'institution_id' => $request->institution_id,
+                    'class_id' => $request->class_id,
+                    'name' => $sectionName,
+                    'status' => $request->status ?? 1 // Default to 1 if not provided
+                ]);
+                $createdSections[] = $section;
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sections created successfully',
+                'data' => $createdSections
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating the sections',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function getSections()
     {
         $currentInstitution = auth('institution')->user();

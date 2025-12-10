@@ -202,6 +202,12 @@ $institution = Auth::guard('institution')->user();
                                         <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('institution.exam-management.marksheet.index') ? 'active' : '' }}"
+                                        href="{{ route('institution.exam-management.marksheet.index') }}">
+                                        <i class="ti ti-file-text"></i><span>Marksheet</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

@@ -8,6 +8,7 @@ use App\Models\SchoolClass;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
@@ -64,8 +65,8 @@ class SubjectController extends Controller
         // Get filtered results
         $lists = $query->orderBy('created_at', 'desc')->get();
         $institutions = Institution::where('status', 1)->get();
-        $classes = collect(); // Empty collection - classes will be loaded via AJAX
-dd($lists,$classes);
+        $classes = SchoolClass::where('institution_id', $request->institution_id)->get(); // Empty collection - classes will be loaded via AJAX
+
         return view('admin.academic.subject.index', compact('lists', 'institutions', 'classes'));
     }
 
@@ -233,7 +234,7 @@ dd($lists,$classes);
     {
         try {
             // Log the request for debugging
-            \Log::info('Filter request received:', $request->all());
+            Log::info('Filter request received:', $request->all());
 
             // Build query with filters
             $query = Subject::with(['institution', 'schoolClass']);
@@ -298,9 +299,10 @@ dd($lists,$classes);
     public function getClassesByInstitution($institutionId)
     {
         try {
+            // Return all classes for the institution (some records may have null/0 status)
             $classes = SchoolClass::where('institution_id', $institutionId)
-                ->where('status', 1)
-                ->get(['id', 'name']);
+                ->orderBy('name')
+                ->get(['id', 'name', 'status']);
 
             return response()->json(['classes' => $classes]);
         } catch (\Exception $e) {

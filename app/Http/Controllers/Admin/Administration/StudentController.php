@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\SchoolClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -79,6 +80,10 @@ class StudentController extends Controller
             $query->where('teacher_id', $request->teacher_id);
         }
 
+        if ($request->filled('class_id')) {
+            $query->where('class_id', $request->class_id);
+        }
+
         if ($request->filled('email')) {
             $query->where('email', 'like', '%' . $request->email . '%');
         }
@@ -92,8 +97,9 @@ class StudentController extends Controller
 
         $institutions = Institution::orderBy('name')->get(['id', 'name']);
         $teachers = Teacher::orderBy('first_name')->get(['id', 'first_name', 'last_name']);
+        $classes = SchoolClass::orderBy('name')->get(['id', 'name']);
 
-        return view('admin.administration.students.index', compact('students', 'allStudentNames', 'institutions', 'teachers'));
+        return view('admin.administration.students.index', compact('students', 'allStudentNames', 'institutions', 'teachers', 'classes'));
     }
     public function Create(){
         $institutions = Institution::all();
@@ -104,9 +110,10 @@ class StudentController extends Controller
     }
 
     // Method to get sections by class ID
-    public function getSectionsByClass($classId)
+    public function getSectionsByClass(Request $request, $classId)
     {
         try {
+            $institutionId = $request->institution_id;
             $class = SchoolClass::find($classId);
             if (!$class) {
                 return response()->json(['sections' => []]);
@@ -114,22 +121,39 @@ class StudentController extends Controller
 
             // Ensure section_ids is properly handled as an array
             $sectionIds = $class->section_ids ?? [];
-            
+
             // If section_ids is a string (JSON), decode it
             if (is_string($sectionIds)) {
                 $sectionIds = json_decode($sectionIds, true) ?? [];
             }
-            
+
             // Ensure it's an array and not empty
             if (!is_array($sectionIds) || empty($sectionIds)) {
                 return response()->json(['sections' => []]);
             }
-            
-            $sections = Section::whereIn('id', $sectionIds)->get(['id', 'name']);
-            
+
+            $sections = Section::where('institution_id', $institutionId)->whereIn('id', $sectionIds)->get(['id', 'name']);
+
             return response()->json(['sections' => $sections]);
         } catch (\Exception $e) {
-            \Log::error('Error in getSectionsByClass: ' . $e->getMessage());
+            Log::error('Error in getSectionsByClass: ' . $e->getMessage());
+            return response()->json(['sections' => [], 'error' => 'An error occurred while fetching sections']);
+        }
+    }
+
+    /**
+     * Get sections by institution and class (primary filter on institution_id + class_id)
+     */
+    public function getSectionsByInstitutionAndClass($institutionId, $classId)
+    {
+        try {
+            $sections = Section::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->get(['id', 'name']);
+
+            return response()->json(['sections' => $sections]);
+        } catch (\Exception $e) {
+            Log::error('Error in getSectionsByInstitutionAndClass: ' . $e->getMessage());
             return response()->json(['sections' => [], 'error' => 'An error occurred while fetching sections']);
         }
     }
@@ -140,7 +164,7 @@ class StudentController extends Controller
         $classes = SchoolClass::where('institution_id', $institutionId)
             ->where('status', 1)
             ->get(['id', 'name', 'institution_id', 'section_ids']);
-        
+
         return response()->json(['classes' => $classes]);
     }
 
@@ -150,7 +174,7 @@ class StudentController extends Controller
         $teachers = Teacher::where('institution_id', $institutionId)
             ->where('status', 1)
             ->get(['id', 'first_name', 'last_name', 'institution_id']);
-        
+
         return response()->json(['teachers' => $teachers]);
     }
     public function Store(Request $request)
@@ -227,12 +251,12 @@ class StudentController extends Controller
             $class = SchoolClass::find($request->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
                     return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
                 }
@@ -310,7 +334,7 @@ class StudentController extends Controller
         $student->class_id       = $request->class_id;
         $student->section_id     = $request->section_id;
         $student->status         = 1;
-        $student->admin_id       = auth()->id();
+        $student->admin_id       = optional(auth('admin')->user())->id;
         $student->password       = Hash::make($request->password);
         $student->decrypt_pw     = $request->password;
 
@@ -381,18 +405,18 @@ class StudentController extends Controller
             $class = SchoolClass::find($student->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (is_array($sectionIds) && !empty($sectionIds)) {
                     $sections = Section::whereIn('id', $sectionIds)->get(['id','name']);
                 }
             }
         }
-        
+
         $teachers = Teacher::where('institution_id', $student->institution_id)->get(['id','first_name','last_name']);
 
         return view('admin.administration.students.edit', compact('student', 'institutions','classes','sections','teachers'));
@@ -476,12 +500,12 @@ class StudentController extends Controller
             $class = SchoolClass::find($request->class_id);
             if ($class) {
                 $sectionIds = $class->section_ids ?? [];
-                
+
                 // If section_ids is a string (JSON), decode it
                 if (is_string($sectionIds)) {
                     $sectionIds = json_decode($sectionIds, true) ?? [];
                 }
-                
+
                 if (!is_array($sectionIds) || !in_array($request->section_id, $sectionIds)) {
                     return back()->withErrors(['section_id' => 'The selected section does not belong to the selected class.'])->withInput();
                 }
@@ -502,17 +526,17 @@ class StudentController extends Controller
         $document03Path = $student->document_03_file;
         $document04Path = $student->document_04_file;
 
-        if ($request->hasFile('photo')) { 
-            $photoPath = $this->uploadFile($request->file('photo'), 'students'); 
+        if ($request->hasFile('photo')) {
+            $photoPath = $this->uploadFile($request->file('photo'), 'students');
         }
-        if ($request->hasFile('father_photo')) { 
-            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents'); 
+        if ($request->hasFile('father_photo')) {
+            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents');
         }
-        if ($request->hasFile('mother_photo')) { 
-            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents'); 
+        if ($request->hasFile('mother_photo')) {
+            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents');
         }
-        if ($request->hasFile('guardian_photo')) { 
-            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians'); 
+        if ($request->hasFile('guardian_photo')) {
+            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
         }
         if ($request->hasFile('aadhaar_front')) {
             $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents');
@@ -526,19 +550,19 @@ class StudentController extends Controller
         if ($request->hasFile('pan_back')) {
             $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents');
         }
-        if ($request->hasFile('document_01_file')) { 
-            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents'); 
+        if ($request->hasFile('document_01_file')) {
+            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
         }
-        if ($request->hasFile('document_02_file')) { 
-            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents'); 
+        if ($request->hasFile('document_02_file')) {
+            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents');
         }
-        if ($request->hasFile('document_03_file')) { 
-            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents'); 
+        if ($request->hasFile('document_03_file')) {
+            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents');
         }
-        if ($request->hasFile('document_04_file')) { 
-            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents'); 
+        if ($request->hasFile('document_04_file')) {
+            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents');
         }
-    
+
         $student->first_name     = $request->first_name;
         $student->middle_name    = $request->middle_name;
         $student->last_name      = $request->last_name;
@@ -557,7 +581,7 @@ class StudentController extends Controller
         $student->institution_code = 'INS' . str_pad($request->institution_id, 3, '0', STR_PAD_LEFT);
         $student->class_id       = $request->class_id;
         $student->section_id     = $request->section_id;
-        $student->admin_id       = auth()->id();
+        $student->admin_id       = optional(auth('admin')->user())->id;
 
         // New fields
         $student->admission_date = $request->admission_date ? Carbon::parse($request->admission_date)->format('Y-m-d') : null;
@@ -605,13 +629,13 @@ class StudentController extends Controller
         $student->document_02_file = $document02Path;
         $student->document_03_file = $document03Path;
         $student->document_04_file = $document04Path;
-    
+
         // Update password only if provided
         if ($request->filled('password')) {
             $student->password   = Hash::make($request->password);
             $student->decrypt_pw = $request->password;
         }
-    
+
         $student->save();
 
         return redirect()->route('admin.students.index')->with('success', 'Student updated successfully!');
@@ -689,13 +713,13 @@ class StudentController extends Controller
     {
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         $destinationPath = public_path('admin/uploads/' . $folder);
-        
+
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
         }
-        
+
         $file->move($destinationPath, $fileName);
-        
+
         return 'admin/uploads/' . $folder . '/' . $fileName;
     }
 }

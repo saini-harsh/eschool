@@ -1,5 +1,5 @@
 @extends('layouts.institution')
-@section('title', 'Admin | Sections Management')
+@section('title', 'Institution | Sections Management')
 @section('content')
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -103,7 +103,7 @@
                     <div class="datatable-search">
                         <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
                     </div>
-                    
+
                 </div>
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">
@@ -178,5 +178,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('custom/js/admin/sections.js') }}"></script>
+    <script src="{{ asset('custom/js/institution/sections.js') }}"></script>
 @endpush

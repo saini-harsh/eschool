@@ -99,6 +99,27 @@
                             </div>
                         </div>
 
+                        <div class="border-top pt-3">
+                            <h6 class="mb-3">Shuffle Students</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Select Classes</label>
+                                <select id="shuffleClasses" class="form-select" multiple size="6">
+                                </select>
+                                <small class="text-muted">Hold Ctrl/Cmd to select multiple classes</small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary" onclick="shuffleStudentsForExam()">
+                                    <i class="ti ti-shuffle me-1"></i>Shuffle Seats
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="clearDeskStudents()">
+                                    <i class="ti ti-eraser me-1"></i>Clear Seats
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                <small id="shuffleStatus" class="text-muted d-block">No shuffle applied yet.</small>
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
@@ -330,6 +351,8 @@
         let numberOfDesks = 0; // Will be calculated based on room capacity
         let numberOfColumns = 2;
         let studentsPerDesk = 2;
+        let institutionId = {{ auth('institution')->id() }};
+        let shuffledStudentsCache = [];
 
         // Initialize layout
         document.addEventListener('DOMContentLoaded', function() {
@@ -362,6 +385,7 @@
             updateDeskLayout();
 
             console.log('=== INITIALIZATION COMPLETE ===');
+            loadShuffleClasses();
         });
 
 
@@ -534,12 +558,17 @@
                             const studentName = isAssigned ? desk.students[k].name : '';
                             const circleClass = isAssigned ? 'student-circle' : 'student-circle empty';
                             let studentDisplay = '';
+                            let studentTooltip = 'Empty seat';
                             if (isAssigned && desk.students[k]) {
                                 const student = desk.students[k];
-                                const classInfo = student.class ? `Class ${student.class}` : '';
-                                const sectionInfo = student.section ? `(${student.section})` : '';
-                                const rollInfo = student.roll ? `-${student.roll}` : '';
-                                studentDisplay = `${classInfo}${sectionInfo}${rollInfo}`;
+                                const classPart = student.class ? `Class - ${student.class}` : 'Class - N/A';
+                                const sectionPart = student.section ? ` ( ${student.section} )` : '';
+                                const rollPart = student.roll ? `Rollno - ${student.roll}` : 'Rollno - N/A';
+                                studentDisplay =
+                                    `<div style="line-height:1.1;">${classPart}${sectionPart}<br>${rollPart}</div>`;
+                                const idInfo = student.id ? ` | ID: ${student.id}` : '';
+                                studentTooltip =
+                                    `${student.name || 'Student'} | ${classPart}${sectionPart} | ${rollPart}${idInfo}`;
                             }
 
                             const circleWidth = Math.max(40, Math.min(60, 320 / studentsPerDesk));
@@ -549,7 +578,7 @@
 
                             studentCircles += `
                                 <div class="${circleClass}"
-                                     title="${studentName || 'Empty seat'}"
+                                     title="${studentTooltip}"
                                      style="${circleStyle}">
                                     ${studentDisplay}
                                 </div>`;
@@ -735,8 +764,8 @@
                                         <strong>Current Assignment:</strong><br>
                                         ${desk.students[studentIndex] ?
                                             `Name: ${desk.students[studentIndex].name}<br>
-                                                                                                                                                                                                             Class: ${desk.students[studentIndex].class || 'Not assigned'}<br>
-                                                                                                                                                                                                             Section: ${desk.students[studentIndex].section || 'Not assigned'}` :
+                                                                                                                                                                                                                                             Class: ${desk.students[studentIndex].class || 'Not assigned'}<br>
+                                                                                                                                                                                                                                             Section: ${desk.students[studentIndex].section || 'Not assigned'}` :
                                             'No student assigned to this position'
                                         }
                                     </small>
@@ -967,6 +996,134 @@
             }
         }
 
+        function loadShuffleClasses() {
+            const classSelect = document.getElementById('shuffleClasses');
+            if (!classSelect) return;
+
+            classSelect.innerHTML = '';
+
+            fetch(`/institution/exam-management/rooms/api/classes/${institutionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.classes.forEach(classItem => {
+                            const option = document.createElement('option');
+                            option.value = classItem.id;
+                            option.textContent = classItem.name;
+                            classSelect.appendChild(option);
+                        });
+                        document.getElementById('shuffleStatus').textContent =
+                            'Select classes and click Shuffle Seats.';
+                    } else {
+                        document.getElementById('shuffleStatus').textContent = 'Unable to load classes.';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('shuffleStatus').textContent = 'Unable to load classes.';
+                });
+        }
+
+        function shuffleStudentsForExam() {
+            const classSelect = document.getElementById('shuffleClasses');
+            const statusEl = document.getElementById('shuffleStatus');
+            if (!classSelect) return;
+
+            const selectedClassIds = Array.from(classSelect.selectedOptions).map(opt => opt.value);
+            if (!selectedClassIds.length) {
+                statusEl.textContent = 'Select at least one class to shuffle.';
+                return;
+            }
+
+            statusEl.textContent = 'Loading students...';
+
+            fetch(`/institution/exam-management/rooms/api/students-by-classes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        class_ids: selectedClassIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        statusEl.textContent = data.error || 'Unable to load students.';
+                        return;
+                    }
+
+                    shuffledStudentsCache = shuffleArray(data.students);
+                    applyShuffleToLayout(shuffledStudentsCache);
+                })
+                .catch(() => {
+                    statusEl.textContent = 'Unable to load students.';
+                });
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function applyShuffleToLayout(students) {
+            const statusEl = document.getElementById('shuffleStatus');
+
+            // Build available seats list
+            const seats = [];
+            deskLayoutData.forEach((row, rowIndex) => {
+                row.forEach((desk, colIndex) => {
+                    if (desk.type === 'desk') {
+                        for (let i = 0; i < studentsPerDesk; i++) {
+                            seats.push({
+                                rowIndex,
+                                colIndex,
+                                seatIndex: i
+                            });
+                        }
+                        desk.students = [];
+                        desk.occupied = false;
+                    }
+                });
+            });
+
+            const seatsToFill = Math.min(students.length, seats.length);
+            for (let i = 0; i < seatsToFill; i++) {
+                const seat = seats[i];
+                const student = students[i];
+                const desk = deskLayoutData[seat.rowIndex][seat.colIndex];
+
+                while (desk.students.length <= seat.seatIndex) {
+                    desk.students.push(null);
+                }
+
+                desk.students[seat.seatIndex] = {
+                    id: student.id,
+                    name: student.name,
+                    roll: student.roll_number,
+                    class: student.class_name,
+                    section: student.section_name,
+                    student_id: student.student_id
+                };
+                desk.occupied = true;
+            }
+
+            renderDeskLayout();
+            updateDeskCounts();
+
+            const remaining = students.length - seatsToFill;
+            if (remaining > 0) {
+                statusEl.textContent =
+                    `${seatsToFill} students placed. ${remaining} could not be seated (capacity exceeded).`;
+            } else {
+                statusEl.textContent = `${seatsToFill} students placed successfully.`;
+            }
+        }
+
         function printLayout() {
             // Get the current layout HTML
             const layoutContainer = document.getElementById('roomLayout');
@@ -1110,6 +1267,10 @@
                 });
                 renderDeskLayout();
                 updateDeskCounts();
+                const statusEl = document.getElementById('shuffleStatus');
+                if (statusEl) {
+                    statusEl.textContent = 'All seats cleared.';
+                }
             }
         }
 
@@ -1148,5 +1309,7 @@
         window.loadStudents = loadStudents;
         window.showStudentInfo = showStudentInfo;
         window.printLayout = printLayout;
+        window.shuffleStudentsForExam = shuffleStudentsForExam;
+        window.loadShuffleClasses = loadShuffleClasses;
     </script>
 @endpush

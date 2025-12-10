@@ -60,6 +60,34 @@ $(document).ready(function () {
         checkAndFetchSubjects();
     });
 
+    // Fetch sections when class is selected (scoped to institution + class)
+    $('#class_id').on('change', function () {
+        let classId = $(this).val();
+        let institutionId = $('#institution_id').val();
+
+        if (!classId) {
+            $('#section_id').html('<option value="">Select Section</option>');
+            return;
+        }
+
+        $.ajax({
+            url: `/admin/exam-management/exam-setup/fetch-sections/${classId}`,
+            type: 'GET',
+            data: { institution_id: institutionId },
+            success: function (response) {
+                let sectionOptions = '<option value="">Select Section</option>';
+                response.sections.forEach(function (section) {
+                    sectionOptions += `<option value="${section.id}">${section.name}</option>`;
+                });
+                $('#section_id').html(sectionOptions);
+            },
+            error: function () {
+                $('#section_id').html('<option value="">Select Section</option>');
+                alert('Failed to fetch sections for the selected class.');
+            }
+        });
+    });
+
     function getDatesInRange(startDate, endDate) {
         const dateArray = [];
         let currentDate = new Date(startDate);

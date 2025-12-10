@@ -87,6 +87,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('admin.students.classes');
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('admin.students.teachers');
             Route::get('/sections/{classId}', [StudentController::class, 'getSectionsByClass'])->name('admin.students.sections');
+            Route::get('/sections/{institutionId}/{classId}', [StudentController::class, 'getSectionsByInstitutionAndClass'])->name('admin.students.sections.by-institution-class');
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('admin.students.status');
             Route::post('/generate-admission-number', [StudentController::class, 'generateAdmissionNumber'])->name('admin.students.generate-admission-number');
             Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('admin.students.generate-roll-number');
@@ -241,6 +242,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/exam-setup',[ExamSetupController::class,'index'])->name('admin.exam-management.exam-setup');
             Route::get('/exam-setup/fetch-data',[ExamSetupController::class,'fetchData'])->name('admin.exam-management.exam-setup.fetchdata');
             Route::get('/exam-setup/fetch-subjects', [ExamSetupController::class, 'fetchSubjects'])->name('admin.exam-management.exam-setup.fetch-subjects');
+            Route::get('/exam-setup/fetch-sections/{classId}', [ExamSetupController::class, 'fetchSections'])->name('admin.exam-management.exam-setup.fetch-sections');
             Route::post('/exam-setup/store',[ExamSetupController::class,'store'])->name('admin.exam-management.exam-setup.store');
 
             Route::prefix('rooms')->group(function () {

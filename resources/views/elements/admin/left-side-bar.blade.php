@@ -244,6 +244,12 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                         <i class="ti ti-home"></i><span>Exam Setup</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a class="{{ request()->routeIs('admin.exam-management.marksheet*') ? 'active' : '' }}"
+                                        href="{{ route('admin.exam-management.marksheet.index') }}">
+                                        <i class="ti ti-file-text"></i><span>Marksheet</span>
+                                    </a>
+                                </li>
                                 <li class="" style="display: none;">
                                     <a class="" href="{{ route('admin.exam-management.rooms.index') }}">
                                         <i class="ti ti-home"></i><span>Exam Rooms Setup</span>

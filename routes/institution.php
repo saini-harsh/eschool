@@ -13,6 +13,7 @@ use App\Http\Controllers\Institution\ExamManagement\ExamSetupController;
 use App\Http\Controllers\Institution\Routine\LessonPlanController;
 use App\Http\Controllers\Institution\Academic\AssignmentController;
 use App\Http\Controllers\Institution\ExamManagement\ExamController;
+use App\Http\Controllers\Institution\ExamManagement\MarksheetController;
 use App\Http\Controllers\Institution\Academic\SchoolClassController;
 use App\Http\Controllers\Institution\Academic\AssignSubjectController;
 use App\Http\Controllers\Institution\Administration\StudentController;
@@ -246,6 +247,11 @@ Route::middleware('institution')->group(function () {
             Route::get('/exams/get-classes-sections/{institution}', [ExamController::class, 'getClassesSections'])->name('institution.exams.getClassesSections');
             Route::get('/exams/get-exam-type/{institution}', [ExamController::class, 'getExamType'])->name('institution.exams.getExamType');
 
+            // Marksheet Routes
+            Route::get('/marksheet', [MarksheetController::class, 'index'])->name('institution.exam-management.marksheet.index');
+            Route::post('/marksheet/search', [MarksheetController::class, 'search'])->name('institution.exam-management.marksheet.search');
+            Route::get('/marksheet/generate/{studentId}/{examId}', [MarksheetController::class, 'generatePdf'])->name('institution.exam-management.marksheet.generate');
+
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('institution.exam-management.exam-type');
             Route::post('/exam-type/store',[ExamTypeController::class,'store'])->name('institution.exam-management.exam-type.store');
@@ -270,6 +276,7 @@ Route::middleware('institution')->group(function () {
                 Route::post('/{id}/update-layout', [ClassRoomController::class, 'updateLayout'])->name('institution.exam-management.rooms.update-layout');
 
                 // API routes for loading classes, sections, and students
+                Route::post('/api/students-by-classes', [ClassRoomController::class, 'getStudentsByClasses'])->name('institution.exam-management.rooms.students-by-classes');
                 Route::get('/api/classes/{institutionId}', [ClassRoomController::class, 'getClassesByInstitution'])->name('institution.exam-management.rooms.classes');
                 Route::get('/api/sections/{classId}', [ClassRoomController::class, 'getSectionsByClass'])->name('institution.exam-management.rooms.sections');
                 Route::get('/api/students/{classId}/{sectionId}', [ClassRoomController::class, 'getStudentsByClassAndSection'])->name('institution.exam-management.rooms.students');
