@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\Communication\EmailSmsController;
 use App\Http\Controllers\Admin\ExamManagement\ExamTypeController;
 use App\Http\Controllers\Admin\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Admin\ExamManagement\ExamSetupController;
+use App\Http\Controllers\Admin\ExamManagement\MarksheetController;
 use App\Http\Controllers\Admin\Administration\AttendanceController;
 use App\Http\Controllers\Admin\Administration\InstitutionController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
@@ -226,6 +227,11 @@ Route::middleware('admin')->group(function () {
             Route::get('/exams',[ExamController::class,'index'])->name('admin.exam-management.exams');
             Route::get('/exams/get-classes-sections/{institution}', [ExamController::class, 'getClassesSections'])->name('admin.exams.getClassesSections');
             Route::get('/exams/get-exam-type/{institution}', [ExamController::class, 'getExamType'])->name('admin.exams.getExamType');
+
+            // Marksheet Routes
+            Route::get('/marksheet', [MarksheetController::class, 'index'])->name('admin.exam-management.marksheet.index');
+            Route::post('/marksheet/search', [MarksheetController::class, 'search'])->name('admin.exam-management.marksheet.search');
+            Route::get('/marksheet/generate/{studentId}/{examId}', [MarksheetController::class, 'generatePdf'])->name('admin.exam-management.marksheet.generate');
 
             // Future exam management routes can be added here
             Route::get('/exam-type',[ExamTypeController::class,'index'])->name('admin.exam-management.exam-type');
