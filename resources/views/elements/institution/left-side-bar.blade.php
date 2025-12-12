@@ -10,7 +10,7 @@ $institution = Auth::guard('institution')->user();
             <!-- Logo Normal -->
             <a href="{{ route('institution.dashboard') }}" class="logo logo-normal">
                 @if ($institution->logo)
-                    <img src="{{ asset($institution->logo) }}" alt="Institution Logo" style="max-height: 40px;">
+                    <img src="{{ asset($institution->logo) }}" alt="Institution Logo" style="max-height: 40px;object-fit:contain;">
                 @else
                     <img src="{{ asset('/institutionpanel/img/logo.png') }}" alt="Logo">
                 @endif

@@ -15,7 +15,7 @@ class SectionController extends Controller
         $this->middleware('auth:institution');
     }
 
-    public function index(){
+    public function indexOLD(){
         $currentInstitution = auth('institution')->user();
 
         // Sections are global, but we can filter by institution if needed
@@ -27,7 +27,18 @@ class SectionController extends Controller
         return view('institution.academic.section.index', compact('lists', 'classes'));
     }
 
-    public function store(Request $request)
+    public function index(){
+        $currentInstitution = auth('institution')->user();
+        $lists = Section::where('institution_id', $currentInstitution->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $classes = SchoolClass::where('institution_id', $currentInstitution->id)->get();
+        $lists->load('institution', 'class');
+
+        return view('institution.academic.section.index', compact('lists', 'classes'));
+    }
+
+    public function storeOLD(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -71,7 +82,7 @@ class SectionController extends Controller
             $validator = Validator::make($request->all(), [
                 'institution_id' => 'required|exists:institutions,id',
                 'class_id' => 'required|exists:classes,id',
-                'sections' => 'required|array|min:1',
+                'sections' => 'array|min:1',
                 'sections.*' => 'string|max:255',
                 'status' => 'nullable|in:0,1'
             ]);

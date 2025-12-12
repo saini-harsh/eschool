@@ -55,6 +55,7 @@
                                 <div class="row">
                                     @php
                                         $grades = [
+                                            'Pre-Nursery',
                                             'Nursery',
                                             'LKG',
                                             'UKG',
@@ -105,7 +106,7 @@
                     <div class="datatable-search">
                         <a href="javascript:void(0);" class="input-text"><i class="ti ti-search"></i></a>
                     </div>
-                    
+
                 </div>
                 <div class="table-responsive">
                     <table class="table table-nowrap datatable">

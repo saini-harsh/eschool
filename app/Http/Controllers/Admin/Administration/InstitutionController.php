@@ -40,10 +40,9 @@ class InstitutionController extends Controller
     }
     public function Store(Request $request)
     {
-
         $request->validate([
             'name'             => 'required|string|max:255',
-            'logo'             => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'logo'             => 'nullable|image|mimes:jpg,jpeg,png',
             'address'          => 'required|string|max:255',
             'pincode'          => 'required|string|max:10',
             'established_date' => 'required|string',
@@ -73,9 +72,27 @@ class InstitutionController extends Controller
         } else {
             $logoPath = null;
         }
+        // Generate institution_code in the format: ENV/25/001 (auto-incremented last part for the current year)
+        $currentYear = now()->format('y');
+        $prefix = "ENV/{$currentYear}/";
+
+        // Get the max code for this year
+        $lastInstitution = \App\Models\Institution::where('institution_code', 'like', $prefix . '%')
+            ->orderBy('institution_code', 'desc')
+            ->first();
+
+        if ($lastInstitution && preg_match('/\/(\d{3})$/', $lastInstitution->institution_code, $matches)) {
+            $lastNumber = (int)$matches[1];
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        $institution_code = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         $institution = new Institution();
         $institution->name             = $request->name;
+        $institution->institution_code = $institution_code;
         $institution->logo             = $logoPath;
         $institution->address          = $request->address;
         $institution->pincode          = $request->pincode;
@@ -86,11 +103,12 @@ class InstitutionController extends Controller
         $institution->email            = $request->email;
         $institution->website          = $request->website;
         $institution->phone            = $request->phone;
-        $institution->admin_id         = auth()->id();
+        $institution->admin_id         = 1;
         $institution->password         = Hash::make($request->password);
         $institution->decrypt_pw       = $request->password;
         $institution->status           = $request->status ?? 1;
-
+        $institution->created_at       = now();
+        $institution->updated_at       = now();
         $institution->save();
 
         return redirect()->route('admin.institutions.index')->with('success', 'Institution added successfully!');
@@ -161,14 +179,14 @@ class InstitutionController extends Controller
 
         return redirect()->route('admin.institutions.index')->with('success', 'Institution updated successfully!');
     }
-    
+
     public function updateStatus(Request $request, $id)
     {
         try {
             $institution = Institution::findOrFail($id);
             $institution->status = $request->status;
             $institution->save();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Institution status updated successfully'
@@ -180,7 +198,7 @@ class InstitutionController extends Controller
             ], 500);
         }
     }
-    
+
     public function Delete($id)
     {
         $institution = Institution::findOrFail($id);

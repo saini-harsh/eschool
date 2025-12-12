@@ -1185,4 +1185,14 @@ class StudentController extends Controller
 
         return 'admin/uploads/' . $folder . '/' . $fileName;
     }
+
+    public function showAdmissionForm()
+    {
+        // Render the admission form view
+        $institutionId = auth('institution')->id();
+        $institution = Institution::find($institutionId);
+        $classes = SchoolClass::where('institution_id', $institutionId)->get();
+        $sections = Section::where('institution_id', $institutionId)->get();
+        return view('institution.administration.students.admission-form', compact('institution', 'classes', 'sections'));
+    }
 }

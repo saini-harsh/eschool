@@ -33,6 +33,9 @@
                 </nav>
             </div>
             <div>
+                <a href="{{ route('institution.students.admission-form') }}" class="btn btn-outline-secondary" id="openAdmissionForm">
+                    <i class="ti ti-form me-1"></i>Open Admission Form
+                </a>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportStudentsModal">
                     <i class="ti ti-download me-1"></i>Export Students
                 </button>
@@ -41,6 +44,7 @@
                 </button>
                 <a href="{{ route('institution.students.create') }}" class="btn btn-primary"><i
                         class="ti ti-circle-plus me-1"></i>New Student</a>
+
             </div>
         </div>
         <!-- End Page Header -->
@@ -48,7 +52,8 @@
         <!-- Classes Cards Section -->
         <div id="classes-section">
             <div class="row" id="classes-grid">
-                @if (isset($classes) && !empty($classes))
+
+                @if (isset($classes) && count($classes) > 0)
                     @foreach ($classes as $class)
                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                             <div class="card class-card h-100" data-class-id="{{ $class->id }}"
@@ -77,7 +82,7 @@
                             <div class="avatar avatar-lg bg-light text-muted rounded-circle mx-auto mb-3">
                                 <i class="ti ti-school fs-24"></i>
                             </div>
-                            <h5 class="text-muted">No Classes Found</h5>
+                            <h5 class="text-muted">Add Classes</h5>
                             <p class="text-muted">Create classes first to manage students.</p>
                             <a href="{{ route('institution.classes.index') }}" class="btn btn-primary">
                                 <i class="ti ti-plus me-1"></i>Create Class

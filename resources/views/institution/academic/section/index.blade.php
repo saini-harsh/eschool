@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Sections <span class="text-danger">*</span></label>
+                                        <label class="form-label">Sections <span class="text-muted">(Optional)</span></label>
                                         <div class="d-flex flex-wrap gap-2">
                                             @foreach (range('A', 'Z') as $letter)
                                                 <div class="form-check">

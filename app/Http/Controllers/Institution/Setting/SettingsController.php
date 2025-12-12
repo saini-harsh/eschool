@@ -29,14 +29,14 @@ class SettingsController extends Controller
     public function updateProfile(Request $request)
     {
         $institution = Auth::guard('institution')->user();
-        
+
         // Debug: Check if file is being received
         if ($request->hasFile('logo')) {
             \Log::info('File received: ' . $request->file('logo')->getClientOriginalName());
         } else {
             \Log::info('No file received in request');
         }
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:institutions,email,' . $institution->id,
@@ -48,7 +48,7 @@ class SettingsController extends Controller
             'board' => 'required|string|max:255',
             'website' => 'nullable|string|max:255',
             'established_date' => 'required|string',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif', // 5MB max
         ]);
 
         if ($validator->fails()) {
@@ -70,12 +70,12 @@ class SettingsController extends Controller
                 $file = $request->file('logo');
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $uploadPath = public_path('institution/uploads/institutions');
-                
+
                 // Create directory if it doesn't exist
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
-                
+
                 $file->move($uploadPath, $fileName);
                 $institution->logo = 'institution/uploads/institutions/' . $fileName;
             }
@@ -114,7 +114,7 @@ class SettingsController extends Controller
     public function changePassword(Request $request)
     {
         $institution = Auth::guard('institution')->user();
-        
+
         $validator = Validator::make($request->all(), [
             'current_password' => 'required|string',
             'new_password' => 'required|string|min:6|confirmed',
@@ -162,7 +162,7 @@ class SettingsController extends Controller
     {
         try {
             $institution = Auth::guard('institution')->user();
-            
+
             if ($institution->logo && File::exists(public_path($institution->logo))) {
                 File::delete(public_path($institution->logo));
                 $institution->logo = null;

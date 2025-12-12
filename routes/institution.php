@@ -71,6 +71,7 @@ Route::middleware('institution')->group(function () {
             Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('institution.students.generate-roll-number');
             Route::get('/export/all', [StudentController::class, 'exportAll'])->name('institution.students.export.all');
             Route::get('/export/class/{classId}', [StudentController::class, 'exportByClass'])->name('institution.students.export.class');
+            Route::get('/admission-form', [StudentController::class, 'showAdmissionForm'])->name('institution.students.admission-form');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('institution.nonworkingstaff.index');
