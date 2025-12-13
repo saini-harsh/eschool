@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Institution\Administration;
 
-use App\Http\Controllers\Controller;
-use App\Models\Institution;
+use Carbon\Carbon;
+use App\Models\Section;
 use App\Models\Student;
 use App\Models\Teacher;
-use App\Models\Section;
+use App\Models\Institution;
 use App\Models\SchoolClass;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
+use App\Models\FeeStructure;
+use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -1193,6 +1194,7 @@ class StudentController extends Controller
         $institution = Institution::find($institutionId);
         $classes = SchoolClass::where('institution_id', $institutionId)->get();
         $sections = Section::where('institution_id', $institutionId)->get();
-        return view('institution.administration.students.admission-form', compact('institution', 'classes', 'sections'));
+        $feeStructure = FeeStructure::where('institution_id', $institutionId)->get();
+        return view('institution.administration.students.admission.admission-form', compact('institution', 'classes', 'sections', 'feeStructure'));
     }
 }

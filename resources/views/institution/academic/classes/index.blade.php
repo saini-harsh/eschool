@@ -55,31 +55,31 @@
                                 <div class="row">
                                     @php
                                         $grades = [
-                                            'Pre-Nursery',
-                                            'Nursery',
-                                            'LKG',
-                                            'UKG',
-                                            '1',
-                                            '2',
-                                            '3',
-                                            '4',
-                                            '5',
-                                            '6',
-                                            '7',
-                                            '8',
-                                            '9',
-                                            '10',
-                                            '11',
-                                            '12',
+                                            'Pre-Nursery' => 'Pre-Nursery',
+                                            'Nursery' => 'Nursery',
+                                            'LKG' => 'LKG',
+                                            'UKG' => 'UKG',
+                                            '1' => 'I',
+                                            '2' => 'II',
+                                            '3' => 'III',
+                                            '4' => 'IV',
+                                            '5' => 'V',
+                                            '6' => 'VI',
+                                            '7' => 'VII',
+                                            '8' => 'VIII',
+                                            '9' => 'IX',
+                                            '10' => 'X',
+                                            '11' => 'XI',
+                                            '12' => 'XII',
                                         ];
                                     @endphp
-                                    @foreach ($grades as $grade)
+                                    @foreach ($grades as $value => $display)
                                         <div class="col-4 mb-2">
                                             <div class="form-check">
-                                                <input type="checkbox" name="classes[]" value="{{ $grade }}"
-                                                    class="form-check-input class-checkbox" id="class_{{ $grade }}">
+                                                <input type="checkbox" name="classes[]" value="{{ $value }}"
+                                                    class="form-check-input class-checkbox" id="class_{{ $value }}">
                                                 <label class="form-check-label"
-                                                    for="class_{{ $grade }}">{{ $grade }}</label>
+                                                    for="class_{{ $value }}">{{ $display }}</label>
                                             </div>
                                         </div>
                                     @endforeach

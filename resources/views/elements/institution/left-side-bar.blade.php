@@ -10,7 +10,8 @@ $institution = Auth::guard('institution')->user();
             <!-- Logo Normal -->
             <a href="{{ route('institution.dashboard') }}" class="logo logo-normal">
                 @if ($institution->logo)
-                    <img src="{{ asset($institution->logo) }}" alt="Institution Logo" style="max-height: 40px;object-fit:contain;">
+                    <img src="{{ asset($institution->logo) }}" alt="Institution Logo"
+                        style="max-height: 40px;object-fit:contain;">
                 @else
                     <img src="{{ asset('/institutionpanel/img/logo.png') }}" alt="Logo">
                 @endif
@@ -60,9 +61,28 @@ $institution = Auth::guard('institution')->user();
                                 </li>
                             </ul>
                         </li>
-
-
-
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <!-- Admission -->
+                        <li class="submenu">
+                            <a href="javascript:void(0);"
+                                class="{{ request()->routeIs('institution.admission*') ? 'active subdrop' : '' }}">
+                                <i class="ti ti-user-plus"></i><span>Admission</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li><a href="{{ route('institution.admission.admission-form') }}"
+                                        class="{{ request()->routeIs('institution.admission.admission-form') ? 'active' : '' }}">New
+                                        Admission</a>
+                                </li>
+                                <li><a href="{{ route('institution.admission.list') }}"
+                                        class="{{ request()->routeIs('institution.admission.list') ? 'active' : '' }}">Admission
+                                        List</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 <li>

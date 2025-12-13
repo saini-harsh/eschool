@@ -129,17 +129,44 @@ class Student extends Authenticatable
     /**
      * Generate a unique admission number.
      */
-    public static function generateAdmissionNumber($institutionId = null, $classId = null)
+    public static function generateAdmissionNumber($institutionId, $classId = null)
     {
-        do {
-            $year = date('Y');
-            $institutionCode = $institutionId ? str_pad($institutionId, 3, '0', STR_PAD_LEFT) : '000';
-            $classCode = $classId ? str_pad($classId, 2, '0', STR_PAD_LEFT) : '00';
-            $randomNumber = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-            $admissionNumber = 'ADM' . $year . $institutionCode . $classCode . $randomNumber;
-        } while (static::where('admission_number', $admissionNumber)->exists());
+        $institution = Institution::find($institutionId);
+        $institutionCode = $institution->institution_code ?? 'INST';
 
-        return $admissionNumber;
+        // Academic year as YYYY-YYYY+1 (e.g., 2026-2027)
+        // $currentYear = (int)date('Y');
+        // $nextYear = $currentYear + 1;
+        // $academicYear = $currentYear . $nextYear;
+        $academicYear = '20262027';
+
+        // For the display, should be like 2627 for 2026-2027
+        $academicYearShort = substr($academicYear, 2, 2) . substr($academicYear, 6, 2);
+
+        // Default classId as 0 padded to 2
+        $classIdPart = $classId ? str_pad($classId, 2, '0', STR_PAD_LEFT) : '00';
+
+        // Get the last admission for this institution, year, class
+        $lastAdmission = Admission::where('institution_id', $institutionId)
+            ->where('class_id', $classId)
+            ->whereNotNull('admission_number')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($lastAdmission && $lastAdmission->admission_number) {
+            // Extract number after last '/' (sequential id)
+            $parts = explode('/', $lastAdmission->admission_number);
+            $lastNumber = isset($parts[3]) ? (int)$parts[3] : 0;
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+
+        // Format: SKA/2627/01/001
+        return $institutionCode
+            . '/' . $academicYearShort
+            . '/' . $classIdPart
+            . '/' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**

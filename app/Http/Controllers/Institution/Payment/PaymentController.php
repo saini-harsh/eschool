@@ -19,7 +19,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $institution = Auth::guard('institution')->user();
-        
+
         $query = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section'])
             ->where('institution_id', $institution->id);
 
@@ -143,7 +143,7 @@ class PaymentController extends Controller
             'transaction_id' => $request->transaction_id,
             'notes' => $request->notes,
             'payment_date' => $request->payment_date,
-            'receipt_number' => Payment::generateReceiptNumber(),
+            'receipt_number' => Payment::generateReceiptNumber($institution->id),
             'status' => 'completed',
         ]);
 

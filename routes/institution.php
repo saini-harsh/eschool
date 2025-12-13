@@ -20,6 +20,7 @@ use App\Http\Controllers\Institution\Administration\StudentController;
 use App\Http\Controllers\Institution\Administration\TeacherController;
 use App\Http\Controllers\Institution\Communication\EmailSmsController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
+use App\Http\Controllers\Institution\Administration\AdmissionController;
 use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
 use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Institution\ExamManagement\InvigilatorController;
@@ -50,6 +51,16 @@ Route::middleware('institution')->group(function () {
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('institution.teachers.delete');
             Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('institution.teachers.status');
         });
+
+        Route::prefix('admission')->group(function () {
+            Route::get('/admission-form', [StudentController::class, 'showAdmissionForm'])->name('institution.admission.admission-form');
+            Route::get('/list', [AdmissionController::class, 'list'])->name('institution.admission.list');
+            Route::post('/store', [AdmissionController::class, 'store'])->name('institution.admission.store');
+            Route::get('/success/{id}', [AdmissionController::class, 'success'])->name('institution.admission.success');
+            Route::get('/receipt/admission/{admissionId}/{paymentId}', [AdmissionController::class, 'generateAdmissionReceipt'])->name('institution.admission.receipt.admission');
+            Route::get('/receipt/tuition/{admissionId}/{paymentId}', [AdmissionController::class, 'generateTuitionReceipt'])->name('institution.admission.receipt.tuition');
+            Route::get('/print/{id}', [AdmissionController::class, 'printForm'])->name('institution.admission.print');
+        });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('institution.students.index');
             Route::get('/create', [StudentController::class, 'Create'])->name('institution.students.create');
@@ -71,7 +82,9 @@ Route::middleware('institution')->group(function () {
             Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('institution.students.generate-roll-number');
             Route::get('/export/all', [StudentController::class, 'exportAll'])->name('institution.students.export.all');
             Route::get('/export/class/{classId}', [StudentController::class, 'exportByClass'])->name('institution.students.export.class');
-            Route::get('/admission-form', [StudentController::class, 'showAdmissionForm'])->name('institution.students.admission-form');
+
+
+
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('institution.nonworkingstaff.index');

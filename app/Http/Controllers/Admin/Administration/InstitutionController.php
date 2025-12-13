@@ -77,14 +77,16 @@ class InstitutionController extends Controller
         $prefix = "ENV/{$currentYear}/";
 
         // Get the max code for this year
-        $lastInstitution = \App\Models\Institution::where('institution_code', 'like', $prefix . '%')
-            ->orderBy('institution_code', 'desc')
+        $lastInstitution = Institution::where('code', 'like', $prefix . '%')
+            ->orderBy('code', 'desc')
             ->first();
 
-        if ($lastInstitution && preg_match('/\/(\d{3})$/', $lastInstitution->institution_code, $matches)) {
+        // If no institutions exist for this year, start with 001
+        if ($lastInstitution && preg_match('/\/(\d{3})$/', $lastInstitution->code, $matches)) {
             $lastNumber = (int)$matches[1];
             $nextNumber = $lastNumber + 1;
         } else {
+            // First institution for this year gets 001
             $nextNumber = 1;
         }
 
@@ -92,7 +94,7 @@ class InstitutionController extends Controller
 
         $institution = new Institution();
         $institution->name             = $request->name;
-        $institution->institution_code = $institution_code;
+        $institution->code = $institution_code;
         $institution->logo             = $logoPath;
         $institution->address          = $request->address;
         $institution->pincode          = $request->pincode;

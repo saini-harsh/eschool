@@ -33,7 +33,8 @@
                 </nav>
             </div>
             <div>
-                <a href="{{ route('institution.students.admission-form') }}" class="btn btn-outline-secondary" id="openAdmissionForm">
+                <a href="{{ route('institution.admission.admission-form') }}" class="btn btn-outline-secondary"
+                    id="openAdmissionForm">
                     <i class="ti ti-form me-1"></i>Open Admission Form
                 </a>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportStudentsModal">

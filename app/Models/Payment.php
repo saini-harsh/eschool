@@ -10,6 +10,7 @@ class Payment extends Model
     protected $fillable = [
         'institution_id',
         'student_id',
+        'admission_id',
         'fee_structure_id',
         'amount',
         'payment_method',
@@ -42,6 +43,14 @@ class Payment extends Model
     }
 
     /**
+     * Get the admission associated with this payment.
+     */
+    public function admission(): BelongsTo
+    {
+        return $this->belongsTo(Admission::class);
+    }
+
+    /**
      * Get the fee structure for this payment.
      */
     public function feeStructure(): BelongsTo
@@ -50,13 +59,43 @@ class Payment extends Model
     }
 
     /**
-     * Generate a unique receipt number.
+     * Generate a unique receipt number with institution code prefix.
+     * Format: {INST_CODE}/PAY/{YEAR}{MONTH}{DAY}/{SEQUENTIAL}
+     *
+     * @param int $institutionId
+     * @return string
      */
-    public static function generateReceiptNumber(): string
+    public static function generateReceiptNumber($institutionId): string
     {
-        do {
-            $receiptNumber = 'RCP' . date('Ymd') . rand(1000, 9999);
-        } while (self::where('receipt_number', $receiptNumber)->exists());
+        $institution = Institution::find($institutionId);
+        $institutionCode = $institution->institution_code ?? 'INST';
+
+        $datePart = date('Ymd');
+
+        // Get the last receipt number for this institution and date
+        $lastPayment = self::where('institution_id', $institutionId)
+            ->where('receipt_number', 'like', $institutionCode . '/PAY/' . $datePart . '/%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($lastPayment && $lastPayment->receipt_number) {
+            // Extract sequential number
+            $parts = explode('/', $lastPayment->receipt_number);
+            $lastNumber = isset($parts[3]) ? (int)$parts[3] : 0;
+            $sequentialNumber = $lastNumber + 1;
+        } else {
+            $sequentialNumber = 1;
+        }
+
+        $receiptNumber = $institutionCode . '/PAY/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+
+        // Double-check uniqueness (in case of race condition)
+        $counter = 0;
+        while (self::where('receipt_number', $receiptNumber)->exists() && $counter < 100) {
+            $sequentialNumber++;
+            $receiptNumber = $institutionCode . '/PAY/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+            $counter++;
+        }
 
         return $receiptNumber;
     }
