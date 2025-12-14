@@ -51,11 +51,13 @@ class StudentController extends Controller
     public function generateRollNumber(Request $request)
     {
         $request->validate([
+            'institution_id' => 'required|integer',
             'class_id' => 'required|integer',
-            'section_id' => 'required|integer'
+            'section_id' => 'nullable|integer'
         ]);
 
         $rollNumber = Student::generateRollNumber(
+            $request->institution_id,
             $request->class_id,
             $request->section_id
         );
@@ -285,7 +287,7 @@ class StudentController extends Controller
         $student->institution_id = $institutionId;
         $student->class_id       = $request->class_id;
         $student->section_id     = $request->section_id;
-        $student->status         = 1;
+        $student->status         = 'admitted';
         $student->admin_id       = auth('institution')->id();
         $student->password       = Hash::make($request->password);
         $student->decrypt_pw     = $request->password;

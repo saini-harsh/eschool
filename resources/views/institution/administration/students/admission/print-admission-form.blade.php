@@ -760,11 +760,7 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="form-footer">
-                        <!-- Signature Section -->
                         <div class="signature-section">
                             <div class="signature-left">
                                 <div class="signature-line"></div>
@@ -774,13 +770,6 @@
                                 <div class="signature-line"></div>
                                 <p class="signature-label">Principal's Signature</p>
                             </div>
-                        </div>
-
-                        <!-- Footer Text -->
-                        <div class="footer-text-section">
-                            <p class="footer-text">
-                                <strong>Generated On:</strong> {{ now()->format('d M Y, h:i A') }}
-                            </p>
                         </div>
                     </div>
                 </div>

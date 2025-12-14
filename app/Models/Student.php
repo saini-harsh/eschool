@@ -40,6 +40,14 @@ class Student extends Authenticatable
         'admission_number',
         'roll_number',
         'group',
+        'pen_no',
+        'aadhaar_no',
+        'aadhaar_front',
+        'aadhaar_back',
+        'previous_school_name',
+        'previous_school_address',
+        'previous_school_class',
+        'previous_school_result',
         // Personal Information
         'religion',
         'blood_group',
@@ -66,13 +74,6 @@ class Student extends Authenticatable
         'guardian_photo',
         // Document Information
         'birth_certificate_number',
-        'aadhaar_no',
-        'aadhaar_front',
-        'aadhaar_back',
-        'pan_no',
-        'pan_front',
-        'pan_back',
-        'pen_no',
         'bank_name',
         'bank_account_number',
         'ifsc_code',
@@ -130,52 +131,35 @@ class Student extends Authenticatable
      * Generate a unique admission number.
      */
     public static function generateAdmissionNumber($institutionId, $classId = null)
-    {
-        $institution = Institution::find($institutionId);
-        $institutionCode = $institution->institution_code ?? 'INST';
+{
+    $institution = Institution::find($institutionId);
 
-        // Academic year as YYYY-YYYY+1 (e.g., 2026-2027)
-        // $currentYear = (int)date('Y');
-        // $nextYear = $currentYear + 1;
-        // $academicYear = $currentYear . $nextYear;
-        $academicYear = '20262027';
+    $institutionCode = $institution->institution_code ?? 'INST';
 
-        // For the display, should be like 2627 for 2026-2027
-        $academicYearShort = substr($academicYear, 2, 2) . substr($academicYear, 6, 2);
-
-        // Default classId as 0 padded to 2
-        $classIdPart = $classId ? str_pad($classId, 2, '0', STR_PAD_LEFT) : '00';
-
-        // Get the last admission for this institution, year, class
-        $lastAdmission = Admission::where('institution_id', $institutionId)
-            ->where('class_id', $classId)
-            ->whereNotNull('admission_number')
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($lastAdmission && $lastAdmission->admission_number) {
-            // Extract number after last '/' (sequential id)
-            $parts = explode('/', $lastAdmission->admission_number);
-            $lastNumber = isset($parts[3]) ? (int)$parts[3] : 0;
-            $newNumber = $lastNumber + 1;
-        } else {
-            $newNumber = 1;
-        }
-
-        // Format: SKA/2627/01/001
-        return $institutionCode
-            . '/' . $academicYearShort
-            . '/' . $classIdPart
-            . '/' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    // Get the last admission for this institution, year, class
+    $lastAdmission = Admission::where('institution_id', $institutionId)
+        ->orderBy('id', 'desc')
+        ->first();
+    if ($lastAdmission && $lastAdmission->admission_number) {
+        // Extract number after last '/' (sequential id)
+        $parts = explode('/', $lastAdmission->admission_number);
+        $lastNumber = isset($parts[1]) ? (int)$parts[1] : 0; // Adjust index according to actual position
+        $newNumber = $lastNumber + 1;
+    } else {
+        $newNumber = 1;
     }
+
+    // Format: SKA/001
+    return $institutionCode . '/' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+}
 
     /**
      * Generate a unique roll number for a class and section.
      */
-    public static function generateRollNumber($classId, $sectionId)
+    public static function generateRollNumber($institutionId, $classId, $sectionId = null)
     {
         // Get the highest roll number for this class and section
-        $lastStudent = static::where('class_id', $classId)
+        $lastStudent = Student::where(['institution_id' => $institutionId, 'class_id' => $classId])
             ->where('section_id', $sectionId)
             ->orderBy('roll_number', 'desc')
             ->first();
@@ -247,6 +231,11 @@ class Student extends Authenticatable
             ->where('section_id', $this->section_id)
             ->where('status', 1)
             ->orderBy('created_at', 'desc');
+    }
+
+    public static function generatePassword($length = 8)
+    {
+        return bin2hex(random_bytes($length / 2));
     }
 
 }

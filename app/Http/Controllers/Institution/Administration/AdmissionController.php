@@ -8,6 +8,7 @@ use App\Models\Institution;
 use App\Models\Payment;
 use App\Models\TuitionFeePayment;
 use App\Models\FeeStructure;
+use App\Models\Student;
 use App\Models\SchoolClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -278,6 +279,19 @@ class AdmissionController extends Controller
 
             // Create admission record
             $admission = Admission::create($data);
+            // Create new student record
+
+            $password = Student::generatePassword();
+
+            // Prepare student data
+            $studentData = array_merge($data, [
+                'password' => bcrypt($password),
+                'decrypt_pw' => $password,
+                'address' => $data['permanent_address'],
+                'pincode' => $data['permanent_pincode'],
+                'district' => $data['permanent_district']
+            ]);
+            Student::create($studentData);
 
             // Store payment records
             DB::beginTransaction();
@@ -581,8 +595,7 @@ class AdmissionController extends Controller
 
         // Format: SKA/2627/01/001
         return $institutionCode
-            . '/' . $academicYearShort
-            . '/' . $classIdPart
+            . '/' . $nextYear
             . '/' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 

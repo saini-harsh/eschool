@@ -110,7 +110,7 @@
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">ACADEMIC YEAR</label>
-                                                        <input type="text" class="form-control" value="2026|2027"
+                                                        <input type="text" class="form-control" value="2026"
                                                             readonly>
                                                     </div>
 
@@ -462,6 +462,30 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="fw-bold mb-0 text-primary">ADMISSION STATUS</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">STATUS <span class="text-danger">*</span></label>
+                                                    <select name="admission_status" class="form-control" required>
+                                                        <option value="" disabled selected>Select Status</option>
+                                                        <option value="admitted"
+                                                            {{ old('admission_status') == 'admitted' ? 'selected' : '' }}>
+                                                            Admitted
+                                                        </option>
+                                                        <option value="not admitted"
+                                                            {{ old('admission_status') == 'not admitted' ? 'selected' : '' }}>
+                                                            Not Admitted
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     </div>
                                 </div>
@@ -1274,7 +1298,8 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
                         body: JSON.stringify({
-                            class_id: classId,
+                            institution_id: institutionId,
+                            class_id: classId
                         })
                     })
                     .then(response => response.json())
