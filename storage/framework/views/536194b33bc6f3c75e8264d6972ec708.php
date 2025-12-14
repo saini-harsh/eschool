@@ -139,43 +139,43 @@ $institution = Auth::guard('institution')->user();
                                         <i class="ti ti-report"></i><span>Class</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.sections*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.sections.index')); ?>">
                                         <i class="ti ti-menu-2"></i><span>Section</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.subjects*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.subjects.index')); ?>">
                                         <i class="ti ti-book"></i><span>Subject</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.academic.assign-teacher*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.academic.assign-teacher.index')); ?>">
                                         <i class="ti ti-user"></i><span>Assign Class Teacher</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.assign-subject*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.assign-subject.index')); ?>">
                                         <i class="ti ti-checks"></i><span>Assign Subject</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.assignments*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.assignments.index')); ?>">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.academic.calendar*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.academic.calendar.index')); ?>">
                                         <i class="ti ti-calendar"></i><span>Calendar</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="d-none">
                                     <a class="<?php echo e(request()->routeIs('institution.events*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.events.index')); ?>">
                                         <i class="ti ti-list"></i><span>Event Management</span>
@@ -185,7 +185,7 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li class="d-none">
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
@@ -232,7 +232,7 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li class="d-none">
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
@@ -251,7 +251,7 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li class="d-none">
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"

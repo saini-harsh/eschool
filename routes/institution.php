@@ -55,7 +55,9 @@ Route::middleware('institution')->group(function () {
         Route::prefix('admission')->group(function () {
             Route::get('/admission-form', [StudentController::class, 'showAdmissionForm'])->name('institution.admission.admission-form');
             Route::get('/list', [AdmissionController::class, 'list'])->name('institution.admission.list');
+            Route::get('/export', [AdmissionController::class, 'exportExcel'])->name('institution.admission.export');
             Route::post('/store', [AdmissionController::class, 'store'])->name('institution.admission.store');
+            Route::get('/show/{id}', [AdmissionController::class, 'show'])->name('institution.admission.show');
             Route::get('/success/{id}', [AdmissionController::class, 'success'])->name('institution.admission.success');
             Route::get('/receipt/admission/{admissionId}/{paymentId}', [AdmissionController::class, 'generateAdmissionReceipt'])->name('institution.admission.receipt.admission');
             Route::get('/receipt/tuition/{admissionId}/{paymentId}', [AdmissionController::class, 'generateTuitionReceipt'])->name('institution.admission.receipt.tuition');

@@ -409,6 +409,37 @@ class AdmissionController extends Controller
     }
 
     /**
+     * Show admission details page
+     */
+    public function show($id)
+    {
+        $institution = Auth::guard('institution')->user();
+
+        $admission = Admission::with([
+            'institution',
+            'schoolClass',
+            'previousSchoolClass'
+        ])
+        ->where('institution_id', $institution->id)
+        ->findOrFail($id);
+
+        // Get payment records for this admission
+        $admissionPayments = Payment::with('feeStructure')
+            ->where('admission_id', $id)
+            ->get();
+
+        $tuitionFeePayments = TuitionFeePayment::with('feeStructure')
+            ->where('admission_id', $id)
+            ->get();
+
+        return view('institution.administration.students.admission.admission-details', compact(
+            'admission',
+            'admissionPayments',
+            'tuitionFeePayments'
+        ));
+    }
+
+    /**
      * Show admission success page
      */
     public function success($id)
@@ -553,5 +584,243 @@ class AdmissionController extends Controller
             . '/' . $academicYearShort
             . '/' . $classIdPart
             . '/' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Export admissions to Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        try {
+            $institution = Auth::guard('institution')->user();
+
+            $query = Admission::with(['institution', 'schoolClass', 'previousSchoolClass'])
+                ->where('institution_id', $institution->id);
+
+            // Apply same filters as list method
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhere('admission_number', 'like', '%' . $search . '%')
+                      ->orWhere('roll_number', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            }
+
+            if ($request->filled('class_id')) {
+                $query->where('class_id', $request->class_id);
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('admission_date_from')) {
+                $query->whereDate('admission_date', '>=', $request->admission_date_from);
+            }
+
+            if ($request->filled('admission_date_to')) {
+                $query->whereDate('admission_date', '<=', $request->admission_date_to);
+            }
+
+            if ($request->filled('created_from')) {
+                $query->whereDate('created_at', '>=', $request->created_from);
+            }
+
+            if ($request->filled('created_to')) {
+                $query->whereDate('created_at', '<=', $request->created_to);
+            }
+
+            $admissions = $query->orderBy('created_at', 'desc')->get();
+
+            return $this->generateExcel($admissions);
+        } catch (\Exception $e) {
+            Log::error('Error exporting admissions: ' . $e->getMessage());
+            return redirect()
+                ->route('institution.admission.list')
+                ->withErrors(['error' => 'Export failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Generate Excel file for admissions
+     */
+    private function generateExcel($admissions)
+    {
+        $excelData = [];
+
+        // Excel Headers - Comprehensive Student Details
+        $excelData[] = [
+            // Basic Information
+            'First Name',
+            'Last Name',
+            'Admission No',
+            'Roll Number',
+            'Class',
+            'PEN No',
+            'Status',
+
+            // Contact Information
+            'Email',
+            'Phone',
+
+            // Dates
+            'Admission Date',
+            'Date of Birth',
+            'Submitted Date',
+
+            // Personal Information
+            'Gender',
+            'Religion',
+            'Caste/Tribe',
+            'Blood Group',
+            'Height',
+            'Weight',
+            'Aadhaar No',
+
+            // Address Information
+            'Address',
+            'Pincode',
+            'District',
+            'Permanent Address',
+            'Permanent Pincode',
+            'Permanent District',
+
+            // Parent Information
+            'Father Name',
+            'Father Occupation',
+            'Father Phone',
+            'Mother Name',
+
+            // Guardian Information
+            'Guardian Name',
+            'Guardian Relation',
+            'Guardian Phone',
+            'Guardian Address',
+
+            // Previous Academic Information
+            'Previous School Name',
+            'Previous School Address',
+            'Previous School Class',
+            'Previous School Result',
+
+            // Payment Information
+            'Admission Fee Amount',
+            'Admission Payment Method',
+            'Tuition Fee Amount',
+            'Tuition Payment Method',
+
+            // Institution Information
+            'Institution Code'
+        ];
+
+        // Add admission data
+        foreach ($admissions as $admission) {
+            $excelData[] = [
+                // Basic Information
+                $admission->first_name ?? 'N/A',
+                $admission->last_name ?? 'N/A',
+                $admission->admission_number ?? 'N/A',
+                $admission->roll_number ?? 'N/A',
+                $admission->schoolClass->name ?? 'N/A',
+                $admission->pen_no ?? 'N/A',
+                ucfirst($admission->status ?? 'Pending'),
+
+                // Contact Information
+                $admission->email ?? 'N/A',
+                $admission->phone ?? 'N/A',
+
+                // Dates
+                $admission->admission_date ? Carbon::parse($admission->admission_date)->format('d M, Y') : 'N/A',
+                $admission->dob ? Carbon::parse($admission->dob)->format('d M, Y') : 'N/A',
+                $admission->created_at->format('d M, Y h:i A'),
+
+                // Personal Information
+                $admission->gender ?? 'N/A',
+                $admission->religion ?? 'N/A',
+                $admission->caste_tribe ?? 'N/A',
+                $admission->blood_group ?? 'N/A',
+                $admission->height ?? 'N/A',
+                $admission->weight ?? 'N/A',
+                $admission->aadhaar_no ?? 'N/A',
+
+                // Address Information
+                $admission->address ?? 'N/A',
+                $admission->pincode ?? 'N/A',
+                $admission->district ?? 'N/A',
+                $admission->permanent_address ?? 'N/A',
+                $admission->permanent_pincode ?? 'N/A',
+                $admission->permanent_district ?? 'N/A',
+
+                // Parent Information
+                $admission->father_name ?? 'N/A',
+                $admission->father_occupation ?? 'N/A',
+                $admission->father_phone ?? 'N/A',
+                $admission->mother_name ?? 'N/A',
+
+                // Guardian Information
+                $admission->guardian_name ?? 'N/A',
+                $admission->guardian_relation_text ?? 'N/A',
+                $admission->guardian_phone ?? 'N/A',
+                $admission->guardian_address ?? 'N/A',
+
+                // Previous Academic Information
+                $admission->previous_school_name ?? 'N/A',
+                $admission->previous_school_address ?? 'N/A',
+                $admission->previousSchoolClass->name ?? 'N/A',
+                $admission->previous_school_result ?? 'N/A',
+
+                // Payment Information
+                $admission->admission_fee_amount ?? 'N/A',
+                $admission->admission_payment_method ?? 'N/A',
+                $admission->tuition_fee_amount ?? 'N/A',
+                $admission->tuition_payment_method ?? 'N/A',
+
+                // Institution Information
+                $admission->institution_code ?? 'N/A'
+            ];
+        }
+
+        // Generate filename with timestamp
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filename = 'admissions_' . $timestamp . '.xls';
+
+        // Generate Excel XML format
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<?mso-application progid="Excel.Sheet"?>' . "\n";
+        $xml .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        $xml .= ' xmlns:o="urn:schemas-microsoft-com:office:office"' . "\n";
+        $xml .= ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
+        $xml .= ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+        $xml .= ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+        $xml .= '<Worksheet ss:Name="Admissions">' . "\n";
+        $xml .= '<Table>' . "\n";
+
+        foreach ($excelData as $row) {
+            $xml .= '<Row>' . "\n";
+            foreach ($row as $cell) {
+                $cellValue = htmlspecialchars($cell, ENT_XML1, 'UTF-8');
+                $xml .= '<Cell><Data ss:Type="String">' . $cellValue . '</Data></Cell>' . "\n";
+            }
+            $xml .= '</Row>' . "\n";
+        }
+
+        $xml .= '</Table>' . "\n";
+        $xml .= '</Worksheet>' . "\n";
+        $xml .= '</Workbook>';
+
+        // Set headers for Excel download
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ];
+
+        return response($xml, 200, $headers);
     }
 }

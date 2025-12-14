@@ -10,9 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description"
         content="EnvisionTechSolution Institution Management System - Manage your educational institution efficiently">
-    <meta name="keywords"
-        content="institution, school, management, dashboard, education, students, teachers, academic">
-    
+    <meta name="keywords" content="institution, school, management, dashboard, education, students, teachers, academic">
+
     <title><?php echo $__env->yieldContent('title', 'Institution Dashboard'); ?> - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
@@ -20,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- Favicon -->
-    
+
     <link rel="shortcut icon" href="<?php echo e(URL::asset('/adminpanel/img/favicon.png')); ?>">
 
     <!-- Apple Icon -->
@@ -30,6 +29,8 @@
     <script src="<?php echo e(URL::asset('/adminpanel/js/theme-script.js')); ?>" type=""></script>
 
     <?php echo $__env->make('components.dashboard.styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+    <?php echo $__env->yieldPushContent('styles'); ?>
 
 </head>
 
@@ -43,7 +44,7 @@
         <!--Content-->
         <!--Left Side Bar-->
         <?php echo $__env->make('../elements/institution/left-side-bar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-        
+
         <div class="page-wrapper">
 
             <?php echo $__env->yieldContent('content'); ?>

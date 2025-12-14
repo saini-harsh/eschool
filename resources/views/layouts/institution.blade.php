@@ -10,9 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description"
         content="EnvisionTechSolution Institution Management System - Manage your educational institution efficiently">
-    <meta name="keywords"
-        content="institution, school, management, dashboard, education, students, teachers, academic">
-    
+    <meta name="keywords" content="institution, school, management, dashboard, education, students, teachers, academic">
+
     <title>@yield('title', 'Institution Dashboard') - EnvisionTechSolution</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="">
@@ -20,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- Favicon -->
-    
+
     <link rel="shortcut icon" href="{{ URL::asset('/adminpanel/img/favicon.png') }}">
 
     <!-- Apple Icon -->
@@ -30,6 +29,8 @@
     <script src="{{URL::asset('/adminpanel/js/theme-script.js')}}" type=""></script>
 
     @include('components.dashboard.styles')
+
+    @stack('styles')
 
 </head>
 
@@ -43,7 +44,7 @@
         <!--Content-->
         <!--Left Side Bar-->
         @include('../elements/institution/left-side-bar')
-        
+
         <div class="page-wrapper">
 
             @yield('content')

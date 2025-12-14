@@ -103,6 +103,12 @@
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h6 class="fw-bold mb-0">Admission Forms ({{ $admissions->total() }})</h6>
+                <div>
+                    <a href="{{ route('institution.admission.export', request()->query()) }}"
+                        class="btn btn-success btn-sm">
+                        <i class="ti ti-file-excel me-1"></i>Export
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 @if ($admissions->count() > 0)
@@ -173,7 +179,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2">
-                                                <a href="{{ route('institution.admission.success', $admission->id) }}"
+                                                <a href="{{ route('institution.admission.show', $admission->id) }}"
                                                     class="btn btn-sm btn-outline-primary" title="View Details">
                                                     <i class="ti ti-eye"></i>
                                                 </a>

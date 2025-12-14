@@ -1,6 +1,423 @@
 <?php $__env->startSection('title', 'Print Admission Form'); ?>
 <?php $__env->startSection('content'); ?>
 
+    <style>
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-container {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 0;
+            margin: 20px auto;
+            width: 210mm;
+            min-height: 297mm;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #000;
+            box-sizing: border-box;
+        }
+
+        .form-header {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            border-bottom: 3px solid #333;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            page-break-inside: avoid;
+            box-sizing: border-box;
+        }
+
+        .header-left {
+            display: table-cell;
+            width: 120px;
+            vertical-align: middle;
+            padding-right: 20px;
+        }
+
+        .header-center {
+            display: table-cell;
+            width: auto;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0 15px;
+        }
+
+        .logo-img {
+            width: 100px;
+            max-width: 100px;
+            height: auto;
+            max-height: 100px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #e0e0e0;
+            border: 2px solid #999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #666;
+        }
+
+        .institution-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #000;
+        }
+
+        .institution-address {
+            font-size: 11px;
+            margin: 3px 0;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .institution-contact {
+            font-size: 10px;
+            margin: 3px 0 0 0;
+            color: #333;
+        }
+
+        .form-title-section {
+            background: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 2px solid #333;
+            page-break-inside: avoid;
+        }
+
+        .form-title-text {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #000;
+        }
+
+        .form-number {
+            font-size: 11px;
+            font-weight: 600;
+            margin: 0;
+            color: #333;
+        }
+
+        .form-body {
+            padding: 20px;
+            background: white;
+        }
+
+        .section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .field {
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .field label {
+            font-weight: 600;
+            color: #000;
+            font-size: 10px;
+            min-width: 140px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .field span {
+            color: #000;
+            font-size: 10px;
+            flex: 1;
+            word-wrap: break-word;
+        }
+
+        .form-footer {
+            background: #f5f5f5;
+            padding: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .signature-left,
+        .signature-right {
+            width: 45%;
+            text-align: center;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid #333;
+            height: 50px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .signature-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #000;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .footer-text-section {
+            text-align: center;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .footer-text {
+            font-size: 9px;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        .personal-info-row {
+            align-items: flex-start;
+        }
+
+        .photo-column {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .student-photo-container {
+            text-align: center;
+            padding: 0;
+            width: 100%;
+        }
+
+        .student-photo {
+            max-width: 50px;
+            max-height: 50px;
+            width: auto;
+            height: auto;
+            border: 2px solid #ddd;
+            /* padding: 3px; */
+            display: block;
+            /* margin: 0 auto; */
+        }
+
+        .details-column .field label {
+            min-width: 120px;
+        }
+
+        @media print {
+
+            .btn,
+            .breadcrumb,
+            .page-header,
+            .sidebar,
+            .navbar,
+            .main-header,
+            .content>.d-flex {
+                display: none !important;
+            }
+
+            @page {
+                margin: 0 !important;
+                size: A4;
+            }
+
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                font-size: 12px !important;
+            }
+
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+            }
+
+            .content {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+
+            .print-container {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 210mm !important;
+                min-height: 297mm !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .form-header {
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                display: table !important;
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            .header-left {
+                display: table-cell !important;
+                width: 120px !important;
+                vertical-align: middle !important;
+                padding-right: 20px !important;
+            }
+
+            .header-center {
+                display: table-cell !important;
+                width: auto !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+                padding: 0 15px !important;
+            }
+
+            .logo-img {
+                width: 100px !important;
+                max-width: 100px !important;
+                height: auto !important;
+                display: block !important;
+            }
+
+            .logo-placeholder {
+                width: 100px !important;
+                height: 100px !important;
+                display: inline-flex !important;
+            }
+
+            .form-title-section {
+                background: white !important;
+                page-break-inside: avoid !important;
+            }
+
+            .form-body {
+                background: white !important;
+                padding: 20px !important;
+            }
+
+            .section {
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid !important;
+                margin-bottom: 15px !important;
+                padding: 15px !important;
+            }
+
+            .section-title {
+                border-bottom: 2px solid #333 !important;
+            }
+
+            .form-footer {
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .signature-section {
+                display: flex !important;
+                justify-content: space-between !important;
+            }
+
+            .signature-line {
+                border-bottom: 2px solid #333 !important;
+            }
+
+            .row {
+                margin-left: -15px !important;
+                margin-right: -15px !important;
+            }
+
+            .col-md-6,
+            .col-md-4,
+            .col-md-12,
+            .col-md-3,
+            .col-md-9 {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+
+            /* Preserve exact layout from screen */
+            .personal-info-row {
+                display: flex !important;
+                align-items: flex-start !important;
+                flex-wrap: nowrap !important;
+            }
+
+            .photo-column {
+                flex: 0 0 25% !important;
+                max-width: 25% !important;
+                width: 25% !important;
+                display: flex !important;
+                align-items: flex-start !important;
+                justify-content: center !important;
+            }
+
+            .details-column {
+                flex: 0 0 75% !important;
+                max-width: 75% !important;
+                width: 75% !important;
+            }
+
+            .details-column .field label {
+                min-width: 120px !important;
+            }
+
+            .student-photo-container {
+                width: 100% !important;
+            }
+
+            .student-photo {
+                max-width: 50px !important;
+                max-height: 60px !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+
     <div class="content">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h5 class="fw-bold">Admission Form</h5>
@@ -17,7 +434,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-11">
                 <div class="print-container">
-                    <!-- Header -->
+                    <!-- Letterhead Header -->
                     <div class="form-header">
                         <div class="header-left">
                             <?php if($admission->institution->logo): ?>
@@ -32,16 +449,25 @@
                             <h2 class="institution-name"><?php echo e($admission->institution->name); ?></h2>
                             <p class="institution-address"><?php echo e($admission->institution->address); ?></p>
                             <p class="institution-contact">
-                                <?php echo e($admission->institution->phone); ?> | <?php echo e($admission->institution->email); ?>
+                                <?php if($admission->institution->phone): ?>
+                                    Phone: <?php echo e($admission->institution->phone); ?>
 
+                                <?php endif; ?>
+                                <?php if($admission->institution->phone && $admission->institution->email): ?>
+                                    |
+                                <?php endif; ?>
+                                <?php if($admission->institution->email): ?>
+                                    Email: <?php echo e($admission->institution->email); ?>
+
+                                <?php endif; ?>
                             </p>
                         </div>
-                        <div class="header-right">
-                            <div class="form-title">
-                                <h1>ADMISSION FORM</h1>
-                                <p class="form-number">Admission No: <?php echo e($admission->admission_number ?? 'N/A'); ?></p>
-                            </div>
-                        </div>
+                    </div>
+
+                    <!-- Form Title Section -->
+                    <div class="form-title-section">
+                        <h1 class="form-title-text">ADMISSION FORM</h1>
+                        <p class="form-number">Admission No: <?php echo e($admission->admission_number ?? 'N/A'); ?></p>
                     </div>
 
                     <!-- Form Body -->
@@ -92,41 +518,55 @@
                         <!-- Personal Information -->
                         <div class="section">
                             <h3 class="section-title">PERSONAL INFORMATION</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>First Name:</label>
-                                        <span><?php echo e($admission->first_name); ?></span>
-                                    </div>
+                            <div class="row personal-info-row">
+                                <!-- Photo on the left -->
+                                <div class="col-md-2 photo-column">
+                                    <?php if($admission->photo): ?>
+                                        <div class="student-photo-container">
+                                            <img src="<?php echo e(asset($admission->photo)); ?>" alt="Student Photo"
+                                                class="student-photo">
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Last Name:</label>
-                                        <span><?php echo e($admission->last_name); ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Gender:</label>
-                                        <span><?php echo e($admission->gender ?? 'N/A'); ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Date of Birth:</label>
-                                        <span><?php echo e($admission->dob ? \Carbon\Carbon::parse($admission->dob)->format('d M, Y') : 'N/A'); ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Religion:</label>
-                                        <span><?php echo e($admission->religion ?? 'N/A'); ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Caste/Tribe:</label>
-                                        <span><?php echo e($admission->caste_tribe ?? 'N/A'); ?></span>
+                                <!-- Details on the right -->
+                                <div class="col-md-10 details-column">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>First Name:</label>
+                                                <span><?php echo e($admission->first_name); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Last Name:</label>
+                                                <span><?php echo e($admission->last_name); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Gender:</label>
+                                                <span><?php echo e($admission->gender ?? 'N/A'); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Date of Birth:</label>
+                                                <span><?php echo e($admission->dob ? \Carbon\Carbon::parse($admission->dob)->format('d M, Y') : 'N/A'); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Religion:</label>
+                                                <span><?php echo e($admission->religion ?? 'N/A'); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Caste/Tribe:</label>
+                                                <span><?php echo e($admission->caste_tribe ?? 'N/A'); ?></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -325,209 +765,30 @@
 
                     <!-- Footer -->
                     <div class="form-footer">
-                        <p class="footer-text">
-                            <strong>Generated On:</strong> <?php echo e(now()->format('d M Y, h:i A')); ?>
+                        <!-- Signature Section -->
+                        <div class="signature-section">
+                            <div class="signature-left">
+                                <div class="signature-line"></div>
+                                <p class="signature-label">Parent's Signature</p>
+                            </div>
+                            <div class="signature-right">
+                                <div class="signature-line"></div>
+                                <p class="signature-label">Principal's Signature</p>
+                            </div>
+                        </div>
 
-                        </p>
-                        <p class="footer-text">
-                            This is a computer generated form and does not require a signature.
-                        </p>
+                        <!-- Footer Text -->
+                        <div class="footer-text-section">
+                            <p class="footer-text">
+                                <strong>Generated On:</strong> <?php echo e(now()->format('d M Y, h:i A')); ?>
+
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <?php $__env->startPush('styles'); ?>
-        <style>
-            .print-container {
-                background: white;
-                border: 2px solid #2c3e50;
-                border-radius: 8px;
-                padding: 0;
-                margin: 20px auto;
-                max-width: 1000px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                font-size: 13px;
-                line-height: 1.6;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-
-            .form-header {
-                background: #f8f9fa;
-                color: #2c3e50;
-                padding: 20px;
-                border-bottom: 2px solid #3e007c;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .header-left {
-                flex: 0 0 auto;
-            }
-
-            .header-center {
-                flex: 1;
-                text-align: center;
-                padding: 0 20px;
-            }
-
-            .header-right {
-                flex: 0 0 auto;
-                text-align: right;
-            }
-
-            .logo-img {
-                max-width: 120px;
-                border-radius: 4px;
-            }
-
-            .logo-placeholder {
-                width: 100px;
-                height: 100px;
-                background: rgba(52, 62, 80, 0.1);
-                border: 2px solid #2c3e50;
-                border-radius: 4px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 2.5rem;
-            }
-
-            .institution-name {
-                font-size: 20px;
-                font-weight: bold;
-                margin: 0 0 8px 0;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-
-            .institution-address {
-                font-size: 12px;
-                margin: 4px 0;
-                opacity: 0.9;
-            }
-
-            .institution-contact {
-                font-size: 11px;
-                margin: 4px 0;
-                opacity: 0.9;
-            }
-
-            .form-title h1 {
-                font-size: 18px;
-                font-weight: bold;
-                margin: 0 0 8px 0;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-
-            .form-number {
-                font-size: 12px;
-                font-weight: 600;
-                margin: 0;
-            }
-
-            .form-body {
-                padding: 25px;
-                background: #fafbfc;
-            }
-
-            .section {
-                background: white;
-                padding: 20px;
-                margin-bottom: 20px;
-                border: 1px solid #e1e8ed;
-                border-radius: 6px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            }
-
-            .section-title {
-                font-size: 14px;
-                font-weight: bold;
-                color: #2c3e50;
-                margin-bottom: 15px;
-                padding-bottom: 8px;
-                border-bottom: 2px solid #3e007c;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .field {
-                margin-bottom: 12px;
-                padding-bottom: 8px;
-                border-bottom: 1px dotted #bdc3c7;
-            }
-
-            .field:last-child {
-                border-bottom: none;
-            }
-
-            .field label {
-                font-weight: 600;
-                color: #34495e;
-                font-size: 11px;
-                display: inline-block;
-                min-width: 150px;
-                margin-right: 10px;
-            }
-
-            .field span {
-                color: #2c3e50;
-                font-size: 12px;
-            }
-
-            .form-footer {
-                background: #f8f9fa;
-                padding: 15px 20px;
-                text-align: center;
-                border-top: 2px solid #ecf0f1;
-                border-radius: 0 0 6px 6px;
-            }
-
-            .footer-text {
-                font-size: 10px;
-                color: #7f8c8d;
-                margin: 5px 0;
-            }
-
-            @media print {
-
-                .btn,
-                .breadcrumb,
-                .page-header,
-                .sidebar,
-                .navbar,
-                .main-header {
-                    display: none !important;
-                }
-
-                @page {
-                    margin: 0.3in !important;
-                    size: A4;
-                }
-
-                body {
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    background: white !important;
-                }
-
-                .print-container {
-                    border: 2px solid #2c3e50 !important;
-                    box-shadow: none !important;
-                    margin: 0 !important;
-                    max-width: none !important;
-                    width: 100% !important;
-                }
-
-                .section {
-                    page-break-inside: avoid;
-                }
-            }
-        </style>
-    <?php $__env->stopPush(); ?>
 
 <?php $__env->stopSection(); ?>
 
