@@ -98,6 +98,7 @@ return new class extends Migration
             $table->string('document_03_file')->nullable();
             $table->string('document_04_file')->nullable();
 
+            $table->rememberToken();
             $table->timestamps();
         });
     }
