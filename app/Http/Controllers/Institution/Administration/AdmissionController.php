@@ -120,6 +120,8 @@ class AdmissionController extends Controller
             'document_02_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
             'document_03_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
             'document_04_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'admission_payment_amount' => 'required',
+            'admission_payment_method' => 'required'
         ]);
 
         if ($validator->fails()) {
