@@ -93,6 +93,10 @@ return new class extends Migration
             $table->enum('admission_payment_method', ['online', 'cash'])->nullable();
             $table->decimal('tuition_fee_amount', 10, 2)->nullable();
             $table->enum('tuition_payment_method', ['online', 'cash'])->nullable();
+            $table->decimal('hostel_admission_fee_amount', 10, 2)->nullable();
+            $table->enum('hostel_admission_payment_method', ['online', 'cash'])->nullable();
+            $table->decimal('hostel_tuition_fee_amount', 10, 2)->nullable();
+            $table->enum('hostel_tuition_payment_method', ['online', 'cash'])->nullable();
 
             // Status and Metadata
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

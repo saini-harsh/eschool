@@ -10,6 +10,8 @@ use App\Models\TuitionFeePayment;
 use App\Models\FeeStructure;
 use App\Models\Student;
 use App\Models\SchoolClass;
+use App\Models\Hostel;
+use App\Models\HostelPayment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -102,7 +104,7 @@ class AdmissionController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
+            'phone' => 'nullable|string|max:20',
             'gender' => 'nullable|in:Male,Female,Other',
             'class_id' => 'nullable|exists:classes,id',
             'permanent_pincode' => 'nullable|string|max:10',
@@ -138,8 +140,8 @@ class AdmissionController extends Controller
                 'admission_date' => $request->admission_date,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
+                'email' => $request->email ?? '',
+                'phone' => $request->phone ?? '',
                 'gender' => $request->gender,
                 'class_id' => $request->class_id,
                 'pen_no' => $request->pen_no,
@@ -193,6 +195,10 @@ class AdmissionController extends Controller
                 'admission_payment_method' => $request->admission_payment_method ?? null,
                 'tuition_fee_amount' => $request->tuition_payment_amount ?? null,
                 'tuition_payment_method' => $request->tuition_payment_method ?? null,
+                'hostel_admission_fee_amount' => $request->hostel_admission_payment_amount ?? null,
+                'hostel_admission_payment_method' => $request->hostel_admission_payment_method ?? null,
+                'hostel_tuition_fee_amount' => $request->hostel_tuition_payment_amount ?? null,
+                'hostel_tuition_payment_method' => $request->hostel_tuition_payment_method ?? null,
 
                 // Status
                 'status' => 'pending',
@@ -289,9 +295,16 @@ class AdmissionController extends Controller
                 'decrypt_pw' => $password,
                 'address' => $data['permanent_address'],
                 'pincode' => $data['permanent_pincode'],
-                'district' => $data['permanent_district']
+                'district' => $data['permanent_district'],
+                'student_id' => $request->admission_number
             ]);
-            Student::create($studentData);
+            $student = Student::create($studentData);
+
+            // Create hostel record
+            $hostel = Hostel::create([
+                'student_id' => $student->id ?? null,
+                'institution_id' => $institutionId,
+            ]);
 
             // Store payment records
             DB::beginTransaction();
@@ -322,7 +335,7 @@ class AdmissionController extends Controller
                         Payment::create([
                             'institution_id' => $institutionId,
                             'admission_id' => $admission->id,
-                            'student_id' => null, // Will be updated when student is created
+                            'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $admissionFeeStructure->id,
                             'amount' => $request->admission_payment_amount,
                             'payment_method' => $request->admission_payment_method ?? 'cash',
@@ -371,7 +384,7 @@ class AdmissionController extends Controller
                         TuitionFeePayment::create([
                             'institution_id' => $institutionId,
                             'admission_id' => $admission->id,
-                            'student_id' => null, // Will be updated when student is created
+                            'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $tuitionFeeStructure->id,
                             'payment_amount' => $request->tuition_payment_amount,
                             'payment_method' => $request->tuition_payment_method ?? 'cash',
@@ -388,7 +401,7 @@ class AdmissionController extends Controller
                         Payment::create([
                             'institution_id' => $institutionId,
                             'admission_id' => $admission->id,
-                            'student_id' => null, // Will be updated when student is created
+                            'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $tuitionFeeStructure->id,
                             'amount' => $request->tuition_payment_amount,
                             'payment_method' => $request->tuition_payment_method ?? 'cash',
@@ -401,6 +414,55 @@ class AdmissionController extends Controller
                             }, $selectedMonthsArray)),
                         ]);
                     }
+                }
+
+                if ($request->hostel_admission_payment_amount && $request->hostel_admission_payment_amount > 0 && $request->class_id) {
+                    $hostelAdmissionFeeStructure = FeeStructure::where('institution_id', $institutionId)
+                        ->where('class_id', $request->class_id)
+                        ->where('fee_type', 'onetime')
+                        ->where(function ($query) {
+                            $query->where('name', 'like', '%hostel admission%');
+                        })
+                        ->where('status', 1)
+                        ->first();
+                    if ($hostelAdmissionFeeStructure) {
+                        Payment::create([
+                            'institution_id' => $institutionId,
+                            'admission_id' => $admission->id,
+                            'student_id' => $student->id ?? null, // Will be updated when student is created
+                            'fee_structure_id' => $hostelAdmissionFeeStructure->id,
+                            'amount' => $request->hostel_admission_payment_amount,
+                            'payment_method' => $request->hostel_admission_payment_method ?? 'cash',
+                            'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
+                            'receipt_number' => Payment::generateReceiptNumber($institutionId),
+                            'status' => 'completed',
+                            'notes' => 'Hostel admission fee payment made during admission',
+                        ]);
+                    }
+                }
+
+                if ($request->hostel_tuition_payment_amount) {
+                    $hostelTuitionFeeStructure = FeeStructure::where('institution_id', $institutionId)
+                        ->where('class_id', $request->class_id)
+                        ->where('fee_type', 'monthly')
+                        ->where(function ($query) {
+                            $query->where('name', 'like', '%hostel tution%');
+                        })
+                        ->where('status', 1)
+                        ->first();
+                    HostelPayment::create([
+                            'hostel_id' => $hostel->id ?? null,
+                            'institution_id' => $student->institution_id ?? null,
+                            'amount' => $request->hostel_tuition_payment_amount,
+                            // 'payment_type' => 'hostel_tuition',
+                            'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
+                            'months_paid' => $request->hostel_tuition_selected_months,
+                            'receipt_number' => HostelPayment::generateReceiptNumber($student->institution_id),
+                            'payment_method' => $request->hostel_tuition_payment_method ?? 'cash',
+                            'fee_structure_id' => $hostelTuitionFeeStructure->id,
+                            'student_id' => $student->id ?? null,
+                        ]);
+
                 }
 
                 DB::commit();
@@ -494,13 +556,13 @@ class AdmissionController extends Controller
             ->where('institution_id', $institution->id)
             ->findOrFail($admissionId);
 
-        $payment = Payment::with(['feeStructure', 'feeStructure.schoolClass'])
+        $payment = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass','TuitionFeePayment'])
             ->where('admission_id', $admissionId)
             ->where('id', $paymentId)
             ->where('institution_id', $institution->id)
             ->firstOrFail();
-
-        return view('institution.administration.students.receipts.admission-receipt', compact('admission', 'payment'));
+        return view('institution.payment.payments.show', compact('payment'));
+        // return view('institution.administration.students.receipts.admission-receipt', compact('admission', 'payment'));
     }
 
     /**
@@ -514,13 +576,14 @@ class AdmissionController extends Controller
             ->where('institution_id', $institution->id)
             ->findOrFail($admissionId);
 
-        $payment = TuitionFeePayment::with(['feeStructure', 'feeStructure.schoolClass'])
+        $payment = TuitionFeePayment::with(['student', 'feeStructure', 'feeStructure.schoolClass','Payment'])
             ->where('admission_id', $admissionId)
             ->where('id', $paymentId)
             ->where('institution_id', $institution->id)
             ->firstOrFail();
 
-        return view('institution.administration.students.receipts.tuition-receipt', compact('admission', 'payment'));
+            return view('institution.payment.payments.show', compact('payment'));
+        // return view('institution.administration.students.receipts.tuition-receipt', compact('admission', 'payment'));
     }
 
     /**

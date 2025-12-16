@@ -173,7 +173,7 @@ class Student extends Authenticatable
             $newRollNumber = 1;
         }
 
-        return str_pad($newRollNumber, 3, '0', STR_PAD_LEFT);
+        return str_pad($newRollNumber, 2, '0', STR_PAD_LEFT);
     }
 
     public function getAuthPassword()

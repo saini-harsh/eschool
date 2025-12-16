@@ -361,6 +361,7 @@ Route::middleware('institution')->group(function () {
             Route::post('/store', [PaymentController::class, 'store'])->name('institution.payments.store');
             Route::get('/history', [PaymentController::class, 'index'])->name('institution.payments.index');
             Route::get('/{id}', [PaymentController::class, 'show'])->name('institution.payments.show');
+            Route::get('/hostel/{id}', [PaymentController::class, 'showHostelPayment'])->name('institution.payments.hostel.show');
             Route::get('/students/{classId}', [PaymentController::class, 'getStudentsByClass'])->name('institution.payments.students');
         });
 

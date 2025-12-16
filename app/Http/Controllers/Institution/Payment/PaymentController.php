@@ -16,12 +16,23 @@ class PaymentController extends Controller
     /**
      * Display a listing of payments.
      */
-    public function index(Request $request)
+    public function indexOLD(Request $request)
     {
         $institution = Auth::guard('institution')->user();
 
         $query = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section'])
             ->where('institution_id', $institution->id);
+        // Fetch HostelPayments for this institution
+        $hostelPaymentsQuery = \App\Models\HostelPayment::with(['hostel'])
+            ->where('institution_id', $institution->id);
+
+        // Apply filters to HostelPayments
+        if ($request->filled('payment_method')) {
+            $hostelPaymentsQuery->whereIn('payment_method', (array) $request->payment_method);
+        }
+        // Note: HostelPayment does not have student_name or class_section filters
+        // Fetch results (limit to same number as Payment for later merge)
+        $hostelPayments = $hostelPaymentsQuery->get();
 
         // Apply filters
         if ($request->filled('payment_method')) {
@@ -82,7 +93,31 @@ class PaymentController extends Controller
 
         return view('institution.payment.payments.index', compact('payments', 'classes'));
     }
+    public function index(Request $request)
+{
+    $institution = Auth::guard('institution')->user();
 
+    // Fetch all Payment records for this institution
+    $spayments = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section'])
+        ->where('institution_id', $institution->id)
+        ->get();
+
+    // Fetch all HostelPayment records for this institution
+    $hostelPayments = \App\Models\HostelPayment::with(['hostel'])
+        ->where('institution_id', $institution->id)
+        ->get();
+
+        $payments = collect($spayments)->concat($hostelPayments);
+
+    // Get classes and sections for filter dropdown
+    $classes = SchoolClass::where('institution_id', $institution->id)
+        ->where('status', 1)
+        ->with('sections')
+        ->orderBy('name')
+        ->get();
+
+    return view('institution.payment.payments.index', compact('payments', 'hostelPayments', 'classes'));
+}
     /**
      * Show the form for creating a new payment.
      */
@@ -160,8 +195,18 @@ class PaymentController extends Controller
      */
     public function show($id)
     {
+
         $institution = Auth::guard('institution')->user();
-        $payment = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section'])
+        $payment = Payment::with(['student', 'feeStructure', 'feeStructure.schoolClass', 'feeStructure.section', 'tuitionFeePayment'])
+            ->where('institution_id', $institution->id)
+            ->findOrFail($id);
+
+        return view('institution.payment.payments.show', compact('payment'));
+    }
+    public function showHostelPayment($id)
+    {
+        $institution = Auth::guard('institution')->user();
+        $payment = \App\Models\HostelPayment::with(['hostel', 'feeStructure', 'student'])
             ->where('institution_id', $institution->id)
             ->findOrFail($id);
 

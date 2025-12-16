@@ -48,8 +48,6 @@ class FeeStructureController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'class_id' => 'nullable|exists:classes,id',
-            'section_id' => 'nullable|exists:sections,id',
             'amount' => 'required|numeric|min:0',
             'fee_type' => 'required|in:monthly,quarterly,yearly,onetime',
             'due_date' => 'required|string|date_format:Y-m-d',
@@ -64,23 +62,38 @@ class FeeStructureController extends Controller
         }
 
         $institution = Auth::guard('institution')->user();
-
-        $feeStructure = FeeStructure::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'institution_id' => $institution->id,
-            'class_id' => $request->class_id,
-            'section_id' => $request->section_id,
-            'amount' => $request->amount,
-            'fee_type' => $request->fee_type,
-            'due_date' => $request->due_date,
-            'status' => 1,
-        ]);
+        if($request->class_id == 0){
+            $classes = SchoolClass::where('institution_id', $institution->id)->get();
+            foreach($classes as $class){
+                FeeStructure::create([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'institution_id' => $institution->id,
+                    'class_id' => $class->id,
+                    'section_id' => $request->section_id,
+                    'amount' => $request->amount,
+                    'fee_type' => $request->fee_type,
+                    'due_date' => $request->due_date,
+                    'status' => 1,
+                ]);
+            }
+        }else{
+            FeeStructure::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'institution_id' => $institution->id,
+                'class_id' => $request->class_id,
+                'section_id' => $request->section_id,
+                'amount' => $request->amount,
+                'fee_type' => $request->fee_type,
+                'due_date' => $request->due_date,
+                'status' => 1,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Fee structure created successfully',
-            'data' => $feeStructure
         ]);
     }
 

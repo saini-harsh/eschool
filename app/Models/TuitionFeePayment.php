@@ -78,33 +78,38 @@ class TuitionFeePayment extends Model
         $institution = Institution::find($institutionId);
         $institutionCode = $institution->institution_code ?? 'INST';
 
-        $datePart = date('Ymd');
-
-        // Get the last receipt number for this institution and date
+        // Get the last sequential number for this institution (for tuition fee payments)
         $lastPayment = self::where('institution_id', $institutionId)
-            ->where('receipt_number', 'like', $institutionCode . '/TFP/' . $datePart . '/%')
+            ->where('receipt_number', 'like', $institutionCode . '/SF/%')
             ->orderBy('id', 'desc')
             ->first();
 
         if ($lastPayment && $lastPayment->receipt_number) {
-            // Extract sequential number
             $parts = explode('/', $lastPayment->receipt_number);
-            $lastNumber = isset($parts[3]) ? (int)$parts[3] : 0;
+            $lastNumber = isset($parts[2]) ? (int)ltrim($parts[2], '0') : 0;
             $sequentialNumber = $lastNumber + 1;
         } else {
             $sequentialNumber = 1;
         }
 
-        $receiptNumber = $institutionCode . '/TFP/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+        $receiptNumber = $institutionCode . '/TF/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
 
-        // Double-check uniqueness (in case of race condition)
+        // Double-check uniqueness
         $counter = 0;
         while (self::where('receipt_number', $receiptNumber)->exists() && $counter < 100) {
             $sequentialNumber++;
-            $receiptNumber = $institutionCode . '/TFP/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+            $receiptNumber = $institutionCode . '/TF/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
             $counter++;
         }
 
         return $receiptNumber;
+    }
+
+    /**
+     * Get the payment associated with this tuition fee payment.
+     */
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'receipt_number', 'receipt_number');
     }
 }

@@ -67,7 +67,7 @@
                                 <div class="mb-3">
                                     <label for="class_id" class="form-label">Class</label>
                                     <select class="form-select" id="class_id" name="class_id">
-                                        <option value="">Select Class (Optional)</option>
+                                        <option value="0">Select All (Optional)</option>
                                         @foreach($classes as $class)
                                             <option value="{{ $class->id }}">{{ $class->name }}</option>
                                         @endforeach
@@ -143,9 +143,9 @@ $(document).ready(function() {
     $('#class_id').change(function() {
         const classId = $(this).val();
         const sectionSelect = $('#section_id');
-        
+
         sectionSelect.html('<option value="">Loading sections...</option>');
-        
+
         if (classId) {
             $.ajax({
                 url: `/institution/fee-structure/sections/${classId}`,
@@ -168,13 +168,13 @@ $(document).ready(function() {
     // Form submission
     $('#feeStructureForm').submit(function(e) {
         e.preventDefault();
-        
+
         // Clear previous validation errors
         $('.form-control, .form-select').removeClass('is-invalid');
         $('.invalid-feedback').text('');
-        
+
         const formData = new FormData(this);
-        
+
         $.ajax({
             url: '{{ route("institution.fee-structure.store") }}',
             method: 'POST',

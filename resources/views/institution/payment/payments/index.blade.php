@@ -180,18 +180,6 @@
             </div>
         </div>
 
-        <!-- Payment History -->
-        @if ($payments->count() > 0)
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h6 class="mb-0">Showing {{ $payments->firstItem() }} to {{ $payments->lastItem() }} of
-                        {{ $payments->total() }} payments</h6>
-                </div>
-                <div>
-                    <span class="text-muted">Page {{ $payments->currentPage() }} of {{ $payments->lastPage() }}</span>
-                </div>
-            </div>
-        @endif
 
         <div class="row">
             <div class="col-12">
@@ -216,10 +204,17 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
                                                     <h6 class="fs-14 mb-0">
-                                                        <a href="{{ route('institution.payments.show', $payment->id) }}"
-                                                            class="text-primary">
-                                                            {{ $payment->receipt_number }}
-                                                        </a>
+                                                @if($payment instanceof \App\Models\HostelPayment)
+                                                        <a href="{{ route('institution.payments.hostel.show', $payment->id) }}"
+                                                                class="text-primary">
+                                                                {{ $payment->receipt_number }}
+                                                            </a>
+                                                        @else
+                                                            <a href="{{ route('institution.payments.show', $payment->id) }}"
+                                                                class="text-primary">
+                                                                {{ $payment->receipt_number }}
+                                                            </a>
+                                                        @endif
                                                     </h6>
                                                 </div>
                                             </div>
@@ -255,10 +250,10 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="fs-14 mb-0">{{ $payment->payment_date->format('d M Y') }}
+                                                    <h6 class="fs-14 mb-0">
+                                                        {{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}
                                                     </h6>
-                                                    <small
-                                                        class="text-muted">{{ $payment->payment_date->format('h:i A') }}</small>
+
                                                 </div>
                                             </div>
                                         </td>
@@ -290,12 +285,6 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
-                    @if ($payments->hasPages())
-                        <div class="d-flex justify-content-center mt-4">
-                            {{ $payments->links() }}
-                        </div>
-                    @endif
                 @else
                     <div class="text-center py-5">
                         <div class="mb-3">

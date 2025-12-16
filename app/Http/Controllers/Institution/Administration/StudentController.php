@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Institution;
 use App\Models\SchoolClass;
+use App\Models\District;
 use Illuminate\Support\Str;
 use App\Models\FeeStructure;
 use Illuminate\Http\Request;
@@ -1197,6 +1198,7 @@ class StudentController extends Controller
         $classes = SchoolClass::where('institution_id', $institutionId)->get();
         $sections = Section::where('institution_id', $institutionId)->get();
         $feeStructure = FeeStructure::where('institution_id', $institutionId)->get();
-        return view('institution.administration.students.admission.admission-form', compact('institution', 'classes', 'sections', 'feeStructure'));
+        $districts = District::all();
+        return view('institution.administration.students.admission.admission-form', compact('institution', 'classes', 'sections', 'feeStructure', 'districts'));
     }
 }

@@ -627,7 +627,7 @@
                         </div>
 
                         <!-- Medical Information -->
-                        <div class="section">
+                        <div class="section d-none">
                             <h3 class="section-title">MEDICAL INFORMATION</h3>
                             <div class="row">
                                 <div class="col-md-4">
@@ -683,6 +683,7 @@
                         </div>
 
                         <!-- Guardian Information -->
+                        @if ($admission->guardian_name)
                         <div class="section">
                             <h3 class="section-title">GUARDIAN INFORMATION</h3>
                             <div class="row">
@@ -712,7 +713,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @endif
                         <!-- Previous Academic Information -->
                         @if ($admission->previous_school_name)
                             <div class="section">

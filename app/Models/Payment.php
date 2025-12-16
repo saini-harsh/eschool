@@ -70,33 +70,42 @@ class Payment extends Model
         $institution = Institution::find($institutionId);
         $institutionCode = $institution->institution_code ?? 'INST';
 
-        $datePart = date('Ymd');
-
-        // Get the last receipt number for this institution and date
+        // Get the last sequential number for this institution (for SF, i.e., School Fee/Student Fee)
         $lastPayment = self::where('institution_id', $institutionId)
-            ->where('receipt_number', 'like', $institutionCode . '/PAY/' . $datePart . '/%')
+            ->where('receipt_number', 'like', $institutionCode . '/SF/%')
             ->orderBy('id', 'desc')
             ->first();
 
         if ($lastPayment && $lastPayment->receipt_number) {
-            // Extract sequential number
             $parts = explode('/', $lastPayment->receipt_number);
-            $lastNumber = isset($parts[3]) ? (int)$parts[3] : 0;
+            $lastNumber = isset($parts[2]) ? (int)ltrim($parts[2], '0') : 0;
             $sequentialNumber = $lastNumber + 1;
         } else {
             $sequentialNumber = 1;
         }
 
-        $receiptNumber = $institutionCode . '/PAY/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+        $receiptNumber = $institutionCode . '/SF/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
 
         // Double-check uniqueness (in case of race condition)
         $counter = 0;
         while (self::where('receipt_number', $receiptNumber)->exists() && $counter < 100) {
             $sequentialNumber++;
-            $receiptNumber = $institutionCode . '/PAY/' . $datePart . '/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
+            $receiptNumber = $institutionCode . '/SF/' . str_pad($sequentialNumber, 4, '0', STR_PAD_LEFT);
             $counter++;
         }
 
         return $receiptNumber;
+    }
+
+    /**
+     * Get the tuition fee payment associated with this payment.
+     */
+    public function tuitionFeePayment()
+    {
+        return $this->hasOne(TuitionFeePayment::class, 'receipt_number', 'receipt_number');
+    }
+    public function hostelPayment()
+    {
+        return $this->hasOne(HostelPayment::class, 'receipt_number', 'receipt_number');
     }
 }

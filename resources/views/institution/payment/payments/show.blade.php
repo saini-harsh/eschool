@@ -51,14 +51,15 @@
                     </div>
                     <div class="header-center">
                         <h2 class="institution-name">{{ $payment->institution->name }}</h2>
-                        <p class="institution-address">{{ $payment->institution->address }}</p>
-                        <p class="institution-contact">
-                            {{ $payment->institution->phone }} | {{ $payment->institution->email }}
+                        <p class="institution-address">{{ $payment->institution->address }} <br>{{ $payment->institution->district }} District- {{ $payment->institution->pincode }}</p>
+
+                        <p class="institution-moto">
+                           "Study with purpose"
                         </p>
                     </div>
                     <div class="header-right">
                         <div class="receipt-title">
-                            <h1>PAYMENT RECEIPT</h1>
+                            <h1>RECEIPT</h1>
                             <div class="receipt-number">
                                 <span class="label">Receipt No:</span>
                                 <span class="value">{{ $payment->receipt_number }}</span>
@@ -75,7 +76,7 @@
                         <div class="content-left">
                             <!-- Student Information -->
                             <div class="info-section">
-                                <h3 class="section-title">Student Information</h3>
+                                <h3 class="section-title d-none">Student Information</h3>
                                 <div class="info-list">
                                     <div class="info-item">
                                         <span class="label">Name:</span>
@@ -105,8 +106,68 @@
                                         <span class="value">{{ $payment->feeStructure->name }}</span>
                                     </div>
                                     <div class="info-item">
-                                        <span class="label">Fee Type:</span>
-                                        <span class="value fee-type">{{ $payment->feeStructure->fee_type == 'onetime' ? 'One Time' : ucfirst($payment->feeStructure->fee_type) }}</span>
+                                        <span class="label">Amount Paid:</span>
+                                        @if(isset($payment->amount))
+                                            <span class="value">₹{{ number_format($payment->amount, 2) }}</span>
+                                        @else
+                                            <span class="value">₹{{ number_format($payment->payment_amount, 2) }}</span>
+                                        @endif
+                                    </div>
+                                    @php
+                                        // Calculate pending due (if any)
+
+
+                                        $monthsArray = explode(',', $payment['months_paid']);
+                                        $numberOfMonths = count($monthsArray);
+
+                                        // Calculate total fee
+                                        $monthlyFee = (float)$payment->feeStructure['amount'];
+                                        $totalFee = $numberOfMonths * $monthlyFee;
+
+                                        // Paid amount
+                                        $amountPaid = (float)$payment['amount'];
+
+                                        $monthlyFee = (float)$payment->feeStructure['amount'];
+
+                                        // Calculate the number of months paid
+                                        $monthsArray = explode(',', $payment['months_paid']);
+                                        $numberOfMonths = count($monthsArray);
+
+                                        // Calculate the total fee for the months paid
+                                        $totalFee = $numberOfMonths * $monthlyFee;
+
+                                        // Get the amount paid from the payment details
+                                        $amountPaid = (float)$payment['amount'];
+
+                                        // Calculate the pending due
+                                        $pendingDue = max($totalFee - $amountPaid, 0);
+
+                                    @endphp
+                                    @if(isset($payment->tuitionFeePayment ) || isset($payment->hostelPayment))
+                                        <div class="info-item">
+                                            <span class="label">Months:</span>
+                                            <span class="value">
+                                                @php
+                                                    $months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                                                    if(isset($payment->tuitionFeePayment)){
+                                                        $selectedMonths = array_filter($payment->tuitionFeePayment->selected_months);
+                                                    }else{
+                                                        $selectedMonths = array_filter($payment->hostelPayment->months_paid ?? []);
+                                                    }
+                                                    $monthNames = [];
+                                                    foreach ($selectedMonths as $m) {
+                                                        $monthNames[] = isset($months[$m]) ? $months[$m] : $m;
+                                                    }
+                                                @endphp
+                                                {{ implode(', ', $monthNames) }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    <div class="info-item">
+                                        <span class="label">Due:</span>
+                                        <span class="value {{ $pendingDue > 0 ? 'pending-due' : 'no-due' }}">
+                                            ₹{{ number_format($pendingDue, 2) }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +189,7 @@
                                 <div class="info-list">
                                     <div class="info-item">
                                         <span class="label">Payment Date:</span>
-                                        <span class="value">{{ $payment->payment_date->format('d M Y') }}</span>
+                                        <span class="value">{{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}</span>
                                     </div>
                                     <div class="info-item">
                                         <span class="label">Payment Method:</span>
@@ -151,7 +212,20 @@
                             <div class="amount-section">
                                 <div class="amount-box">
                                     <div class="amount-label">Amount Paid</div>
-                                    <div class="amount-value">₹{{ number_format($payment->amount, 2) }}</div>
+                                    @if(isset($payment->amount))
+                                        <div class="amount-value">₹{{ number_format($payment->amount, 2) }}</div>
+                                    @else
+                                        <div class="amount-value">₹{{ number_format($payment->payment_amount, 2) }}</div>
+                                    @endif
+                                    <div class="amount-in-words">
+                                        <small>
+                                            @if(isset($payment->amount))
+                                                ({{ ucwords(\App\Helpers\NumberHelper::toWords($payment->amount)) }} Only)
+                                            @else
+                                                ({{ ucwords(\App\Helpers\NumberHelper::toWords($payment->payment_amount)) }} Only)
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -489,19 +563,19 @@
     .btn, .breadcrumb, .page-header, .sidebar, .navbar, .main-header, .page-title, .content-header {
         display: none !important;
     }
-    
+
     /* Hide the main page wrapper and show only receipt */
     .main-content-wrapper, .content-wrapper, .page-wrapper {
         padding: 0 !important;
         margin: 0 !important;
     }
-    
+
     /* Page setup for clean printing */
     @page {
         margin: 0.2in !important;
         size: A4;
     }
-    
+
     /* Reset body for print */
     body {
         margin: 0 !important;
@@ -511,7 +585,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
-    
+
     /* Make receipt container fill the page */
     .receipt-container {
         border: 2px solid #2c3e50 !important;
@@ -527,7 +601,7 @@
         left: 0 !important;
         background: white !important;
     }
-    
+
      /* Receipt header - match web design */
      .receipt-header {
          background: #f8f9fa !important;
@@ -541,13 +615,13 @@
          min-height: 100px !important;
          page-break-inside: avoid !important;
      }
-     
+
      /* Logo styles for print */
      .logo-img {
          max-width: 120px !important;
          border-radius: 4px !important;
      }
-     
+
      .logo-placeholder {
          width: 80px !important;
          height: 80px !important;
@@ -559,13 +633,13 @@
          justify-content: center !important;
          font-size: 2rem !important;
      }
-    
+
     /* Receipt body - match web design */
     .receipt-body {
         background: #fafbfc !important;
         padding: 15px 20px !important;
     }
-    
+
     /* Main content grid - match web design */
     .main-content {
         display: grid !important;
@@ -573,14 +647,14 @@
         gap: 20px !important;
         margin-bottom: 15px !important;
     }
-    
+
     /* Content columns */
     .content-left, .content-right {
         display: flex !important;
         flex-direction: column !important;
         gap: 15px !important;
     }
-    
+
     /* Info sections - match web design */
     .info-section {
         background: white !important;
@@ -589,7 +663,7 @@
         border-radius: 6px !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
     }
-    
+
     /* Section titles - match web design */
     .section-title {
         font-size: 11px !important;
@@ -601,14 +675,14 @@
         text-transform: uppercase !important;
         letter-spacing: 0.5px !important;
     }
-    
+
     /* Info lists */
     .info-list {
         display: flex !important;
         flex-direction: column !important;
         gap: 6px !important;
     }
-    
+
     /* Info items */
     .info-item {
         display: flex !important;
@@ -617,18 +691,18 @@
         padding: 4px 0 !important;
         border-bottom: 1px dotted #bdc3c7 !important;
     }
-    
+
     .info-item:last-child {
         border-bottom: none !important;
     }
-    
+
     .info-item .label {
         font-weight: 600 !important;
         color: #34495e !important;
         font-size: 10px !important;
         flex: 0 0 40% !important;
     }
-    
+
     .info-item .value {
         font-weight: 500 !important;
         color: #2c3e50 !important;
@@ -636,7 +710,7 @@
         font-size: 10px !important;
         flex: 1 !important;
     }
-    
+
     /* Badges - match web design */
     .fee-type {
         background: #e8f4fd !important;
@@ -647,7 +721,7 @@
         font-size: 9px !important;
         font-weight: 600 !important;
     }
-    
+
     .payment-method {
         background: #e8f5e8 !important;
         color: #27ae60 !important;
@@ -657,7 +731,7 @@
         font-size: 9px !important;
         font-weight: 600 !important;
     }
-    
+
     /* Amount section - match web design */
     .amount-section {
         background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
@@ -668,27 +742,27 @@
         margin-top: auto !important;
         box-shadow: 0 3px 6px rgba(46, 204, 113, 0.3) !important;
     }
-    
+
     .amount-box {
         background: rgba(255,255,255,0.1) !important;
         padding: 12px !important;
         border-radius: 4px !important;
         border: 1px solid rgba(255,255,255,0.2) !important;
     }
-    
+
     .amount-label {
         font-size: 11px !important;
         font-weight: 600 !important;
         margin-bottom: 6px !important;
         opacity: 0.9 !important;
     }
-    
+
     .amount-value {
         font-size: 20px !important;
         font-weight: bold !important;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
     }
-    
+
     /* Status badge */
     .status-badge.completed {
         background: #d5f4e6 !important;
@@ -701,7 +775,7 @@
         text-transform: uppercase !important;
         letter-spacing: 0.5px !important;
     }
-    
+
     /* Notes content */
     .notes-content {
         font-style: italic !important;
@@ -710,7 +784,7 @@
         line-height: 1.4 !important;
         margin-top: 5px !important;
     }
-    
+
     /* Footer info */
     .footer-info {
         display: flex !important;
@@ -720,21 +794,21 @@
         border-top: 2px solid #ecf0f1 !important;
         margin-bottom: 10px !important;
     }
-    
+
     .footer-left, .footer-right {
         flex: 1 !important;
     }
-    
+
     .footer-right {
         text-align: right !important;
     }
-    
+
     .footer-text {
         font-size: 9px !important;
         color: #7f8c8d !important;
         margin: 0 !important;
     }
-    
+
     /* Receipt footer */
     .receipt-footer {
         background: #f8f9fa !important;
@@ -743,7 +817,7 @@
         border-top: 2px solid #ecf0f1 !important;
         border-radius: 0 0 6px 6px !important;
     }
-    
+
     /* Hide any browser print elements */
     .print-header,
     .print-footer,
@@ -759,30 +833,30 @@
         margin: 10px;
         border-radius: 4px;
     }
-    
+
     .main-content {
         grid-template-columns: 1fr;
         gap: 15px;
     }
-    
+
     .receipt-header {
         flex-direction: column;
         text-align: center;
         gap: 10px;
     }
-    
+
     .header-center {
         padding: 0;
     }
-    
+
     .institution-name {
         font-size: 14px;
     }
-    
+
     .amount-value {
         font-size: 18px;
     }
-    
+
     .receipt-body {
         padding: 12px 15px;
     }

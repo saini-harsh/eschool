@@ -190,4 +190,4 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH F:\Github\envision\eschool\resources\views/institution/administration/students/admission/admission-success.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.institution', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\school management software\eschool\resources\views/institution/administration/students/admission/admission-success.blade.php ENDPATH**/ ?>

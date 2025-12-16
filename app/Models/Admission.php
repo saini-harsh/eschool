@@ -85,6 +85,10 @@ class Admission extends Model
         'admission_payment_method',
         'tuition_fee_amount',
         'tuition_payment_method',
+        'hostel_admission_fee_amount',
+        'hostel_admission_payment_method',
+        'hostel_tuition_fee_amount',
+        'hostel_tuition_payment_method',
 
         // Status and Metadata
         'status',
@@ -96,6 +100,8 @@ class Admission extends Model
         'dob' => 'date',
         'admission_fee_amount' => 'decimal:2',
         'tuition_fee_amount' => 'decimal:2',
+        'hostel_admission_fee_amount' => 'decimal:2',
+        'hostel_tuition_fee_amount' => 'decimal:2',
     ];
 
     // Relationships

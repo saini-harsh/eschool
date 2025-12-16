@@ -52,7 +52,6 @@
                         <div class="main-content">
                             <div class="content-left">
                                 <div class="info-section">
-                                    <h3 class="section-title">Student Information</h3>
                                     <div class="info-list">
                                         <div class="info-item">
                                             <span class="label">Name:</span>

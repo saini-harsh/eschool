@@ -91,6 +91,12 @@
                                     PAYMENT
                                 </button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="hostel-tab" data-bs-toggle="tab" data-bs-target="#hostel"
+                                    type="button" role="tab" aria-controls="hostel" aria-selected="false">
+                                    HOSTEL PAYMENT
+                                </button>
+                            </li>
                         </ul>
 
                         <!-- Tab Content -->
@@ -282,16 +288,16 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-md-6 mb-3">
+                                                    <div class="col-md-6 mb-3 d-none">
                                                         <label class="form-label">EMAIL ADDRESS</label>
                                                         <input type="email" name="email" class="form-control"
                                                             value="{{ old('email') }}">
                                                     </div>
-                                                    <div class="col-md-6 mb-3">
+                                                    <div class="col-md-6 mb-3 d-none">
                                                         <label class="form-label">PHONE NUMBER <span
                                                                 class="text-danger">*</span></label>
                                                         <input type="number" name="phone" class="form-control"
-                                                            value="{{ old('phone') }}" required>
+                                                            value="{{ old('phone') }}" >
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">CURRENT ADDRESS </label>
@@ -304,26 +310,37 @@
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">DISTRICT </label>
-                                                        <input type="text" name="district" class="form-control"
-                                                            value="{{ old('district') }}">
+                                                        <select name="district" class="form-control">
+                                                        <option value="" disabled selected>Select District</option>
+                                                            @foreach ($districts as $district)
+                                                                <option value="{{ $district->value }}"
+                                                                    {{ old('district') == $district->value ? 'selected' : '' }}>
+                                                                    {{ $district->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">PERMANENT ADDRESS</label>
                                                         <textarea name="permanent_address" class="form-control" rows="3">{{ old('permanent_address') }}</textarea>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label class="form-label"> PINCODE <span
-                                                                class="text-danger">*</span></label>
+                                                        <label class="form-label"> PINCODE </label>
                                                         <input type="text" name="permanent_pincode"
                                                             class="form-control" value="{{ old('permanent_pincode') }}"
-                                                            required>
+                                                            >
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label class="form-label"> DISTRICT <span
-                                                                class="text-danger">*</span></label>
-                                                        <input type="text" name="permanent_district"
-                                                            class="form-control" value="{{ old('permanent_district') }}"
-                                                            required>
+                                                        <label class="form-label"> DISTRICT</label>
+                                                             <select name="permanent_district" class="form-control">
+                                                            <option value="" disabled selected>Select District</option>
+                                                            @foreach ($districts as $district)
+                                                                <option value="{{ $district->value }}"
+                                                                    {{ old('permanent_district') == $district->value ? 'selected' : '' }}>
+                                                                    {{ $district->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -342,16 +359,16 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">FIRST NAME</label>
                                                         <input type="text" name="first_name" class="form-control"
-                                                            value="{{ old('first_name') }}" required>
+                                                            value="{{ old('first_name') }}" >
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">LAST NAME</label>
                                                         <input type="text" name="last_name" class="form-control"
-                                                            value="{{ old('last_name') }}" required>
+                                                            value="{{ old('last_name') }}" >
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">GENDER</label>
-                                                        <select name="gender" class="form-control" required>
+                                                        <select name="gender" class="form-control" >
                                                             <option value="" disabled selected>Gender</option>
                                                             <option value="Male"
                                                                 {{ old('gender') == 'Male' ? 'selected' : '' }}>Male
@@ -470,8 +487,8 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">STATUS <span class="text-danger">*</span></label>
-                                                    <select name="admission_status" class="form-control" required>
+                                                    <label class="form-label">School <span class="text-danger">*</span></label>
+                                                    <select name="admission_status" class="form-control" >
                                                         <option value="" disabled selected>Select Status</option>
                                                         <option value="admitted"
                                                             {{ old('admission_status') == 'admitted' ? 'selected' : '' }}>
@@ -480,6 +497,20 @@
                                                         <option value="not admitted"
                                                             {{ old('admission_status') == 'not admitted' ? 'selected' : '' }}>
                                                             Not Admitted
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">HOSTEL <span class="text-danger">*</span></label>
+                                                    <select name="hostel_status" class="form-control" >
+                                                        <option value="" disabled selected>Select Status</option>
+                                                        <option value="1"
+                                                            {{ old('hostel_status') == '1' ? 'selected' : '' }}>
+                                                            Yes
+                                                        </option>
+                                                        <option value="0"
+                                                            {{ old('hostel_status') == '0' ? 'selected' : '' }}>
+                                                            No
                                                         </option>
                                                     </select>
                                                 </div>
@@ -820,7 +851,7 @@
                                             <div class="card-body">
                                                 <div class="row">
                                                     <p>Admission Fee: <span class="text-primary"
-                                                            id="admission_fee_amount">₹ 0</span></p>
+                                                            id="admission_fee_amount">₹ </span></p>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">PAYMENT AMOUNT</label>
                                                         <input type="number" name="admission_payment_amount"
@@ -855,7 +886,7 @@
                                             <div class="card-body">
                                                 <div class="row">
                                                     <p>Monthly Tuition Fee: <span class="text-primary"
-                                                            id="tuition_fee_per_month">₹ 0</span></p>
+                                                            id="tuition_fee_per_month">₹ </span></p>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">SELECT MONTHS</label>
                                                         <div class="row g-2" id="tuition_months_container">
@@ -928,6 +959,134 @@
                                                         </select>
                                                     </div>
                                                     <p>Due: <span class="text-danger fw-bold" id="tuition_due_amount">₹
+                                                            0</span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="hostel" role="tabpanel" aria-labelledby="hostel-tab">
+                                <div class="row">
+                                    <!-- Left Column - Document Info -->
+                                    <div class="col-md-6">
+                                        <!-- Payment Information -->
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <h6 class="fw-bold mb-0 text-primary">Admission Fee</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <p>Admission Fee: <span class="text-primary"
+                                                            id="hostel_admission_fee_amount">₹ </span></p>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">PAYMENT AMOUNT</label>
+                                                        <input type="number" name="hostel_admission_payment_amount"
+                                                            id="hostel_admission_payment_amount" class="form-control"
+                                                            value="{{ old('hostel_admission_payment_amount') }}"
+                                                            placeholder="Enter Payment Amount">
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">PAYMENT METHOD</label>
+                                                        <select name="hostel_admission_payment_method" class="form-control">
+                                                            <option value="" disabled selected>Select Payment Method
+                                                            </option>
+                                                            <option value="online"
+                                                                {{ old('hostel_admission_payment_method') == 'online' ? 'selected' : '' }}>
+                                                                Online Payment</option>
+                                                            <option value="cash"
+                                                                {{ old('hostel_admission_payment_method') == 'cash' ? 'selected' : '' }}>
+                                                                Cash</option>
+                                                        </select>
+                                                    </div>
+                                                    <p>Due: <span class="text-danger fw-bold" id="hostel_admission_due_amount">₹
+                                                            0</span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <h6 class="fw-bold mb-0 text-primary">Tuition Fee</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <p>Monthly Tuition Fee: <span class="text-primary"
+                                                            id="hostel_fee_per_month">₹ </span></p>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">SELECT MONTHS</label>
+                                                        <div class="row g-2" id="hostel_tuition_months_container">
+                                                            @php
+                                                                $months = [
+                                                                    'January',
+                                                                    'February',
+                                                                    'March',
+                                                                    'April',
+                                                                    'May',
+                                                                    'June',
+                                                                    'July',
+                                                                    'August',
+                                                                    'September',
+                                                                    'October',
+                                                                    'November',
+                                                                    'December',
+                                                                ];
+                                                            @endphp
+                                                            @php
+                                                                $oldMonths = old('hostel_tuition_months', []);
+                                                            @endphp
+                                                            @foreach ($months as $index => $month)
+                                                                <div class="col-md-3 col-sm-4 col-6">
+                                                                    <div class="form-check">
+                                                                        <input
+                                                                            class="form-check-input hostel-tuition-month-checkbox"
+                                                                            type="checkbox" name="hostel_tuition_months[]"
+                                                                            value="{{ $index + 1 }}"
+                                                                            id="hostel_month_{{ $index + 1 }}"
+                                                                            {{ in_array($index + 1, $oldMonths) ? 'checked' : '' }}
+                                                                            onchange="calculateHostelTuitionFee()">
+                                                                        <label class="form-check-label"
+                                                                            for="hostel_month_{{ $index + 1 }}">
+                                                                            {{ $month }}
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <input type="hidden" name="hostel_tuition_selected_months"
+                                                            id="hostel_tuition_selected_months"
+                                                            value="{{ old('hostel_tuition_selected_months', '') }}">
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <p class="mb-2">Total Tuition Fee: <span
+                                                                class="text-primary fw-bold" id="hostel_tuition_fee_total">₹
+                                                                0</span></p>
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">PAYMENT AMOUNT</label>
+                                                        <input type="number" name="hostel_tuition_payment_amount"
+                                                            id="hostel_tuition_payment_amount" class="form-control"
+                                                            value="{{ old('hostel_tuition_payment_amount') }}"
+                                                            placeholder="Enter Payment Amount"
+                                                            onchange="calculateHostelTuitionDue()"
+                                                            oninput="calculateHostelTuitionDue()">
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">PAYMENT METHOD</label>
+                                                        <select name="hostel_tuition_payment_method" class="form-control">
+                                                            <option value="" disabled selected>Select Payment Method
+                                                            </option>
+                                                            <option value="online"
+                                                                {{ old('hostel_tuition_payment_method') == 'online' ? 'selected' : '' }}>
+                                                                Online Payment</option>
+                                                            <option value="cash"
+                                                                {{ old('hostel_tuition_payment_method') == 'cash' ? 'selected' : '' }}>
+                                                                Cash</option>
+                                                        </select>
+                                                    </div>
+                                                    <p>Due: <span class="text-danger fw-bold" id="hostel_tuition_due_amount">₹
                                                             0</span></p>
                                                 </div>
                                             </div>
@@ -1100,6 +1259,13 @@
 @push('scripts')
     <script src="{{ asset('custom/js/institution/students.js') }}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
+    });
         function previewPhoto(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -1129,10 +1295,14 @@
             const admissionFeeElement = document.getElementById('admission_fee_amount');
             const dueAmountElement = document.getElementById('admission_due_amount');
             const paymentAmountInput = document.getElementById('admission_payment_amount');
-
+            const hostelAdmissionFeeElement = document.getElementById('hostel_admission_fee_amount');
+            const hostelAdmissionDueAmountElement = document.getElementById('hostel_admission_due_amount');
+            const hostelAdmissionPaymentAmountInput = document.getElementById('hostel_admission_payment_amount');
             if (!classId) {
                 admissionFeeElement.textContent = '₹ 0';
                 dueAmountElement.textContent = '₹ 0';
+                hostelAdmissionFeeElement.textContent = '₹ 0';
+                hostelAdmissionDueAmountElement.textContent = '₹ 0';
                 return;
             }
 
@@ -1153,6 +1323,11 @@
                 admissionFee = classFees.find(fee => fee.fee_type === 'onetime');
             }
 
+            // Find hostel admission fee for the selected class
+            let hostelAdmissionFee = classFees.find(fee => {
+                return fee.name && fee.name.toLowerCase().includes('hostel admission');
+            });
+
             if (admissionFee) {
                 const feeAmount = parseFloat(admissionFee.amount) || 0;
                 admissionFeeElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
@@ -1162,15 +1337,47 @@
             } else {
                 admissionFeeElement.textContent = '₹ 0';
                 dueAmountElement.textContent = '₹ 0';
+
+            }
+
+            if (hostelAdmissionFee) {
+                const feeAmount = parseFloat(hostelAdmissionFee.amount) || 0;
+                hostelAdmissionFeeElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
+                hostelAdmissionDueAmountElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
+                hostelAdmissionPaymentAmountInput.value = feeAmount;
+                hostelAdmissionDueAmountElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
+            } else {
+                hostelAdmissionFeeElement.textContent = '₹ 0';
+                hostelAdmissionDueAmountElement.textContent = '₹ 0';
+                hostelAdmissionPaymentAmountInput.value = '0';
+                hostelAdmissionDueAmountElement.textContent = '₹ 0';
             }
         }
 
         // Function to calculate due amount
         $("#admission_payment_amount").on("blur", function() {
-            // var admissionFeeText = $("#admission_fee_amount").text();
-            // var admissionFeeAmount = parseFloat(admissionFeeText.replace(/[₹,\s]/g, '')) || 0;
             calculateDueAmount();
         });
+
+        // Similar calculation for hostel admission payment (hostel section)
+        $("#hostel_admission_payment_amount").on("blur", function() {
+            calculateHostelAdmissionDueAmount();
+        });
+
+        function calculateHostelAdmissionDueAmount(hostelAdmissionFeeAmount = null) {
+            const paymentAmountInput = document.getElementById('hostel_admission_payment_amount');
+            const dueAmountElement = document.getElementById('hostel_admission_due_amount');
+
+            // Get hostel admission fee amount if not provided
+            if (hostelAdmissionFeeAmount === null) {
+                const hostelAdmissionFeeText = document.getElementById('hostel_admission_fee_amount').textContent;
+                hostelAdmissionFeeAmount = parseFloat(hostelAdmissionFeeText.replace(/[₹,\s]/g, '')) || 0;
+            }
+
+            const paymentAmount = parseFloat(paymentAmountInput.value) || 0;
+            const dueAmount = Math.max(0, hostelAdmissionFeeAmount - paymentAmount);
+            dueAmountElement.textContent = '₹ ' + dueAmount.toLocaleString('en-IN');
+        }
 
         function calculateDueAmount(admissionFeeAmount = null) {
             const paymentAmountInput = document.getElementById('admission_payment_amount');
@@ -1192,6 +1399,7 @@
         function updateTuitionFee() {
             const classId = document.querySelector('select[name="class_id"]').value;
             const tuitionFeePerMonthElement = document.getElementById('tuition_fee_per_month');
+            const HostelFeePerMonthElement = document.getElementById('hostel_fee_per_month');
 
             if (!classId) {
                 tuitionFeePerMonthElement.textContent = '₹ 0';
@@ -1204,6 +1412,34 @@
                 const matchesClass = fee.class_id == classId || fee.class_id === parseInt(classId);
                 return matchesClass;
             });
+            // Logic for hostel monthly fee (hostel tuition fee per month)
+            // Find hostel monthly fee for the selected class
+            let hostelMonthlyFee = classFees.find(fee => {
+                return fee.fee_type === 'monthly' &&
+                    (fee.name && (
+                        fee.name.toLowerCase().includes('hostel') ||
+                        fee.name.toLowerCase().includes('hostel tuition')
+                    ));
+            });
+
+            // If not found, fallback to any monthly hostel-related fee
+            if (!hostelMonthlyFee) {
+                hostelMonthlyFee = classFees.find(fee =>
+                    fee.fee_type === 'monthly' &&
+                    (fee.name && fee.name.toLowerCase().includes('hostel'))
+                );
+            }
+
+
+            // If found, you can set it somewhere for later use, e.g.:
+            if (hostelMonthlyFee) {
+                // For example, store amount in a data attribute for access elsewhere if needed
+                HostelFeePerMonthElement.setAttribute('data-monthly-fee', hostelMonthlyFee.amount);
+                HostelFeePerMonthElement.textContent = '₹ ' + hostelMonthlyFee.amount.toLocaleString('en-IN');
+            } else {
+                HostelFeePerMonthElement.textContent = '₹ 0';
+                HostelFeePerMonthElement.setAttribute('data-monthly-fee', '0');
+            }
 
             // Look for tuition fee (monthly fee type)
             let tuitionFee = classFees.find(fee => {
@@ -1229,7 +1465,65 @@
                 document.getElementById('tuition_fee_total').textContent = '₹ 0';
             }
         }
+        // Function to update hostel tuition fee based on selected class
+        function updateHostelTuitionFee() {
+            const classId = document.querySelector('select[name="class_id"]').value;
+            const hostelTuitionFeePerMonthElement = document.getElementById('hostel_fee_per_month');
+            if (!classId) {
+                hostelTuitionFeePerMonthElement.textContent = '₹ 0';
+                document.getElementById('hostel_tuition_fee_total').textContent = '₹ 0';
+                return;
+            }
 
+            // Find hostel tuition fee for the selected class
+            const classFees = window.feeStructures.filter(fee => {
+                const matchesClass = fee.class_id == classId || fee.class_id === parseInt(classId);
+                return matchesClass;
+            });
+
+            let hostelTuitionFee = classFees.find(fee => {
+                return fee.fee_type === 'monthly' &&
+                    (fee.name && fee.name.toLowerCase().includes('hostel tuition'));
+            });
+
+            if (!hostelTuitionFee) {
+                hostelTuitionFee = classFees.find(fee => fee.fee_type === 'monthly');
+            }
+
+            if (hostelTuitionFee) {
+                const feeAmount = parseFloat(hostelTuitionFee.amount) || 0;
+                hostelTuitionFeePerMonthElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
+                // Store the monthly fee amount in a data attribute for later use
+                hostelTuitionFeePerMonthElement.setAttribute('data-monthly-fee', feeAmount);
+                // Recalculate total if months are already selected
+                calculateHostelTuitionFee();
+            } else {
+                hostelTuitionFeePerMonthElement.textContent = '₹ 0';
+                hostelTuitionFeePerMonthElement.setAttribute('data-monthly-fee', '0');
+                document.getElementById('hostel_tuition_fee_total').textContent = '₹ 0';
+            }
+        }
+
+        // Function to calculate total hostel tuition fee based on selected months
+        function calculateHostelTuitionFee() {
+            console.log('calculateHostelTuitionFee');
+            const monthlyFeeElement = document.getElementById('hostel_fee_per_month');
+            const monthlyFee = parseFloat(monthlyFeeElement.getAttribute('data-monthly-fee')) || 0;
+
+            // Get all checked month checkboxes
+            const checkedMonths = document.querySelectorAll('.hostel-tuition-month-checkbox:checked');
+            const selectedMonths = Array.from(checkedMonths).map(cb => cb.value);
+
+            // Update hidden input with selected months
+            document.getElementById('hostel_tuition_selected_months').value = selectedMonths.join(',');
+
+            // Calculate total fee
+            const totalFee = monthlyFee * selectedMonths.length;
+            document.getElementById('hostel_tuition_fee_total').textContent = '₹ ' + totalFee.toLocaleString('en-IN');
+
+            // Recalculate due amount
+            calculateHostelTuitionDue();
+        }
         // Function to calculate total tuition fee based on selected months
         function calculateTuitionFee() {
             const monthlyFeeElement = document.getElementById('tuition_fee_per_month');
@@ -1260,6 +1554,18 @@
             const paymentAmount = parseFloat(paymentAmountInput.value) || 0;
             const dueAmount = Math.max(0, totalFee - paymentAmount);
 
+            console.log(dueAmount);
+            dueAmountElement.textContent = '₹ ' + dueAmount.toLocaleString('en-IN');
+        }
+        // Function to calculate hostel tuition due amount
+        function calculateHostelTuitionDue() {
+            const totalFeeText = document.getElementById('hostel_tuition_fee_total').textContent;
+            const totalFee = parseFloat(totalFeeText.replace(/[₹,\s]/g, '')) || 0;
+            const paymentAmountInput = document.getElementById('hostel_tuition_payment_amount');
+            const dueAmountElement = document.getElementById('hostel_tuition_due_amount');
+            const paymentAmount = parseFloat(paymentAmountInput.value) || 0;
+            const dueAmount = Math.max(0, totalFee - paymentAmount);
+            console.log(dueAmount);
             dueAmountElement.textContent = '₹ ' + dueAmount.toLocaleString('en-IN');
         }
 
