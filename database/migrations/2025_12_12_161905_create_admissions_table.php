@@ -96,6 +96,7 @@ return new class extends Migration
 
             // Status and Metadata
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('admission_status', ['pending', 'approved', 'rejected', 'admitted'])->default('pending');
             $table->text('notes')->nullable();
 
             $table->timestamps();

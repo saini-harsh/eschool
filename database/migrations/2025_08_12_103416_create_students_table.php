@@ -34,13 +34,24 @@ return new class extends Migration
             $table->string('password');
             $table->string('decrypt_pw');
             $table->boolean('status')->default(1);
-            
+
             // Academic Information
             $table->date('admission_date')->nullable();
             $table->string('admission_number', 50)->nullable();
             $table->string('roll_number', 50)->nullable();
             $table->string('group', 50)->nullable();
-            
+            $table->string('pen_no', 50)->nullable();
+            $table->string('aadhaar_no', 12)->nullable();
+            $table->string('aadhaar_front')->nullable();
+            $table->string('aadhaar_back')->nullable();
+            $table->string('previous_school_name', 255)->nullable();
+            $table->text('previous_school_address')->nullable();
+            $table->foreignId('previous_school_class')->nullable();
+            $table->string('previous_school_result', 255)->nullable();
+
+            // Admission Status
+            // $table->enum('admission_status', ['pending', 'approved', 'rejected', 'admitted'])->default('pending');
+
             // Personal Information
             $table->string('religion', 50)->nullable();
             $table->string('blood_group', 10)->nullable();
@@ -48,7 +59,7 @@ return new class extends Migration
             $table->string('height', 10)->nullable();
             $table->string('weight', 10)->nullable();
             $table->text('permanent_address')->nullable();
-            
+
             // Parents Information
             $table->string('father_name', 255)->nullable();
             $table->string('father_occupation', 255)->nullable();
@@ -58,7 +69,7 @@ return new class extends Migration
             $table->string('mother_occupation', 255)->nullable();
             $table->string('mother_phone', 20)->nullable();
             $table->string('mother_photo')->nullable();
-            
+
             // Guardian Information
             $table->string('guardian_name', 255)->nullable();
             $table->string('guardian_relation', 50)->nullable();
@@ -68,7 +79,7 @@ return new class extends Migration
             $table->string('guardian_occupation', 255)->nullable();
             $table->text('guardian_address')->nullable();
             $table->string('guardian_photo')->nullable();
-            
+
             // Document Information
             $table->string('national_id', 50)->nullable();
             $table->string('birth_certificate_number', 50)->nullable();
@@ -76,7 +87,7 @@ return new class extends Migration
             $table->string('bank_account_number', 50)->nullable();
             $table->string('ifsc_code', 20)->nullable();
             $table->text('additional_notes')->nullable();
-            
+
             // Document Attachments
             $table->string('document_01_title', 255)->nullable();
             $table->string('document_02_title', 255)->nullable();
@@ -86,7 +97,8 @@ return new class extends Migration
             $table->string('document_02_file')->nullable();
             $table->string('document_03_file')->nullable();
             $table->string('document_04_file')->nullable();
-            
+
+            $table->rememberToken();
             $table->timestamps();
         });
     }

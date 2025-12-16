@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->time('time')->nullable();
             $table->unsignedBigInteger('institution_id');
+            $table->rememberToken();
             $table->timestamps();
 
             // Optionally, add foreign key constraints if related tables exist

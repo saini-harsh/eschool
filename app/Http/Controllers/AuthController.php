@@ -15,6 +15,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -41,7 +42,6 @@ class AuthController extends Controller
         }
 
         $guard = $guards[$role];
-
         if (Auth::guard($guard)->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
