@@ -359,6 +359,32 @@ use App\Helpers\PermissionHelper;
                 </li>
                 <?php endif; ?>
 
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"
+                                class="<?php echo e(request()->routeIs('admin.salary*') ? 'active subdrop' : ''); ?>">
+                                <i class="ti ti-cash"></i><span>Salary Management</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('admin.salary.structures*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('admin.salary.structures.index')); ?>">
+                                        <i class="ti ti-list-details"></i><span>Salary Structures</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('admin.salary.payments*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('admin.salary.payments.index')); ?>">
+                                        <i class="ti ti-wallet"></i><span>All Payments</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
                 <?php if(PermissionHelper::canShowMenu('settings')): ?>
                 <li>
                     <ul>

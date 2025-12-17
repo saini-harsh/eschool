@@ -352,6 +352,30 @@ Route::middleware('admin')->group(function () {
             Route::get('/classes-by-teacher/{institutionId}/{teacherId}', [LessonPlanController::class, 'getClassesByTeacher'])->name('admin.lesson-plans.classes-by-teacher');
             Route::get('/subjects/{institutionId}/{classId}', [LessonPlanController::class, 'getSubjectsByInstitutionClass'])->name('admin.lesson-plans.subjects');
         });
+
+        // SALARY MANAGEMENT (Admin)
+        Route::prefix('salary')->group(function () {
+            // Salary Structures
+            Route::prefix('structures')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'index'])->name('admin.salary.structures.index');
+                Route::get('/create', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'create'])->name('admin.salary.structures.create');
+                Route::post('/store', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'store'])->name('admin.salary.structures.store');
+                Route::get('/{id}/edit', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'edit'])->name('admin.salary.structures.edit');
+                Route::post('/{id}/update', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'update'])->name('admin.salary.structures.update');
+                Route::post('/{id}/delete', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'destroy'])->name('admin.salary.structures.destroy');
+                Route::post('/{id}/status', [\App\Http\Controllers\Admin\Salary\SalaryStructureController::class, 'toggleStatus'])->name('admin.salary.structures.status');
+            });
+
+            // Salary Payments
+            Route::prefix('payments')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'index'])->name('admin.salary.payments.index');
+                Route::get('/export', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'export'])->name('admin.salary.payments.export');
+                Route::get('/institution-stats/{id}', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'getInstitutionStats'])->name('admin.salary.payments.institution-stats');
+                Route::get('/{id}', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'show'])->name('admin.salary.payments.show');
+                Route::post('/{id}/process', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'processPayment'])->name('admin.salary.payments.process');
+                Route::post('/{id}/status', [\App\Http\Controllers\Admin\Salary\SalaryPaymentController::class, 'updateStatus'])->name('admin.salary.payments.status');
+            });
+        });
     });
 });
 
