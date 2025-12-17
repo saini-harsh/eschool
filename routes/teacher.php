@@ -12,6 +12,7 @@ use App\Http\Controllers\Teacher\ExamManagement\ExamRoutineController;
 use App\Http\Controllers\Teacher\ExamManagement\MarksEntryController;
 use App\Http\Controllers\Teacher\Academic\SchoolClassController;
 use App\Http\Controllers\Teacher\Academic\EventController;
+use App\Http\Controllers\Teacher\Salary\SalaryController;
 
 
 Route::middleware('teacher')->group(function () {
@@ -32,6 +33,12 @@ Route::middleware('teacher')->group(function () {
             Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('teacher.settings.profile');
             Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('teacher.settings.change-password');
             Route::post('/delete-profile-image', [SettingsController::class, 'deleteProfileImage'])->name('teacher.settings.delete-profile-image');
+        });
+
+        // Salary Management (View Only for Teachers)
+        Route::prefix('salary')->group(function () {
+            Route::get('/', [SalaryController::class, 'index'])->name('teacher.salary.index');
+            Route::get('/{id}', [SalaryController::class, 'show'])->name('teacher.salary.show');
         });
 
         Route::prefix('students')->group(function () {

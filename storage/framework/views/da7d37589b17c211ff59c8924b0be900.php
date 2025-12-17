@@ -169,6 +169,18 @@
                 </li>
                 <?php endif; ?>
 
+                <?php if(PermissionHelper::canShowMenu('my_salary')): ?>
+                <li>
+                    <ul>
+                        <li class="">
+                            <a class="<?php echo e(request()->routeIs('teacher.salary*') ? 'active' : ''); ?>" href="<?php echo e(route('teacher.salary.index')); ?>">
+                                <i class="ti ti-cash"></i><span>My Salary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <?php endif; ?>
+
                 <?php if(PermissionHelper::canShowMenu('settings')): ?>
                 <li>
                     <ul>

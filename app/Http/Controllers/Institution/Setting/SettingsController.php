@@ -186,6 +186,46 @@ class SettingsController extends Controller
     }
 
     /**
+     * Update Razorpay settings
+     */
+    public function updateRazorpay(Request $request)
+    {
+        $institution = Auth::guard('institution')->user();
+
+        $validator = Validator::make($request->all(), [
+            'razorpay_key_id' => 'nullable|string|max:255',
+            'razorpay_key_secret' => 'nullable|string|max:255',
+            'razorpay_webhook_secret' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $institution->razorpay_key_id = $request->razorpay_key_id;
+            $institution->razorpay_key_secret = $request->razorpay_key_secret;
+            $institution->razorpay_webhook_secret = $request->razorpay_webhook_secret;
+            $institution->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Razorpay settings updated successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating Razorpay settings: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Helper method to sanitize institution name for folder naming
      */
     private function sanitizeInstitutionName($name)

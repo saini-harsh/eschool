@@ -164,7 +164,66 @@
                         </div> <!-- end card -->
 
                        
+                        <!-- Salary & Bank Details Card -->
+                        <div class="card rounded-0">
+                            <div class="card-header">
+                                <h6 class="fw-bold mb-0">Salary & Bank Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Monthly Salary (₹)</label>
+                                            <input type="number" step="0.01" name="salary" class="form-control" placeholder="e.g., 25000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Salary Structure</label>
+                                            <select name="salary_structure_id" class="form-select">
+                                                <option value="">Select Structure (Optional)</option>
+                                                @if(isset($salaryStructures))
+                                                    @foreach($salaryStructures as $structure)
+                                                        <option value="{{ $structure->id }}">{{ $structure->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <hr class="my-3">
+                                <h6 class="mb-3">Bank Account Details</h6>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bank Name</label>
+                                            <input type="text" name="bank_name" class="form-control" placeholder="e.g., State Bank of India">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bank Branch</label>
+                                            <input type="text" name="bank_branch" class="form-control" placeholder="e.g., Main Branch">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Account Number</label>
+                                            <input type="text" name="bank_account_number" class="form-control" placeholder="Enter account number">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">IFSC Code</label>
+                                            <input type="text" name="bank_ifsc_code" class="form-control" placeholder="e.g., SBIN0001234">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Salary & Bank Details Card -->
 
                         <div class="d-flex align-items-center justify-content-end">
                             <button type="button" class="btn btn-light me-2">Cancel</button>

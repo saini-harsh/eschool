@@ -26,6 +26,7 @@
         <div class="d-flex align-items-center flex-wrap nav-tab-dark row-gap-2 mb-3" role="tablist">
             <a href="#nav_tab_1" class="btn btn-sm btn-light border active fs-14 me-2" data-bs-toggle="tab" role="tab">Profile Settings</a>
             <a href="#nav_tab_2" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Change Password</a>
+            <a href="#nav_tab_razorpay" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Razorpay Settings</a>
         </div>
 
         <div class="tab-content">
@@ -186,6 +187,91 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Razorpay Settings Tab -->
+            <div class="tab-pane" id="nav_tab_razorpay" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card rounded-0 mb-0">
+                            <div class="card-header">
+                                <h6 class="fw-bold mb-0">RazorpayX Configuration</h6>
+                                <p class="text-muted small mb-0">Configure your RazorpayX account for salary payouts</p>
+                            </div>
+                            <form id="razorpay-form">
+                                @csrf
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-4">
+                                        <i class="ti ti-info-circle me-2"></i>
+                                        <strong>Note:</strong> You need a RazorpayX account (not standard Razorpay) to enable salary payouts. 
+                                        <a href="https://razorpay.com/x/" target="_blank">Learn more about RazorpayX</a>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">API Key ID<span class="text-danger ms-1">*</span></label>
+                                                <input type="text" class="form-control" name="razorpay_key_id" 
+                                                    value="{{ $institution->razorpay_key_id ?? '' }}" 
+                                                    placeholder="rzp_live_xxxxxxxxxx or rzp_test_xxxxxxxxxx">
+                                                <small class="text-muted">Your RazorpayX API Key ID from the dashboard</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">API Key Secret<span class="text-danger ms-1">*</span></label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="razorpay_key_secret" id="razorpay_key_secret"
+                                                        value="{{ $institution->razorpay_key_secret ?? '' }}" 
+                                                        placeholder="Enter API Key Secret">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="toggleSecretVisibility()">
+                                                        <i class="ti ti-eye" id="secret-toggle-icon"></i>
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted">Your RazorpayX API Key Secret</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">Webhook Secret</label>
+                                                <input type="text" class="form-control" name="razorpay_webhook_secret" 
+                                                    value="{{ $institution->razorpay_webhook_secret ?? '' }}" 
+                                                    placeholder="Enter Webhook Secret (optional)">
+                                                <small class="text-muted">Used to verify webhook signatures for payment status updates</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Webhook URL</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" readonly 
+                                                value="{{ url('/webhook/razorpay/' . $institution->id) }}" id="webhook-url">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyWebhookUrl()">
+                                                <i class="ti ti-copy"></i>
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Add this URL in your RazorpayX dashboard under Webhooks</small>
+                                    </div>
+
+                                    @if($institution->razorpay_key_id)
+                                    <div class="alert alert-success">
+                                        <i class="ti ti-check me-2"></i>
+                                        Razorpay is configured. You can now process salary payouts.
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Save Razorpay Settings</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- End Content -->
@@ -197,7 +283,61 @@
 const profileUpdateUrl = '{{ route("institution.settings.profile") }}';
 const passwordUpdateUrl = '{{ route("institution.settings.change-password") }}';
 const deleteImageUrl = '{{ route("institution.settings.delete-profile-image") }}';
+const razorpayUpdateUrl = '{{ route("institution.settings.razorpay") }}';
 const defaultImageUrl = '{{ asset("/adminpanel/img/users/avatar-2.jpg") }}';
+
+// Toggle secret visibility
+function toggleSecretVisibility() {
+    const input = document.getElementById('razorpay_key_secret');
+    const icon = document.getElementById('secret-toggle-icon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('ti-eye');
+        icon.classList.add('ti-eye-off');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('ti-eye-off');
+        icon.classList.add('ti-eye');
+    }
+}
+
+// Copy webhook URL
+function copyWebhookUrl() {
+    const input = document.getElementById('webhook-url');
+    input.select();
+    document.execCommand('copy');
+    toastr.success('Webhook URL copied to clipboard');
+}
+
+// Razorpay form submission
+$('#razorpay-form').on('submit', function(e) {
+    e.preventDefault();
+    
+    const btn = $(this).find('button[type="submit"]');
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+    
+    $.ajax({
+        url: razorpayUpdateUrl,
+        type: 'POST',
+        data: $(this).serialize(),
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if (response.success) {
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
+            }
+        },
+        error: function(xhr) {
+            toastr.error(xhr.responseJSON?.message || 'Failed to save settings');
+        },
+        complete: function() {
+            btn.prop('disabled', false).html('Save Razorpay Settings');
+        }
+    });
+});
 </script>
 <script src="{{ asset('custom/js/institution/settings.js') }}"></script>
 @endpush

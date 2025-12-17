@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Institution\Administration;
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Teacher;
+use App\Models\SalaryStructure;
 use App\Helpers\PermissionHelper;
 use App\Helpers\FileUploadHelper;
 use Illuminate\Http\Request;
@@ -68,7 +69,10 @@ class TeacherController extends Controller
     public function Create(){
         $institutionId = auth('institution')->id();
         $institution = Institution::find($institutionId);
-        return view('institution.administration.teachers.create',compact('institution'));
+        $salaryStructures = SalaryStructure::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get();
+        return view('institution.administration.teachers.create', compact('institution', 'salaryStructures'));
     }
     public function Store(Request $request)
     {
@@ -122,7 +126,14 @@ class TeacherController extends Controller
         $teacher->admin_id         = auth('institution')->id();
         $teacher->password         = Hash::make($request->password);
         $teacher->decrypt_pw       = $request->password;
-
+        
+        // Salary and bank details
+        $teacher->salary                = $request->salary;
+        $teacher->salary_structure_id   = $request->salary_structure_id;
+        $teacher->bank_name             = $request->bank_name;
+        $teacher->bank_branch           = $request->bank_branch;
+        $teacher->bank_account_number   = $request->bank_account_number;
+        $teacher->bank_ifsc_code        = $request->bank_ifsc_code;
 
         $teacher->save();
 
@@ -142,7 +153,10 @@ class TeacherController extends Controller
         }
 
         $institution = Institution::find($institutionId);
-        return view('institution.administration.teachers.edit', compact('teacher', 'institution'));
+        $salaryStructures = SalaryStructure::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get();
+        return view('institution.administration.teachers.edit', compact('teacher', 'institution', 'salaryStructures'));
     }
     public function Update(Request $request, Teacher $teacher)
     {
@@ -201,6 +215,14 @@ class TeacherController extends Controller
             $teacher->password   = Hash::make($request->password);
             $teacher->decrypt_pw = $request->password;
         }
+
+        // Salary and bank details
+        $teacher->salary                = $request->salary;
+        $teacher->salary_structure_id   = $request->salary_structure_id;
+        $teacher->bank_name             = $request->bank_name;
+        $teacher->bank_branch           = $request->bank_branch;
+        $teacher->bank_account_number   = $request->bank_account_number;
+        $teacher->bank_ifsc_code        = $request->bank_ifsc_code;
 
         $teacher->save();
 

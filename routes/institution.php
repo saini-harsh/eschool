@@ -26,6 +26,8 @@ use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Institution\ExamManagement\InvigilatorController;
 use App\Http\Controllers\Institution\Payment\FeeStructureController;
 use App\Http\Controllers\Institution\Payment\PaymentController;
+use App\Http\Controllers\Institution\Salary\SalaryStructureController;
+use App\Http\Controllers\Institution\Salary\SalaryPaymentController;
 
 Route::middleware('institution')->group(function () {
 
@@ -38,6 +40,7 @@ Route::middleware('institution')->group(function () {
             Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('institution.settings.profile');
             Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('institution.settings.change-password');
             Route::post('/delete-profile-image', [SettingsController::class, 'deleteProfileImage'])->name('institution.settings.delete-profile-image');
+            Route::post('/razorpay', [SettingsController::class, 'updateRazorpay'])->name('institution.settings.razorpay');
         });
 
         Route::prefix('teachers')->group(function () {
@@ -365,6 +368,39 @@ Route::middleware('institution')->group(function () {
             Route::get('/{id}', [PaymentController::class, 'show'])->name('institution.payments.show');
             Route::get('/hostel/{id}', [PaymentController::class, 'showHostelPayment'])->name('institution.payments.hostel.show');
             Route::get('/students/{classId}', [PaymentController::class, 'getStudentsByClass'])->name('institution.payments.students');
+        });
+
+        // SALARY MANAGEMENT
+        Route::prefix('salary')->group(function () {
+            // Salary Structures
+            Route::prefix('structures')->group(function () {
+                Route::get('/', [SalaryStructureController::class, 'index'])->name('institution.salary.structures.index');
+                Route::get('/create', [SalaryStructureController::class, 'create'])->name('institution.salary.structures.create');
+                Route::post('/', [SalaryStructureController::class, 'store'])->name('institution.salary.structures.store');
+                Route::get('/{id}/edit', [SalaryStructureController::class, 'edit'])->name('institution.salary.structures.edit');
+                Route::put('/{id}', [SalaryStructureController::class, 'update'])->name('institution.salary.structures.update');
+                Route::delete('/{id}', [SalaryStructureController::class, 'destroy'])->name('institution.salary.structures.destroy');
+                Route::post('/{id}/status', [SalaryStructureController::class, 'updateStatus'])->name('institution.salary.structures.status');
+                Route::get('/{id}/preview', [SalaryStructureController::class, 'preview'])->name('institution.salary.structures.preview');
+            });
+
+            // Salary Payments
+            Route::prefix('payments')->group(function () {
+                Route::get('/', [SalaryPaymentController::class, 'index'])->name('institution.salary.payments.index');
+                Route::get('/create', [SalaryPaymentController::class, 'create'])->name('institution.salary.payments.create');
+                Route::post('/', [SalaryPaymentController::class, 'store'])->name('institution.salary.payments.store');
+                Route::get('/bulk', [SalaryPaymentController::class, 'bulkCreate'])->name('institution.salary.payments.bulk');
+                Route::post('/bulk-process', [SalaryPaymentController::class, 'bulkProcess'])->name('institution.salary.payments.bulk-process');
+                Route::post('/bulk-pay', [SalaryPaymentController::class, 'bulkProcessPayments'])->name('institution.salary.payments.bulk-pay');
+                Route::get('/preview', [SalaryPaymentController::class, 'getSalaryPreview'])->name('institution.salary.payments.preview');
+                Route::get('/{id}', [SalaryPaymentController::class, 'show'])->name('institution.salary.payments.show');
+                Route::post('/{id}/process', [SalaryPaymentController::class, 'processPayment'])->name('institution.salary.payments.process');
+            });
+
+            // AJAX routes
+            Route::get('/teachers', [SalaryPaymentController::class, 'getTeachers'])->name('institution.salary.teachers');
+            Route::get('/staff', [SalaryPaymentController::class, 'getStaff'])->name('institution.salary.staff');
+            Route::get('/structures-list', [SalaryStructureController::class, 'getStructures'])->name('institution.salary.structures-list');
         });
 
     });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\NonWorkingStaff;
 use App\Models\Teacher;
+use App\Models\SalaryStructure;
 use App\Helpers\PermissionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -73,7 +74,10 @@ class NonWorkingStaffController extends Controller
     public function Create(){
         $institutionId = auth()->id();
         $institution = Institution::find($institutionId);
-        return view('institution.administration.nonworkingstaff.create',compact('institution'));
+        $salaryStructures = SalaryStructure::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get();
+        return view('institution.administration.nonworkingstaff.create', compact('institution', 'salaryStructures'));
     }
     public function Store(Request $request)
     {
@@ -135,6 +139,14 @@ class NonWorkingStaffController extends Controller
         $staff->admin_id         = auth()->id();
         $staff->password         = Hash::make($request->password);
         $staff->decrypt_pw       = $request->password;
+        
+        // Salary and bank details
+        $staff->salary                = $request->salary;
+        $staff->salary_structure_id   = $request->salary_structure_id;
+        $staff->bank_name             = $request->bank_name;
+        $staff->bank_branch           = $request->bank_branch;
+        $staff->bank_account_number   = $request->bank_account_number;
+        $staff->bank_ifsc_code        = $request->bank_ifsc_code;
 
         $staff->save();
 
@@ -154,7 +166,10 @@ class NonWorkingStaffController extends Controller
         }
         
         $institution = Institution::find($institutionId);
-        return view('institution.administration.nonworkingstaff.edit', compact('nonworkingstaff', 'institution'));
+        $salaryStructures = SalaryStructure::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get();
+        return view('institution.administration.nonworkingstaff.edit', compact('nonworkingstaff', 'institution', 'salaryStructures'));
     }
     public function Update(Request $request, NonWorkingStaff $nonworkingstaff)
     {
@@ -221,6 +236,14 @@ class NonWorkingStaffController extends Controller
             $nonworkingstaff->password   = Hash::make($request->password);
             $nonworkingstaff->decrypt_pw = $request->password;
         }
+        
+        // Salary and bank details
+        $nonworkingstaff->salary                = $request->salary;
+        $nonworkingstaff->salary_structure_id   = $request->salary_structure_id;
+        $nonworkingstaff->bank_name             = $request->bank_name;
+        $nonworkingstaff->bank_branch           = $request->bank_branch;
+        $nonworkingstaff->bank_account_number   = $request->bank_account_number;
+        $nonworkingstaff->bank_ifsc_code        = $request->bank_ifsc_code;
 
         $nonworkingstaff->save();
 

@@ -169,6 +169,18 @@
                 </li>
                 @endif
 
+                @if(PermissionHelper::canShowMenu('my_salary'))
+                <li>
+                    <ul>
+                        <li class="">
+                            <a class="{{ request()->routeIs('teacher.salary*') ? 'active' : '' }}" href="{{ route('teacher.salary.index') }}">
+                                <i class="ti ti-cash"></i><span>My Salary</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @endif
+
                 @if(PermissionHelper::canShowMenu('settings'))
                 <li>
                     <ul>

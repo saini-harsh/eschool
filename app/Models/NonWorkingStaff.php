@@ -34,6 +34,14 @@ class NonWorkingStaff extends Model
         'designation',
         'department',
         'permissions',
+        'salary',
+        'salary_structure_id',
+        'bank_account_number',
+        'bank_ifsc_code',
+        'bank_name',
+        'bank_branch',
+        'razorpay_contact_id',
+        'razorpay_fund_account_id',
     ];
 
     protected $casts = [
@@ -41,12 +49,46 @@ class NonWorkingStaff extends Model
         'date_of_joining' => 'date',
         'status' => 'boolean',
         'permissions' => 'array',
+        'salary' => 'decimal:2',
     ];
 
     // Relationships
     public function institution()
     {
         return $this->belongsTo(Institution::class);
+    }
+
+    /**
+     * Get the salary structure for this staff member
+     */
+    public function salaryStructure()
+    {
+        return $this->belongsTo(SalaryStructure::class);
+    }
+
+    /**
+     * Get salary payments for this staff member
+     */
+    public function salaryPayments()
+    {
+        return $this->hasMany(SalaryPayment::class, 'payee_id')
+            ->where('payee_type', 'staff');
+    }
+
+    /**
+     * Check if bank details are complete
+     */
+    public function hasBankDetails()
+    {
+        return !empty($this->bank_account_number) && !empty($this->bank_ifsc_code);
+    }
+
+    /**
+     * Check if Razorpay is configured for this staff member
+     */
+    public function hasRazorpayConfig()
+    {
+        return !empty($this->razorpay_contact_id) && !empty($this->razorpay_fund_account_id);
     }
 
     public function attendance()
@@ -100,6 +142,7 @@ class NonWorkingStaff extends Model
         return [
             'dashboard' => 'Dashboard',
             'attendance' => 'Attendance',
+            'my_salary' => 'My Salary',
             'settings' => 'Settings',
         ];
     }

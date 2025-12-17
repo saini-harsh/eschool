@@ -119,6 +119,12 @@ class PermissionHelper
                 'class_routine' => 'Class Routine',
                 'lesson_plan' => 'Lesson Plan',
             ],
+            'Salary Management' => [
+                'salary_management' => 'Salary Management (Main Menu)',
+                'salary_structures' => 'Salary Structures',
+                'salary_payments' => 'Salary Payments',
+                'razorpay_settings' => 'Razorpay Settings',
+            ],
             'Settings' => [
                 'settings' => 'Settings',
             ],

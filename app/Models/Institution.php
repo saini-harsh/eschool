@@ -28,12 +28,17 @@ class Institution extends Authenticatable
         'decrypt_pw',
         'status',
         'permissions',
+        'razorpay_key_id',
+        'razorpay_key_secret',
+        'razorpay_webhook_secret',
     ];
 
     protected $hidden = [
         'password',
         'decrypt_pw',
         'remember_token',
+        'razorpay_key_secret',
+        'razorpay_webhook_secret',
     ];
 
     protected $casts = [
@@ -82,6 +87,46 @@ class Institution extends Authenticatable
     }
 
     /**
+     * Get salary structures for this institution
+     */
+    public function salaryStructures()
+    {
+        return $this->hasMany(SalaryStructure::class);
+    }
+
+    /**
+     * Get salary payments for this institution
+     */
+    public function salaryPayments()
+    {
+        return $this->hasMany(SalaryPayment::class);
+    }
+
+    /**
+     * Get teachers for this institution
+     */
+    public function teachers()
+    {
+        return $this->hasMany(Teacher::class);
+    }
+
+    /**
+     * Get non-working staff for this institution
+     */
+    public function nonWorkingStaff()
+    {
+        return $this->hasMany(NonWorkingStaff::class);
+    }
+
+    /**
+     * Check if Razorpay is configured
+     */
+    public function hasRazorpayConfig()
+    {
+        return !empty($this->razorpay_key_id) && !empty($this->razorpay_key_secret);
+    }
+
+    /**
      * Check if institution has a specific permission
      */
     public function hasPermission($permission)
@@ -124,6 +169,10 @@ class Institution extends Authenticatable
             'routine' => 'Routine',
             'class_routine' => 'Class Routine',
             'lesson_plan' => 'Lesson Plan',
+            'salary_management' => 'Salary Management',
+            'salary_structures' => 'Salary Structures',
+            'salary_payments' => 'Salary Payments',
+            'razorpay_settings' => 'Razorpay Settings',
             'settings' => 'Settings',
         ];
     }

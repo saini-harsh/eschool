@@ -31,6 +31,13 @@ Route::get('/', function () {
     return view('frontend.index');
 });
 
+// Razorpay Webhook (public route - no authentication)
+Route::post('/webhook/razorpay/{institutionId}', [\App\Http\Controllers\Webhook\RazorpayWebhookController::class, 'handle'])
+    ->name('webhook.razorpay')
+    ->withoutMiddleware(['web']);
+Route::get('/webhook/razorpay/{institutionId}/test', [\App\Http\Controllers\Webhook\RazorpayWebhookController::class, 'test'])
+    ->name('webhook.razorpay.test');
+
 // Auth routes
 
 // Login

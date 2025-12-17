@@ -370,6 +370,40 @@ use App\Helpers\PermissionHelper;
                         </li>
                     </ul>
                 </li>
+    
+                <?php if(PermissionHelper::canShowMenu('salary_management')): ?>
+                <li>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"
+                                class="<?php echo e(request()->routeIs('institution.salary*') ? 'active subdrop' : ''); ?>">
+                                <i class="ti ti-cash"></i><span>Salary Management</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul>
+                                <?php if(PermissionHelper::canShowMenu('salary_structures')): ?>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('institution.salary.structures*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('institution.salary.structures.index')); ?>">
+                                        <i class="ti ti-list-details"></i><span>Salary Structures</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+
+                                <?php if(PermissionHelper::canShowMenu('salary_payments')): ?>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('institution.salary.payments*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('institution.salary.payments.index')); ?>">
+                                        <i class="ti ti-wallet"></i><span>Salary Payments</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <?php endif; ?>
+
                 <?php if(PermissionHelper::canShowMenu('settings')): ?>
                 <li>
                     <ul>
