@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Teacher;
 use App\Helpers\PermissionHelper;
+use App\Helpers\FileUploadHelper;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
@@ -91,18 +92,13 @@ class TeacherController extends Controller
         
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             
             // Create institution-specific path
-            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
-            $destinationPath = public_path('Institution/' . $institutionFolder . '/teachers');
-
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-
-            $file->move($destinationPath, $fileName);
-            $photoPath = 'Institution/' . $institutionFolder . '/teachers/' . $fileName;
+            $institutionFolder = FileUploadHelper::sanitizeInstitutionName($institution->name);
+            $folder = 'Institution/' . $institutionFolder . '/teachers';
+            
+            // Upload file using helper (works for both local and cPanel)
+            $photoPath = FileUploadHelper::uploadFile($file, $folder);
         } else {
             $photoPath = null;
         }
@@ -177,18 +173,13 @@ class TeacherController extends Controller
         
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             
             // Create institution-specific path
-            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
-            $destinationPath = public_path('Institution/' . $institutionFolder . '/teachers');
+            $institutionFolder = FileUploadHelper::sanitizeInstitutionName($institution->name);
+            $folder = 'Institution/' . $institutionFolder . '/teachers';
             
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            
-            $file->move($destinationPath, $fileName);
-            $teacher->profile_image = 'Institution/' . $institutionFolder . '/teachers/' . $fileName;
+            // Upload file using helper (works for both local and cPanel)
+            $teacher->profile_image = FileUploadHelper::uploadFile($file, $folder);
         }
 
         $teacher->first_name       = $request->first_name;
@@ -306,14 +297,4 @@ class TeacherController extends Controller
         return redirect()->route('institution.teachers.index')->with('success', 'Permissions updated successfully!');
     }
 
-    /**
-     * Helper method to sanitize institution name for folder naming
-     */
-    private function sanitizeInstitutionName($name)
-    {
-        // Remove special characters and replace spaces with underscores
-        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
-        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
-        return $sanitized;
-    }
 }
