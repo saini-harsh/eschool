@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\SchoolClass;
 use App\Models\Section;
 use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\AssignClassTeacher;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -49,6 +50,136 @@ class AttendanceController extends Controller
         $classes = $assignments->pluck('schoolClass')->unique('id')->values();
 
         return view('teacher.administration.attendance.mark-attendance', compact('classes'));
+    }
+
+    public function scanAttendancePage()
+    {
+        $teacherId = auth('teacher')->user()->id;
+        $institutionId = auth('teacher')->user()->institution_id;
+
+        // Get classes and sections assigned to this teacher
+        $assignments = AssignClassTeacher::where('teacher_id', $teacherId)
+            ->where('status', true)
+            ->with(['schoolClass:id,name', 'section:id,name'])
+            ->get();
+
+        $classes = $assignments->pluck('schoolClass')->unique('id')->values();
+
+        return view('teacher.administration.attendance.scan-attendance', compact('classes'));
+    }
+
+    public function scanAttendance(Request $request)
+    {
+        $request->validate([
+            'scan_type' => 'required|in:barcode,qr_code,biometric',
+            'scan_value' => 'required|string',
+            'class_id' => 'required|exists:classes,id',
+            'section_id' => 'required|exists:sections,id',
+            'date' => 'required|date_format:Y-m-d',
+        ]);
+
+        $teacherId = auth('teacher')->user()->id;
+        $institutionId = auth('teacher')->user()->institution_id;
+        $scanType = $request->scan_type;
+        $scanValue = $request->scan_value;
+        $classId = $request->class_id;
+        $sectionId = $request->section_id;
+        $date = $request->date;
+
+        // Verify that this teacher is assigned to this class/section
+        $assignment = AssignClassTeacher::where('teacher_id', $teacherId)
+            ->where('class_id', $classId)
+            ->where('section_id', $sectionId)
+            ->where('status', true)
+            ->first();
+
+        if (!$assignment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not assigned to this class/section'
+            ], 403);
+        }
+
+        try {
+            // Find student based on scan type
+            $student = null;
+            $query = Student::where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->where('section_id', $sectionId);
+
+            if ($scanType === 'barcode') {
+                $student = $query->where('barcode', $scanValue)->first();
+            } elseif ($scanType === 'qr_code') {
+                $student = $query->where('qr_code', $scanValue)->first();
+            } elseif ($scanType === 'biometric') {
+                $student = $query->where('biometric_id', $scanValue)->first();
+            }
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student not found with the provided ' . $scanType
+                ], 404);
+            }
+
+            // Check if attendance already exists
+            $existingAttendance = Attendance::where('user_id', $student->id)
+                ->where('role', 'student')
+                ->where('institution_id', $institutionId)
+                ->where('class_id', $classId)
+                ->where('section_id', $sectionId)
+                ->whereDate('date', $date)
+                ->first();
+
+            if ($existingAttendance) {
+                // Update existing attendance
+                $existingAttendance->update([
+                    'class_id' => $classId,
+                    'section_id' => $sectionId,
+                    'teacher_id' => $teacherId,
+                    'status' => 'present',
+                    'marked_by' => $teacherId,
+                    'marked_by_role' => 'teacher',
+                    'is_confirmed' => true,
+                    'confirmed_by' => $teacherId,
+                    'confirmed_at' => now(),
+                ]);
+            } else {
+                // Create new attendance
+                Attendance::create([
+                    'user_id' => $student->id,
+                    'role' => 'student',
+                    'institution_id' => $institutionId,
+                    'class_id' => $classId,
+                    'section_id' => $sectionId,
+                    'teacher_id' => $teacherId,
+                    'date' => $date,
+                    'status' => 'present',
+                    'marked_by' => $teacherId,
+                    'marked_by_role' => 'teacher',
+                    'is_confirmed' => true,
+                    'confirmed_by' => $teacherId,
+                    'confirmed_at' => now(),
+                ]);
+            }
+
+            $studentName = $student->first_name . ' ' . $student->last_name;
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance marked successfully for ' . $studentName,
+                'user' => [
+                    'id' => $student->id,
+                    'name' => $studentName,
+                    'role' => 'student'
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark attendance: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -352,6 +483,15 @@ class AttendanceController extends Controller
                 ->get(['id', 'first_name', 'last_name', 'email']);
         }
         
+        // Get class and section info for title
+        $classInfo = '';
+        if ($classId && $sectionId) {
+            $class = SchoolClass::find($classId);
+            $section = Section::find($sectionId);
+            $classInfo = $class ? $class->name : '';
+            $classInfo .= $section ? ' - ' . $section->name : '';
+        }
+
         // If no users found for the selected role, return empty array
         if (empty($users)) {
             return response()->json([
@@ -381,15 +521,6 @@ class AttendanceController extends Controller
                 'user' => $user,
                 'attendance' => $userAttendance
             ];
-        }
-
-        // Get class and section info for title
-        $classInfo = '';
-        if ($classId && $sectionId) {
-            $class = SchoolClass::find($classId);
-            $section = Section::find($sectionId);
-            $classInfo = $class ? $class->name : '';
-            $classInfo .= $section ? ' - ' . $section->name : '';
         }
 
         $response = [

@@ -42,6 +42,161 @@ class AttendanceController extends Controller
         return view('institution.administration.attendance.mark-attendance', compact('classes'));
     }
 
+    public function scanAttendancePage()
+    {
+        $institutionId = auth('institution')->user()->id;
+        
+        // Get all classes for this institution
+        $classes = SchoolClass::where('institution_id', $institutionId)
+            ->where('status', true)
+            ->get(['id', 'name']);
+
+        return view('institution.administration.attendance.scan-attendance', compact('classes'));
+    }
+
+    public function scanAttendance(Request $request)
+    {
+        $request->validate([
+            'scan_type' => 'required|in:barcode,qr_code,biometric',
+            'scan_value' => 'required|string',
+            'role' => 'required|in:student,teacher,nonworkingstaff',
+            'class_id' => 'required_if:role,student|nullable|exists:classes,id',
+            'section_id' => 'required_if:role,student|nullable|exists:sections,id',
+            'date' => 'required|date_format:Y-m-d',
+        ]);
+
+        $institutionId = auth('institution')->user()->id;
+        $scanType = $request->scan_type;
+        $scanValue = $request->scan_value;
+        $role = $request->role;
+        $classId = $request->class_id;
+        $sectionId = $request->section_id;
+        $date = $request->date;
+
+        try {
+            // Find user based on scan type
+            $user = null;
+            if ($role === 'student') {
+                $query = Student::where('institution_id', $institutionId);
+                if ($scanType === 'barcode') {
+                    $user = $query->where('barcode', $scanValue)->first();
+                } elseif ($scanType === 'qr_code') {
+                    $user = $query->where('qr_code', $scanValue)->first();
+                } elseif ($scanType === 'biometric') {
+                    $user = $query->where('biometric_id', $scanValue)->first();
+                }
+            } elseif ($role === 'teacher') {
+                $query = Teacher::where('institution_id', $institutionId);
+                if ($scanType === 'barcode') {
+                    $user = $query->where('barcode', $scanValue)->first();
+                } elseif ($scanType === 'qr_code') {
+                    $user = $query->where('qr_code', $scanValue)->first();
+                } elseif ($scanType === 'biometric') {
+                    $user = $query->where('biometric_id', $scanValue)->first();
+                }
+            } elseif ($role === 'nonworkingstaff') {
+                $query = NonWorkingStaff::where('institution_id', $institutionId);
+                if ($scanType === 'barcode') {
+                    $user = $query->where('barcode', $scanValue)->first();
+                } elseif ($scanType === 'qr_code') {
+                    $user = $query->where('qr_code', $scanValue)->first();
+                } elseif ($scanType === 'biometric') {
+                    $user = $query->where('biometric_id', $scanValue)->first();
+                }
+            }
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found with the provided ' . $scanType
+                ], 404);
+            }
+
+            // Check if attendance already exists
+            $existingAttendance = Attendance::where('user_id', $user->id)
+                ->where('role', $role)
+                ->where('institution_id', $institutionId)
+                ->whereDate('date', $date)
+                ->first();
+
+            $markedBy = auth('institution')->id();
+            $markedByRole = 'institution';
+
+            // Get class/section based on role
+            $attendanceClassId = null;
+            $attendanceSectionId = null;
+            $attendanceTeacherId = null;
+
+            if ($role === 'student') {
+                $attendanceClassId = $classId;
+                $attendanceSectionId = $sectionId;
+                // Get assigned teacher
+                $assignment = AssignClassTeacher::where('class_id', $classId)
+                    ->where('section_id', $sectionId)
+                    ->where('status', true)
+                    ->first();
+                $attendanceTeacherId = $assignment ? $assignment->teacher_id : null;
+            } elseif ($role === 'teacher') {
+                $assignment = AssignClassTeacher::where('teacher_id', $user->id)
+                    ->where('status', true)
+                    ->first();
+                if ($assignment) {
+                    $attendanceClassId = $assignment->class_id;
+                    $attendanceSectionId = $assignment->section_id;
+                }
+            }
+
+            if ($existingAttendance) {
+                // Update existing attendance
+                $existingAttendance->update([
+                    'class_id' => $attendanceClassId,
+                    'section_id' => $attendanceSectionId,
+                    'teacher_id' => $attendanceTeacherId,
+                    'status' => 'present',
+                    'marked_by' => $markedBy,
+                    'marked_by_role' => $markedByRole,
+                    'is_confirmed' => true,
+                    'confirmed_by' => $markedBy,
+                    'confirmed_at' => now(),
+                ]);
+            } else {
+                // Create new attendance
+                Attendance::create([
+                    'user_id' => $user->id,
+                    'role' => $role,
+                    'institution_id' => $institutionId,
+                    'class_id' => $attendanceClassId,
+                    'section_id' => $attendanceSectionId,
+                    'teacher_id' => $attendanceTeacherId,
+                    'date' => $date,
+                    'status' => 'present',
+                    'marked_by' => $markedBy,
+                    'marked_by_role' => $markedByRole,
+                    'is_confirmed' => true,
+                    'confirmed_by' => $markedBy,
+                    'confirmed_at' => now(),
+                ]);
+            }
+
+            $userName = $user->first_name . ' ' . $user->last_name;
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance marked successfully for ' . $userName,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $userName,
+                    'role' => $role
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark attendance: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function getSectionsByClass($classId)
     {

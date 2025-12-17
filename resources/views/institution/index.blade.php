@@ -82,6 +82,44 @@
             </div>
 
             <div class="row">
+                <!-- Quick Attendance Access -->
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">Quick Attendance Access</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <a href="{{ route('institution.attendance.scan-page') }}" class="card border-primary text-decoration-none h-100">
+                                        <div class="card-body text-center">
+                                            <i class="ti ti-scan fs-32 text-primary mb-2"></i>
+                                            <h6 class="mb-0">Scan Attendance</h6>
+                                            <p class="text-muted mb-0 small">Barcode / QR / Biometric</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{{ route('institution.attendance.mark-page') }}" class="card border-success text-decoration-none h-100">
+                                        <div class="card-body text-center">
+                                            <i class="ti ti-clipboard-check fs-32 text-success mb-2"></i>
+                                            <h6 class="mb-0">Mark Attendance</h6>
+                                            <p class="text-muted mb-0 small">Manual Entry</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="{{ route('institution.attendance') }}" class="card border-info text-decoration-none h-100">
+                                        <div class="card-body text-center">
+                                            <i class="ti ti-clipboard-list fs-32 text-info mb-2"></i>
+                                            <h6 class="mb-0">View Records</h6>
+                                            <p class="text-muted mb-0 small">Attendance History</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-6 col-xl-4 d-flex">
                     <div class="card flex-fill">
                         <div class="card-body">

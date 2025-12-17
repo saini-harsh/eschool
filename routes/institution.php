@@ -111,6 +111,8 @@ Route::middleware('institution')->group(function () {
         Route::prefix('attendance')->group(function () {
             Route::get('/', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'index'])->name('institution.attendance');
             Route::get('/mark', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'markAttendancePage'])->name('institution.attendance.mark-page');
+            Route::get('/scan', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'scanAttendancePage'])->name('institution.attendance.scan-page');
+            Route::post('/scan', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'scanAttendance'])->name('institution.attendance.scan');
             Route::get('/matrix', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getAttendanceMatrix']);
             Route::post('/mark', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'markAttendance'])->name('institution.attendance.mark');
             Route::put('/{id}', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'updateAttendance'])->name('institution.attendance.update');

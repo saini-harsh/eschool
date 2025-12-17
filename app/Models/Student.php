@@ -35,6 +35,9 @@ class Student extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
+        'barcode',
+        'qr_code',
+        'biometric_id',
         // Academic Information
         'admission_date',
         'admission_number',

@@ -37,6 +37,9 @@ class Teacher extends Authenticatable
         'bank_branch',
         'razorpay_contact_id',
         'razorpay_fund_account_id',
+        'barcode',
+        'qr_code',
+        'biometric_id',
     ];
 
     protected $hidden = [

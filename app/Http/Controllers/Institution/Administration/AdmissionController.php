@@ -442,14 +442,16 @@ class AdmissionController extends Controller
                 }
 
                 if ($request->hostel_tuition_payment_amount) {
-                    $hostelTuitionFeeStructure = FeeStructure::where('institution_id', $institutionId)
-                        ->where('class_id', $request->class_id)
+                    $hostelFeeStructure = FeeStructure::where('institution_id', $institutionId)
+                        ->where('class_id', (int) $request->class_id)
                         ->where('fee_type', 'monthly')
-                        ->where(function ($query) {
-                            $query->where('name', 'like', '%hostel tution%');
-                        })
+                        ->whereRaw('LOWER(name) LIKE ?', ['%hostel fee%'])
                         ->where('status', 1)
                         ->first();
+
+
+
+
                     HostelPayment::create([
                             'hostel_id' => $hostel->id ?? null,
                             'institution_id' => $student->institution_id ?? null,
@@ -459,9 +461,10 @@ class AdmissionController extends Controller
                             'months_paid' => $request->hostel_tuition_selected_months,
                             'receipt_number' => HostelPayment::generateReceiptNumber($student->institution_id),
                             'payment_method' => $request->hostel_tuition_payment_method ?? 'cash',
-                            'fee_structure_id' => $hostelTuitionFeeStructure->id,
+                            'fee_structure_id' => $hostelFeeStructure->id,
                             'student_id' => $student->id ?? null,
                         ]);
+
 
                 }
 
@@ -611,9 +614,9 @@ class AdmissionController extends Controller
     {
         $institutionId = auth('institution')->id();
         $institution = Institution::find($institutionId);
-        
+
         $fileName = time() . '_' . uniqid() . '_' . $prefix . '.' . $file->getClientOriginalExtension();
-        
+
         // Create institution-specific path
         $institutionFolder = $this->sanitizeInstitutionName($institution->name);
         $fullPath = 'Institution/' . $institutionFolder . '/' . $folder;

@@ -297,7 +297,7 @@
                                                         <label class="form-label">PHONE NUMBER <span
                                                                 class="text-danger">*</span></label>
                                                         <input type="number" name="phone" class="form-control"
-                                                            value="{{ old('phone') }}" >
+                                                            value="{{ old('phone') }}">
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">CURRENT ADDRESS </label>
@@ -311,7 +311,8 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">DISTRICT </label>
                                                         <select name="district" class="form-control">
-                                                        <option value="" disabled selected>Select District</option>
+                                                            <option value="" disabled selected>Select District
+                                                            </option>
                                                             @foreach ($districts as $district)
                                                                 <option value="{{ $district->value }}"
                                                                     {{ old('district') == $district->value ? 'selected' : '' }}>
@@ -327,13 +328,13 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label"> PINCODE </label>
                                                         <input type="text" name="permanent_pincode"
-                                                            class="form-control" value="{{ old('permanent_pincode') }}"
-                                                            >
+                                                            class="form-control" value="{{ old('permanent_pincode') }}">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label"> DISTRICT</label>
-                                                             <select name="permanent_district" class="form-control">
-                                                            <option value="" disabled selected>Select District</option>
+                                                        <select name="permanent_district" class="form-control">
+                                                            <option value="" disabled selected>Select District
+                                                            </option>
                                                             @foreach ($districts as $district)
                                                                 <option value="{{ $district->value }}"
                                                                     {{ old('permanent_district') == $district->value ? 'selected' : '' }}>
@@ -359,16 +360,16 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">FIRST NAME</label>
                                                         <input type="text" name="first_name" class="form-control"
-                                                            value="{{ old('first_name') }}" >
+                                                            value="{{ old('first_name') }}">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">LAST NAME</label>
                                                         <input type="text" name="last_name" class="form-control"
-                                                            value="{{ old('last_name') }}" >
+                                                            value="{{ old('last_name') }}">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">GENDER</label>
-                                                        <select name="gender" class="form-control" >
+                                                        <select name="gender" class="form-control">
                                                             <option value="" disabled selected>Gender</option>
                                                             <option value="Male"
                                                                 {{ old('gender') == 'Male' ? 'selected' : '' }}>Male
@@ -480,43 +481,45 @@
                                             </div>
                                         </div>
 
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <h6 class="fw-bold mb-0 text-primary">ADMISSION STATUS</h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="form-label">School <span class="text-danger">*</span></label>
-                                                    <select name="admission_status" class="form-control" >
-                                                        <option value="" disabled selected>Select Status</option>
-                                                        <option value="admitted"
-                                                            {{ old('admission_status') == 'admitted' ? 'selected' : '' }}>
-                                                            Admitted
-                                                        </option>
-                                                        <option value="not admitted"
-                                                            {{ old('admission_status') == 'not admitted' ? 'selected' : '' }}>
-                                                            Not Admitted
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="form-label">HOSTEL <span class="text-danger">*</span></label>
-                                                    <select name="hostel_status" class="form-control" >
-                                                        <option value="" disabled selected>Select Status</option>
-                                                        <option value="1"
-                                                            {{ old('hostel_status') == '1' ? 'selected' : '' }}>
-                                                            Yes
-                                                        </option>
-                                                        <option value="0"
-                                                            {{ old('hostel_status') == '0' ? 'selected' : '' }}>
-                                                            No
-                                                        </option>
-                                                    </select>
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <h6 class="fw-bold mb-0 text-primary">ADMISSION STATUS</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">School <span
+                                                                class="text-danger">*</span></label>
+                                                        <select name="admission_status" class="form-control">
+                                                            <option value="" disabled selected>Select Status</option>
+                                                            <option value="admitted"
+                                                                {{ old('admission_status') == 'admitted' ? 'selected' : '' }}>
+                                                                Admitted
+                                                            </option>
+                                                            <option value="not admitted"
+                                                                {{ old('admission_status') == 'not admitted' ? 'selected' : '' }}>
+                                                                Not Admitted
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">HOSTEL <span
+                                                                class="text-danger">*</span></label>
+                                                        <select name="hostel_status" class="form-control">
+                                                            <option value="" disabled selected>Select Status</option>
+                                                            <option value="1"
+                                                                {{ old('hostel_status') == '1' ? 'selected' : '' }}>
+                                                                Yes
+                                                            </option>
+                                                            <option value="0"
+                                                                {{ old('hostel_status') == '0' ? 'selected' : '' }}>
+                                                                No
+                                                            </option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
                                     </div>
                                 </div>
@@ -853,6 +856,28 @@
                                                     <p>Admission Fee: <span class="text-primary"
                                                             id="admission_fee_amount">₹ </span></p>
                                                     <div class="col-md-12 mb-3">
+                                                        <label class="form-label">DISCOUNT (if any)</label>
+                                                        <div class="input-group">
+                                                            <input type="number" min="0"
+                                                                name="admission_discount" id="admission_discount"
+                                                                class="form-control"
+                                                                value="{{ old('admission_discount') }}"
+                                                                placeholder="Enter Discount Amount or Percentage">
+                                                            <select name="admission_discount_type"
+                                                                id="admission_discount_type" class="form-select"
+                                                                style="max-width: 100px;">
+                                                                <option value="fixed"
+                                                                    {{ old('admission_discount_type', 'fixed') == 'fixed' ? 'selected' : '' }}>
+                                                                    ₹</option>
+                                                                <option value="percent"
+                                                                    {{ old('admission_discount_type') == 'percent' ? 'selected' : '' }}>
+                                                                    %</option>
+                                                            </select>
+                                                        </div>
+                                                        <small class="form-text text-muted">Choose ₹ for amount or % for
+                                                            percentage discount.</small>
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
                                                         <label class="form-label">PAYMENT AMOUNT</label>
                                                         <input type="number" name="admission_payment_amount"
                                                             id="admission_payment_amount" class="form-control"
@@ -989,7 +1014,8 @@
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">PAYMENT METHOD</label>
-                                                        <select name="hostel_admission_payment_method" class="form-control">
+                                                        <select name="hostel_admission_payment_method"
+                                                            class="form-control">
                                                             <option value="" disabled selected>Select Payment Method
                                                             </option>
                                                             <option value="online"
@@ -1000,7 +1026,8 @@
                                                                 Cash</option>
                                                         </select>
                                                     </div>
-                                                    <p>Due: <span class="text-danger fw-bold" id="hostel_admission_due_amount">₹
+                                                    <p>Due: <span class="text-danger fw-bold"
+                                                            id="hostel_admission_due_amount">₹
                                                             0</span></p>
                                                 </div>
                                             </div>
@@ -1061,7 +1088,8 @@
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <p class="mb-2">Total Tuition Fee: <span
-                                                                class="text-primary fw-bold" id="hostel_tuition_fee_total">₹
+                                                                class="text-primary fw-bold"
+                                                                id="hostel_tuition_fee_total">₹
                                                                 0</span></p>
                                                     </div>
                                                     <div class="col-md-12 mb-3">
@@ -1086,7 +1114,8 @@
                                                                 Cash</option>
                                                         </select>
                                                     </div>
-                                                    <p>Due: <span class="text-danger fw-bold" id="hostel_tuition_due_amount">₹
+                                                    <p>Due: <span class="text-danger fw-bold"
+                                                            id="hostel_tuition_due_amount">₹
                                                             0</span></p>
                                                 </div>
                                             </div>
@@ -1260,12 +1289,13 @@
     <script src="{{ asset('custom/js/institution/students.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-            }
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
         });
-    });
+
         function previewPhoto(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
