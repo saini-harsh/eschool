@@ -134,14 +134,17 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
+                                        <a href="{{ route('admin.login-as.institution', $institution->id) }}"
+                                            class="btn btn-icon btn-sm btn-success border-0" title="Login as Institution"><i
+                                                class="ti ti-login"></i></a>
                                         <a href="{{ route('admin.institutions.permissions', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions"><i
                                                 class="ti ti-lock"></i></a>
                                         <a href="{{ route('admin.institutions.edit', $institution->id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0"><i
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit"><i
                                                 class="ti ti-edit"></i></a>
-                                        <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $institution->id) }}`)"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0" data-bs-toggle="modal"
+                                        <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.institutions.delete', $institution->id) }}`)"
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Delete" data-bs-toggle="modal"
                                             data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
                                     </div>
                                 </td>

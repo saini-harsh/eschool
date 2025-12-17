@@ -12,6 +12,7 @@ use App\Models\Subject;
 use App\Models\Assignment;
 use App\Models\AcademicEvent;
 use App\Models\Attendance;
+use App\Models\NonWorkingStaff;
 use Carbon\Carbon;
 
 class InstitutionController extends Controller
@@ -145,5 +146,63 @@ class InstitutionController extends Controller
             'recentActivities' => $activities,
             'structure' => $structure,
         ]);
+    }
+
+    /**
+     * Login as Teacher
+     */
+    public function loginAsTeacher($id)
+    {
+        $institution = Auth::guard('institution')->user();
+        
+        // Make sure the teacher belongs to this institution
+        $teacher = Teacher::where('institution_id', $institution->id)->findOrFail($id);
+        
+        // Store institution session info for returning later
+        session(['institution_impersonating' => $institution->id]);
+        
+        // Login as teacher
+        Auth::guard('teacher')->login($teacher);
+        
+        return redirect()->route('teacher.dashboard')
+            ->with('success', 'Logged in as ' . $teacher->first_name . ' ' . $teacher->last_name);
+    }
+
+    /**
+     * Login as Student
+     */
+    public function loginAsStudent($id)
+    {
+        $institution = Auth::guard('institution')->user();
+        
+        // Make sure the student belongs to this institution
+        $student = Student::where('institution_id', $institution->id)->findOrFail($id);
+        
+        // Store institution session info for returning later
+        session(['institution_impersonating' => $institution->id]);
+        
+        // Login as student
+        Auth::guard('student')->login($student);
+        
+        return redirect()->route('student.dashboard')
+            ->with('success', 'Logged in as ' . $student->first_name . ' ' . $student->last_name);
+    }
+
+    /**
+     * Login as Non-Working Staff
+     */
+    public function loginAsStaff($id)
+    {
+        $institution = Auth::guard('institution')->user();
+        
+        // Make sure the staff belongs to this institution
+        $staff = NonWorkingStaff::where('institution_id', $institution->id)->findOrFail($id);
+        
+        // Store institution session info for returning later
+        session(['institution_impersonating' => $institution->id]);
+        
+        // Note: NonWorkingStaff doesn't have a dedicated dashboard
+        return redirect()->back()
+            ->with('info', 'Non-Working Staff dashboard is not available. Staff: ' . $staff->first_name . ' ' . $staff->last_name);
     }
 }

@@ -187,6 +187,10 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
+                                        <a href="{{ route('admin.login-as.student', $student->id) }}"
+                                            class="btn btn-icon btn-sm btn-success border-0" title="Login as Student">
+                                            <i class="ti ti-login"></i>
+                                        </a>
                                         <a href="{{ route('admin.students.permissions', $student->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions">
                                             <i class="ti ti-lock"></i>

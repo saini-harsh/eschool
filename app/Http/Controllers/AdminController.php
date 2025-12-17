@@ -17,6 +17,7 @@ use App\Models\NonWorkingStaff;
 use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -249,5 +250,73 @@ class AdminController extends Controller
         ];
 
         return response()->json(['groups' => $groups]);
+    }
+
+    /**
+     * Login as Institution
+     */
+    public function loginAsInstitution($id)
+    {
+        $institution = Institution::findOrFail($id);
+        
+        // Store admin session info for returning later
+        session(['admin_impersonating' => Auth::guard('admin')->id()]);
+        
+        // Login as institution
+        Auth::guard('institution')->login($institution);
+        
+        return redirect()->route('institution.dashboard')
+            ->with('success', 'Logged in as ' . $institution->name);
+    }
+
+    /**
+     * Login as Teacher
+     */
+    public function loginAsTeacher($id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        
+        // Store admin session info for returning later
+        session(['admin_impersonating' => Auth::guard('admin')->id()]);
+        
+        // Login as teacher
+        Auth::guard('teacher')->login($teacher);
+        
+        return redirect()->route('teacher.dashboard')
+            ->with('success', 'Logged in as ' . $teacher->first_name . ' ' . $teacher->last_name);
+    }
+
+    /**
+     * Login as Student
+     */
+    public function loginAsStudent($id)
+    {
+        $student = Student::findOrFail($id);
+        
+        // Store admin session info for returning later
+        session(['admin_impersonating' => Auth::guard('admin')->id()]);
+        
+        // Login as student
+        Auth::guard('student')->login($student);
+        
+        return redirect()->route('student.dashboard')
+            ->with('success', 'Logged in as ' . $student->first_name . ' ' . $student->last_name);
+    }
+
+    /**
+     * Login as Non-Working Staff
+     */
+    public function loginAsStaff($id)
+    {
+        $staff = NonWorkingStaff::findOrFail($id);
+        
+        // Store admin session info for returning later
+        session(['admin_impersonating' => Auth::guard('admin')->id()]);
+        
+        // Note: If NonWorkingStaff has its own guard, use it. Otherwise, you may need to create one.
+        // For now, we'll redirect to a staff dashboard if exists, or show a message
+        
+        return redirect()->back()
+            ->with('info', 'Non-Working Staff dashboard is not available. Staff: ' . $staff->first_name . ' ' . $staff->last_name);
     }
 }

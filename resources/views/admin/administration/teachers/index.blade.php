@@ -153,15 +153,20 @@
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
+                                <a href="{{ route('admin.login-as.teacher', $teacher->id) }}" 
+                                   class="btn btn-icon btn-sm btn-success border-0" 
+                                   title="Login as Teacher">
+                                    <i class="ti ti-login"></i>
+                                </a>
                                 <a href="{{ route('admin.teachers.permissions', $teacher->id) }}" 
                                    class="btn btn-icon btn-sm btn-outline-white border-0" 
                                    title="Manage Permissions">
                                     <i class="ti ti-lock"></i>
                                 </a>
-                                <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
+                                <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit"><i
                                         class="ti ti-edit"></i></a>
-                                <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $teacher->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"
-                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
+                                <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.teachers.delete', $teacher->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"
+                                    data-bs-toggle="modal" data-bs-target="#delete_modal" title="Delete"><i
                                         class="ti ti-trash"></i></a>
                             </div>
                         </td>

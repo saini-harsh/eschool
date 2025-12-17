@@ -220,16 +220,19 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
+                                        <a href="{{ route('institution.login-as.teacher', $teacher->id) }}"
+                                            class="btn btn-icon btn-sm btn-success border-0" title="Login as Teacher"><i
+                                                class="ti ti-login"></i></a>
                                         <a href="{{ route('institution.teachers.permissions', $teacher->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions"><i
                                                 class="ti ti-lock"></i></a>
                                         <a href="{{ route('institution.teachers.edit', $teacher->id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0"><i
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit"><i
                                                 class="ti ti-edit"></i></a>
                                         <a href="javascript:void(0);"
-                                            onclick="confirmDelete(`{{ route('institution.students.delete', $teacher->id) }}`)"
+                                            onclick="confirmDelete(`{{ route('institution.teachers.delete', $teacher->id) }}`)"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" data-bs-toggle="modal"
-                                            data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
+                                            data-bs-target="#delete_modal" title="Delete"><i class="ti ti-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

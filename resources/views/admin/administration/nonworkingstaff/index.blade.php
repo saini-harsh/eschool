@@ -167,19 +167,26 @@
                             </td>
                             <td>
                                 <div class="d-inline-flex align-items-center">
+                                    <a href="{{ route('admin.login-as.staff', $member->id) }}" 
+                                        class="btn btn-icon btn-sm btn-secondary border-0"
+                                        title="No Dashboard Available">
+                                        <i class="ti ti-login"></i>
+                                    </a>
                                     <a href="{{ route('admin.nonworkingstaff.permissions', $member->id) }}" 
                                         class="btn btn-icon btn-sm btn-outline-white border-0"
                                         title="Manage Permissions">
                                         <i class="ti ti-lock"></i>
                                     </a>
                                     <a href="{{ route('admin.nonworkingstaff.edit', $member->id) }}" 
-                                        class="btn btn-icon btn-sm btn-outline-white border-0">
+                                        class="btn btn-icon btn-sm btn-outline-white border-0"
+                                        title="Edit">
                                         <i class="ti ti-edit"></i>
                                     </a>
                                     <a href="javascript:void(0);" 
                                         onclick="confirmDelete(`{{ route('admin.nonworkingstaff.delete', $member->id) }}`)" 
                                         class="btn btn-icon btn-sm btn-outline-white border-0" 
-                                        data-bs-toggle="modal" data-bs-target="#delete_modal">
+                                        data-bs-toggle="modal" data-bs-target="#delete_modal"
+                                        title="Delete">
                                         <i class="ti ti-trash"></i>
                                     </a>
                                 </div>

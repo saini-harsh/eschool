@@ -55,6 +55,12 @@ Route::middleware('admin')->group(function () {
             Route::get('/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
             Route::get('/search', [AdminController::class, 'search'])->name('admin.search');
 
+            // Login As (Impersonation) Routes
+            Route::get('/login-as/institution/{id}', [AdminController::class, 'loginAsInstitution'])->name('admin.login-as.institution');
+            Route::get('/login-as/teacher/{id}', [AdminController::class, 'loginAsTeacher'])->name('admin.login-as.teacher');
+            Route::get('/login-as/student/{id}', [AdminController::class, 'loginAsStudent'])->name('admin.login-as.student');
+            Route::get('/login-as/staff/{id}', [AdminController::class, 'loginAsStaff'])->name('admin.login-as.staff');
+
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('admin.settings.index');
             Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('admin.settings.profile');

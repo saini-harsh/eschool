@@ -35,6 +35,11 @@ Route::middleware('institution')->group(function () {
         Route::get('/dashboard', [InstitutionController::class, 'dashboard'])->name('institution.dashboard');
         Route::get('/dashboard/data', [InstitutionController::class, 'dashboardData'])->name('institution.dashboard.data');
 
+        // Login As (Impersonation) Routes
+        Route::get('/login-as/teacher/{id}', [InstitutionController::class, 'loginAsTeacher'])->name('institution.login-as.teacher');
+        Route::get('/login-as/student/{id}', [InstitutionController::class, 'loginAsStudent'])->name('institution.login-as.student');
+        Route::get('/login-as/staff/{id}', [InstitutionController::class, 'loginAsStaff'])->name('institution.login-as.staff');
+
         Route::prefix('settings')->group(function () {
             Route::get('/index', [SettingsController::class, 'index'])->name('institution.settings.index');
             Route::post('/profile', [SettingsController::class, 'updateProfile'])->name('institution.settings.profile');
