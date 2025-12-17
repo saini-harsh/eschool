@@ -130,7 +130,10 @@ class LessonPlanController extends Controller
             if ($request->hasFile('lesson_plan_file')) {
                 $file = $request->file('lesson_plan_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $uploadPath = public_path('admin/uploads/lessonplan');
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($currentInstitution->name);
+                $uploadPath = public_path('Institution/' . $institutionFolder . '/lessonplan');
                 
                 // Create directory if it doesn't exist
                 if (!File::exists($uploadPath)) {
@@ -138,7 +141,7 @@ class LessonPlanController extends Controller
                 }
                 
                 $file->move($uploadPath, $fileName);
-                $filePath = 'admin/uploads/lessonplan/' . $fileName;
+                $filePath = 'Institution/' . $institutionFolder . '/lessonplan/' . $fileName;
             }
 
             $lessonPlan = LessonPlan::create([
@@ -237,7 +240,10 @@ class LessonPlanController extends Controller
 
                 $file = $request->file('lesson_plan_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $uploadPath = public_path('admin/uploads/lessonplan');
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($currentInstitution->name);
+                $uploadPath = public_path('Institution/' . $institutionFolder . '/lessonplan');
                 
                 // Create directory if it doesn't exist
                 if (!File::exists($uploadPath)) {
@@ -245,7 +251,7 @@ class LessonPlanController extends Controller
                 }
                 
                 $file->move($uploadPath, $fileName);
-                $filePath = 'admin/uploads/lessonplan/' . $fileName;
+                $filePath = 'Institution/' . $institutionFolder . '/lessonplan/' . $fileName;
             }
 
             // Update lesson plan
@@ -464,5 +470,16 @@ class LessonPlanController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

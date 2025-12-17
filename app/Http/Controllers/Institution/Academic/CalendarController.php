@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Institution\Academic;
 
 use App\Http\Controllers\Controller;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -106,13 +107,18 @@ class CalendarController extends Controller
         }
 
         try {
+            $currentInstitution = auth('institution')->user();
+            
             // Handle file upload
             $filePath = null;
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = 'uploads/events/' . $fileName;
-                $file->storeAs('public/uploads/events', $fileName);
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($currentInstitution->name);
+                $filePath = 'Institution/' . $institutionFolder . '/events/' . $fileName;
+                $file->storeAs('public/Institution/' . $institutionFolder . '/events', $fileName);
             }
 
             // Parse the date format (d M, Y)
@@ -321,5 +327,16 @@ class CalendarController extends Controller
                 'line' => $e->getLine()
             ], 500);
         }
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

@@ -216,14 +216,14 @@
                 email = 'admin@gmail.com';
                 password = 'admin';
             } else if (role === 'institution') {
-                email = 'greenvalley@example.com'; // example, update as needed
-                password = 'school123';
+                email = 'insitution@gmail.com'; // example, update as needed
+                password = '123456';
             } else if (role === 'teacher') {
-                email = 'rajesh.green@example.com'; // example
-                password = 'teacher123';
+                email = 'teacher@gmail.com'; // example
+                password = '123456';
             } else if (role === 'student') {
-                email = 'rohit.gupta@example.com'; // example
-                password = 'student123';
+                email = 'student@gmail.com'; // example
+                password = '123456';
             }
             document.querySelector('input[name="email"]').value = email;
             document.querySelector('input[name="password"]').value = password;

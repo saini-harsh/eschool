@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\NonWorkingStaff;
 use App\Models\Teacher;
+use App\Helpers\PermissionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -94,20 +95,25 @@ class NonWorkingStaffController extends Controller
             'profile_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
+        $institution = Institution::find($institutionId);
+        
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('admin/uploads/nonworkingstaff');
+            
+            // Create institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            $destinationPath = public_path('Institution/' . $institutionFolder . '/nonworkingstaff');
+            
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
+            
             $file->move($destinationPath, $fileName);
-            $photoPath = 'admin/uploads/nonworkingstaff/' . $fileName;
+            $photoPath = 'Institution/' . $institutionFolder . '/nonworkingstaff/' . $fileName;
         } else {
             $photoPath = null;
         }
-
-        $institution = Institution::find($institutionId);
 
         $staff = new NonWorkingStaff();
         $staff->first_name       = $request->first_name;
@@ -176,18 +182,23 @@ class NonWorkingStaffController extends Controller
             'status'          => 'required|boolean',
         ]);
 
+        $institution = Institution::find($institutionId);
+        
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('admin/uploads/nonworkingstaff');
+            
+            // Create institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            $destinationPath = public_path('Institution/' . $institutionFolder . '/nonworkingstaff');
+            
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
+            
             $file->move($destinationPath, $fileName);
-            $nonworkingstaff->profile_image = 'admin/uploads/nonworkingstaff/' . $fileName;
+            $nonworkingstaff->profile_image = 'Institution/' . $institutionFolder . '/nonworkingstaff/' . $fileName;
         }
-
-        $institution = Institution::find($institutionId);
 
         $nonworkingstaff->first_name       = $request->first_name;
         $nonworkingstaff->middle_name      = $request->middle_name;
@@ -247,5 +258,48 @@ class NonWorkingStaffController extends Controller
         $staff->delete();
 
         return redirect()->route('institution.nonworkingstaff.index')->with('success', 'Non-working staff deleted successfully!');
+    }
+
+    /**
+     * Manage permissions for a non-working staff
+     */
+    public function managePermissions($id)
+    {
+        $institutionId = auth('institution')->id();
+        $staff = NonWorkingStaff::where('id', $id)
+                        ->where('institution_id', $institutionId)
+                        ->firstOrFail();
+        
+        return view('institution.administration.nonworkingstaff.permissions', compact('staff'));
+    }
+
+    /**
+     * Update permissions for a non-working staff
+     */
+    public function updatePermissions(Request $request, $id)
+    {
+        $institutionId = auth('institution')->id();
+        $staff = NonWorkingStaff::where('id', $id)
+                        ->where('institution_id', $institutionId)
+                        ->firstOrFail();
+        
+        $permissions = $request->input('permissions', []);
+        
+        // If no permissions selected, set to null to allow all access
+        $staff->permissions = empty($permissions) ? null : $permissions;
+        $staff->save();
+
+        return redirect()->route('institution.nonworkingstaff.index')->with('success', 'Permissions updated successfully!');
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

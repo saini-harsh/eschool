@@ -28,6 +28,7 @@ class Teacher extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -39,6 +40,7 @@ class Teacher extends Authenticatable
     protected $casts = [
         'dob' => 'date',
         'status' => 'boolean',
+        'permissions' => 'array',
     ];
 
     public function getAuthPassword()
@@ -89,5 +91,35 @@ class Teacher extends Authenticatable
     public function assignments()
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    /**
+     * Check if teacher has a specific permission
+     */
+    public function hasPermission($permission)
+    {
+        if (!$this->permissions) {
+            return true; // If no permissions set, grant all access
+        }
+        return in_array($permission, $this->permissions);
+    }
+
+    /**
+     * Get all available permissions for teachers
+     */
+    public static function availablePermissions()
+    {
+        return [
+            'dashboard' => 'Dashboard',
+            'my_classes' => 'My Classes',
+            'students' => 'Students',
+            'attendance' => 'Attendance',
+            'assignments' => 'Assignments',
+            'lesson_plans' => 'Lesson Plans',
+            'class_routine' => 'Class Routine',
+            'exams' => 'Exams',
+            'marksheet' => 'Marksheet',
+            'settings' => 'Settings',
+        ];
     }
 }

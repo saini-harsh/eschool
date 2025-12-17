@@ -45,11 +45,12 @@ Route::middleware('institution')->group(function () {
             Route::get('/show/{teacher}', [TeacherController::class, 'Show'])->name('institution.teachers.show');
             Route::get('/create', [TeacherController::class, 'Create'])->name('institution.teachers.create');
             Route::post('/store', [TeacherController::class, 'Store'])->name('institution.teachers.store');
-
             Route::get('/edit/{teacher}', [TeacherController::class, 'Edit'])->name('institution.teachers.edit');
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('institution.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('institution.teachers.delete');
             Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('institution.teachers.status');
+            Route::get('/permissions/{id}', [TeacherController::class, 'managePermissions'])->name('institution.teachers.permissions');
+            Route::post('/permissions/{id}', [TeacherController::class, 'updatePermissions'])->name('institution.teachers.permissions.update');
         });
 
         Route::prefix('admission')->group(function () {
@@ -84,9 +85,8 @@ Route::middleware('institution')->group(function () {
             Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('institution.students.generate-roll-number');
             Route::get('/export/all', [StudentController::class, 'exportAll'])->name('institution.students.export.all');
             Route::get('/export/class/{classId}', [StudentController::class, 'exportByClass'])->name('institution.students.export.class');
-
-
-
+            Route::get('/permissions/{id}', [StudentController::class, 'managePermissions'])->name('institution.students.permissions');
+            Route::post('/permissions/{id}', [StudentController::class, 'updatePermissions'])->name('institution.students.permissions.update');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('institution.nonworkingstaff.index');
@@ -96,6 +96,8 @@ Route::middleware('institution')->group(function () {
             Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('institution.nonworkingstaff.update');
             Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('institution.nonworkingstaff.delete');
             Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('institution.nonworkingstaff.status');
+            Route::get('/permissions/{id}', [NonWorkingStaffController::class, 'managePermissions'])->name('institution.nonworkingstaff.permissions');
+            Route::post('/permissions/{id}', [NonWorkingStaffController::class, 'updatePermissions'])->name('institution.nonworkingstaff.permissions.update');
         });
 
         Route::prefix('attendance')->group(function () {

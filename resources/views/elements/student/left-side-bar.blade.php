@@ -1,5 +1,6 @@
 <?php
     $student = Auth::guard('student')->user();
+    use App\Helpers\PermissionHelper;
 ?>
 <!-- Sidenav Menu Start -->
 <div class="sidebar" id="sidebar">
@@ -45,6 +46,7 @@
     <div class="sidebar-inner" data-simplebar>
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
+                @if(PermissionHelper::canShowMenu('dashboard'))
                 <li>
                     <ul>
                         <!-- Dashboard -->
@@ -57,11 +59,11 @@
                                 <li><a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}">Overview</a></li>
                             </ul>
                         </li>
-
-
-
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('attendance'))
                 <li>
                     <ul>
                         <li class="">
@@ -71,6 +73,7 @@
                         </li>
                     </ul>
                 </li>
+                @endif
 
                 <li>
                     <ul>
@@ -80,16 +83,22 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('class_routine'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('student.routine*') ? 'active' : '' }}" href="{{ route('student.routine.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Routine</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assignments'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('student.assignments*') ? 'active' : '' }}" href="{{ route('student.assignments.index') }}">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
+                                @endif
+
                                 <li class="">
                                     <a class="{{ request()->routeIs('student.events*') ? 'active' : '' }}" href="{{ route('student.events.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Events</span>
@@ -99,6 +108,8 @@
                         </li>
                     </ul>
                 </li>
+
+                @if(PermissionHelper::canShowMenu('exams') || PermissionHelper::canShowMenu('results'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -107,21 +118,28 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('exams'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('student.exams*') ? 'active' : '' }}" href="{{ route('student.exams.index') }}">
                                         <i class="ti ti-report"></i><span>Routine</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('results'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('student.coming-soon*') ? 'active' : '' }}" href="{{ route('student.coming-soon') }}">
                                         <i class="ti ti-report"></i><span>Progress Report</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
 
+                @if(PermissionHelper::canShowMenu('settings'))
                 <li>
                     <ul>
                         <li class="">
@@ -131,6 +149,7 @@
                         </li>
                     </ul>
                 </li>
+                @endif
 
             </ul>
         </div>

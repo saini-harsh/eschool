@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student\Setting;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -120,6 +121,10 @@ class SettingsController extends Controller
         }
 
         try {
+            // Get institution for folder structure
+            $institution = Institution::find($student->institution_id);
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            
             // Handle photo upload
             if ($request->hasFile('photo')) {
                 if ($student->photo && File::exists(public_path($student->photo))) {
@@ -127,12 +132,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('photo');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/students');
+                $uploadPath = public_path('student/' . $institutionFolder . '/students');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->photo = 'student/uploads/students/' . $fileName;
+                $student->photo = 'student/' . $institutionFolder . '/students/' . $fileName;
             }
 
             // Handle father photo upload
@@ -142,12 +147,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('father_photo');
                 $fileName = time() . '_father_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/parents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/parents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->father_photo = 'student/uploads/parents/' . $fileName;
+                $student->father_photo = 'student/' . $institutionFolder . '/parents/' . $fileName;
             }
 
             // Handle mother photo upload
@@ -157,12 +162,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('mother_photo');
                 $fileName = time() . '_mother_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/parents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/parents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->mother_photo = 'student/uploads/parents/' . $fileName;
+                $student->mother_photo = 'student/' . $institutionFolder . '/parents/' . $fileName;
             }
 
             // Handle guardian photo upload
@@ -172,12 +177,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('guardian_photo');
                 $fileName = time() . '_guardian_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/guardians');
+                $uploadPath = public_path('student/' . $institutionFolder . '/guardians');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->guardian_photo = 'student/uploads/guardians/' . $fileName;
+                $student->guardian_photo = 'student/' . $institutionFolder . '/guardians/' . $fileName;
             }
 
             // Handle Aadhaar card uploads
@@ -187,12 +192,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('aadhaar_front');
                 $fileName = time() . '_aadhaar_front_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/documents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/documents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->aadhaar_front = 'student/uploads/documents/' . $fileName;
+                $student->aadhaar_front = 'student/' . $institutionFolder . '/documents/' . $fileName;
             }
 
             if ($request->hasFile('aadhaar_back')) {
@@ -201,12 +206,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('aadhaar_back');
                 $fileName = time() . '_aadhaar_back_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/documents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/documents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->aadhaar_back = 'student/uploads/documents/' . $fileName;
+                $student->aadhaar_back = 'student/' . $institutionFolder . '/documents/' . $fileName;
             }
 
             // Handle PAN card uploads
@@ -216,12 +221,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('pan_front');
                 $fileName = time() . '_pan_front_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/documents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/documents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->pan_front = 'student/uploads/documents/' . $fileName;
+                $student->pan_front = 'student/' . $institutionFolder . '/documents/' . $fileName;
             }
 
             if ($request->hasFile('pan_back')) {
@@ -230,12 +235,12 @@ class SettingsController extends Controller
                 }
                 $file = $request->file('pan_back');
                 $fileName = time() . '_pan_back_' . $file->getClientOriginalName();
-                $uploadPath = public_path('student/uploads/documents');
+                $uploadPath = public_path('student/' . $institutionFolder . '/documents');
                 if (!File::exists($uploadPath)) {
                     File::makeDirectory($uploadPath, 0755, true);
                 }
                 $file->move($uploadPath, $fileName);
-                $student->pan_back = 'student/uploads/documents/' . $fileName;
+                $student->pan_back = 'student/' . $institutionFolder . '/documents/' . $fileName;
             }
 
             // Handle document uploads
@@ -248,12 +253,12 @@ class SettingsController extends Controller
                     }
                     $file = $request->file($field);
                     $fileName = time() . '_' . $field . '_' . $file->getClientOriginalName();
-                    $uploadPath = public_path('student/uploads/documents');
+                    $uploadPath = public_path('student/' . $institutionFolder . '/documents');
                     if (!File::exists($uploadPath)) {
                         File::makeDirectory($uploadPath, 0755, true);
                     }
                     $file->move($uploadPath, $fileName);
-                    $student->$field = 'student/uploads/documents/' . $fileName;
+                    $student->$field = 'student/' . $institutionFolder . '/documents/' . $fileName;
                 }
             }
 
@@ -401,4 +406,14 @@ class SettingsController extends Controller
         }
     }
 
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Administration;
 
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
+use App\Helpers\PermissionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -59,16 +60,18 @@ class InstitutionController extends Controller
         // Handle logo upload
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
-
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('admin/uploads/institutions');
+            
+            // Create admin-institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($request->name);
+            $destinationPath = public_path('admin/' . $institutionFolder . '/institutions');
 
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
 
             $file->move($destinationPath, $fileName);
-            $logoPath = 'admin/uploads/institutions/' . $fileName;
+            $logoPath = 'admin/' . $institutionFolder . '/institutions/' . $fileName;
         } else {
             $logoPath = null;
         }
@@ -141,15 +144,18 @@ class InstitutionController extends Controller
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('admin/uploads/institutions');
+            
+            // Create admin-institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($request->name);
+            $destinationPath = public_path('admin/' . $institutionFolder . '/institutions');
 
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
 
             $file->move($destinationPath, $fileName);
-
-            $logoPath = 'admin/uploads/institutions/' . $fileName;
+            $logoPath = 'admin/' . $institutionFolder . '/institutions/' . $fileName;
+            
             // delete old logo if exists
             if ($institution->logo && file_exists(public_path($institution->logo))) {
                 unlink(public_path($institution->logo));
@@ -209,4 +215,35 @@ class InstitutionController extends Controller
         return redirect()->route('admin.institutions.index')->with('success', 'Institution deleted successfully!');
     }
 
+    public function managePermissions($id)
+    {
+        $institution = Institution::findOrFail($id);
+        $groupedPermissions = PermissionHelper::getGroupedPermissions();
+        
+        return view('admin.administration.institutions.permissions', compact('institution', 'groupedPermissions'));
+    }
+
+    public function updatePermissions(Request $request, $id)
+    {
+        $institution = Institution::findOrFail($id);
+        
+        $permissions = $request->input('permissions', []);
+        
+        // If no permissions selected, set to null to allow all access
+        $institution->permissions = empty($permissions) ? null : $permissions;
+        $institution->save();
+
+        return redirect()->route('admin.institutions.index')->with('success', 'Permissions updated successfully!');
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
+    }
 }

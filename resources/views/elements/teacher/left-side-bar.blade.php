@@ -1,5 +1,6 @@
 <?php
     $teacher = Auth::guard('teacher')->user();
+    use App\Helpers\PermissionHelper;
 ?>
 <!-- Sidenav Menu Start -->
 <div class="sidebar" id="sidebar">
@@ -45,6 +46,7 @@
     <div class="sidebar-inner" data-simplebar>
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
+                @if(PermissionHelper::canShowMenu('dashboard'))
                 <li>
                     <ul>
                         <!-- Dashboard -->
@@ -57,11 +59,11 @@
                                 <li><a href="{{ route('teacher.dashboard') }}" class="{{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">Overview</a></li>
                             </ul>
                         </li>
-
-
-
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('students'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -75,11 +77,12 @@
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
-
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
+
                 <li>
                     <ul>
                         <li class="submenu">
@@ -88,31 +91,46 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('attendance'))
                               <li class="">
                                     <a class="{{ request()->routeIs('teacher.attendance*') ? 'active' : '' }}" href="{{ route('teacher.attendance') }}">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('my_classes'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.classes*') ? 'active' : '' }}" href="{{ route('teacher.classes.index') }}">
                                         <i class="ti ti-files"></i><span>Classes</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('class_routine'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.routines*') ? 'active' : '' }}" href="{{ route('teacher.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('lesson_plans'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.lesson-plans*') ? 'active' : '' }}" href="{{ route('teacher.lesson-plans.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assignments'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.assignments*') ? 'active' : '' }}" href="{{ route('teacher.assignments.index') }}">
                                         <i class="ti ti-file-text"></i><span>Assignments</span>
                                     </a>
                                 </li>
+                                @endif
+
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.events*') ? 'active' : '' }}" href="{{ route('teacher.events.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Events</span>
@@ -122,6 +140,8 @@
                         </li>
                     </ul>
                 </li>
+
+                @if(PermissionHelper::canShowMenu('exams'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -130,11 +150,14 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('marksheet'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.marks-entries*') ? 'active' : '' }}" href="{{ \Illuminate\Support\Facades\Route::has('teacher.marks-entries.index') ? route('teacher.marks-entries.index') : route('teacher.coming-soon') }}">
                                         <i class="ti ti-calendar-event"></i><span>Marks Entry</span>
                                     </a>
                                 </li>
+                                @endif
+
                                 <li class="">
                                     <a class="{{ request()->routeIs('teacher.exam-routines*') ? 'active' : '' }}" href="{{ route('teacher.exam-routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Teacher Routine</span>
@@ -144,7 +167,9 @@
                         </li>
                     </ul>
                 </li>
+                @endif
 
+                @if(PermissionHelper::canShowMenu('settings'))
                 <li>
                     <ul>
                         <li class="">
@@ -154,6 +179,7 @@
                         </li>
                     </ul>
                 </li>
+                @endif
 
             </ul>
         </div>

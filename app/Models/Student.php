@@ -86,6 +86,7 @@ class Student extends Authenticatable
         'document_02_file',
         'document_03_file',
         'document_04_file',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -97,6 +98,7 @@ class Student extends Authenticatable
     protected $casts = [
         'dob' => 'date',
         'status' => 'boolean',
+        'permissions' => 'array',
     ];
 
     /**
@@ -236,6 +238,36 @@ class Student extends Authenticatable
     public static function generatePassword($length = 8)
     {
         return bin2hex(random_bytes($length / 2));
+    }
+
+    /**
+     * Check if student has a specific permission
+     */
+    public function hasPermission($permission)
+    {
+        if (!$this->permissions) {
+            return true; // If no permissions set, grant all access
+        }
+        return in_array($permission, $this->permissions);
+    }
+
+    /**
+     * Get all available permissions for students
+     */
+    public static function availablePermissions()
+    {
+        return [
+            'dashboard' => 'Dashboard',
+            'my_profile' => 'My Profile',
+            'my_classes' => 'My Classes',
+            'assignments' => 'Assignments',
+            'attendance' => 'Attendance',
+            'exams' => 'Exams',
+            'results' => 'Results',
+            'class_routine' => 'Class Routine',
+            'fee_payments' => 'Fee Payments',
+            'settings' => 'Settings',
+        ];
     }
 
 }

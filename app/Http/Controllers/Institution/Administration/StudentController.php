@@ -11,6 +11,7 @@ use App\Models\SchoolClass;
 use App\Models\District;
 use Illuminate\Support\Str;
 use App\Models\FeeStructure;
+use App\Helpers\PermissionHelper;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
@@ -1178,8 +1179,14 @@ class StudentController extends Controller
      */
     private function uploadFile($file, $folder)
     {
+        $institutionId = auth('institution')->id();
+        $institution = Institution::find($institutionId);
+        
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $destinationPath = public_path('admin/uploads/' . $folder);
+        
+        // Create institution-specific path
+        $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+        $destinationPath = public_path('Institution/' . $institutionFolder . '/' . $folder);
 
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
@@ -1187,7 +1194,18 @@ class StudentController extends Controller
 
         $file->move($destinationPath, $fileName);
 
-        return 'admin/uploads/' . $folder . '/' . $fileName;
+        return 'Institution/' . $institutionFolder . '/' . $folder . '/' . $fileName;
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 
     public function showAdmissionForm()
@@ -1200,5 +1218,37 @@ class StudentController extends Controller
         $feeStructure = FeeStructure::where('institution_id', $institutionId)->get();
         $districts = District::all();
         return view('institution.administration.students.admission.admission-form', compact('institution', 'classes', 'sections', 'feeStructure', 'districts'));
+    }
+
+    /**
+     * Manage permissions for a student
+     */
+    public function managePermissions($id)
+    {
+        $institutionId = auth('institution')->id();
+        $student = Student::where('id', $id)
+                        ->where('institution_id', $institutionId)
+                        ->firstOrFail();
+        
+        return view('institution.administration.students.permissions', compact('student'));
+    }
+
+    /**
+     * Update permissions for a student
+     */
+    public function updatePermissions(Request $request, $id)
+    {
+        $institutionId = auth('institution')->id();
+        $student = Student::where('id', $id)
+                        ->where('institution_id', $institutionId)
+                        ->firstOrFail();
+        
+        $permissions = $request->input('permissions', []);
+        
+        // If no permissions selected, set to null to allow all access
+        $student->permissions = empty($permissions) ? null : $permissions;
+        $student->save();
+
+        return redirect()->route('institution.students.index')->with('success', 'Permissions updated successfully!');
     }
 }

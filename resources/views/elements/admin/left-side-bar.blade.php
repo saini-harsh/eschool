@@ -1,5 +1,6 @@
 <?php
 $admin = @\App\Models\Admin::where('id', '=', 1)->first();
+use App\Helpers\PermissionHelper;
 ?>
 <!-- Sidenav Menu Start -->
 <div class="sidebar" id="sidebar">
@@ -37,6 +38,7 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
     <div class="sidebar-inner" data-simplebar>
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
+                @if(PermissionHelper::canShowMenu('dashboard'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -90,6 +92,9 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                         </li> -->
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('administration'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -99,41 +104,57 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-
+                                @if(PermissionHelper::canShowMenu('institutions'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.institutions*') ? 'active' : '' }}"
                                         href="{{ route('admin.institutions.index') }}">
                                         <i class="ti ti-building-community"></i><span>Insitutions</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('teachers'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.teachers*') ? 'active' : '' }}"
                                         href="{{ route('admin.teachers.index') }}">
                                         <i class="ti ti-users-group"></i><span>Teachers</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('students'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.students*') ? 'active' : '' }}"
                                         href="{{ route('admin.students.index') }}">
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('nonworkingstaff'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.nonworkingstaff*') ? 'active' : '' }}"
                                         href="{{ route('admin.nonworkingstaff.index') }}">
                                         <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('attendance'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.attendance*') ? 'active' : '' }}"
                                         href="{{ route('admin.attendance') }}">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('academics'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -143,61 +164,85 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-
+                                @if(PermissionHelper::canShowMenu('classes'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.classes*') ? 'active' : '' }}"
                                         href="{{ route('admin.classes.index') }}">
                                         <i class="ti ti-report"></i><span>Class</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('sections'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.sections*') ? 'active' : '' }}"
                                         href="{{ route('admin.sections.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Section</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('subjects'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.subjects*') ? 'active' : '' }}"
                                         href="{{ route('admin.subjects.index') }}">
                                         <i class="ti ti-book"></i><span>Subject</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assign_teacher'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.academic.assign-teacher*') ? 'active' : '' }}"
                                         href="{{ route('admin.academic.assign-teacher.index') }}">
                                         <i class="ti ti-user"></i><span>Assign Class Teacher</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assign_subject'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.assign-subject*') ? 'active' : '' }}"
                                         href="{{ route('admin.assign-subject.index') }}">
                                         <i class="ti ti-checks"></i><span>Assign Subject</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assignments'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.assignments*') ? 'active' : '' }}"
                                         href="{{ route('admin.assignments.index') }}">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('calendar'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.academic.calendar*') ? 'active' : '' }}"
                                         href="{{ route('admin.academic.calendar.index') }}">
                                         <i class="ti ti-calendar"></i><span>Calendar</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('events'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.events*') ? 'active' : '' }}"
                                         href="{{ route('admin.events.index') }}">
                                         <i class="ti ti-list"></i><span>Event Management</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
 
                 <!-- <li class="menu-title"><span>Room Management</span></li> -->
+                @if(PermissionHelper::canShowMenu('communication'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -207,17 +252,21 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('email_sms'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.email-sms*') ? 'active' : '' }}"
                                         href="{{ route('admin.email-sms.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Email / Sms</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
 
+                @if(PermissionHelper::canShowMenu('exam_management'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -227,29 +276,40 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('exams'))
                                 <li class="">
                                     <a class="" href="{{ route('admin.exam-management.exams') }}">
                                         <i class="ti ti-home"></i><span>Exams</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('exam_type'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.exam-management.exam-type') ? 'active' : '' }}"
                                         href="{{ route('admin.exam-management.exam-type') }}">
                                         <i class="ti ti-home"></i><span>Exam Type</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('exam_setup'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.exam-management.exam-setup') ? 'active' : '' }}"
                                         href="{{ route('admin.exam-management.exam-setup') }}">
                                         <i class="ti ti-home"></i><span>Exam Setup</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('marksheet'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.exam-management.marksheet*') ? 'active' : '' }}"
                                         href="{{ route('admin.exam-management.marksheet.index') }}">
                                         <i class="ti ti-file-text"></i><span>Marksheet</span>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="" style="display: none;">
                                     <a class="" href="{{ route('admin.exam-management.rooms.index') }}">
                                         <i class="ti ti-home"></i><span>Exam Rooms Setup</span>
@@ -264,6 +324,9 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                         </li>
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('routine'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -273,22 +336,30 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('class_routine'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.routines*') ? 'active' : '' }}"
                                         href="{{ route('admin.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('lesson_plan'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('admin.lesson-plans*') ? 'active' : '' }}"
                                         href="{{ route('admin.lesson-plans.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('settings'))
                 <li>
                     <ul>
                         <li class="">
@@ -299,6 +370,7 @@ $admin = @\App\Models\Admin::where('id', '=', 1)->first();
                         </li>
                     </ul>
                 </li>
+                @endif
                 <!---<li class="menu-title"><span>Authentication</span></li>
                 <li>
                     <ul>

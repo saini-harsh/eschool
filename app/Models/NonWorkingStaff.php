@@ -32,13 +32,15 @@ class NonWorkingStaff extends Model
         'status',
         'employee_id',
         'designation',
-        'department'
+        'department',
+        'permissions',
     ];
 
     protected $casts = [
         'dob' => 'date',
         'date_of_joining' => 'date',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'permissions' => 'array',
     ];
 
     // Relationships
@@ -77,5 +79,28 @@ class NonWorkingStaff extends Model
     public function getRoleDisplayAttribute()
     {
         return 'Non-working Staff';
+    }
+
+    /**
+     * Check if staff has a specific permission
+     */
+    public function hasPermission($permission)
+    {
+        if (!$this->permissions) {
+            return true; // If no permissions set, grant all access
+        }
+        return in_array($permission, $this->permissions);
+    }
+
+    /**
+     * Get all available permissions for non-working staff
+     */
+    public static function availablePermissions()
+    {
+        return [
+            'dashboard' => 'Dashboard',
+            'attendance' => 'Attendance',
+            'settings' => 'Settings',
+        ];
     }
 }

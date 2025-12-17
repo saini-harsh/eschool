@@ -816,6 +816,11 @@ function displayStudents(students) {
                 </td>
                 <td>
                     <div class="d-inline-flex align-items-center">
+                        <a href="/institution/students/permissions/${
+                            student.id
+                        }" class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions">
+                            <i class="ti ti-lock"></i>
+                        </a>
                         <a href="/institution/students/show/${
                             student.id
                         }" class="btn btn-icon btn-sm btn-outline-white border-0" title="View Details">

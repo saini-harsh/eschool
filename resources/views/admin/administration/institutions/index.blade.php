@@ -134,6 +134,9 @@
                                 </td>
                                 <td>
                                     <div class="d-inline-flex align-items-center">
+                                        <a href="{{ route('admin.institutions.permissions', $institution->id) }}"
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions"><i
+                                                class="ti ti-lock"></i></a>
                                         <a href="{{ route('admin.institutions.edit', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                                 class="ti ti-edit"></i></a>

@@ -9,6 +9,7 @@ use App\Models\Section;
 use App\Models\Subject;
 use App\Models\StudentAssignment;
 use App\Models\AssignSubject;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -131,8 +132,19 @@ class AssignmentController extends Controller
             if ($request->hasFile('assignment_file')) {
                 $file = $request->file('assignment_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('teacher/uploads/assignment'), $fileName);
-                $filePath = 'teacher/uploads/assignment/' . $fileName;
+                
+                // Create teacher-institution-specific path
+                $currentTeacher = auth('teacher')->user();
+                $institution = Institution::find($currentTeacher->institution_id);
+                $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+                $uploadPath = public_path('teacher/' . $institutionFolder . '/assignments');
+                
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                $file->move($uploadPath, $fileName);
+                $filePath = 'teacher/' . $institutionFolder . '/assignments/' . $fileName;
             }
 
             $assignment = Assignment::create([
@@ -261,8 +273,19 @@ class AssignmentController extends Controller
 
                 $file = $request->file('assignment_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('teacher/uploads/assignment'), $fileName);
-                $assignment->assignment_file = 'teacher/uploads/assignment/' . $fileName;
+                
+                // Create teacher-institution-specific path
+                $currentTeacher = auth('teacher')->user();
+                $institution = Institution::find($currentTeacher->institution_id);
+                $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+                $uploadPath = public_path('teacher/' . $institutionFolder . '/assignments');
+                
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                $file->move($uploadPath, $fileName);
+                $assignment->assignment_file = 'teacher/' . $institutionFolder . '/assignments/' . $fileName;
             }
 
             $assignment->update([
@@ -630,5 +653,16 @@ class AssignmentController extends Controller
                 'message' => 'Error downloading file: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

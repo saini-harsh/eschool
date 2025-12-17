@@ -609,8 +609,15 @@ class AdmissionController extends Controller
      */
     private function uploadFile($file, $folder, $prefix = 'file')
     {
+        $institutionId = auth('institution')->id();
+        $institution = Institution::find($institutionId);
+        
         $fileName = time() . '_' . uniqid() . '_' . $prefix . '.' . $file->getClientOriginalExtension();
-        $destinationPath = public_path($folder);
+        
+        // Create institution-specific path
+        $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+        $fullPath = 'Institution/' . $institutionFolder . '/' . $folder;
+        $destinationPath = public_path($fullPath);
 
         if (!File::exists($destinationPath)) {
             File::makeDirectory($destinationPath, 0755, true);
@@ -618,7 +625,18 @@ class AdmissionController extends Controller
 
         $file->move($destinationPath, $fileName);
 
-        return $folder . '/' . $fileName;
+        return $fullPath . '/' . $fileName;
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 
     /**

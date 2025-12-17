@@ -69,7 +69,10 @@ class SettingsController extends Controller
 
                 $file = $request->file('logo');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $uploadPath = public_path('institution/uploads/institutions');
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+                $uploadPath = public_path('Institution/' . $institutionFolder . '/institutions');
 
                 // Create directory if it doesn't exist
                 if (!File::exists($uploadPath)) {
@@ -77,7 +80,7 @@ class SettingsController extends Controller
                 }
 
                 $file->move($uploadPath, $fileName);
-                $institution->logo = 'institution/uploads/institutions/' . $fileName;
+                $institution->logo = 'Institution/' . $institutionFolder . '/institutions/' . $fileName;
             }
 
             // Update institution data
@@ -180,5 +183,16 @@ class SettingsController extends Controller
                 'message' => 'An error occurred while deleting profile image: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

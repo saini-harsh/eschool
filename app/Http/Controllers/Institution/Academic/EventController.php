@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Institution\Academic;
 
 use App\Http\Controllers\Controller;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -92,8 +93,11 @@ class EventController extends Controller
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = 'uploads/events/' . $fileName;
-                $file->storeAs('public/uploads/events', $fileName);
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($currentInstitution->name);
+                $filePath = 'Institution/' . $institutionFolder . '/events/' . $fileName;
+                $file->storeAs('public/Institution/' . $institutionFolder . '/events', $fileName);
             }
 
             $eventId = DB::table('academic_events')->insertGetId([
@@ -275,8 +279,11 @@ class EventController extends Controller
                 
                 $file = $request->file('file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = 'uploads/events/' . $fileName;
-                $file->storeAs('public/uploads/events', $fileName);
+                
+                // Create institution-specific path
+                $institutionFolder = $this->sanitizeInstitutionName($currentInstitution->name);
+                $filePath = 'Institution/' . $institutionFolder . '/events/' . $fileName;
+                $file->storeAs('public/Institution/' . $institutionFolder . '/events', $fileName);
             }
 
             DB::table('academic_events')
@@ -350,5 +357,16 @@ class EventController extends Controller
                 'message' => 'Error deleting Event'
             ], 500);
         }
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

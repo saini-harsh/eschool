@@ -1,5 +1,6 @@
 <?php
 $institution = Auth::guard('institution')->user();
+use App\Helpers\PermissionHelper;
 ?>
 <!-- Sidenav Menu Start -->
 <div class="sidebar" id="sidebar">
@@ -46,6 +47,7 @@ $institution = Auth::guard('institution')->user();
     <div class="sidebar-inner" data-simplebar>
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
+                @if(PermissionHelper::canShowMenu('dashboard'))
                 <li>
                     <ul>
                         <!-- Dashboard -->
@@ -63,6 +65,8 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
+                @endif
+
                 <li>
                     <ul>
                         <!-- Admission -->
@@ -85,6 +89,8 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
+
+                @if(PermissionHelper::canShowMenu('administration'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -94,35 +100,48 @@ $institution = Auth::guard('institution')->user();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('teachers'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.teachers*') ? 'active' : '' }}"
                                         href="{{ route('institution.teachers.index') }}">
                                         <i class="ti ti-users-group"></i><span>Teachers</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('students'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.students*') ? 'active' : '' }}"
                                         href="{{ route('institution.students.index') }}">
                                         <i class="ti ti-users-group"></i><span>Students</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('nonworkingstaff'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.nonworkingstaff*') ? 'active' : '' }}"
                                         href="{{ route('institution.nonworkingstaff.index') }}">
                                         <i class="ti ti-users-group"></i><span>Non-Working Staff</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('attendance'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.attendance*') ? 'active' : '' }}"
                                         href="{{ route('institution.attendance') }}">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
                                     </a>
                                 </li>
-
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
+
+                @if(PermissionHelper::canShowMenu('academics'))
                 <li>
                     <ul>
                         <li class="submenu">
@@ -132,60 +151,84 @@ $institution = Auth::guard('institution')->user();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
-
+                                @if(PermissionHelper::canShowMenu('classes'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.classes*') ? 'active' : '' }}"
                                         href="{{ route('institution.classes.index') }}">
                                         <i class="ti ti-report"></i><span>Class</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('sections'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.sections*') ? 'active' : '' }}"
                                         href="{{ route('institution.sections.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Section</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('subjects'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.subjects*') ? 'active' : '' }}"
                                         href="{{ route('institution.subjects.index') }}">
                                         <i class="ti ti-book"></i><span>Subject</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assign_teacher'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.academic.assign-teacher*') ? 'active' : '' }}"
                                         href="{{ route('institution.academic.assign-teacher.index') }}">
                                         <i class="ti ti-user"></i><span>Assign Class Teacher</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assign_subject'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.assign-subject*') ? 'active' : '' }}"
                                         href="{{ route('institution.assign-subject.index') }}">
                                         <i class="ti ti-checks"></i><span>Assign Subject</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('assignments'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.assignments*') ? 'active' : '' }}"
                                         href="{{ route('institution.assignments.index') }}">
                                         <i class="ti ti-report"></i><span>Assignments</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('calendar'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.academic.calendar*') ? 'active' : '' }}"
                                         href="{{ route('institution.academic.calendar.index') }}">
                                         <i class="ti ti-calendar"></i><span>Calendar</span>
                                     </a>
                                 </li>
-                                <li class="d-none">
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('events'))
+                                <li class="">
                                     <a class="{{ request()->routeIs('institution.events*') ? 'active' : '' }}"
                                         href="{{ route('institution.events.index') }}">
                                         <i class="ti ti-list"></i><span>Event Management</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="d-none">
+                @endif
+                @if(PermissionHelper::canShowMenu('exam_management'))
+                <li>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
@@ -194,23 +237,32 @@ $institution = Auth::guard('institution')->user();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('exams'))
                                 <li class="">
                                     <a class="" href="{{ route('institution.exam-management.exams') }}">
                                         <i class="ti ti-home"></i><span>Exams</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('exam_type'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.exam-management.exam-type') ? 'active' : '' }}"
                                         href="{{ route('institution.exam-management.exam-type') }}">
                                         <i class="ti ti-home"></i><span>Exam Type</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('exam_setup'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.exam-management.exam-setup') ? 'active' : '' }}"
                                         href="{{ route('institution.exam-management.exam-setup') }}">
                                         <i class="ti ti-home"></i><span>Exam Setup</span>
                                     </a>
                                 </li>
+                                @endif
+
                                 <li class="">
                                     <a class="" href="{{ route('institution.exam-management.rooms.index') }}">
                                         <i class="ti ti-home"></i><span>Exam Rooms Setup</span>
@@ -222,17 +274,23 @@ $institution = Auth::guard('institution')->user();
                                         <i class="ti ti-users"></i><span>Invigilator / Assign Teacher</span>
                                     </a>
                                 </li>
+
+                                @if(PermissionHelper::canShowMenu('marksheet'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.exam-management.marksheet.index') ? 'active' : '' }}"
                                         href="{{ route('institution.exam-management.marksheet.index') }}">
                                         <i class="ti ti-file-text"></i><span>Marksheet</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="d-none">
+                @endif
+
+                @if(PermissionHelper::canShowMenu('communication'))
+                <li>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
@@ -241,17 +299,22 @@ $institution = Auth::guard('institution')->user();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('email_sms'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.email-sms*') ? 'active' : '' }}"
                                         href="{{ route('institution.email-sms.index') }}">
                                         <i class="ti ti-menu-2"></i><span>Email / Sms</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="d-none">
+                @endif
+
+                @if(PermissionHelper::canShowMenu('routine'))
+                <li>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
@@ -260,22 +323,28 @@ $institution = Auth::guard('institution')->user();
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul>
+                                @if(PermissionHelper::canShowMenu('class_routine'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.routines*') ? 'active' : '' }}"
                                         href="{{ route('institution.routines.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Class Routine</span>
                                     </a>
                                 </li>
+                                @endif
+
+                                @if(PermissionHelper::canShowMenu('lesson_plan'))
                                 <li class="">
                                     <a class="{{ request()->routeIs('institution.lesson-plans*') ? 'active' : '' }}"
                                         href="{{ route('institution.lesson-plans.index') }}">
                                         <i class="ti ti-calendar-event"></i><span>Lesson Plan</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     </ul>
                 </li>
+                @endif
                 <li>
                     <ul>
                         <li class="submenu">
@@ -301,6 +370,7 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
+                @if(PermissionHelper::canShowMenu('settings'))
                 <li>
                     <ul>
                         <li class="">
@@ -311,6 +381,7 @@ $institution = Auth::guard('institution')->user();
                         </li>
                     </ul>
                 </li>
+                @endif
 
             </ul>
         </div>

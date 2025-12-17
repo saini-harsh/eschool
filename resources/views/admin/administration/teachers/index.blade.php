@@ -153,6 +153,11 @@
                         </td>
                         <td>
                             <div class="d-inline-flex align-items-center">
+                                <a href="{{ route('admin.teachers.permissions', $teacher->id) }}" 
+                                   class="btn btn-icon btn-sm btn-outline-white border-0" 
+                                   title="Manage Permissions">
+                                    <i class="ti ti-lock"></i>
+                                </a>
                                 <a href="{{ route('admin.teachers.edit', $teacher->id) }}" class="btn btn-icon btn-sm btn-outline-white border-0"><i
                                         class="ti ti-edit"></i></a>
                                 <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.students.delete', $teacher->id) }}`)" class="btn btn-icon btn-sm btn-outline-white border-0"

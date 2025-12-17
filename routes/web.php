@@ -63,6 +63,8 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{institution}', [InstitutionController::class, 'Update'])->name('admin.institutions.update');
             Route::post('/delete/{institution}', [InstitutionController::class, 'Delete'])->name('admin.institutions.delete');
             Route::post('/status/{id}', [InstitutionController::class, 'updateStatus'])->name('admin.institutions.status');
+            Route::get('/permissions/{id}', [InstitutionController::class, 'managePermissions'])->name('admin.institutions.permissions');
+            Route::post('/permissions/{id}', [InstitutionController::class, 'updatePermissions'])->name('admin.institutions.permissions.update');
         });
         Route::prefix('teachers')->group(function () {
             Route::get('/index', [TeacherController::class, 'Index'])->name('admin.teachers.index');
@@ -73,6 +75,8 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{teacher}', [TeacherController::class, 'Update'])->name('admin.teachers.update');
             Route::post('/delete/{teacher}', [TeacherController::class, 'Delete'])->name('admin.teachers.delete');
             Route::post('/status/{id}', [TeacherController::class, 'updateStatus'])->name('admin.teachers.status');
+            Route::get('/permissions/{id}', [TeacherController::class, 'managePermissions'])->name('admin.teachers.permissions');
+            Route::post('/permissions/{id}', [TeacherController::class, 'updatePermissions'])->name('admin.teachers.permissions.update');
         });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('admin.students.index');
@@ -91,6 +95,8 @@ Route::middleware('admin')->group(function () {
             Route::post('/status/{id}', [StudentController::class, 'updateStatus'])->name('admin.students.status');
             Route::post('/generate-admission-number', [StudentController::class, 'generateAdmissionNumber'])->name('admin.students.generate-admission-number');
             Route::post('/generate-roll-number', [StudentController::class, 'generateRollNumber'])->name('admin.students.generate-roll-number');
+            Route::get('/permissions/{id}', [StudentController::class, 'managePermissions'])->name('admin.students.permissions');
+            Route::post('/permissions/{id}', [StudentController::class, 'updatePermissions'])->name('admin.students.permissions.update');
         });
         Route::prefix('nonworkingstaff')->group(function () {
             Route::get('/index', [NonWorkingStaffController::class, 'Index'])->name('admin.nonworkingstaff.index');
@@ -100,6 +106,8 @@ Route::middleware('admin')->group(function () {
             Route::post('/update/{nonworkingstaff}', [NonWorkingStaffController::class, 'Update'])->name('admin.nonworkingstaff.update');
             Route::post('/delete/{nonworkingstaff}', [NonWorkingStaffController::class, 'Delete'])->name('admin.nonworkingstaff.delete');
             Route::post('/status/{id}', [NonWorkingStaffController::class, 'updateStatus'])->name('admin.nonworkingstaff.status');
+            Route::get('/permissions/{id}', [NonWorkingStaffController::class, 'managePermissions'])->name('admin.nonworkingstaff.permissions');
+            Route::post('/permissions/{id}', [NonWorkingStaffController::class, 'updatePermissions'])->name('admin.nonworkingstaff.permissions.update');
         });
 
         Route::prefix('attendance')->group(function () {

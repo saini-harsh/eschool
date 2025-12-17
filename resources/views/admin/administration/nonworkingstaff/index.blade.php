@@ -167,6 +167,11 @@
                             </td>
                             <td>
                                 <div class="d-inline-flex align-items-center">
+                                    <a href="{{ route('admin.nonworkingstaff.permissions', $member->id) }}" 
+                                        class="btn btn-icon btn-sm btn-outline-white border-0"
+                                        title="Manage Permissions">
+                                        <i class="ti ti-lock"></i>
+                                    </a>
                                     <a href="{{ route('admin.nonworkingstaff.edit', $member->id) }}" 
                                         class="btn btn-icon btn-sm btn-outline-white border-0">
                                         <i class="ti ti-edit"></i>

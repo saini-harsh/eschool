@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Administration;
 use App\Http\Controllers\Controller;
 use App\Models\Institution;
 use App\Models\Teacher;
+use App\Helpers\PermissionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -65,26 +66,25 @@ class TeacherController extends Controller
             'profile_image'   => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
+        $institution = Institution::find($request->institution_id);
+        
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
-
-            
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             
-            $destinationPath = public_path('admin/uploads/teachers');
+            // Create admin-institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            $destinationPath = public_path('admin/' . $institutionFolder . '/teachers');
             
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
             
             $file->move($destinationPath, $fileName);
-            
-            $photoPath = 'admin/uploads/teachers/' . $fileName;
+            $photoPath = 'admin/' . $institutionFolder . '/teachers/' . $fileName;
         } else {
             $photoPath = null;
         }
-
-        $institution = Institution::find($request->institution_id);
 
         $teacher = new Teacher();
         $teacher->first_name       = $request->first_name;
@@ -143,18 +143,23 @@ class TeacherController extends Controller
         ]);
         
         
+        $institution = Institution::find($request->institution_id);
+        
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('admin/uploads/teachers');
+            
+            // Create admin-institution-specific path
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            $destinationPath = public_path('admin/' . $institutionFolder . '/teachers');
+            
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
+            
             $file->move($destinationPath, $fileName);
-            $teacher->profile_image = 'admin/uploads/teachers/' . $fileName;
+            $teacher->profile_image = 'admin/' . $institutionFolder . '/teachers/' . $fileName;
         }
-
-        $institution = Institution::find($request->institution_id);
         
         $teacher->first_name       = $request->first_name;
         $teacher->middle_name      = $request->middle_name;
@@ -233,5 +238,42 @@ class TeacherController extends Controller
         }
         
         return $employeeId;
+    }
+
+    /**
+     * Manage permissions for a teacher
+     */
+    public function managePermissions($id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        
+        return view('admin.administration.teachers.permissions', compact('teacher'));
+    }
+
+    /**
+     * Update permissions for a teacher
+     */
+    public function updatePermissions(Request $request, $id)
+    {
+        $teacher = Teacher::findOrFail($id);
+        
+        $permissions = $request->input('permissions', []);
+        
+        // If no permissions selected, set to null to allow all access
+        $teacher->permissions = empty($permissions) ? null : $permissions;
+        $teacher->save();
+
+        return redirect()->route('admin.teachers.index')->with('success', 'Permissions updated successfully!');
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

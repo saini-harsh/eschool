@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Section;
 use App\Models\SchoolClass;
+use App\Helpers\PermissionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -277,41 +278,43 @@ class StudentController extends Controller
         $document03Path = null;
         $document04Path = null;
 
+        $institutionId = $request->institution_id;
+        
         if ($request->hasFile('photo')) {
-            $photoPath = $this->uploadFile($request->file('photo'), 'students');
+            $photoPath = $this->uploadFile($request->file('photo'), 'students', $institutionId);
         }
         if ($request->hasFile('father_photo')) {
-            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents');
+            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents', $institutionId);
         }
         if ($request->hasFile('mother_photo')) {
-            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents');
+            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents', $institutionId);
         }
         if ($request->hasFile('guardian_photo')) {
-            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
+            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians', $institutionId);
         }
         if ($request->hasFile('aadhaar_front')) {
-            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents');
+            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('aadhaar_back')) {
-            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents');
+            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('pan_front')) {
-            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents');
+            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('pan_back')) {
-            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents');
+            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_01_file')) {
-            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
+            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_02_file')) {
-            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents');
+            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_03_file')) {
-            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents');
+            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_04_file')) {
-            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents');
+            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents', $institutionId);
         }
 
         $student = new Student();
@@ -526,41 +529,43 @@ class StudentController extends Controller
         $document03Path = $student->document_03_file;
         $document04Path = $student->document_04_file;
 
+        $institutionId = $request->institution_id;
+        
         if ($request->hasFile('photo')) {
-            $photoPath = $this->uploadFile($request->file('photo'), 'students');
+            $photoPath = $this->uploadFile($request->file('photo'), 'students', $institutionId);
         }
         if ($request->hasFile('father_photo')) {
-            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents');
+            $fatherPhotoPath = $this->uploadFile($request->file('father_photo'), 'students/parents', $institutionId);
         }
         if ($request->hasFile('mother_photo')) {
-            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents');
+            $motherPhotoPath = $this->uploadFile($request->file('mother_photo'), 'students/parents', $institutionId);
         }
         if ($request->hasFile('guardian_photo')) {
-            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians');
+            $guardianPhotoPath = $this->uploadFile($request->file('guardian_photo'), 'students/guardians', $institutionId);
         }
         if ($request->hasFile('aadhaar_front')) {
-            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents');
+            $aadhaarFrontPath = $this->uploadFile($request->file('aadhaar_front'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('aadhaar_back')) {
-            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents');
+            $aadhaarBackPath = $this->uploadFile($request->file('aadhaar_back'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('pan_front')) {
-            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents');
+            $panFrontPath = $this->uploadFile($request->file('pan_front'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('pan_back')) {
-            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents');
+            $panBackPath = $this->uploadFile($request->file('pan_back'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_01_file')) {
-            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents');
+            $document01Path = $this->uploadFile($request->file('document_01_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_02_file')) {
-            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents');
+            $document02Path = $this->uploadFile($request->file('document_02_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_03_file')) {
-            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents');
+            $document03Path = $this->uploadFile($request->file('document_03_file'), 'students/documents', $institutionId);
         }
         if ($request->hasFile('document_04_file')) {
-            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents');
+            $document04Path = $this->uploadFile($request->file('document_04_file'), 'students/documents', $institutionId);
         }
 
         $student->first_name     = $request->first_name;
@@ -709,17 +714,69 @@ class StudentController extends Controller
     /**
      * Helper method to upload files
      */
-    private function uploadFile($file, $folder)
+    private function uploadFile($file, $folder, $institutionId = null)
     {
         $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        
+        // Create admin-institution-specific path if institution ID is provided
+        if ($institutionId) {
+            $institution = Institution::find($institutionId);
+            if ($institution) {
+                $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+                $destinationPath = public_path('admin/' . $institutionFolder . '/' . $folder);
+                
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                
+                $file->move($destinationPath, $fileName);
+                return 'admin/' . $institutionFolder . '/' . $folder . '/' . $fileName;
+            }
+        }
+        
+        // Fallback to old path if no institution ID
         $destinationPath = public_path('admin/uploads/' . $folder);
-
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true);
         }
-
         $file->move($destinationPath, $fileName);
-
         return 'admin/uploads/' . $folder . '/' . $fileName;
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
+    }
+
+    /**
+     * Manage permissions for a student
+     */
+    public function managePermissions($id)
+    {
+        $student = Student::findOrFail($id);
+        
+        return view('admin.administration.students.permissions', compact('student'));
+    }
+
+    /**
+     * Update permissions for a student
+     */
+    public function updatePermissions(Request $request, $id)
+    {
+        $student = Student::findOrFail($id);
+        
+        $permissions = $request->input('permissions', []);
+        
+        // If no permissions selected, set to null to allow all access
+        $student->permissions = empty($permissions) ? null : $permissions;
+        $student->save();
+
+        return redirect()->route('admin.students.index')->with('success', 'Permissions updated successfully!');
     }
 }

@@ -27,6 +27,7 @@ class Institution extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
+        'permissions',
     ];
 
     protected $hidden = [
@@ -38,6 +39,7 @@ class Institution extends Authenticatable
     protected $casts = [
         'established_date' => 'date',
         'status' => 'boolean',
+        'permissions' => 'array',
     ];
 
     public function getAuthPassword()
@@ -79,5 +81,51 @@ class Institution extends Authenticatable
         return $this->hasMany(ExamType::class,'institution_id');
     }
 
+    /**
+     * Check if institution has a specific permission
+     */
+    public function hasPermission($permission)
+    {
+        if (!$this->permissions) {
+            return true; // If no permissions set, grant all access
+        }
+        return in_array($permission, $this->permissions);
+    }
+
+    /**
+     * Get all available permissions
+     */
+    public static function availablePermissions()
+    {
+        return [
+            'dashboard' => 'Dashboard',
+            'administration' => 'Administration',
+            'institutions' => 'Institutions',
+            'teachers' => 'Teachers',
+            'students' => 'Students',
+            'nonworkingstaff' => 'Non-Working Staff',
+            'attendance' => 'Attendance',
+            'academics' => 'Academics',
+            'classes' => 'Classes',
+            'sections' => 'Sections',
+            'subjects' => 'Subjects',
+            'assign_teacher' => 'Assign Class Teacher',
+            'assign_subject' => 'Assign Subject',
+            'assignments' => 'Assignments',
+            'calendar' => 'Calendar',
+            'events' => 'Event Management',
+            'communication' => 'Communication',
+            'email_sms' => 'Email / SMS',
+            'exam_management' => 'Exam Management',
+            'exams' => 'Exams',
+            'exam_type' => 'Exam Type',
+            'exam_setup' => 'Exam Setup',
+            'marksheet' => 'Marksheet',
+            'routine' => 'Routine',
+            'class_routine' => 'Class Routine',
+            'lesson_plan' => 'Lesson Plan',
+            'settings' => 'Settings',
+        ];
+    }
 
 }

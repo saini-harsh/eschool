@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\StudentAssignment;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -118,8 +119,18 @@ class AssignmentController extends Controller
         if ($request->hasFile('submitted_file')) {
             $file = $request->file('submitted_file');
             $fileName = time() . '_' . $student->id . '_' . $file->getClientOriginalName();
-            $file->move(public_path('student/uploads/assignments'), $fileName);
-            $filePath = 'student/uploads/assignments/' . $fileName;
+            
+            // Create student-institution-specific path
+            $institution = Institution::find($student->institution_id);
+            $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+            $uploadPath = public_path('student/' . $institutionFolder . '/assignments');
+            
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            
+            $file->move($uploadPath, $fileName);
+            $filePath = 'student/' . $institutionFolder . '/assignments/' . $fileName;
         }
 
         $studentAssignment = StudentAssignment::create([
@@ -194,5 +205,16 @@ class AssignmentController extends Controller
         }
 
         return response()->download(public_path($assignment->assignment_file));
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher\Setting;
 
 use App\Http\Controllers\Controller;
 use App\Models\Teacher;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
@@ -76,7 +77,11 @@ class SettingsController extends Controller
 
                 $file = $request->file('profile_image');
                 $fileName = time() . '_' . $file->getClientOriginalName();
-                $uploadPath = public_path('admin/uploads/teachers');
+                
+                // Create teacher-institution-specific path
+                $institution = Institution::find($teacher->institution_id);
+                $institutionFolder = $this->sanitizeInstitutionName($institution->name);
+                $uploadPath = public_path('teacher/' . $institutionFolder . '/profile');
                 
                 // Create directory if it doesn't exist
                 if (!File::exists($uploadPath)) {
@@ -84,7 +89,7 @@ class SettingsController extends Controller
                 }
                 
                 $file->move($uploadPath, $fileName);
-                $teacher->profile_image = 'admin/uploads/teachers/' . $fileName;
+                $teacher->profile_image = 'teacher/' . $institutionFolder . '/profile/' . $fileName;
             }
 
             // Update teacher data
@@ -210,5 +215,16 @@ class SettingsController extends Controller
         }
         
         return $employeeId;
+    }
+
+    /**
+     * Helper method to sanitize institution name for folder naming
+     */
+    private function sanitizeInstitutionName($name)
+    {
+        // Remove special characters and replace spaces with underscores
+        $sanitized = preg_replace('/[^A-Za-z0-9\s]/', '', $name);
+        $sanitized = preg_replace('/\s+/', '_', trim($sanitized));
+        return $sanitized;
     }
 }
