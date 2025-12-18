@@ -28,6 +28,40 @@ class AdmissionController extends Controller
     }
 
     /**
+     * Search for students (for sibling selection)
+     */
+    public function searchSiblings(Request $request)
+    {
+        $institutionId = auth('institution')->id();
+        $query = $request->get('q');
+
+        $students = Student::where('institution_id', $institutionId)
+            ->where(function ($q) use ($query) {
+                $q->where('first_name', 'like', "%{$query}%")
+                    ->orWhere('last_name', 'like', "%{$query}%")
+                    ->orWhere('admission_number', 'like', "%{$query}%")
+                    ->orWhere('student_id', 'like', "%{$query}%");
+            })
+            ->select('id', 'first_name', 'last_name', 'admission_number', 'father_name', 'mother_name', 'address', 'pincode', 'district')
+            ->limit(10)
+            ->get();
+
+        return response()->json($students);
+    }
+
+    /**
+     * Get student details for sibling auto-fill
+     */
+    public function getSiblingDetails($id)
+    {
+        $institutionId = auth('institution')->id();
+        $student = Student::where('institution_id', $institutionId)
+            ->findOrFail($id);
+
+        return response()->json($student);
+    }
+
+    /**
      * List all admissions with filters
      */
     public function list(Request $request)
@@ -111,6 +145,9 @@ class AdmissionController extends Controller
             'permanent_district' => 'nullable|string|max:100',
             'admission_date' => 'nullable|string',
             'dob' => 'nullable|string',
+            'dob_status' => 'nullable|string|in:Verified,Not Verified',
+            'age_years' => 'nullable|integer',
+            'age_months' => 'nullable|integer',
             'email' => 'nullable|email|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'aadhaar_front' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
@@ -123,6 +160,9 @@ class AdmissionController extends Controller
             'document_02_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
             'document_03_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
             'document_04_file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'has_sibling' => 'nullable|boolean',
+            'sibling_ids' => 'nullable|array',
+            'sibling_ids.*' => 'exists:students,id',
         ]);
 
         if ($validator->fails()) {
@@ -157,6 +197,9 @@ class AdmissionController extends Controller
                 // Personal Information
                 'religion' => $request->religion,
                 'caste_tribe' => $request->caste_tribe,
+                'dob_status' => $request->dob_status ?? 'Not Verified',
+                'age_years' => $request->age_years,
+                'age_months' => $request->age_months,
 
                 // Medical Record
                 'blood_group' => $request->blood_group,
@@ -200,8 +243,14 @@ class AdmissionController extends Controller
                 'hostel_tuition_fee_amount' => $request->hostel_tuition_payment_amount ?? null,
                 'hostel_tuition_payment_method' => $request->hostel_tuition_payment_method ?? null,
 
+                'discount_category' => $request->discount_category ?? null,
+                'discount_amount' => $request->discount_amount ?? 0,
+                'discount_percentage' => $request->discount_percentage ?? 0,
+
                 // Status
                 'status' => 'pending',
+                'has_sibling' => $request->has_sibling ? true : false,
+                'sibling_ids' => $request->sibling_ids,
             ];
 
             // Parse dates (form uses "d M, Y" format)
@@ -224,7 +273,8 @@ class AdmissionController extends Controller
             }
 
             // Handle file uploads
-            $uploadPath = 'institution/uploads/admissions';
+            $institutionCode = $institution->institution_code ?? 'unknown';
+            $uploadPath = "institution/{$institutionCode}/students/admissions";
             $fullPath = public_path($uploadPath);
 
             if (!File::exists($fullPath)) {
@@ -296,9 +346,29 @@ class AdmissionController extends Controller
                 'address' => $data['permanent_address'],
                 'pincode' => $data['permanent_pincode'],
                 'district' => $data['permanent_district'],
-                'student_id' => $request->admission_number
+                'student_id' => $request->admission_number,
+                'discount_percentage' => $request->discount_percentage ?? 0,
+                'has_sibling' => $data['has_sibling'],
+                'sibling_ids' => $data['sibling_ids'],
             ]);
             $student = Student::create($studentData);
+
+            // Link this student to existing siblings
+            if ($data['has_sibling'] && !empty($data['sibling_ids'])) {
+                foreach ($data['sibling_ids'] as $siblingId) {
+                    $sibling = Student::find($siblingId);
+                    if ($sibling) {
+                        $currentSiblings = $sibling->sibling_ids ?? [];
+                        if (!in_array($student->id, $currentSiblings)) {
+                            $currentSiblings[] = $student->id;
+                            $sibling->update([
+                                'sibling_ids' => $currentSiblings,
+                                'has_sibling' => true
+                            ]);
+                        }
+                    }
+                }
+            }
 
             // Create hostel record
             $hostel = Hostel::create([
@@ -338,6 +408,8 @@ class AdmissionController extends Controller
                             'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $admissionFeeStructure->id,
                             'amount' => $request->admission_payment_amount,
+                            'discount_amount' => $request->discount_amount ?? 0,
+                            'discount_percentage' => $request->discount_percentage ?? 0,
                             'payment_method' => $request->admission_payment_method ?? 'cash',
                             'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
                             'receipt_number' => Payment::generateReceiptNumber($institutionId),
@@ -387,6 +459,8 @@ class AdmissionController extends Controller
                             'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $tuitionFeeStructure->id,
                             'payment_amount' => $request->tuition_payment_amount,
+                            'discount_amount' => 0, // Tuition discount not implemented in form yet
+                            'discount_percentage' => 0,
                             'payment_method' => $request->tuition_payment_method ?? 'cash',
                             'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
                             'receipt_number' => TuitionFeePayment::generateReceiptNumber($institutionId),
@@ -404,6 +478,8 @@ class AdmissionController extends Controller
                             'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $tuitionFeeStructure->id,
                             'amount' => $request->tuition_payment_amount,
+                            'discount_amount' => 0,
+                            'discount_percentage' => 0,
                             'payment_method' => $request->tuition_payment_method ?? 'cash',
                             'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
                             'receipt_number' => Payment::generateReceiptNumber($institutionId),
@@ -432,6 +508,8 @@ class AdmissionController extends Controller
                             'student_id' => $student->id ?? null, // Will be updated when student is created
                             'fee_structure_id' => $hostelAdmissionFeeStructure->id,
                             'amount' => $request->hostel_admission_payment_amount,
+                            'discount_amount' => 0,
+                            'discount_percentage' => 0,
                             'payment_method' => $request->hostel_admission_payment_method ?? 'cash',
                             'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
                             'receipt_number' => Payment::generateReceiptNumber($institutionId),
@@ -441,7 +519,7 @@ class AdmissionController extends Controller
                     }
                 }
 
-                if ($request->hostel_tuition_payment_amount) {
+                if ($request->hostel_tuition_payment_amount && $request->hostel_tuition_payment_amount > 0) {
                     $hostelFeeStructure = FeeStructure::where('institution_id', $institutionId)
                         ->where('class_id', (int) $request->class_id)
                         ->where('fee_type', 'monthly')
@@ -449,14 +527,13 @@ class AdmissionController extends Controller
                         ->where('status', 1)
                         ->first();
 
-
-
-
-                    HostelPayment::create([
+                    if ($hostelFeeStructure) {
+                        HostelPayment::create([
                             'hostel_id' => $hostel->id ?? null,
                             'institution_id' => $student->institution_id ?? null,
                             'amount' => $request->hostel_tuition_payment_amount,
-                            // 'payment_type' => 'hostel_tuition',
+                            'discount_amount' => 0,
+                            'discount_percentage' => 0,
                             'payment_date' => $data['admission_date'] ?? now()->format('Y-m-d'),
                             'months_paid' => $request->hostel_tuition_selected_months,
                             'receipt_number' => HostelPayment::generateReceiptNumber($student->institution_id),
@@ -464,8 +541,7 @@ class AdmissionController extends Controller
                             'fee_structure_id' => $hostelFeeStructure->id,
                             'student_id' => $student->id ?? null,
                         ]);
-
-
+                    }
                 }
 
                 DB::commit();
@@ -684,6 +760,63 @@ class AdmissionController extends Controller
     }
 
     /**
+     * Preview admissions in Excel-like format
+     */
+    public function previewExcel(Request $request)
+    {
+        try {
+            $institution = Auth::guard('institution')->user();
+
+            $query = Admission::with(['institution', 'schoolClass', 'previousSchoolClass'])
+                ->where('institution_id', $institution->id);
+
+            // Apply same filters as list method
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%')
+                      ->orWhere('admission_number', 'like', '%' . $search . '%')
+                      ->orWhere('roll_number', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            }
+
+            if ($request->filled('class_id')) {
+                $query->where('class_id', $request->class_id);
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->filled('admission_date_from')) {
+                $query->whereDate('admission_date', '>=', $request->admission_date_from);
+            }
+
+            if ($request->filled('admission_date_to')) {
+                $query->whereDate('admission_date', '<=', $request->admission_date_to);
+            }
+
+            if ($request->filled('created_from')) {
+                $query->whereDate('created_at', '>=', $request->created_from);
+            }
+
+            if ($request->filled('created_to')) {
+                $query->whereDate('created_at', '<=', $request->created_to);
+            }
+
+            $admissions = $query->orderBy('created_at', 'desc')->get();
+
+            return view('institution.administration.students.admission.excel-preview', compact('admissions'));
+        } catch (\Exception $e) {
+            Log::error('Error previewing admissions: ' . $e->getMessage());
+            return response()->json(['error' => 'Preview failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Export admissions to Excel
      */
     public function exportExcel(Request $request)
@@ -749,135 +882,66 @@ class AdmissionController extends Controller
     {
         $excelData = [];
 
-        // Excel Headers - Comprehensive Student Details
+        // Excel Headers - Matching the requested preview format
         $excelData[] = [
-            // Basic Information
-            'First Name',
-            'Last Name',
-            'Admission No',
-            'Roll Number',
-            'Class',
-            'PEN No',
-            'Status',
-
-            // Contact Information
-            'Email',
-            'Phone',
-
-            // Dates
-            'Admission Date',
-            'Date of Birth',
-            'Submitted Date',
-
-            // Personal Information
+            'Old / New',
+            'Roll No.',
+            'Name',
             'Gender',
-            'Religion',
-            'Caste/Tribe',
-            'Blood Group',
-            'Height',
-            'Weight',
-            'Aadhaar No',
-
-            // Address Information
+            'DOB',
+            'DOB Status',
+            'PEN No.',
+            'Aadhaar No.',
+            'Mother\'s Name',
+            'Father\'s Name',
+            'WhatsApp No.',
+            'Admission Date',
             'Address',
-            'Pincode',
-            'District',
-            'Permanent Address',
-            'Permanent Pincode',
-            'Permanent District',
-
-            // Parent Information
-            'Father Name',
-            'Father Occupation',
-            'Father Phone',
-            'Mother Name',
-
-            // Guardian Information
-            'Guardian Name',
-            'Guardian Relation',
-            'Guardian Phone',
-            'Guardian Address',
-
-            // Previous Academic Information
-            'Previous School Name',
-            'Previous School Address',
-            'Previous School Class',
-            'Previous School Result',
-
-            // Payment Information
-            'Admission Fee Amount',
-            'Admission Payment Method',
-            'Tuition Fee Amount',
-            'Tuition Payment Method',
-
-            // Institution Information
-            'Institution Code'
+            'Discount Category',
+            'Discount Amount',
+            'Verification',
+            'Admission Amount',
+            'KSO',
+            'ID',
+            'Total',
+            'Payment',
+            'Admission Status',
+            'Sibling',
+            'Name of the School',
+            'Class',
+            'Result'
         ];
 
         // Add admission data
         foreach ($admissions as $admission) {
             $excelData[] = [
-                // Basic Information
-                $admission->first_name ?? 'N/A',
-                $admission->last_name ?? 'N/A',
-                $admission->admission_number ?? 'N/A',
+                'New', // Default to New for admission records
                 $admission->roll_number ?? 'N/A',
-                $admission->schoolClass->name ?? 'N/A',
-                $admission->pen_no ?? 'N/A',
-                ucfirst($admission->status ?? 'Pending'),
-
-                // Contact Information
-                $admission->email ?? 'N/A',
-                $admission->phone ?? 'N/A',
-
-                // Dates
-                $admission->admission_date ? Carbon::parse($admission->admission_date)->format('d M, Y') : 'N/A',
-                $admission->dob ? Carbon::parse($admission->dob)->format('d M, Y') : 'N/A',
-                $admission->created_at->format('d M, Y h:i A'),
-
-                // Personal Information
+                ($admission->first_name ?? '') . ' ' . ($admission->last_name ?? ''),
                 $admission->gender ?? 'N/A',
-                $admission->religion ?? 'N/A',
-                $admission->caste_tribe ?? 'N/A',
-                $admission->blood_group ?? 'N/A',
-                $admission->height ?? 'N/A',
-                $admission->weight ?? 'N/A',
+                $admission->dob ? Carbon::parse($admission->dob)->format('d/m/Y') : 'N/A',
+                'N/A', // DOB Status
+                $admission->pen_no ?? 'N/A',
                 $admission->aadhaar_no ?? 'N/A',
-
-                // Address Information
-                $admission->address ?? 'N/A',
-                $admission->pincode ?? 'N/A',
-                $admission->district ?? 'N/A',
-                $admission->permanent_address ?? 'N/A',
-                $admission->permanent_pincode ?? 'N/A',
-                $admission->permanent_district ?? 'N/A',
-
-                // Parent Information
-                $admission->father_name ?? 'N/A',
-                $admission->father_occupation ?? 'N/A',
-                $admission->father_phone ?? 'N/A',
                 $admission->mother_name ?? 'N/A',
-
-                // Guardian Information
-                $admission->guardian_name ?? 'N/A',
-                $admission->guardian_relation_text ?? 'N/A',
-                $admission->guardian_phone ?? 'N/A',
-                $admission->guardian_address ?? 'N/A',
-
-                // Previous Academic Information
+                $admission->father_name ?? 'N/A',
+                $admission->phone ?? 'N/A',
+                $admission->admission_date ? Carbon::parse($admission->admission_date)->format('d/m/Y') : 'N/A',
+                $admission->address ?? 'N/A',
+                $admission->discount_category ?? 'None',
+                $admission->discount_amount ?? '0.00',
+                ucfirst($admission->status ?? 'Pending'), // Verification
+                $admission->admission_fee_amount ?? '0.00',
+                'N/A', // KSO
+                $admission->admission_number ?? 'N/A',
+                number_format(($admission->admission_fee_amount ?? 0) + ($admission->tuition_fee_amount ?? 0), 2),
+                $admission->admission_payment_method ?? 'N/A',
+                ucfirst($admission->status ?? 'Pending'),
+                $admission->has_sibling && $admission->sibling_ids ? 
+                    \App\Models\Student::whereIn('id', $admission->sibling_ids)->get()->map(fn($s) => $s->first_name . ' ' . $s->last_name)->implode(', ') : 'N/A',
                 $admission->previous_school_name ?? 'N/A',
-                $admission->previous_school_address ?? 'N/A',
                 $admission->previousSchoolClass->name ?? 'N/A',
                 $admission->previous_school_result ?? 'N/A',
-
-                // Payment Information
-                $admission->admission_fee_amount ?? 'N/A',
-                $admission->admission_payment_method ?? 'N/A',
-                $admission->tuition_fee_amount ?? 'N/A',
-                $admission->tuition_payment_method ?? 'N/A',
-
-                // Institution Information
-                $admission->institution_code ?? 'N/A'
             ];
         }
 
@@ -885,7 +949,7 @@ class AdmissionController extends Controller
         $timestamp = now()->format('Y-m-d_H-i-s');
         $filename = 'admissions_' . $timestamp . '.xls';
 
-        // Generate Excel XML format
+        // Generate Excel XML format with styles for yellow header
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<?mso-application progid="Excel.Sheet"?>' . "\n";
         $xml .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
@@ -893,14 +957,56 @@ class AdmissionController extends Controller
         $xml .= ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
         $xml .= ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
         $xml .= ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+
+        // Add Styles
+        $xml .= '<Styles>' . "\n";
+        $xml .= ' <Style ss:ID="Default" ss:Name="Normal">' . "\n";
+        $xml .= '  <Alignment ss:Vertical="Bottom"/>' . "\n";
+        $xml .= '  <Borders/>' . "\n";
+        $xml .= '  <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>' . "\n";
+        $xml .= '  <Interior/>' . "\n";
+        $xml .= '  <NumberFormat/>' . "\n";
+        $xml .= '  <Protection/>' . "\n";
+        $xml .= ' </Style>' . "\n";
+        $xml .= ' <Style ss:ID="Header">' . "\n";
+        $xml .= '  <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>' . "\n";
+        $xml .= '  <Borders>' . "\n";
+        $xml .= '   <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '  </Borders>' . "\n";
+        $xml .= '  <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000" ss:Bold="1"/>' . "\n";
+        $xml .= '  <Interior ss:Color="#FFFF00" ss:Pattern="Solid"/>' . "\n";
+        $xml .= ' </Style>' . "\n";
+        $xml .= ' <Style ss:ID="Cell">' . "\n";
+        $xml .= '  <Borders>' . "\n";
+        $xml .= '   <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '   <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>' . "\n";
+        $xml .= '  </Borders>' . "\n";
+        $xml .= ' </Style>' . "\n";
+        $xml .= '</Styles>' . "\n";
+
         $xml .= '<Worksheet ss:Name="Admissions">' . "\n";
         $xml .= '<Table>' . "\n";
 
-        foreach ($excelData as $row) {
+        // Headers
+        $xml .= '<Row ss:Height="20">' . "\n";
+        foreach ($excelData[0] as $cell) {
+            $cellValue = htmlspecialchars($cell, ENT_XML1, 'UTF-8');
+            $xml .= '<Cell ss:StyleID="Header"><Data ss:Type="String">' . $cellValue . '</Data></Cell>' . "\n";
+        }
+        $xml .= '</Row>' . "\n";
+
+        // Data
+        for ($i = 1; $i < count($excelData); $i++) {
             $xml .= '<Row>' . "\n";
-            foreach ($row as $cell) {
+            foreach ($excelData[$i] as $cell) {
                 $cellValue = htmlspecialchars($cell, ENT_XML1, 'UTF-8');
-                $xml .= '<Cell><Data ss:Type="String">' . $cellValue . '</Data></Cell>' . "\n";
+                $type = is_numeric($cell) ? 'Number' : 'String';
+                $xml .= '<Cell ss:StyleID="Cell"><Data ss:Type="' . $type . '">' . $cellValue . '</Data></Cell>' . "\n";
             }
             $xml .= '</Row>' . "\n";
         }

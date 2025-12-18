@@ -13,6 +13,8 @@ class CreateHostelPaymentsTable extends Migration
             $table->foreignId('hostel_id')->constrained('hostels')->onDelete('cascade');
             $table->foreignId('institution_id')->constrained('institutions')->onDelete('cascade');
             $table->decimal('amount', 8, 2);
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->date('payment_date')->default(now());
             $table->string('months_paid');
             $table->enum('payment_method', ['cash', 'online'])->default('cash');

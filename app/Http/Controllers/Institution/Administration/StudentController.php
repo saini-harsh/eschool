@@ -748,7 +748,7 @@ class StudentController extends Controller
             'secondaryColor' => $secondaryColor,
         ])->setPaper('a4');
 
-        $fileName = 'Student_' . ($student->student_id ?? $student->id) . '.pdf';
+        $fileName = 'Student_' . str_replace(['/', '\\'], '-', ($student->student_id ?? $student->id)) . '.pdf';
         return $pdf->download($fileName);
     }
 
@@ -774,7 +774,7 @@ class StudentController extends Controller
             'secondaryColor' => $secondaryColor,
         ])->setPaper('a4');
 
-        $fileName = 'Student_ID_Card_' . ($student->student_id ?? $student->id) . '.pdf';
+        $fileName = 'Student_ID_Card_' . str_replace(['/', '\\'], '-', ($student->student_id ?? $student->id)) . '.pdf';
         return $pdf->stream($fileName);
     }
 

@@ -22,6 +22,8 @@ return new class extends Migration
 
             // Payment Information
             $table->decimal('payment_amount', 10, 2);
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->enum('payment_method', ['online', 'cash'])->default('cash');
             $table->string('transaction_id')->nullable();
             $table->date('payment_date');

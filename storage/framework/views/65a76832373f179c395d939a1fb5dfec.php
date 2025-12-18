@@ -1,18 +1,20 @@
 <?php $__env->startSection('title', 'Admin | Institutions Management'); ?>
 <?php $__env->startSection('content'); ?>
-<?php if(session('success')): ?>
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <?php echo e(session('success')); ?>
+    <?php if(session('success')): ?>
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?php echo e(session('success')); ?>
 
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
-    </div>
-<?php endif; ?>
+    <?php endif; ?>
     <!-- Start Content -->
     <div class="content">
 
@@ -22,14 +24,15 @@
                 <h5 class="fw-bold">Institutions</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="<?php echo e(route('admin.institutions.create')); ?>"><i
-                                    class="ti ti-home me-1"></i>Home</a></li>
+                        <li class="breadcrumb-item d-flex align-items-center"><a
+                                href="<?php echo e(route('admin.institutions.create')); ?>"><i class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Institutions</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="<?php echo e(route('admin.institutions.create')); ?>" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
+                <a href="<?php echo e(route('admin.institutions.create')); ?>" class="btn btn-primary"><i
+                        class="ti ti-circle-plus me-1"></i>New Institution</a>
             </div>
         </div>
         <!-- End Page Header -->
@@ -50,7 +53,8 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="fw-bold mb-0">Filter</h6>
                                     <div class="d-flex align-items-center">
-                                        <a href="<?php echo e(route('admin.institutions.index')); ?>" class="link-danger text-decoration-underline">Clear
+                                        <a href="<?php echo e(route('admin.institutions.index')); ?>"
+                                            class="link-danger text-decoration-underline">Clear
                                             All</a>
                                     </div>
                                 </div>
@@ -60,13 +64,17 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Name</label>
-                                            <a href="<?php echo e(route('admin.institutions.index')); ?>" class="link-primary mb-1">Reset</a>
+                                            <a href="<?php echo e(route('admin.institutions.index')); ?>"
+                                                class="link-primary mb-1">Reset</a>
                                         </div>
                                         <select name="name" id="filter-name" class="form-select">
                                             <option value="">Select</option>
                                             <?php if(isset($allInstitutionNames) && $allInstitutionNames->count()): ?>
                                                 <?php $__currentLoopData = $allInstitutionNames; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($n); ?>" <?php echo e(request('name') == $n ? 'selected' : ''); ?>><?php echo e($n); ?></option>
+                                                    <option value="<?php echo e($n); ?>"
+                                                        <?php echo e(request('name') == $n ? 'selected' : ''); ?>><?php echo e($n); ?>
+
+                                                    </option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             <?php endif; ?>
                                         </select>
@@ -74,9 +82,11 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Email</label>
-                                            <a href="<?php echo e(route('admin.institutions.index')); ?>" class="link-primary mb-1">Reset</a>
+                                            <a href="<?php echo e(route('admin.institutions.index')); ?>"
+                                                class="link-primary mb-1">Reset</a>
                                         </div>
-                                        <input type="text" name="email" id="filter-email" class="form-control" placeholder="Institution email" value="<?php echo e(request('email')); ?>">
+                                        <input type="text" name="email" id="filter-email" class="form-control"
+                                            placeholder="Institution email" value="<?php echo e(request('email')); ?>">
                                     </div>
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-end">
@@ -96,6 +106,8 @@
                 <thead class="thead-ight">
                     <tr>
                         <th>Name</th>
+                        <th>Code</th>
+                        <th>Institution Code</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Status</th>
@@ -110,8 +122,8 @@
                                     <div class="d-flex align-items-center">
                                         <a href="company-details.html"
                                             class="avatar avatar-sm rounded-circle bg-light border">
-                                            <img src="<?php echo e(asset($institution->logo)); ?>"
-                                                class="w-auto h-auto" alt="img">
+                                            <img src="<?php echo e(asset($institution->logo)); ?>" class="w-auto h-auto"
+                                                alt="img">
                                         </a>
                                         <div class="ms-2">
                                             <h6 class="fs-14 mb-0"><a
@@ -119,6 +131,8 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td><?php echo e($institution->code); ?></td>
+                                <td><?php echo e($institution->institution_code); ?></td>
                                 <td><a href="https://dleohr.dreamstechnologies.com/cdn-cgi/l/email-protection"
                                         class="__cf_email__"
                                         data-cfemail="43202c2d37222037032d263b22202c31266d202c2e"><?php echo e($institution->email); ?></a>
@@ -127,8 +141,10 @@
                                 <td>
                                     <div>
                                         <select class="select">
-                                        <option value="1" <?php echo e($institution->status === 1 ? 'selected' : ''); ?>>Active</option>
-                                        <option value="0" <?php echo e($institution->status === 0 ? 'selected' : ''); ?>>Inactive</option>
+                                            <option value="1" <?php echo e($institution->status === 1 ? 'selected' : ''); ?>>
+                                                Active</option>
+                                            <option value="0" <?php echo e($institution->status === 0 ? 'selected' : ''); ?>>
+                                                Inactive</option>
                                         </select>
                                     </div>
                                 </td>
@@ -138,14 +154,16 @@
                                             class="btn btn-icon btn-sm btn-success border-0" title="Login as Institution"><i
                                                 class="ti ti-login"></i></a>
                                         <a href="<?php echo e(route('admin.institutions.permissions', $institution->id)); ?>"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions"><i
-                                                class="ti ti-lock"></i></a>
+                                            class="btn btn-icon btn-sm btn-outline-white border-0"
+                                            title="Manage Permissions"><i class="ti ti-lock"></i></a>
                                         <a href="<?php echo e(route('admin.institutions.edit', $institution->id)); ?>"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit"><i
                                                 class="ti ti-edit"></i></a>
-                                        <a href="javascript:void(0);" onclick="confirmDelete(`<?php echo e(route('admin.institutions.delete', $institution->id)); ?>`)"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Delete" data-bs-toggle="modal"
-                                            data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
+                                        <a href="javascript:void(0);"
+                                            onclick="confirmDelete(`<?php echo e(route('admin.institutions.delete', $institution->id)); ?>`)"
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Delete"
+                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
+                                                class="ti ti-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

@@ -43,6 +43,7 @@ class InstitutionController extends Controller
     {
         $request->validate([
             'name'             => 'required|string|max:255',
+            'institution_code' => 'nullable|string|max:255|unique:institutions,institution_code',
             'logo'             => 'nullable|image|mimes:jpg,jpeg,png',
             'address'          => 'required|string|max:255',
             'pincode'          => 'required|string|max:10',
@@ -93,11 +94,12 @@ class InstitutionController extends Controller
             $nextNumber = 1;
         }
 
-        $institution_code = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        $code = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         $institution = new Institution();
         $institution->name             = $request->name;
-        $institution->code = $institution_code;
+        $institution->institution_code = $request->institution_code;
+        $institution->code = $code;
         $institution->logo             = $logoPath;
         $institution->address          = $request->address;
         $institution->pincode          = $request->pincode;
@@ -128,6 +130,7 @@ class InstitutionController extends Controller
 
         $request->validate([
             'name'             => 'required|string|max:255',
+            'institution_code' => 'nullable|string|max:255|unique:institutions,institution_code,' . $institution->id,
             'profile_image'             => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
             'address'          => 'required|string|max:255',
             'pincode'          => 'required|string|max:10',
@@ -166,6 +169,7 @@ class InstitutionController extends Controller
 
 
         $institution->name             = $request->name;
+        $institution->institution_code = $request->institution_code;
         $institution->address          = $request->address;
         $institution->pincode          = $request->pincode;
         $institution->established_date = Carbon::createFromFormat('d M, Y', $request->established_date)->format('Y-m-d');

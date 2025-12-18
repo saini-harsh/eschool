@@ -13,6 +13,8 @@ class Payment extends Model
         'admission_id',
         'fee_structure_id',
         'amount',
+        'discount_amount',
+        'discount_percentage',
         'payment_method',
         'transaction_id',
         'notes',
@@ -23,6 +25,8 @@ class Payment extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
         'payment_date' => 'date',
     ];
 

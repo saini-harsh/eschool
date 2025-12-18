@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone', 20)->nullable();
             $table->date('dob');
+            $table->string('dob_status')->default('Not Verified');
+            $table->integer('age_years')->nullable();
+            $table->integer('age_months')->nullable();
             $table->string('gender');
             $table->string('address');
             $table->string('pincode', 10);
@@ -30,10 +33,12 @@ return new class extends Migration
             $table->foreignId('institution_id')->constrained()->onDelete('cascade');
             $table->string('class_id')->nullable();
             $table->string('section_id')->nullable();
-            $table->string('admin_id')->constrained()->onDelete('cascade');
+            $table->string('admin_id')->nullable();
             $table->string('password');
             $table->string('decrypt_pw');
-            $table->boolean('status')->default(1);
+            $table->string('status')->nullable();
+            $table->boolean('has_sibling')->default(false);
+            $table->json('sibling_ids')->nullable();
 
             // Academic Information
             $table->date('admission_date')->nullable();
@@ -56,6 +61,9 @@ return new class extends Migration
             $table->string('religion', 50)->nullable();
             $table->string('blood_group', 10)->nullable();
             $table->string('category', 50)->nullable();
+            $table->string('discount_category')->nullable();
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->string('height', 10)->nullable();
             $table->string('weight', 10)->nullable();
             $table->text('permanent_address')->nullable();

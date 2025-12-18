@@ -1,18 +1,20 @@
 @extends('layouts.admin')
 @section('title', 'Admin | Institutions Management')
 @section('content')
-@if (session('success'))
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-        <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
+    @if (session('success'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
-    </div>
-@endif
+    @endif
     <!-- Start Content -->
     <div class="content">
 
@@ -22,14 +24,15 @@
                 <h5 class="fw-bold">Institutions</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb breadcrumb-divide p-0 mb-0">
-                        <li class="breadcrumb-item d-flex align-items-center"><a href="{{ route('admin.institutions.create') }}"><i
-                                    class="ti ti-home me-1"></i>Home</a></li>
+                        <li class="breadcrumb-item d-flex align-items-center"><a
+                                href="{{ route('admin.institutions.create') }}"><i class="ti ti-home me-1"></i>Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Institutions</li>
                     </ol>
                 </nav>
             </div>
             <div>
-                <a href="{{ route('admin.institutions.create') }}" class="btn btn-primary"><i class="ti ti-circle-plus me-1"></i>New Institution</a>
+                <a href="{{ route('admin.institutions.create') }}" class="btn btn-primary"><i
+                        class="ti ti-circle-plus me-1"></i>New Institution</a>
             </div>
         </div>
         <!-- End Page Header -->
@@ -50,7 +53,8 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="fw-bold mb-0">Filter</h6>
                                     <div class="d-flex align-items-center">
-                                        <a href="{{ route('admin.institutions.index') }}" class="link-danger text-decoration-underline">Clear
+                                        <a href="{{ route('admin.institutions.index') }}"
+                                            class="link-danger text-decoration-underline">Clear
                                             All</a>
                                     </div>
                                 </div>
@@ -60,13 +64,16 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Name</label>
-                                            <a href="{{ route('admin.institutions.index') }}" class="link-primary mb-1">Reset</a>
+                                            <a href="{{ route('admin.institutions.index') }}"
+                                                class="link-primary mb-1">Reset</a>
                                         </div>
                                         <select name="name" id="filter-name" class="form-select">
                                             <option value="">Select</option>
-                                            @if(isset($allInstitutionNames) && $allInstitutionNames->count())
+                                            @if (isset($allInstitutionNames) && $allInstitutionNames->count())
                                                 @foreach ($allInstitutionNames as $n)
-                                                    <option value="{{ $n }}" {{ request('name') == $n ? 'selected' : '' }}>{{ $n }}</option>
+                                                    <option value="{{ $n }}"
+                                                        {{ request('name') == $n ? 'selected' : '' }}>{{ $n }}
+                                                    </option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -74,9 +81,11 @@
                                     <div class="mb-3">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <label class="form-label">Email</label>
-                                            <a href="{{ route('admin.institutions.index') }}" class="link-primary mb-1">Reset</a>
+                                            <a href="{{ route('admin.institutions.index') }}"
+                                                class="link-primary mb-1">Reset</a>
                                         </div>
-                                        <input type="text" name="email" id="filter-email" class="form-control" placeholder="Institution email" value="{{ request('email') }}">
+                                        <input type="text" name="email" id="filter-email" class="form-control"
+                                            placeholder="Institution email" value="{{ request('email') }}">
                                     </div>
                                 </div>
                                 <div class="card-footer d-flex align-items-center justify-content-end">
@@ -96,6 +105,8 @@
                 <thead class="thead-ight">
                     <tr>
                         <th>Name</th>
+                        <th>Code</th>
+                        <th>Institution Code</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Status</th>
@@ -110,8 +121,8 @@
                                     <div class="d-flex align-items-center">
                                         <a href="company-details.html"
                                             class="avatar avatar-sm rounded-circle bg-light border">
-                                            <img src="{{ asset($institution->logo) }}"
-                                                class="w-auto h-auto" alt="img">
+                                            <img src="{{ asset($institution->logo) }}" class="w-auto h-auto"
+                                                alt="img">
                                         </a>
                                         <div class="ms-2">
                                             <h6 class="fs-14 mb-0"><a
@@ -119,6 +130,8 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td>{{ $institution->code }}</td>
+                                <td>{{ $institution->institution_code }}</td>
                                 <td><a href="https://dleohr.dreamstechnologies.com/cdn-cgi/l/email-protection"
                                         class="__cf_email__"
                                         data-cfemail="43202c2d37222037032d263b22202c31266d202c2e">{{ $institution->email }}</a>
@@ -127,8 +140,10 @@
                                 <td>
                                     <div>
                                         <select class="select">
-                                        <option value="1" {{ $institution->status === 1 ? 'selected' : '' }}>Active</option>
-                                        <option value="0" {{ $institution->status === 0 ? 'selected' : '' }}>Inactive</option>
+                                            <option value="1" {{ $institution->status === 1 ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="0" {{ $institution->status === 0 ? 'selected' : '' }}>
+                                                Inactive</option>
                                         </select>
                                     </div>
                                 </td>
@@ -138,14 +153,16 @@
                                             class="btn btn-icon btn-sm btn-success border-0" title="Login as Institution"><i
                                                 class="ti ti-login"></i></a>
                                         <a href="{{ route('admin.institutions.permissions', $institution->id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Manage Permissions"><i
-                                                class="ti ti-lock"></i></a>
+                                            class="btn btn-icon btn-sm btn-outline-white border-0"
+                                            title="Manage Permissions"><i class="ti ti-lock"></i></a>
                                         <a href="{{ route('admin.institutions.edit', $institution->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-white border-0" title="Edit"><i
                                                 class="ti ti-edit"></i></a>
-                                        <a href="javascript:void(0);" onclick="confirmDelete(`{{ route('admin.institutions.delete', $institution->id) }}`)"
-                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Delete" data-bs-toggle="modal"
-                                            data-bs-target="#delete_modal"><i class="ti ti-trash"></i></a>
+                                        <a href="javascript:void(0);"
+                                            onclick="confirmDelete(`{{ route('admin.institutions.delete', $institution->id) }}`)"
+                                            class="btn btn-icon btn-sm btn-outline-white border-0" title="Delete"
+                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
+                                                class="ti ti-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

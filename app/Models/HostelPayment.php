@@ -10,7 +10,20 @@ class HostelPayment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['hostel_id','student_id', 'institution_id', 'amount', 'payment_date', 'months_paid', 'due_amount', 'payment_type', 'receipt_number', 'fee_structure_id'];
+    protected $fillable = [
+        'hostel_id',
+        'student_id',
+        'institution_id',
+        'amount',
+        'discount_amount',
+        'discount_percentage',
+        'payment_date',
+        'months_paid',
+        'due_amount',
+        'payment_type',
+        'receipt_number',
+        'fee_structure_id'
+    ];
 
     public function hostel(): BelongsTo
     {
@@ -30,6 +43,14 @@ class HostelPayment extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+        'due_amount' => 'decimal:2',
+        'payment_date' => 'date',
+    ];
 
     public static function generateReceiptNumber($institutionId): string
     {

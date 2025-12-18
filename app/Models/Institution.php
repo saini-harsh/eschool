@@ -13,6 +13,7 @@ class Institution extends Authenticatable
     protected $fillable = [
         'name',
         'institution_code',
+        'code',
         'logo',
         'address',
         'pincode',

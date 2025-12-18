@@ -47,6 +47,23 @@
                             <div class="col-md-6 mb-3">
                                 <strong>Email:</strong> {{ $admission->email ?? 'N/A' }}
                             </div>
+                            @if ($admission->discount_category)
+                                <div class="col-md-12 mb-3">
+                                    <div class="p-2 bg-light border rounded">
+                                        <strong>Discount Applied:</strong>
+                                        @if ($admission->discount_category == 'orphanage')
+                                            Orphanage
+                                        @elseif($admission->discount_category == 'teacher_child')
+                                            Teacher's Child
+                                        @elseif($admission->discount_category == 'personal_selection')
+                                            Personal Selection
+                                        @else
+                                            {{ $admission->discount_category }}
+                                        @endif
+                                        - Amount: ₹{{ number_format($admission->discount_amount, 2) }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

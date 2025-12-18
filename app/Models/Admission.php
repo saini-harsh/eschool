@@ -40,6 +40,9 @@ class Admission extends Model
         'last_name',
         'gender',
         'dob',
+        'dob_status',
+        'age_years',
+        'age_months',
         'religion',
         'caste_tribe',
         'photo',
@@ -89,19 +92,27 @@ class Admission extends Model
         'hostel_admission_payment_method',
         'hostel_tuition_fee_amount',
         'hostel_tuition_payment_method',
+        'discount_category',
+        'discount_amount',
+        'discount_percentage',
 
         // Status and Metadata
         'status',
+        'has_sibling',
+        'sibling_ids',
         'notes',
     ];
 
     protected $casts = [
         'admission_date' => 'date',
         'dob' => 'date',
+        'sibling_ids' => 'array',
         'admission_fee_amount' => 'decimal:2',
         'tuition_fee_amount' => 'decimal:2',
         'hostel_admission_fee_amount' => 'decimal:2',
         'hostel_tuition_fee_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
     ];
 
     // Relationships
@@ -118,5 +129,10 @@ class Admission extends Model
     public function previousSchoolClass()
     {
         return $this->belongsTo(SchoolClass::class, 'previous_school_class');
+    }
+
+    public function siblings()
+    {
+        return Student::whereIn('id', $this->sibling_ids ?? [])->get();
     }
 }

@@ -74,6 +74,12 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="sibling-tab" data-bs-toggle="tab" data-bs-target="#sibling"
+                                    type="button" role="tab" aria-controls="sibling" aria-selected="false">
+                                    SIBLING INFO
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="parents-tab" data-bs-toggle="tab" data-bs-target="#parents"
                                     type="button" role="tab" aria-controls="parents" aria-selected="false">
                                     PARENTS & GUARDIAN INFO
@@ -94,7 +100,7 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="hostel-tab" data-bs-toggle="tab" data-bs-target="#hostel"
                                     type="button" role="tab" aria-controls="hostel" aria-selected="false">
-                                    HOSTEL PAYMENT
+                                    BOARDING PAYMENT
                                 </button>
                             </li>
                         </ul>
@@ -385,12 +391,38 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">DATE OF BIRTH</label>
                                                         <div class="input-group w-auto input-group-flat">
-                                                            <input type="text" name="dob" class="form-control"
-                                                                data-provider="flatpickr" data-date-format="d M, Y"
-                                                                placeholder="dd/mm/yyyy" value="{{ old('dob') }}">
+                                                            <input type="text" name="dob" id="dob_input"
+                                                                class="form-control" data-provider="flatpickr"
+                                                                data-date-format="d M, Y" placeholder="dd/mm/yyyy"
+                                                                value="{{ old('dob') }}">
                                                             <span class="input-group-text"><i
                                                                     class="ti ti-calendar"></i></span>
                                                         </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <label class="form-label">AGE (YEARS)</label>
+                                                        <input type="text" name="age_years" id="age_years"
+                                                            class="form-control bg-light" readonly placeholder="Years"
+                                                            value="{{ old('age_years') }}">
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <label class="form-label">AGE (MONTHS)</label>
+                                                        <input type="text" name="age_months" id="age_months"
+                                                            class="form-control bg-light" readonly placeholder="Months"
+                                                            value="{{ old('age_months') }}">
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">DOB STATUS</label>
+                                                        <select name="dob_status" class="form-control">
+                                                            <option value="Not Verified"
+                                                                {{ old('dob_status') == 'Not Verified' ? 'selected' : '' }}>
+                                                                Not
+                                                                Verified</option>
+                                                            <option value="Verified"
+                                                                {{ old('dob_status') == 'Verified' ? 'selected' : '' }}>
+                                                                Verified
+                                                            </option>
+                                                        </select>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">RELIGION</label>
@@ -425,6 +457,13 @@
                                                                     <small class="upload-subtitle">JPG, PNG (Max
                                                                         5MB)</small>
                                                                 </div>
+                                                            </div>
+                                                            <div class="camera-capture-btn mt-2">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary w-100"
+                                                                    onclick="openCamera('photo')">
+                                                                    <i class="ti ti-camera me-1"></i> Take Photo
+                                                                </button>
                                                             </div>
                                                             <div class="photo-preview mt-2" id="photoPreviewContainer"
                                                                 style="display: none;">
@@ -503,7 +542,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label class="form-label">HOSTEL <span
+                                                        <label class="form-label">BOARDING <span
                                                                 class="text-danger">*</span></label>
                                                         <select name="hostel_status" class="form-control">
                                                             <option value="" disabled selected>Select Status</option>
@@ -521,6 +560,53 @@
                                             </div>
                                         </div>
 
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sibling Info Tab -->
+                            <div class="tab-pane fade" id="sibling" role="tabpanel" aria-labelledby="sibling-tab">
+                                <div class="card mb-4">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold mb-0 text-primary">SIBLING INFORMATION</h6>
+                                        <div class="form-check form-switch mb-0">
+                                            <input class="form-check-input" type="checkbox" name="has_sibling"
+                                                id="has_sibling" value="1"
+                                                {{ old('has_sibling') ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="has_sibling">Does student have a sibling
+                                                in this school?</label>
+                                        </div>
+                                    </div>
+                                    <div class="card-body" id="sibling_section"
+                                        style="{{ old('has_sibling') ? '' : 'display: none;' }}">
+                                        <div class="row">
+                                            <div class="col-md-12 mb-4">
+                                                <label class="form-label">SEARCH SIBLING (Name or Admission Number)</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="ti ti-search"></i></span>
+                                                    <input type="text" id="sibling_search" class="form-control"
+                                                        placeholder="Type to search for a sibling...">
+                                                </div>
+                                                <div id="sibling_results" class="list-group mt-2"
+                                                    style="position: absolute; z-index: 1000; width: 95%; max-height: 200px; overflow-y: auto; display: none;">
+                                                    <!-- Search results will appear here -->
+                                                </div>
+                                            </div>
+
+                                            <div id="selected_siblings_container" class="col-md-12">
+                                                <!-- Multiple siblings will be listed here -->
+                                            </div>
+
+                                            <div id="sibling_actions" class="col-md-12" style="display: none;">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="copy_parent_info">
+                                                    <label class="form-check-label fw-bold" for="copy_parent_info">
+                                                        Copy Parent and Address information from first Sibling?
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -604,13 +690,47 @@
 
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">AADHAAR CARD FRONT</label>
-                                                        <input type="file" name="parent_aadhaar_front"
-                                                            class="form-control" accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="parent_aadhaar_front"
+                                                                id="parent_aadhaar_front" class="form-control"
+                                                                accept="image/*"
+                                                                onchange="previewAadhaar(this, 'parent_aadhaar_front')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('parent_aadhaar_front')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="parent_aadhaar_front_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="parent_aadhaar_front_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('parent_aadhaar_front', 'parent_aadhaar_front')">Remove</button>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">AADHAAR CARD BACK</label>
-                                                        <input type="file" name="parent_aadhaar_back"
-                                                            class="form-control" accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="parent_aadhaar_back"
+                                                                id="parent_aadhaar_back" class="form-control"
+                                                                accept="image/*"
+                                                                onchange="previewAadhaar(this, 'parent_aadhaar_back')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('parent_aadhaar_back')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="parent_aadhaar_back_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="parent_aadhaar_back_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('parent_aadhaar_back', 'parent_aadhaar_back')">Remove</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -676,13 +796,47 @@
 
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">AADHAAR CARD FRONT</label>
-                                                        <input type="file" name="guardian_aadhaar_front"
-                                                            class="form-control" accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="guardian_aadhaar_front"
+                                                                id="guardian_aadhaar_front" class="form-control"
+                                                                accept="image/*"
+                                                                onchange="previewAadhaar(this, 'guardian_aadhaar_front')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('guardian_aadhaar_front')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="guardian_aadhaar_front_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="guardian_aadhaar_front_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('guardian_aadhaar_front', 'guardian_aadhaar_front')">Remove</button>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">AADHAAR CARD BACK</label>
-                                                        <input type="file" name="guardian_aadhaar_back"
-                                                            class="form-control" accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="guardian_aadhaar_back"
+                                                                id="guardian_aadhaar_back" class="form-control"
+                                                                accept="image/*"
+                                                                onchange="previewAadhaar(this, 'guardian_aadhaar_back')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('guardian_aadhaar_back')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="guardian_aadhaar_back_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="guardian_aadhaar_back_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('guardian_aadhaar_back', 'guardian_aadhaar_back')">Remove</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -712,13 +866,45 @@
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">AADHAAR CARD FRONT</label>
-                                                        <input type="file" name="aadhaar_front" class="form-control"
-                                                            accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="aadhaar_front" id="aadhaar_front"
+                                                                class="form-control" accept="image/*"
+                                                                onchange="previewAadhaar(this, 'aadhaar_front')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('aadhaar_front')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="aadhaar_front_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="aadhaar_front_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('aadhaar_front', 'aadhaar_front')">Remove</button>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">AADHAAR CARD BACK</label>
-                                                        <input type="file" name="aadhaar_back" class="form-control"
-                                                            accept="image/*">
+                                                        <div class="input-group">
+                                                            <input type="file" name="aadhaar_back" id="aadhaar_back"
+                                                                class="form-control" accept="image/*"
+                                                                onchange="previewAadhaar(this, 'aadhaar_back')">
+                                                            <button class="btn btn-outline-primary" type="button"
+                                                                onclick="openCamera('aadhaar_back')">
+                                                                <i class="ti ti-camera"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div id="aadhaar_back_container" class="mt-2"
+                                                            style="display: none;">
+                                                            <img id="aadhaar_back_img" src=""
+                                                                class="img-thumbnail"
+                                                                style="max-height: 150px; cursor: pointer;"
+                                                                onclick="window.open(this.src)">
+                                                            <button type="button" class="btn btn-sm btn-danger mt-1"
+                                                                onclick="removeAadhaarPreview('aadhaar_back', 'aadhaar_back')">Remove</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -772,10 +958,16 @@
                                                 <div class="document-upload mt-2">
                                                     <input type="file" name="document_01_file" id="document_01_file"
                                                         class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                                    <div class="document-upload-btn"
-                                                        onclick="document.getElementById('document_01_file').click()">
-                                                        <i class="ti ti-file-upload text-primary me-1"></i>
-                                                        <span>Upload File</span>
+                                                    <div class="d-flex gap-2">
+                                                        <div class="document-upload-btn flex-grow-1"
+                                                            onclick="document.getElementById('document_01_file').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload File</span>
+                                                        </div>
+                                                        <div class="document-upload-btn px-3"
+                                                            onclick="openCamera('document_01_file')">
+                                                            <i class="ti ti-camera text-primary"></i>
+                                                        </div>
                                                     </div>
                                                     <div class="file-info mt-1" id="document_01_info"
                                                         style="display: none;">
@@ -790,10 +982,16 @@
                                                 <div class="document-upload mt-2">
                                                     <input type="file" name="document_02_file" id="document_02_file"
                                                         class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                                    <div class="document-upload-btn"
-                                                        onclick="document.getElementById('document_02_file').click()">
-                                                        <i class="ti ti-file-upload text-primary me-1"></i>
-                                                        <span>Upload File</span>
+                                                    <div class="d-flex gap-2">
+                                                        <div class="document-upload-btn flex-grow-1"
+                                                            onclick="document.getElementById('document_02_file').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload File</span>
+                                                        </div>
+                                                        <div class="document-upload-btn px-3"
+                                                            onclick="openCamera('document_02_file')">
+                                                            <i class="ti ti-camera text-primary"></i>
+                                                        </div>
                                                     </div>
                                                     <div class="file-info mt-1" id="document_02_info"
                                                         style="display: none;">
@@ -808,10 +1006,16 @@
                                                 <div class="document-upload mt-2">
                                                     <input type="file" name="document_03_file" id="document_03_file"
                                                         class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                                    <div class="document-upload-btn"
-                                                        onclick="document.getElementById('document_03_file').click()">
-                                                        <i class="ti ti-file-upload text-primary me-1"></i>
-                                                        <span>Upload File</span>
+                                                    <div class="d-flex gap-2">
+                                                        <div class="document-upload-btn flex-grow-1"
+                                                            onclick="document.getElementById('document_03_file').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload File</span>
+                                                        </div>
+                                                        <div class="document-upload-btn px-3"
+                                                            onclick="openCamera('document_03_file')">
+                                                            <i class="ti ti-camera text-primary"></i>
+                                                        </div>
                                                     </div>
                                                     <div class="file-info mt-1" id="document_03_info"
                                                         style="display: none;">
@@ -826,10 +1030,16 @@
                                                 <div class="document-upload mt-2">
                                                     <input type="file" name="document_04_file" id="document_04_file"
                                                         class="d-none" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                                                    <div class="document-upload-btn"
-                                                        onclick="document.getElementById('document_04_file').click()">
-                                                        <i class="ti ti-file-upload text-primary me-1"></i>
-                                                        <span>Upload File</span>
+                                                    <div class="d-flex gap-2">
+                                                        <div class="document-upload-btn flex-grow-1"
+                                                            onclick="document.getElementById('document_04_file').click()">
+                                                            <i class="ti ti-file-upload text-primary me-1"></i>
+                                                            <span>Upload File</span>
+                                                        </div>
+                                                        <div class="document-upload-btn px-3"
+                                                            onclick="openCamera('document_04_file')">
+                                                            <i class="ti ti-camera text-primary"></i>
+                                                        </div>
                                                     </div>
                                                     <div class="file-info mt-1" id="document_04_info"
                                                         style="display: none;">
@@ -846,6 +1056,48 @@
                                 <div class="row">
                                     <!-- Left Column - Document Info -->
                                     <div class="col-md-6">
+                                        <!-- Discount & Fee Information -->
+                                        <div class="card mb-4">
+                                            <div class="card-header">
+                                                <h6 class="fw-bold mb-0 text-primary">Discount Information</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-12 mb-3">
+                                                        <label class="form-label">DISCOUNT CATEGORY</label>
+                                                        <select name="discount_category" id="discount_category"
+                                                            class="form-control" onchange="applyDiscount()">
+                                                            <option value="">No Discount</option>
+                                                            <option value="orphanage"
+                                                                {{ old('discount_category') == 'orphanage' ? 'selected' : '' }}>
+                                                                Orphanage</option>
+                                                            <option value="teacher_child"
+                                                                {{ old('discount_category') == 'teacher_child' ? 'selected' : '' }}>
+                                                                Teacher's Child</option>
+                                                            <option value="personal_selection"
+                                                                {{ old('discount_category') == 'personal_selection' ? 'selected' : '' }}>
+                                                                Personal Selection</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">DISCOUNT AMOUNT (₹)</label>
+                                                        <input type="number" name="discount_amount" id="discount_amount"
+                                                            class="form-control" value="{{ old('discount_amount', 0) }}"
+                                                            placeholder="Enter Discount Amount"
+                                                            oninput="applyDiscount('amount')">
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label class="form-label">DISCOUNT PERCENT (%)</label>
+                                                        <input type="number" name="discount_percentage"
+                                                            id="discount_percentage" class="form-control"
+                                                            value="{{ old('discount_percentage', 0) }}"
+                                                            placeholder="Enter Discount Percent"
+                                                            oninput="applyDiscount('percent')">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <!-- Payment Information -->
                                         <div class="card mb-4">
                                             <div class="card-header">
@@ -855,28 +1107,6 @@
                                                 <div class="row">
                                                     <p>Admission Fee: <span class="text-primary"
                                                             id="admission_fee_amount">₹ </span></p>
-                                                    <div class="col-md-12 mb-3">
-                                                        <label class="form-label">DISCOUNT (if any)</label>
-                                                        <div class="input-group">
-                                                            <input type="number" min="0"
-                                                                name="admission_discount" id="admission_discount"
-                                                                class="form-control"
-                                                                value="{{ old('admission_discount') }}"
-                                                                placeholder="Enter Discount Amount or Percentage">
-                                                            <select name="admission_discount_type"
-                                                                id="admission_discount_type" class="form-select"
-                                                                style="max-width: 100px;">
-                                                                <option value="fixed"
-                                                                    {{ old('admission_discount_type', 'fixed') == 'fixed' ? 'selected' : '' }}>
-                                                                    ₹</option>
-                                                                <option value="percent"
-                                                                    {{ old('admission_discount_type') == 'percent' ? 'selected' : '' }}>
-                                                                    %</option>
-                                                            </select>
-                                                        </div>
-                                                        <small class="form-text text-muted">Choose ₹ for amount or % for
-                                                            percentage discount.</small>
-                                                    </div>
                                                     <div class="col-md-12 mb-3">
                                                         <label class="form-label">PAYMENT AMOUNT</label>
                                                         <input type="number" name="admission_payment_amount"
@@ -1307,6 +1537,23 @@
             }
         }
 
+        function previewAadhaar(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId + '_img').src = e.target.result;
+                    document.getElementById(previewId + '_container').style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeAadhaarPreview(inputId, previewId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(previewId + '_img').src = '';
+            document.getElementById(previewId + '_container').style.display = 'none';
+        }
+
         function removePhoto() {
             document.getElementById('photo').value = '';
             document.getElementById('photoPreview').src = '';
@@ -1362,8 +1609,8 @@
                 const feeAmount = parseFloat(admissionFee.amount) || 0;
                 admissionFeeElement.textContent = '₹ ' + feeAmount.toLocaleString('en-IN');
 
-                // Recalculate due amount if payment amount is already entered
-                // calculateDueAmount(feeAmount);
+                // Apply discount if any
+                applyDiscount();
             } else {
                 admissionFeeElement.textContent = '₹ 0';
                 dueAmountElement.textContent = '₹ 0';
@@ -1409,9 +1656,42 @@
             dueAmountElement.textContent = '₹ ' + dueAmount.toLocaleString('en-IN');
         }
 
+        // Function to apply discount to admission fee
+        function applyDiscount(type) {
+            const admissionFeeElement = document.getElementById('admission_fee_amount');
+            const admissionFeeText = admissionFeeElement.textContent;
+            const originalFee = parseFloat(admissionFeeText.replace(/[₹,\s]/g, '')) || 0;
+
+            const discountAmountInput = document.getElementById('discount_amount');
+            const discountPercentageInput = document.getElementById('discount_percentage');
+
+            let discountAmount = parseFloat(discountAmountInput.value) || 0;
+            let discountPercentage = parseFloat(discountPercentageInput.value) || 0;
+
+            if (type === 'amount' && originalFee > 0) {
+                discountPercentage = (discountAmount / originalFee) * 100;
+                discountPercentageInput.value = discountPercentage.toFixed(2);
+            } else if (type === 'percent' && originalFee > 0) {
+                discountAmount = (discountPercentage / 100) * originalFee;
+                discountAmountInput.value = discountAmount.toFixed(2);
+            }
+
+            const paymentAmountInput = document.getElementById('admission_payment_amount');
+            const netAmount = Math.max(0, originalFee - discountAmount);
+
+            // Auto-fill payment amount with net amount if it was empty or same as original
+            if (!paymentAmountInput.value || parseFloat(paymentAmountInput.value) == originalFee) {
+                paymentAmountInput.value = netAmount.toFixed(2);
+            }
+
+            calculateDueAmount();
+        }
+
         function calculateDueAmount(admissionFeeAmount = null) {
             const paymentAmountInput = document.getElementById('admission_payment_amount');
             const dueAmountElement = document.getElementById('admission_due_amount');
+            const discountAmountInput = document.getElementById('discount_amount');
+            const discountAmount = parseFloat(discountAmountInput.value) || 0;
 
             // Get admission fee amount if not provided
             if (admissionFeeAmount === null) {
@@ -1419,9 +1699,10 @@
                 admissionFeeAmount = parseFloat(admissionFeeText.replace(/[₹,\s]/g, '')) || 0;
             }
 
+            const netFeeAmount = Math.max(0, admissionFeeAmount - discountAmount);
             const paymentAmount = parseFloat(paymentAmountInput.value) || 0;
-            const dueAmount = Math.max(0, admissionFeeAmount - paymentAmount);
-            console.log(dueAmount);
+            const dueAmount = Math.max(0, netFeeAmount - paymentAmount);
+
             dueAmountElement.textContent = '₹ ' + dueAmount.toLocaleString('en-IN');
         }
 
@@ -1726,5 +2007,420 @@
                 bsToast.show();
             });
         });
+
+        // Age Calculation Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const dobInput = document.getElementById('dob_input');
+            const ageYearsInput = document.getElementById('age_years');
+            const ageMonthsInput = document.getElementById('age_months');
+            const targetDate = new Date('2026-01-31');
+
+            function updateAge(selectedDate) {
+                if (!selectedDate) {
+                    ageYearsInput.value = '';
+                    ageMonthsInput.value = '';
+                    return;
+                }
+
+                let years = targetDate.getFullYear() - selectedDate.getFullYear();
+                let months = targetDate.getMonth() - selectedDate.getMonth();
+
+                if (targetDate.getDate() < selectedDate.getDate()) {
+                    months--;
+                }
+
+                if (months < 0) {
+                    years--;
+                    months += 12;
+                }
+
+                if (years < 0) {
+                    ageYearsInput.value = '0';
+                    ageMonthsInput.value = '0';
+                } else {
+                    ageYearsInput.value = years;
+                    ageMonthsInput.value = months;
+                }
+            }
+
+            // Hook into flatpickr
+            const checkFlatpickr = setInterval(() => {
+                if (dobInput._flatpickr) {
+                    clearInterval(checkFlatpickr);
+
+                    // Add listener
+                    dobInput._flatpickr.set('onChange', function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            updateAge(selectedDates[0]);
+                        } else {
+                            updateAge(null);
+                        }
+                    });
+
+                    // Initial calculation
+                    if (dobInput._flatpickr.selectedDates.length > 0) {
+                        updateAge(dobInput._flatpickr.selectedDates[0]);
+                    }
+                }
+            }, 100);
+
+            // Cleanup interval after 5 seconds if flatpickr not found
+            setTimeout(() => clearInterval(checkFlatpickr), 5000);
+
+            // Fallback for manual input
+            dobInput.addEventListener('change', function() {
+                if (!this._flatpickr) {
+                    updateAge(new Date(this.value));
+                }
+            });
+        });
+
+        // Sibling Search and Selection Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasSiblingCheckbox = document.getElementById('has_sibling');
+            const siblingSection = document.getElementById('sibling_section');
+            const siblingSearch = document.getElementById('sibling_search');
+            const siblingResults = document.getElementById('sibling_results');
+            const selectedSiblingsContainer = document.getElementById('selected_siblings_container');
+            const siblingActions = document.getElementById('sibling_actions');
+            const copyParentInfoCheckbox = document.getElementById('copy_parent_info');
+
+            let selectedSiblings = [];
+
+            // Toggle sibling section
+            hasSiblingCheckbox.addEventListener('change', function() {
+                siblingSection.style.display = this.checked ? 'block' : 'none';
+                if (!this.checked) {
+                    resetSiblingSelection();
+                }
+            });
+
+            // Sibling search with debounce
+            let debounceTimer;
+            siblingSearch.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    siblingResults.style.display = 'none';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`{{ route('institution.admission.search-siblings') }}?q=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            siblingResults.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(student => {
+                                    // Don't show already selected siblings
+                                    if (selectedSiblings.some(s => s.id === student.id))
+                                        return;
+
+                                    const item = document.createElement('a');
+                                    item.href = '#';
+                                    item.className =
+                                        'list-group-item list-group-item-action';
+                                    item.innerHTML = `
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="mb-1">${student.first_name} ${student.last_name}</h6>
+                                            <small>${student.admission_number || 'No Admission #'}</small>
+                                        </div>
+                                        <p class="mb-1" style="font-size: 0.8rem;">Father: ${student.father_name || 'N/A'}</p>
+                                    `;
+                                    item.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        addSibling(student);
+                                    });
+                                    siblingResults.appendChild(item);
+                                });
+                                siblingResults.style.display = 'block';
+                            } else {
+                                siblingResults.innerHTML =
+                                    '<div class="list-group-item">No students found</div>';
+                                siblingResults.style.display = 'block';
+                            }
+                        });
+                }, 300);
+            });
+
+            // Close results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!siblingSearch.contains(e.target) && !siblingResults.contains(e.target)) {
+                    siblingResults.style.display = 'none';
+                }
+            });
+
+            function addSibling(student) {
+                selectedSiblings.push(student);
+                renderSelectedSiblings();
+                siblingResults.style.display = 'none';
+                siblingSearch.value = '';
+                siblingActions.style.display = 'block';
+            }
+
+            function removeSibling(studentId) {
+                selectedSiblings = selectedSiblings.filter(s => s.id !== studentId);
+                renderSelectedSiblings();
+                if (selectedSiblings.length === 0) {
+                    siblingActions.style.display = 'none';
+                    copyParentInfoCheckbox.checked = false;
+                }
+            }
+
+            function renderSelectedSiblings() {
+                selectedSiblingsContainer.innerHTML = '';
+                selectedSiblings.forEach(student => {
+                    const div = document.createElement('div');
+                    div.className =
+                        'alert alert-info d-flex justify-content-between align-items-center mb-2';
+                    div.innerHTML = `
+                        <div>
+                            <input type="hidden" name="sibling_ids[]" value="${student.id}">
+                            <strong>Sibling:</strong> ${student.first_name} ${student.last_name} 
+                            (${student.admission_number || 'N/A'})
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-sibling-btn" data-id="${student.id}">
+                            <i class="ti ti-x"></i> Remove
+                        </button>
+                    `;
+                    selectedSiblingsContainer.appendChild(div);
+                });
+
+                // Re-attach event listeners to remove buttons
+                document.querySelectorAll('.remove-sibling-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        removeSibling(parseInt(this.dataset.id));
+                    });
+                });
+            }
+
+            function resetSiblingSelection() {
+                selectedSiblings = [];
+                renderSelectedSiblings();
+                siblingActions.style.display = 'none';
+                copyParentInfoCheckbox.checked = false;
+            }
+
+            // Copy parent and address info
+            copyParentInfoCheckbox.addEventListener('change', function() {
+                if (this.checked && selectedSiblings.length > 0) {
+                    const student = selectedSiblings[0]; // Copy from the first selected sibling
+
+                    // Fields to copy
+                    const fields = {
+                        'father_name': student.father_name,
+                        'mother_name': student.mother_name,
+                        'father_occupation': student.father_occupation,
+                        'father_phone': student.father_phone,
+                        'permanent_address': student.permanent_address || student.address,
+                        'permanent_pincode': student.permanent_pincode || student.pincode,
+                        'permanent_district': student.permanent_district || student.district,
+                        'address': student.address,
+                        'pincode': student.pincode,
+                        'district': student.district
+                    };
+
+                    for (const [name, value] of Object.entries(fields)) {
+                        const input = document.querySelector(`[name="${name}"]`);
+                        if (input && value) {
+                            input.value = value;
+                        }
+                    }
+
+                    // Also copy caste/tribe and religion if available
+                    if (student.caste_tribe) {
+                        const casteInput = document.querySelector('[name="caste_tribe"]');
+                        if (casteInput) casteInput.value = student.caste_tribe;
+                    }
+                    if (student.religion) {
+                        const religionInput = document.querySelector('[name="religion"]');
+                        if (religionInput) religionInput.value = student.religion;
+                    }
+
+                    // Enforce same parents for all siblings is naturally handled by copying to the form
+                    // which will be saved for the new student. The link between siblings is maintained by IDs.
+                }
+            });
+        });
+
+        let currentInputId = null;
+        let stream = null;
+        let cameraModalInstance = null;
+
+        function openCamera(inputId) {
+            currentInputId = inputId;
+            const modalElement = document.getElementById('cameraModal');
+
+            if (!cameraModalInstance) {
+                cameraModalInstance = new bootstrap.Modal(modalElement);
+            }
+
+            cameraModalInstance.show();
+            startCamera();
+        }
+
+        async function startCamera() {
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: {
+                            ideal: 1280
+                        },
+                        height: {
+                            ideal: 720
+                        }
+                    }
+                };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                alert("Could not access camera. Please ensure you have given permission.");
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+
+        // Wait for DOM to be ready before attaching listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const cameraModal = document.getElementById('cameraModal');
+            if (cameraModal) {
+                cameraModal.addEventListener('hidden.bs.modal', stopCamera);
+            }
+
+            const captureBtn = document.getElementById('capture-btn');
+            if (captureBtn) {
+                captureBtn.addEventListener('click', function() {
+                    const video = document.getElementById('video');
+                    const canvas = document.getElementById('canvas');
+                    const context = canvas.getContext('2d');
+
+                    if (!video.videoWidth || video.readyState !== 4) {
+                        alert("Camera is still loading, please wait...");
+                        return;
+                    }
+
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob(function(blob) {
+                        if (!blob) return;
+
+                        const file = new File([blob], "captured_photo.jpg", {
+                            type: "image/jpeg"
+                        });
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+
+                        const input = document.getElementById(currentInputId);
+                        if (input) {
+                            input.files = dataTransfer.files;
+                            const event = new Event('change', {
+                                bubbles: true
+                            });
+                            input.dispatchEvent(event);
+                        }
+
+                        if (cameraModalInstance) {
+                            cameraModalInstance.hide();
+                        }
+                    }, 'image/jpeg', 0.9);
+                });
+            }
+        });
     </script>
+
+    <style>
+        #camera-container {
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #video {
+            transform: scaleX(-1);
+            /* Mirror effect */
+        }
+
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+        }
+
+        #capture-btn {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            background-color: #0d6efd;
+            /* Fallback to blue if primary is different */
+        }
+
+        #capture-btn i {
+            font-size: 32px !important;
+            color: #fff;
+        }
+
+        #capture-btn:hover {
+            transform: scale(1.1);
+            background-color: #0b5ed7;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .document-upload-btn {
+            cursor: pointer;
+            border: 1px dashed #ced4da;
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .document-upload-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #0d6efd;
+        }
+    </style>
+
+    <!-- Camera Modal -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true"
+        style="z-index: 9999;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cameraModalLabel">Take Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="camera-container" class="position-relative bg-dark rounded overflow-hidden mb-3"
+                        style="min-height: 400px;">
+                        <video id="video" autoplay playsinline class="w-100 h-100"
+                            style="object-fit: cover;"></video>
+                        <canvas id="canvas" class="d-none"></canvas>
+                    </div>
+                    <div class="camera-controls">
+                        <button type="button" id="capture-btn" class="btn btn-primary rounded-circle">
+                            <i class="ti ti-camera"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endpush

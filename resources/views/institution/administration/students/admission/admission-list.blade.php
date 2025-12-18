@@ -103,7 +103,11 @@
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h6 class="fw-bold mb-0">Admission Forms ({{ $admissions->total() }})</h6>
-                <div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#excelPreviewModal">
+                        <i class="ti ti-eye me-1"></i>Excel Preview
+                    </button>
                     <a href="{{ route('institution.admission.export', request()->query()) }}"
                         class="btn btn-success btn-sm">
                         <i class="ti ti-file-excel me-1"></i>Export
@@ -153,7 +157,8 @@
                                             <span class="fw-bold">{{ $admission->admission_number ?? 'N/A' }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-info">{{ $admission->schoolClass->name ?? 'N/A' }}</span>
+                                            <span
+                                                class="badge bg-info">{{ $admission->schoolClass->name ?? 'N/A' }}</span>
                                         </td>
                                         <td>{{ $admission->phone ?? 'N/A' }}</td>
                                         <td>
@@ -166,7 +171,8 @@
                                         <td>
                                             {{ $admission->created_at->format('d M, Y') }}
                                             <br>
-                                            <small class="text-muted">{{ $admission->created_at->format('h:i A') }}</small>
+                                            <small
+                                                class="text-muted">{{ $admission->created_at->format('h:i A') }}</small>
                                         </td>
                                         <td>
                                             @if ($admission->status == 'approved')
@@ -214,6 +220,29 @@
                         </p>
                     </div>
                 @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Preview Modal -->
+    <div class="modal fade" id="excelPreviewModal" tabindex="-1" aria-labelledby="excelPreviewModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excelPreviewModalLabel">Excel Preview - Admission List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe src="{{ route('institution.admission.preview-excel', request()->query()) }}"
+                        style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{{ route('institution.admission.export', request()->query()) }}" class="btn btn-success">
+                        <i class="ti ti-download me-1"></i>Download Excel
+                    </a>
+                </div>
             </div>
         </div>
     </div>

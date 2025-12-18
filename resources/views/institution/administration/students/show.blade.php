@@ -3,26 +3,29 @@
 @section('title', 'Student Details')
 
 @push('styles')
-<style>
-    .avatar-xxxl {
-        width: 120px;
-        height: 120px;
-    }
-    .nav-tab-dark .btn.active {
-        background-color: #6366f1;
-        color: white;
-        border-color: #6366f1;
-    }
-    .nav-tab-dark .btn {
-        background-color: #f8f9fa;
-        color: #6c757d;
-        border-color: #dee2e6;
-    }
-    .nav-tab-dark .btn:hover {
-        background-color: #e9ecef;
-        color: #495057;
-    }
-</style>
+    <style>
+        .avatar-xxxl {
+            width: 120px;
+            height: 120px;
+        }
+
+        .nav-tab-dark .btn.active {
+            background-color: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .nav-tab-dark .btn {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-color: #dee2e6;
+        }
+
+        .nav-tab-dark .btn:hover {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -32,17 +35,24 @@
         <div class="row">
             <div class="col-lg-10 mx-auto">
                 <div>
-                    <h6 class="mb-3 fs-14"><a href="{{ route('institution.students.index') }}"><i class="ti ti-arrow-left me-1"></i>Students</a></h6>
+                    <h6 class="mb-3 fs-14"><a href="{{ route('institution.students.index') }}"><i
+                                class="ti ti-arrow-left me-1"></i>Students</a></h6>
                 </div>
-                
+
                 <!-- Tab Navigation -->
                 <div class="d-flex align-items-center flex-wrap row-gap-2 mb-3 pb-1 nav-tab-dark" role="tablist">
-                    <a href="#nav_tab_1" class="btn btn-sm btn-light border fs-14 active me-2" data-bs-toggle="tab" role="tab">Personal Info</a>
-                    <a href="#nav_tab_2" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Academic Info</a>
-                    <a href="#nav_tab_3" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Parents & Guardian</a>
-                    <a href="#nav_tab_4" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Documents</a>
-                    <a href="#nav_tab_5" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab" role="tab">Medical Info</a>
-                    <a href="#nav_tab_6" class="btn btn-sm btn-light border fs-14" data-bs-toggle="tab" role="tab">Settings</a>
+                    <a href="#nav_tab_1" class="btn btn-sm btn-light border fs-14 active me-2" data-bs-toggle="tab"
+                        role="tab">Personal Info</a>
+                    <a href="#nav_tab_2" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
+                        role="tab">Academic Info</a>
+                    <a href="#nav_tab_3" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
+                        role="tab">Parents & Guardian</a>
+                    <a href="#nav_tab_4" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
+                        role="tab">Documents</a>
+                    <a href="#nav_tab_5" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
+                        role="tab">Medical Info</a>
+                    <a href="#nav_tab_6" class="btn btn-sm btn-light border fs-14" data-bs-toggle="tab"
+                        role="tab">Settings</a>
                 </div>
 
                 <!-- Tab Content -->
@@ -54,7 +64,7 @@
                                 <div class="card rounded-0 shadow flex-fill mb-xl-0">
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->photo)
+                                            @if ($student->photo)
                                                 <span class="avatar avatar-xxxl avatar-rounded mb-3">
                                                     <img src="{{ asset($student->photo) }}" alt="Student Photo">
                                                 </span>
@@ -63,7 +73,8 @@
                                                     <i class="ti ti-user fs-48 text-muted"></i>
                                                 </span>
                                             @endif
-                                            <h6 class="fs-16 mb-1">{{ $student->first_name }} {{ $student->middle_name }} {{ $student->last_name }}</h6>
+                                            <h6 class="fs-16 mb-1">{{ $student->first_name }} {{ $student->middle_name }}
+                                                {{ $student->last_name }}</h6>
                                             <p class="mb-0">{{ $student->email }}</p>
                                         </div>
                                         <div class="d-flex align-items-center gap-3 flex-wrap">
@@ -76,7 +87,9 @@
                                             <div class="flex-fill">
                                                 <div class="bg-light border rounded p-2">
                                                     <h6 class="fw-semibold fs-14 mb-1">Date of Birth</h6>
-                                                    <p class="mb-0">{{ $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M Y') : 'N/A' }}</p>
+                                                    <p class="mb-0">
+                                                        {{ $student->dob ? \Carbon\Carbon::parse($student->dob)->format('d M Y') : 'N/A' }}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="flex-fill">
@@ -93,26 +106,30 @@
                                 <div class="card rounded-0 shadow flex-fill mb-0">
                                     <div class="card-header d-flex align-items-center justify-content-between">
                                         <h6 class="mb-0 fw-bold">Contact Details</h6>
-                                        <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                        <a href="{{ route('institution.students.edit', $student->id) }}"
+                                            class="btn p-1 border-0 btn-outline-white">
                                             <i class="ti ti-edit"></i>
                                         </a>
                                     </div>
                                     <div class="card-body">
                                         <div>
                                             <div class="bg-light border rounded d-flex align-items-center p-2 mb-3">
-                                                <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
+                                                <span
+                                                    class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-phone"></i>
                                                 </span>
                                                 <p class="mb-0 fs-13 text-dark">{{ $student->phone ?? 'N/A' }}</p>
                                             </div>
                                             <div class="bg-light border rounded d-flex align-items-center p-2 mb-3">
-                                                <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
+                                                <span
+                                                    class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-mail"></i>
                                                 </span>
                                                 <p class="mb-0 fs-13 text-dark">{{ $student->email ?? 'N/A' }}</p>
                                             </div>
                                             <div class="bg-light border rounded d-flex align-items-center p-2">
-                                                <span class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
+                                                <span
+                                                    class="btn btn-icon btn-sm bg-white text-dark border flex-shrink-0 me-2">
                                                     <i class="ti ti-map-pin"></i>
                                                 </span>
                                                 <p class="mb-0 fs-13 text-dark">{{ $student->address ?? 'N/A' }}</p>
@@ -122,6 +139,77 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Sibling Information -->
+                        @if ($student->has_sibling)
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card rounded-0 shadow mb-0">
+                                        <div class="card-header d-flex align-items-center justify-content-between">
+                                            <h6 class="mb-0 fw-bold">Sibling Information</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            @php $siblings = $student->siblings(); @endphp
+                                            @if ($siblings && $siblings->count() > 0)
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-bordered mb-0">
+                                                        <thead class="bg-light text-dark">
+                                                            <tr>
+                                                                <th>Photo</th>
+                                                                <th>Student ID</th>
+                                                                <th>Name</th>
+                                                                <th>Class</th>
+                                                                <th>Section</th>
+                                                                <th class="text-center">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($siblings as $sibling)
+                                                                <tr>
+                                                                    <td>
+                                                                        @if ($sibling->photo)
+                                                                            <span class="avatar avatar-sm avatar-rounded">
+                                                                                <img src="{{ asset($sibling->photo) }}"
+                                                                                    alt="Sibling Photo">
+                                                                            </span>
+                                                                        @else
+                                                                            <span
+                                                                                class="avatar avatar-sm avatar-rounded bg-light border">
+                                                                                <i class="ti ti-user text-muted"></i>
+                                                                            </span>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td class="fs-13 align-middle">
+                                                                        {{ $sibling->student_id }}</td>
+                                                                    <td class="fs-13 align-middle">
+                                                                        {{ $sibling->first_name }}
+                                                                        {{ $sibling->last_name }}</td>
+                                                                    <td class="fs-13 align-middle">
+                                                                        {{ $sibling->schoolClass->name ?? 'N/A' }}</td>
+                                                                    <td class="fs-13 align-middle">
+                                                                        {{ $sibling->section->name ?? 'N/A' }}</td>
+                                                                    <td class="text-center align-middle">
+                                                                        <a href="{{ route('institution.students.show', $sibling->id) }}"
+                                                                            class="btn btn-sm btn-primary py-0 fs-12">
+                                                                            <i class="ti ti-eye me-1"></i>View
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <div class="text-center py-3">
+                                                    <p class="text-muted mb-0">Sibling information marked but no sibling
+                                                        records found.</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Academic Info Tab -->
@@ -137,14 +225,16 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-primary d-inline-flex">
+                                                <span
+                                                    class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-primary d-inline-flex">
                                                     {{ $student->institution->name ?? 'N/A' }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                    class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -163,15 +253,17 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
-                                                    
+                                                <span
+                                                    class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
+
                                                     {{ $student->schoolClass->name ?? 'N/A' }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                    class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -190,14 +282,16 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
+                                                <span
+                                                    class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
                                                     {{ $student->section->name ?? 'N/A' }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                    class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -216,15 +310,17 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                @if($student->teacher)
+                                                @if ($student->teacher)
                                                     <span class="avatar avatar-sm avatar-rounded flex-shrink-0 me-2">
-                                                        @if($student->teacher->photo)
-                                                            <img src="{{ asset($student->teacher->photo) }}" alt="">
+                                                        @if ($student->teacher->photo)
+                                                            <img src="{{ asset($student->teacher->photo) }}"
+                                                                alt="">
                                                         @else
                                                             <i class="ti ti-user"></i>
                                                         @endif
                                                     </span>
-                                                    <p class="mb-0">{{ $student->teacher->first_name }} {{ $student->teacher->last_name }}</p>
+                                                    <p class="mb-0">{{ $student->teacher->first_name }}
+                                                        {{ $student->teacher->last_name }}</p>
                                                 @else
                                                     <span class="text-muted">No teacher assigned</span>
                                                 @endif
@@ -232,7 +328,8 @@
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                    class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -251,14 +348,16 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="d-flex align-items-center">
-                                                <span class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
+                                                <span
+                                                    class="bg-light border py-1 px-2 rounded fs-13 fw-medium text-dark d-inline-flex">
                                                     {{ $student->admission_date ? \Carbon\Carbon::parse($student->admission_date)->format('d M Y') : 'N/A' }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="text-md-end">
-                                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn p-1 border-0 btn-outline-white">
+                                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                    class="btn p-1 border-0 btn-outline-white">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
                                             </div>
@@ -279,7 +378,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->father_photo)
+                                            @if ($student->father_photo)
                                                 <span class="avatar avatar-xl avatar-rounded mb-3">
                                                     <img src="{{ asset($student->father_photo) }}" alt="Father Photo">
                                                 </span>
@@ -311,7 +410,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="text-center mb-3">
-                                            @if($student->mother_photo)
+                                            @if ($student->mother_photo)
                                                 <span class="avatar avatar-xl avatar-rounded mb-3">
                                                     <img src="{{ asset($student->mother_photo) }}" alt="Mother Photo">
                                                 </span>
@@ -346,9 +445,10 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-3 text-center">
-                                                @if($student->guardian_photo)
+                                                @if ($student->guardian_photo)
                                                     <span class="avatar avatar-xl avatar-rounded mb-3">
-                                                        <img src="{{ asset($student->guardian_photo) }}" alt="Guardian Photo">
+                                                        <img src="{{ asset($student->guardian_photo) }}"
+                                                            alt="Guardian Photo">
                                                     </span>
                                                 @else
                                                     <span class="avatar avatar-xl avatar-rounded mb-3 bg-light border">
@@ -373,19 +473,22 @@
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Relation</h6>
-                                                            <p class="mb-0">{{ $student->guardian_relation ?? 'N/A' }}</p>
+                                                            <p class="mb-0">{{ $student->guardian_relation ?? 'N/A' }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="bg-light border rounded p-2 mb-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Occupation</h6>
-                                                            <p class="mb-0">{{ $student->guardian_occupation ?? 'N/A' }}</p>
+                                                            <p class="mb-0">{{ $student->guardian_occupation ?? 'N/A' }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="bg-light border rounded p-2">
                                                             <h6 class="fw-semibold fs-14 mb-1">Address</h6>
-                                                            <p class="mb-0">{{ $student->guardian_address ?? 'N/A' }}</p>
+                                                            <p class="mb-0">{{ $student->guardian_address ?? 'N/A' }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -402,7 +505,8 @@
                         <div class="card rounded-0 mb-0">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h6 class="fw-bold mb-0">Documents</h6>
-                                <a href="{{ route('institution.students.edit', $student->id) }}" class="btn btn-primary fs-12 py-1">
+                                <a href="{{ route('institution.students.edit', $student->id) }}"
+                                    class="btn btn-primary fs-12 py-1">
                                     <i class="ti ti-circle-plus me-1"></i>Edit Documents
                                 </a>
                             </div>
@@ -418,36 +522,46 @@
                                                 <div class="mb-3">
                                                     <strong>Number:</strong> {{ $student->aadhaar_no ?? 'N/A' }}
                                                 </div>
-                                                @if($student->aadhaar_front || $student->aadhaar_back)
-                                                <div class="row">
-                                                    @if($student->aadhaar_front)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Front</strong>
-                                                            <img src="{{ asset($student->aadhaar_front) }}" alt="Aadhaar Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->aadhaar_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
+                                                @if ($student->aadhaar_front || $student->aadhaar_back)
+                                                    <div class="row">
+                                                        @if ($student->aadhaar_front)
+                                                            <div class="col-6">
+                                                                <div class="text-center">
+                                                                    <strong class="d-block mb-2">Front</strong>
+                                                                    <img src="{{ asset($student->aadhaar_front) }}"
+                                                                        alt="Aadhaar Front"
+                                                                        class="img-fluid border rounded"
+                                                                        style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                                    <a href="{{ asset($student->aadhaar_front) }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-sm btn-outline-secondary mt-2">
+                                                                        <i class="ti ti-external-link me-1"></i>Open
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        @if ($student->aadhaar_back)
+                                                            <div class="col-6">
+                                                                <div class="text-center">
+                                                                    <strong class="d-block mb-2">Back</strong>
+                                                                    <img src="{{ asset($student->aadhaar_back) }}"
+                                                                        alt="Aadhaar Back"
+                                                                        class="img-fluid border rounded"
+                                                                        style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                                    <a href="{{ asset($student->aadhaar_back) }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-sm btn-outline-secondary mt-2">
+                                                                        <i class="ti ti-external-link me-1"></i>Open
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        @endif
                                                     </div>
-                                                    @endif
-                                                    @if($student->aadhaar_back)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Back</strong>
-                                                            <img src="{{ asset($student->aadhaar_back) }}" alt="Aadhaar Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->aadhaar_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                </div>
                                                 @else
-                                                <div class="text-center text-muted py-3">
-                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
-                                                    <p class="mb-0">No images uploaded</p>
-                                                </div>
+                                                    <div class="text-center text-muted py-3">
+                                                        <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
+                                                        <p class="mb-0">No images uploaded</p>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -461,36 +575,44 @@
                                                 <div class="mb-3">
                                                     <strong>Number:</strong> {{ $student->pan_no ?? 'N/A' }}
                                                 </div>
-                                                @if($student->pan_front || $student->pan_back)
-                                                <div class="row">
-                                                    @if($student->pan_front)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Front</strong>
-                                                            <img src="{{ asset($student->pan_front) }}" alt="PAN Front" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->pan_front) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
+                                                @if ($student->pan_front || $student->pan_back)
+                                                    <div class="row">
+                                                        @if ($student->pan_front)
+                                                            <div class="col-6">
+                                                                <div class="text-center">
+                                                                    <strong class="d-block mb-2">Front</strong>
+                                                                    <img src="{{ asset($student->pan_front) }}"
+                                                                        alt="PAN Front" class="img-fluid border rounded"
+                                                                        style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                                    <a href="{{ asset($student->pan_front) }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-sm btn-outline-secondary mt-2">
+                                                                        <i class="ti ti-external-link me-1"></i>Open
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        @if ($student->pan_back)
+                                                            <div class="col-6">
+                                                                <div class="text-center">
+                                                                    <strong class="d-block mb-2">Back</strong>
+                                                                    <img src="{{ asset($student->pan_back) }}"
+                                                                        alt="PAN Back" class="img-fluid border rounded"
+                                                                        style="max-height: 150px; width: 100%; object-fit: cover;">
+                                                                    <a href="{{ asset($student->pan_back) }}"
+                                                                        target="_blank"
+                                                                        class="btn btn-sm btn-outline-secondary mt-2">
+                                                                        <i class="ti ti-external-link me-1"></i>Open
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        @endif
                                                     </div>
-                                                    @endif
-                                                    @if($student->pan_back)
-                                                    <div class="col-6">
-                                                        <div class="text-center">
-                                                            <strong class="d-block mb-2">Back</strong>
-                                                            <img src="{{ asset($student->pan_back) }}" alt="PAN Back" class="img-fluid border rounded" style="max-height: 150px; width: 100%; object-fit: cover;">
-                                                            <a href="{{ asset($student->pan_back) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2">
-                                                                <i class="ti ti-external-link me-1"></i>Open
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    @endif
-                                                </div>
                                                 @else
-                                                <div class="text-center text-muted py-3">
-                                                    <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
-                                                    <p class="mb-0">No images uploaded</p>
-                                                </div>
+                                                    <div class="text-center text-muted py-3">
+                                                        <i class="ti ti-photo-off fs-24 mb-2 d-block"></i>
+                                                        <p class="mb-0">No images uploaded</p>
+                                                    </div>
                                                 @endif
                                             </div>
                                         </div>
@@ -530,93 +652,109 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if($student->document_01_file)
-                                            <tr>
-                                                <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_01_title ?? 'Document 01' }}</h6>
-                                                </td>
-                                                <td>
-                                                    <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_01_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-download me-1"></i>Download
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_01_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            @if ($student->document_01_file)
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0 fs-14">
+                                                            {{ $student->document_01_title ?? 'Document 01' }}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_01_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-download me-1"></i>Download
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_01_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                             @endif
-                                            @if($student->document_02_file)
-                                            <tr>
-                                                <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_02_title ?? 'Document 02' }}</h6>
-                                                </td>
-                                                <td>
-                                                    <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_02_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-download me-1"></i>Download
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_02_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            @if ($student->document_02_file)
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0 fs-14">
+                                                            {{ $student->document_02_title ?? 'Document 02' }}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_02_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-download me-1"></i>Download
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_02_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                             @endif
-                                            @if($student->document_03_file)
-                                            <tr>
-                                                <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_03_title ?? 'Document 03' }}</h6>
-                                                </td>
-                                                <td>
-                                                    <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_03_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-download me-1"></i>Download
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_03_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            @if ($student->document_03_file)
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0 fs-14">
+                                                            {{ $student->document_03_title ?? 'Document 03' }}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_03_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-download me-1"></i>Download
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_03_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                             @endif
-                                            @if($student->document_04_file)
-                                            <tr>
-                                                <td>
-                                                    <h6 class="mb-0 fs-14">{{ $student->document_04_title ?? 'Document 04' }}</h6>
-                                                </td>
-                                                <td>
-                                                    <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_04_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-download me-1"></i>Download
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ asset($student->document_04_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="ti ti-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            @if ($student->document_04_file)
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0 fs-14">
+                                                            {{ $student->document_04_title ?? 'Document 04' }}</h6>
+                                                    </td>
+                                                    <td>
+                                                        <i class="ti ti-file-type-pdf fs-20 text-danger"></i>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_04_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-download me-1"></i>Download
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ asset($student->document_04_file) }}" target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="ti ti-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                             @endif
-                                            @if(!$student->document_01_file && !$student->document_02_file && !$student->document_03_file && !$student->document_04_file)
-                                            <tr>
-                                                <td colspan="4" class="text-center text-muted py-4">
-                                                    <i class="ti ti-file-off fs-48 mb-3 d-block"></i>
-                                                    <p class="mb-0">No documents uploaded</p>
-                                                </td>
-                                            </tr>
+                                            @if (
+                                                !$student->document_01_file &&
+                                                    !$student->document_02_file &&
+                                                    !$student->document_03_file &&
+                                                    !$student->document_04_file)
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted py-4">
+                                                        <i class="ti ti-file-off fs-48 mb-3 d-block"></i>
+                                                        <p class="mb-0">No documents uploaded</p>
+                                                    </td>
+                                                </tr>
                                             @endif
                                         </tbody>
                                     </table>
@@ -682,23 +820,27 @@
                         <div class="row">
                             <div class="col-xl-7">
                                 <div class="card rounded-0 mb-xl-0">
-                                    <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2">
+                                    <div
+                                        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2">
                                         <h6 class="fw-bold mb-0">Student Information</h6>
                                     </div>
                                     <div class="card-body">
-                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
+                                        <div
+                                            class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Student ID</h6>
                                                 <p class="mb-0 fs-13">{{ $student->student_id ?? 'N/A' }}</p>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
+                                        <div
+                                            class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Email</h6>
                                                 <p class="mb-0 fs-13">{{ $student->email ?? 'N/A' }}</p>
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
+                                        <div
+                                            class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-3">
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Phone</h6>
                                                 <p class="mb-0 fs-13">{{ $student->phone ?? 'N/A' }}</p>
@@ -708,7 +850,7 @@
                                             <div>
                                                 <h6 class="fs-14 fw-semibold mb-1">Status</h6>
                                                 <p class="mb-0 fs-13">
-                                                    @if($student->status == 'active')
+                                                    @if ($student->status == 'active')
                                                         <span class="badge badge-soft-success">Active</span>
                                                     @else
                                                         <span class="badge badge-soft-danger">Inactive</span>
@@ -721,15 +863,18 @@
                             </div>
                             <div class="col-xl-5">
                                 <div class="card rounded-0 mb-0">
-                                    <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2">
+                                    <div
+                                        class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2">
                                         <h6 class="fw-bold mb-0">Quick Actions</h6>
                                     </div>
                                     <div class="card-body">
                                         <div class="d-grid gap-2">
-                                            <a href="{{ route('institution.students.edit', $student->id) }}" class="btn btn-primary">
+                                            <a href="{{ route('institution.students.edit', $student->id) }}"
+                                                class="btn btn-primary">
                                                 <i class="ti ti-edit me-1"></i>Edit Student
                                             </a>
-                                            <a href="{{ route('institution.students.index') }}" class="btn btn-outline-secondary">
+                                            <a href="{{ route('institution.students.index') }}"
+                                                class="btn btn-outline-secondary">
                                                 <i class="ti ti-arrow-left me-1"></i>Back to List
                                             </a>
                                         </div>
@@ -746,28 +891,28 @@
 @endsection
 
 @push('scripts')
-<script>
-    // Tab switching functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
-        const tabPanes = document.querySelectorAll('.tab-pane');
-        
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons and panes
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabPanes.forEach(pane => pane.classList.remove('show', 'active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Show corresponding tab pane
-                const targetPane = document.querySelector(this.getAttribute('href'));
-                if (targetPane) {
-                    targetPane.classList.add('show', 'active');
-                }
+    <script>
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons and panes
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.remove('show', 'active'));
+
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    // Show corresponding tab pane
+                    const targetPane = document.querySelector(this.getAttribute('href'));
+                    if (targetPane) {
+                        targetPane.classList.add('show', 'active');
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 @endpush

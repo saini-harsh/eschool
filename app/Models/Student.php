@@ -20,6 +20,9 @@ class Student extends Authenticatable
         'email',
         'phone',
         'dob',
+        'dob_status',
+        'age_years',
+        'age_months',
         'gender',
         'address',
         'permanent_address',
@@ -35,6 +38,8 @@ class Student extends Authenticatable
         'password',
         'decrypt_pw',
         'status',
+        'has_sibling',
+        'sibling_ids',
         'barcode',
         'qr_code',
         'biometric_id',
@@ -57,11 +62,16 @@ class Student extends Authenticatable
         'category',
         'height',
         'weight',
+        'discount_category',
+        'discount_amount',
+        'discount_percentage',
         // Parent Information
         'father_name',
         'father_occupation',
         'father_phone',
         'father_photo',
+        'parent_aadhaar_front',
+        'parent_aadhaar_back',
         'mother_name',
         'mother_occupation',
         'mother_phone',
@@ -75,6 +85,8 @@ class Student extends Authenticatable
         'guardian_occupation',
         'guardian_address',
         'guardian_photo',
+        'guardian_aadhaar_front',
+        'guardian_aadhaar_back',
         // Document Information
         'birth_certificate_number',
         'bank_name',
@@ -102,6 +114,9 @@ class Student extends Authenticatable
         'dob' => 'date',
         'status' => 'boolean',
         'permissions' => 'array',
+        'sibling_ids' => 'array',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
     ];
 
     /**
@@ -207,6 +222,11 @@ class Student extends Authenticatable
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
+    }
+
+    public function siblings()
+    {
+        return Student::whereIn('id', $this->sibling_ids ?? [])->get();
     }
 
     public function attendance()

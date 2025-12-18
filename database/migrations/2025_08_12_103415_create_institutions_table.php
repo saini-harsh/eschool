@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique()->nullable();
+            $table->string('institution_code')->unique()->nullable();
             $table->string('logo')->nullable();
             $table->string('address');
             $table->string('pincode', 10);

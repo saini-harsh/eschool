@@ -44,6 +44,9 @@ return new class extends Migration
             $table->string('last_name', 100);
             $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();
             $table->date('dob')->nullable();
+            $table->string('dob_status')->default('Not Verified');
+            $table->integer('age_years')->nullable();
+            $table->integer('age_months')->nullable();
             $table->string('religion', 50)->nullable();
             $table->enum('caste_tribe', ['General', 'OBC', 'SC', 'ST', 'OTHERS'])->nullable();
             $table->string('photo')->nullable(); // File path for student photo
@@ -98,8 +101,14 @@ return new class extends Migration
             $table->decimal('hostel_tuition_fee_amount', 10, 2)->nullable();
             $table->enum('hostel_tuition_payment_method', ['online', 'cash'])->nullable();
 
+            $table->string('discount_category')->nullable();
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('discount_percentage', 5, 2)->default(0);
+
             // Status and Metadata
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->boolean('has_sibling')->default(false);
+            $table->json('sibling_ids')->nullable();
             $table->enum('admission_status', ['pending', 'approved', 'rejected', 'admitted'])->default('pending');
             $table->text('notes')->nullable();
 

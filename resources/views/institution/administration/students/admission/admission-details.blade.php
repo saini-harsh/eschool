@@ -144,6 +144,21 @@
                                 </p>
                             </div>
                             <div class="col-md-3">
+                                <label class="text-muted small">DOB Status</label>
+                                <p class="mb-0">
+                                    <span
+                                        class="badge {{ $admission->dob_status == 'Verified' ? 'bg-success' : 'bg-warning' }}">
+                                        {{ $admission->dob_status ?? 'Not Verified' }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-muted small">Age (as of Jan 2026)</label>
+                                <p class="mb-0 fw-semibold">
+                                    {{ $admission->age_years ?? '0' }} Years, {{ $admission->age_months ?? '0' }} Months
+                                </p>
+                            </div>
+                            <div class="col-md-3">
                                 <label class="text-muted small">Religion</label>
                                 <p class="mb-0 fw-semibold">{{ $admission->religion ?? 'N/A' }}</p>
                             </div>
@@ -320,6 +335,30 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
+                                @if ($admission->discount_category)
+                                    <div class="col-md-12 mb-4">
+                                        <div class="alert alert-info border-info mb-0">
+                                            <div class="d-flex align-items-center">
+                                                <i class="ti ti-info-circle fs-20 me-2"></i>
+                                                <div>
+                                                    <p class="mb-0"><strong>Discount Applied:</strong>
+                                                        @if ($admission->discount_category == 'orphanage')
+                                                            Orphanage
+                                                        @elseif($admission->discount_category == 'teacher_child')
+                                                            Teacher's Child
+                                                        @elseif($admission->discount_category == 'personal_selection')
+                                                            Personal Selection
+                                                        @else
+                                                            {{ $admission->discount_category }}
+                                                        @endif
+                                                        - Amount: ₹{{ number_format($admission->discount_amount, 2) }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 @if ($admissionPayments->where('feeStructure.fee_type', 'onetime')->count() > 0)
                                     <div class="col-md-6 mb-4">
                                         <h6 class="fw-semibold mb-3">Admission Fee</h6>

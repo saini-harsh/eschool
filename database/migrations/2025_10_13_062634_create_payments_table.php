@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('fee_structure_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('discount_percentage', 5, 2)->default(0);
             $table->enum('payment_method', ['cash', 'online', 'bank_transfer', 'other']);
             $table->string('transaction_id')->nullable();
             $table->text('notes')->nullable();

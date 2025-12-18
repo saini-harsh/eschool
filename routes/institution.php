@@ -65,12 +65,15 @@ Route::middleware('institution')->group(function () {
             Route::get('/admission-form', [StudentController::class, 'showAdmissionForm'])->name('institution.admission.admission-form');
             Route::get('/list', [AdmissionController::class, 'list'])->name('institution.admission.list');
             Route::get('/export', [AdmissionController::class, 'exportExcel'])->name('institution.admission.export');
+            Route::get('/preview-excel', [AdmissionController::class, 'previewExcel'])->name('institution.admission.preview-excel');
             Route::post('/store', [AdmissionController::class, 'store'])->name('institution.admission.store');
             Route::get('/show/{id}', [AdmissionController::class, 'show'])->name('institution.admission.show');
             Route::get('/success/{id}', [AdmissionController::class, 'success'])->name('institution.admission.success');
             Route::get('/receipt/admission/{admissionId}/{paymentId}', [AdmissionController::class, 'generateAdmissionReceipt'])->name('institution.admission.receipt.admission');
             Route::get('/receipt/tuition/{admissionId}/{paymentId}', [AdmissionController::class, 'generateTuitionReceipt'])->name('institution.admission.receipt.tuition');
             Route::get('/print/{id}', [AdmissionController::class, 'printForm'])->name('institution.admission.print');
+            Route::get('/search-siblings', [AdmissionController::class, 'searchSiblings'])->name('institution.admission.search-siblings');
+            Route::get('/sibling-details/{id}', [AdmissionController::class, 'getSiblingDetails'])->name('institution.admission.sibling-details');
         });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('institution.students.index');

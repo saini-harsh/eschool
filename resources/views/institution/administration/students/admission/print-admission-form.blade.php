@@ -556,6 +556,19 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="field">
+                                                <label>DOB Status:</label>
+                                                <span>{{ $admission->dob_status ?? 'Not Verified' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
+                                                <label>Age (as of Jan 2026):</label>
+                                                <span>{{ $admission->age_years ?? '0' }} Years,
+                                                    {{ $admission->age_months ?? '0' }} Months</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="field">
                                                 <label>Religion:</label>
                                                 <span>{{ $admission->religion ?? 'N/A' }}</span>
                                             </div>
@@ -684,35 +697,35 @@
 
                         <!-- Guardian Information -->
                         @if ($admission->guardian_name)
-                        <div class="section">
-                            <h3 class="section-title">GUARDIAN INFORMATION</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Guardian Name:</label>
-                                        <span>{{ $admission->guardian_name ?? 'N/A' }}</span>
+                            <div class="section">
+                                <h3 class="section-title">GUARDIAN INFORMATION</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="field">
+                                            <label>Guardian Name:</label>
+                                            <span>{{ $admission->guardian_name ?? 'N/A' }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Relation:</label>
-                                        <span>{{ $admission->guardian_relation_text ?? 'N/A' }}</span>
+                                    <div class="col-md-6">
+                                        <div class="field">
+                                            <label>Relation:</label>
+                                            <span>{{ $admission->guardian_relation_text ?? 'N/A' }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="field">
-                                        <label>Guardian Phone:</label>
-                                        <span>{{ $admission->guardian_phone ?? 'N/A' }}</span>
+                                    <div class="col-md-6">
+                                        <div class="field">
+                                            <label>Guardian Phone:</label>
+                                            <span>{{ $admission->guardian_phone ?? 'N/A' }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="field">
-                                        <label>Guardian Address:</label>
-                                        <span>{{ $admission->guardian_address ?? 'N/A' }}</span>
+                                    <div class="col-md-12">
+                                        <div class="field">
+                                            <label>Guardian Address:</label>
+                                            <span>{{ $admission->guardian_address ?? 'N/A' }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endif
                         <!-- Previous Academic Information -->
                         @if ($admission->previous_school_name)

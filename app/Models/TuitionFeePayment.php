@@ -16,6 +16,8 @@ class TuitionFeePayment extends Model
         'admission_id',
         'fee_structure_id',
         'payment_amount',
+        'discount_amount',
+        'discount_percentage',
         'payment_method',
         'transaction_id',
         'payment_date',
@@ -29,6 +31,8 @@ class TuitionFeePayment extends Model
 
     protected $casts = [
         'payment_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
         'monthly_fee_amount' => 'decimal:2',
         'payment_date' => 'date',
         'selected_months' => 'array',
