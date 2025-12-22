@@ -99,7 +99,7 @@ use App\Helpers\PermissionHelper;
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
-                                class="<?php echo e(request()->routeIs('admin.institutions*') || request()->routeIs('admin.teachers*') || request()->routeIs('admin.students*') || request()->routeIs('admin.nonworkingstaff*') || request()->routeIs('admin.attendance*') ? 'active subdrop' : ''); ?>">
+                                class="<?php echo e(request()->routeIs('admin.institutions*') || request()->routeIs('admin.teachers*') || request()->routeIs('admin.students*') || request()->routeIs('admin.nonworkingstaff*') || request()->routeIs('admin.attendance*') || request()->routeIs('admin.boarding*') ? 'active subdrop' : ''); ?>">
                                 <i class="ti ti-layout-dashboard"></i><span>Administration</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -145,6 +145,15 @@ use App\Helpers\PermissionHelper;
                                     <a class="<?php echo e(request()->routeIs('admin.attendance*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.attendance')); ?>">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+
+                                <?php if(PermissionHelper::canShowMenu('boarding')): ?>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('admin.boarding*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('admin.boarding.index')); ?>">
+                                        <i class="ti ti-home"></i><span>Boarding</span>
                                     </a>
                                 </li>
                                 <?php endif; ?>

@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\ExamManagement\ExamSetupController;
 use App\Http\Controllers\Admin\ExamManagement\MarksheetController;
 use App\Http\Controllers\Admin\Administration\AttendanceController;
 use App\Http\Controllers\Admin\Administration\InstitutionController;
+use App\Http\Controllers\Admin\Administration\BoardingController;
 use App\Http\Controllers\Admin\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Admin\Academic\AssignmentController;
 use App\Http\Controllers\Admin\Administration\NonWorkingStaffController;
@@ -142,6 +143,9 @@ Route::middleware('admin')->group(function () {
             Route::get('/staff/{institutionId}', [AttendanceController::class, 'getStaffByInstitution']);
         });
 
+        Route::prefix('boarding')->group(function () {
+            Route::get('/', [BoardingController::class, 'index'])->name('admin.boarding.index');
+        });
 
         // Classes
         Route::prefix('classes')->group(function () {

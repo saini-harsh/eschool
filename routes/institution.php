@@ -22,6 +22,7 @@ use App\Http\Controllers\Institution\Communication\EmailSmsController;
 use App\Http\Controllers\Institution\Academic\AssignClassTeacherController;
 use App\Http\Controllers\Institution\Administration\AdmissionController;
 use App\Http\Controllers\Institution\Administration\NonWorkingStaffController;
+use App\Http\Controllers\Institution\Administration\BoardingController;
 use App\Http\Controllers\Institution\ExamManagement\ClassRoomController;
 use App\Http\Controllers\Institution\ExamManagement\InvigilatorController;
 use App\Http\Controllers\Institution\Payment\FeeStructureController;
@@ -77,6 +78,8 @@ Route::middleware('institution')->group(function () {
         });
         Route::prefix('students')->group(function () {
             Route::get('/index', [StudentController::class, 'Index'])->name('institution.students.index');
+            Route::get('/search', [StudentController::class, 'search'])->name('institution.students.search');
+            Route::get('/with-siblings', [StudentController::class, 'getStudentsWithSiblings'])->name('institution.students.with-siblings');
             Route::get('/create', [StudentController::class, 'Create'])->name('institution.students.create');
             Route::post('/store', [StudentController::class, 'Store'])->name('institution.students.store');
             Route::get('/show/{student}', [StudentController::class, 'Show'])->name('institution.students.show');
@@ -85,6 +88,7 @@ Route::middleware('institution')->group(function () {
             Route::post('/delete/{student}', [StudentController::class, 'Delete'])->name('institution.students.delete');
             Route::get('/download-pdf/{student}', [StudentController::class, 'downloadPdf'])->name('institution.students.download-pdf');
             Route::get('/print-id-card/{student}', [StudentController::class, 'printIdCard'])->name('institution.students.print-id-card');
+            Route::get('/download-template', [StudentController::class, 'downloadTemplate'])->name('institution.students.download-template');
             Route::post('/import', [StudentController::class, 'import'])->name('institution.students.import');
             Route::get('/classes/{institutionId}', [StudentController::class, 'getClassesByInstitution'])->name('institution.students.classes');
             Route::get('/teachers/{institutionId}', [StudentController::class, 'getTeachersByInstitution'])->name('institution.students.teachers');
@@ -128,6 +132,16 @@ Route::middleware('institution')->group(function () {
             Route::get('/students', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getStudentsByClassSection']);
             Route::get('/institution-teachers', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getTeachersByInstitution']);
             Route::get('/institution-staff', [\App\Http\Controllers\Institution\Administration\AttendanceController::class, 'getStaffByInstitution']);
+        });
+
+        Route::prefix('boarding')->group(function () {
+            Route::get('/', [BoardingController::class, 'index'])->name('institution.boarding.index');
+            Route::get('/create', [BoardingController::class, 'create'])->name('institution.boarding.create');
+            Route::post('/store', [BoardingController::class, 'store'])->name('institution.boarding.store');
+            Route::get('/edit/{id}', [BoardingController::class, 'edit'])->name('institution.boarding.edit');
+            Route::post('/update/{id}', [BoardingController::class, 'update'])->name('institution.boarding.update');
+            Route::post('/delete/{id}', [BoardingController::class, 'destroy'])->name('institution.boarding.delete');
+            Route::get('/students/{classId}', [BoardingController::class, 'getStudentsByClass'])->name('institution.boarding.students');
         });
 
          // Classes

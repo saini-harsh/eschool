@@ -9,6 +9,9 @@ use App\Models\Teacher;
 use App\Models\Institution;
 use App\Models\SchoolClass;
 use App\Models\District;
+use App\Models\Payment;
+use App\Models\TuitionFeePayment;
+use App\Models\HostelPayment;
 use Illuminate\Support\Str;
 use App\Models\FeeStructure;
 use App\Helpers\PermissionHelper;
@@ -77,6 +80,103 @@ class StudentController extends Controller
             ->withCount('students')
             ->get();
         return view('institution.administration.students.index',compact('classes'));
+    }
+
+    /**
+     * Get all students with siblings
+     */
+    public function getStudentsWithSiblings()
+    {
+        $institutionId = auth('institution')->id();
+        
+        $students = Student::where('institution_id', $institutionId)
+            ->where('has_sibling', true)
+            ->whereNotNull('sibling_ids')
+            ->with(['schoolClass', 'section'])
+            ->get()
+            ->map(function($student) {
+                $siblingIds = is_array($student->sibling_ids) ? $student->sibling_ids : json_decode($student->sibling_ids, true);
+                $siblings = [];
+                if ($siblingIds) {
+                    $siblings = Student::whereIn('id', $siblingIds)
+                        ->where('institution_id', $student->institution_id)
+                        ->with(['schoolClass', 'section'])
+                        ->get(['id', 'first_name', 'middle_name', 'last_name', 'student_id', 'photo', 'class_id', 'section_id', 'email'])
+                        ->map(function($sibling) {
+                            return [
+                                'id' => $sibling->id,
+                                'name' => trim($sibling->first_name . ' ' . ($sibling->middle_name ?? '') . ' ' . $sibling->last_name),
+                                'student_id' => $sibling->student_id,
+                                'photo' => $sibling->photo,
+                                'class' => $sibling->schoolClass->name ?? 'N/A',
+                                'section' => $sibling->section->name ?? 'N/A',
+                                'email' => $sibling->email,
+                                'url' => route('institution.students.show', $sibling->id)
+                            ];
+                        });
+                }
+                
+                return [
+                    'id' => $student->id,
+                    'name' => trim($student->first_name . ' ' . ($student->middle_name ?? '') . ' ' . $student->last_name),
+                    'student_id' => $student->student_id,
+                    'admission_number' => $student->admission_number,
+                    'roll_number' => $student->roll_number,
+                    'email' => $student->email,
+                    'photo' => $student->photo,
+                    'class' => $student->schoolClass->name ?? 'N/A',
+                    'section' => $student->section->name ?? 'N/A',
+                    'siblings_count' => count($siblings),
+                    'siblings' => $siblings,
+                    'url' => route('institution.students.show', $student->id)
+                ];
+            });
+
+        return response()->json(['students' => $students]);
+    }
+
+    /**
+     * Search students by name or ID
+     */
+    public function search(Request $request)
+    {
+        $institutionId = auth('institution')->id();
+        $query = $request->input('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json(['students' => []]);
+        }
+
+        $students = Student::where('institution_id', $institutionId)
+            ->where(function($q) use ($query) {
+                $q->where('first_name', 'like', '%' . $query . '%')
+                  ->orWhere('last_name', 'like', '%' . $query . '%')
+                  ->orWhere('middle_name', 'like', '%' . $query . '%')
+                  ->orWhereRaw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(middle_name, ''), ' ', COALESCE(last_name, '')) LIKE ?", ['%' . $query . '%'])
+                  ->orWhere('student_id', 'like', '%' . $query . '%')
+                  ->orWhere('admission_number', 'like', '%' . $query . '%')
+                  ->orWhere('roll_number', 'like', '%' . $query . '%')
+                  ->orWhere('email', 'like', '%' . $query . '%');
+            })
+            ->with(['schoolClass', 'section'])
+            ->limit(20)
+            ->get()
+            ->map(function($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => trim($student->first_name . ' ' . ($student->middle_name ?? '') . ' ' . $student->last_name),
+                    'student_id' => $student->student_id,
+                    'admission_number' => $student->admission_number,
+                    'roll_number' => $student->roll_number,
+                    'email' => $student->email,
+                    'class' => $student->schoolClass->name ?? 'N/A',
+                    'section' => $student->section->name ?? 'N/A',
+                    'photo' => $student->photo,
+                    'url' => route('institution.students.show', $student->id)
+                ];
+            });
+
+        return response()->json(['students' => $students]);
     }
     public function Create(){
         $institutionId = auth('institution')->id();
@@ -392,7 +492,156 @@ class StudentController extends Controller
             abort(403, 'Unauthorized access to student data.');
         }
 
-        return view('institution.administration.students.show', compact('student'));
+        // Fetch all payment records for this student
+        $payments = Payment::where('student_id', $student->id)
+            ->where('institution_id', $institutionId)
+            ->with(['feeStructure'])
+            ->orderBy('payment_date', 'desc')
+            ->get();
+
+        $tuitionPayments = TuitionFeePayment::where('student_id', $student->id)
+            ->where('institution_id', $institutionId)
+            ->with(['feeStructure'])
+            ->orderBy('payment_date', 'desc')
+            ->get();
+
+        $hostelPayments = HostelPayment::where('student_id', $student->id)
+            ->where('institution_id', $institutionId)
+            ->with(['feeStructure'])
+            ->orderBy('payment_date', 'desc')
+            ->get();
+
+        // Group payments by month
+        $paymentsByMonth = [];
+        
+        // Process regular payments
+        foreach ($payments as $payment) {
+            $monthKey = Carbon::parse($payment->payment_date)->format('Y-m');
+            $monthName = Carbon::parse($payment->payment_date)->format('F Y');
+            
+            if (!isset($paymentsByMonth[$monthKey])) {
+                $paymentsByMonth[$monthKey] = [
+                    'month' => $monthName,
+                    'month_key' => $monthKey,
+                    'payments' => [],
+                    'total_amount' => 0
+                ];
+            }
+            
+            $paymentsByMonth[$monthKey]['payments'][] = [
+                'type' => 'Fee Payment',
+                'date' => $payment->payment_date,
+                'amount' => $payment->amount,
+                'discount' => $payment->discount_amount,
+                'receipt' => $payment->receipt_number,
+                'method' => $payment->payment_method,
+                'status' => $payment->status,
+                'fee_structure' => $payment->feeStructure->name ?? 'N/A'
+            ];
+            
+            $paymentsByMonth[$monthKey]['total_amount'] += $payment->amount;
+        }
+
+        // Process tuition fee payments (can span multiple months)
+        foreach ($tuitionPayments as $tuitionPayment) {
+            $paymentDate = Carbon::parse($tuitionPayment->payment_date);
+            $selectedMonths = $tuitionPayment->selected_months ?? [];
+            
+            if (empty($selectedMonths)) {
+                // If no months specified, use payment date month
+                $monthKey = $paymentDate->format('Y-m');
+                $monthName = $paymentDate->format('F Y');
+                
+                if (!isset($paymentsByMonth[$monthKey])) {
+                    $paymentsByMonth[$monthKey] = [
+                        'month' => $monthName,
+                        'month_key' => $monthKey,
+                        'payments' => [],
+                        'total_amount' => 0
+                    ];
+                }
+                
+                $paymentsByMonth[$monthKey]['payments'][] = [
+                    'type' => 'Tuition Fee',
+                    'date' => $tuitionPayment->payment_date,
+                    'amount' => $tuitionPayment->payment_amount,
+                    'discount' => $tuitionPayment->discount_amount,
+                    'receipt' => $tuitionPayment->receipt_number,
+                    'method' => $tuitionPayment->payment_method,
+                    'status' => $tuitionPayment->status,
+                    'months' => $tuitionPayment->number_of_months,
+                    'fee_structure' => $tuitionPayment->feeStructure->name ?? 'N/A'
+                ];
+                
+                $paymentsByMonth[$monthKey]['total_amount'] += $tuitionPayment->payment_amount;
+            } else {
+                // Add payment to each selected month
+                foreach ($selectedMonths as $monthNum) {
+                    $year = $paymentDate->year;
+                    $monthKey = Carbon::create($year, $monthNum, 1)->format('Y-m');
+                    $monthName = Carbon::create($year, $monthNum, 1)->format('F Y');
+                    
+                    if (!isset($paymentsByMonth[$monthKey])) {
+                        $paymentsByMonth[$monthKey] = [
+                            'month' => $monthName,
+                            'month_key' => $monthKey,
+                            'payments' => [],
+                            'total_amount' => 0
+                        ];
+                    }
+                    
+                    $monthlyAmount = $tuitionPayment->monthly_fee_amount ?? ($tuitionPayment->payment_amount / count($selectedMonths));
+                    
+                    $paymentsByMonth[$monthKey]['payments'][] = [
+                        'type' => 'Tuition Fee',
+                        'date' => $tuitionPayment->payment_date,
+                        'amount' => $monthlyAmount,
+                        'discount' => 0,
+                        'receipt' => $tuitionPayment->receipt_number,
+                        'method' => $tuitionPayment->payment_method,
+                        'status' => $tuitionPayment->status,
+                        'months' => 'Month ' . $monthNum,
+                        'fee_structure' => $tuitionPayment->feeStructure->name ?? 'N/A'
+                    ];
+                    
+                    $paymentsByMonth[$monthKey]['total_amount'] += $monthlyAmount;
+                }
+            }
+        }
+
+        // Process hostel payments
+        foreach ($hostelPayments as $hostelPayment) {
+            $monthKey = Carbon::parse($hostelPayment->payment_date)->format('Y-m');
+            $monthName = Carbon::parse($hostelPayment->payment_date)->format('F Y');
+            
+            if (!isset($paymentsByMonth[$monthKey])) {
+                $paymentsByMonth[$monthKey] = [
+                    'month' => $monthName,
+                    'month_key' => $monthKey,
+                    'payments' => [],
+                    'total_amount' => 0
+                ];
+            }
+            
+            $paymentsByMonth[$monthKey]['payments'][] = [
+                'type' => 'Hostel Payment',
+                'date' => $hostelPayment->payment_date,
+                'amount' => $hostelPayment->amount,
+                'discount' => $hostelPayment->discount_amount,
+                'receipt' => $hostelPayment->receipt_number,
+                'method' => 'cash', // HostelPayment doesn't have payment_method
+                'status' => 'completed',
+                'months' => $hostelPayment->months_paid ?? 1,
+                'fee_structure' => $hostelPayment->feeStructure->name ?? 'N/A'
+            ];
+            
+            $paymentsByMonth[$monthKey]['total_amount'] += $hostelPayment->amount;
+        }
+
+        // Sort by month (most recent first)
+        krsort($paymentsByMonth);
+
+        return view('institution.administration.students.show', compact('student', 'paymentsByMonth'));
     }
 
     public function Update(Request $request, Student $student)
@@ -789,8 +1038,8 @@ class StudentController extends Controller
             // Validate the request
             $validator = Validator::make($request->all(), [
                 'class_id' => 'required|exists:classes,id',
-                'section_id' => 'required|exists:sections,id',
-                'csv_file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
+                'section_id' => 'nullable|exists:sections,id',
+                'csv_file' => 'required|file|mimes:csv,txt,xlsx,xls|max:10240', // 10MB max, allow Excel files
             ]);
 
             if ($validator->fails()) {
@@ -813,16 +1062,20 @@ class StudentController extends Controller
                 ], 404);
             }
 
-            // Verify section belongs to class
-            $section = Section::where('id', $request->section_id)
-                ->where('class_id', $class->id)
-                ->where('institution_id', $institutionId)
-                ->first();
-            if (!$section) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'The selected section does not belong to the selected class.'
-                ], 422);
+            // Verify section belongs to class (only if section_id is provided)
+            $sectionId = null;
+            if ($request->filled('section_id')) {
+                $section = Section::where('id', $request->section_id)
+                    ->where('class_id', $class->id)
+                    ->where('institution_id', $institutionId)
+                    ->first();
+                if (!$section) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'The selected section does not belong to the selected class.'
+                    ], 422);
+                }
+                $sectionId = $request->section_id;
             }
 
 
@@ -839,7 +1092,7 @@ class StudentController extends Controller
             }
 
             // Import students
-            $importResult = $this->importStudentsFromCsv($csvData, $institutionId, $request->class_id, $request->section_id);
+            $importResult = $this->importStudentsFromCsv($csvData, $institutionId, $request->class_id, $sectionId);
 
             return response()->json([
                 'success' => true,
@@ -857,10 +1110,18 @@ class StudentController extends Controller
     }
 
     /**
-     * Parse CSV file and return array of data
+     * Parse CSV/Excel file and return array of data
      */
     private function parseCsvFile($file)
     {
+        $extension = $file->getClientOriginalExtension();
+        
+        // Handle Excel files
+        if (in_array(strtolower($extension), ['xlsx', 'xls'])) {
+            return $this->parseExcelFile($file);
+        }
+        
+        // Handle CSV files
         $csvData = [];
         $handle = fopen($file->getPathname(), 'r');
 
@@ -892,22 +1153,138 @@ class StudentController extends Controller
     }
 
     /**
-     * Import students from CSV data
+     * Parse Excel file and return array of data
      */
-    private function importStudentsFromCsv($csvData, $institutionId, $classId, $sectionId)
+    private function parseExcelFile($file)
+    {
+        try {
+            // Use PhpSpreadsheet if available, otherwise fallback to CSV conversion
+            if (class_exists(\PhpOffice\PhpSpreadsheet\IOFactory::class)) {
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
+                $worksheet = $spreadsheet->getActiveSheet();
+                $data = $worksheet->toArray();
+                
+                if (empty($data)) {
+                    return [];
+                }
+                
+                // First row is headers
+                $headers = array_map(function($header) {
+                    return trim(str_replace("\xEF\xBB\xBF", '', $header ?? ''));
+                }, array_shift($data));
+                
+                // Convert rows to associative arrays
+                $result = [];
+                foreach ($data as $row) {
+                    if (count($row) === count($headers)) {
+                        $result[] = array_combine($headers, $row);
+                    }
+                }
+                
+                return $result;
+            } else {
+                // Fallback: try to read as CSV
+                return $this->parseCsvFile($file);
+            }
+        } catch (\Exception $e) {
+            Log::error('Excel parsing error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Import students from CSV/Excel data
+     */
+    private function importStudentsFromCsv($csvData, $institutionId, $classId, $sectionId = null)
     {
         $successful = 0;
         $failed = 0;
         $errors = [];
 
+        // Map Excel column names to database fields (exact headings from Excel)
+        $columnMapping = [
+            'Old / New' => 'old_new',
+            'Roll No.' => 'roll_number',
+            'Roll No' => 'roll_number', // Without period
+            'Name' => 'name',
+            'Gender' => 'gender',
+            'DOB' => 'dob',
+            'DOB Status' => 'dob_status',
+            'PEN No.' => 'pen_no',
+            'PEN No' => 'pen_no', // Without period
+            'Aadhaar No.' => 'aadhaar_no',
+            'Aadhaar No' => 'aadhaar_no', // Without period
+            'Mother\'s Name' => 'mother_name',
+            'Mothers Name' => 'mother_name', // Without apostrophe
+            'Father\'s Name' => 'father_name',
+            'Fathers Name' => 'father_name', // Without apostrophe
+            'WhatsApp No.' => 'whatsapp_no',
+            'WhatsApp No' => 'whatsapp_no', // Without period
+            'Admission Date' => 'admission_date',
+            'Address' => 'address',
+            'Verification' => 'verification',
+            'Admission Amount' => 'admission_amount',
+            'KSO' => 'kso',
+            'ID' => 'kso_id', // Maps to kso_id field
+            'Total' => 'total',
+            'Payment' => 'payment',
+            'Admission Status' => 'admission_status',
+            'Sibling' => 'sibling_name',
+            'Name of the School' => 'previous_school_name',
+            'Class' => 'class_name',
+            'Result' => 'previous_school_result',
+        ];
+
         foreach ($csvData as $index => $row) {
             try {
+                // Normalize column names (map Excel headers to standard names)
+                $normalizedRow = [];
+                foreach ($row as $key => $value) {
+                    $trimmedKey = trim($key);
+                    $normalizedKey = null;
+                    
+                    // Check exact match first
+                    if (isset($columnMapping[$trimmedKey])) {
+                        $normalizedKey = $columnMapping[$trimmedKey];
+                    } else {
+                        // Check case-insensitive match
+                        $lowerKey = strtolower($trimmedKey);
+                        foreach ($columnMapping as $excelCol => $dbField) {
+                            if (strtolower($excelCol) === $lowerKey) {
+                                $normalizedKey = $dbField;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if ($normalizedKey) {
+                        $normalizedRow[$normalizedKey] = trim($value ?? '');
+                    } else {
+                        // Keep original key for backward compatibility (normalize format)
+                        $normalizedRow[strtolower(str_replace([' ', '-', '.'], '_', $trimmedKey))] = trim($value ?? '');
+                    }
+                }
+
+                // Parse name field if provided (format: "First Middle Last" or "First Last")
+                $name = $normalizedRow['name'] ?? '';
+                if (!empty($name)) {
+                    $nameParts = explode(' ', trim($name));
+                    $normalizedRow['first_name'] = $nameParts[0] ?? '';
+                    $normalizedRow['last_name'] = end($nameParts) ?? '';
+                    $normalizedRow['middle_name'] = count($nameParts) > 2 ? implode(' ', array_slice($nameParts, 1, -1)) : null;
+                }
+
+                // Use WhatsApp No. as phone if phone not provided
+                if (empty($normalizedRow['phone']) && !empty($normalizedRow['whatsapp_no'])) {
+                    $normalizedRow['phone'] = $normalizedRow['whatsapp_no'];
+                }
+
                 // Validate required fields
-                $requiredFields = ['first_name', 'last_name', 'email', 'phone', 'dob', 'address', 'pincode', 'gender', 'district'];
+                $requiredFields = ['first_name', 'last_name', 'gender', 'dob'];
                 $missingFields = [];
 
                 foreach ($requiredFields as $field) {
-                    if (empty($row[$field])) {
+                    if (empty($normalizedRow[$field])) {
                         $missingFields[] = $field;
                     }
                 }
@@ -918,54 +1295,67 @@ class StudentController extends Controller
                     continue;
                 }
 
-                // Check if email already exists
-                if (Student::where('email', $row['email'])->exists()) {
-                    $errors[] = "Row " . ($index + 2) . ": Email '{$row['email']}' already exists";
+                // Check if email already exists (if email provided)
+                if (!empty($normalizedRow['email']) && Student::where('email', $normalizedRow['email'])->exists()) {
+                    $errors[] = "Row " . ($index + 2) . ": Email '{$normalizedRow['email']}' already exists";
                     $failed++;
                     continue;
                 }
 
-                // Validate email format
-                if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = "Row " . ($index + 2) . ": Invalid email format '{$row['email']}'";
+                // Validate email format (if email provided)
+                if (!empty($normalizedRow['email']) && !filter_var($normalizedRow['email'], FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid email format '{$normalizedRow['email']}'";
                     $failed++;
                     continue;
                 }
 
                 // Validate gender
-                if (!in_array($row['gender'], ['Male', 'Female', 'Other'])) {
-                    $errors[] = "Row " . ($index + 2) . ": Invalid gender '{$row['gender']}'. Must be Male, Female, or Other";
+                $gender = ucfirst(strtolower(trim($normalizedRow['gender'] ?? '')));
+                if (!in_array($gender, ['Male', 'Female', 'Other'])) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid gender '{$normalizedRow['gender']}'. Must be Male, Female, or Other";
                     $failed++;
                     continue;
                 }
 
-                // Validate date format
-                try {
-                    $dob = Carbon::createFromFormat('Y-m-d', $row['dob']);
-                } catch (\Exception $e) {
-                    $errors[] = "Row " . ($index + 2) . ": Invalid date format for DOB '{$row['dob']}'. Use YYYY-MM-DD";
+                // Parse DOB - try multiple formats
+                $dob = null;
+                $dobFormats = ['Y-m-d', 'd/m/Y', 'd-m-Y', 'Y/m/d', 'd.m.Y'];
+                foreach ($dobFormats as $format) {
+                    try {
+                        $dob = Carbon::createFromFormat($format, trim($normalizedRow['dob'] ?? ''));
+                        break;
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+
+                if (!$dob) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid date format for DOB '{$normalizedRow['dob']}'. Use YYYY-MM-DD, DD/MM/YYYY, or DD-MM-YYYY";
                     $failed++;
                     continue;
                 }
 
                 // Create student
                 $student = new Student();
-                $student->first_name = $row['first_name'];
-                $student->last_name = $row['last_name'];
-                $student->middle_name = $row['middle_name'] ?? null;
-                $student->email = $row['email'];
-                $student->phone = $row['phone'];
+                $student->first_name = $normalizedRow['first_name'];
+                $student->last_name = $normalizedRow['last_name'];
+                $student->middle_name = $normalizedRow['middle_name'] ?? null;
+                $student->email = $normalizedRow['email'] ?? null;
+                $student->phone = $normalizedRow['phone'] ?? null;
                 $student->dob = $dob->format('Y-m-d');
-                $student->address = $row['address'];
-                $student->permanent_address = $row['permanent_address'] ?? null;
-                $student->pincode = $row['pincode'];
-                $student->gender = $row['gender'];
-                $student->caste_tribe = $row['caste_tribe'] ?? null;
-                $student->district = $row['district'];
+                $student->dob_status = $normalizedRow['dob_status'] ?? 'Not Verified';
+                // Handle Address column (separate from Verification)
+                $student->address = $normalizedRow['address'] ?? 'Not Provided';
+                $student->permanent_address = $normalizedRow['permanent_address'] ?? null;
+                // Verification column is stored but not used in DB
+                $student->pincode = $normalizedRow['pincode'] ?? '000000';
+                $student->gender = $gender;
+                $student->caste_tribe = $normalizedRow['caste_tribe'] ?? null;
+                $student->district = $normalizedRow['district'] ?? 'Not Provided';
                 $student->institution_code = 'INS' . str_pad($institutionId, 3, '0', STR_PAD_LEFT);
                 $student->institution_id = $institutionId;
                 $student->class_id = $classId;
-                $student->section_id = $sectionId;
+                $student->section_id = $sectionId; // Can be null now
                 $student->status = 1;
                 $student->admin_id = $institutionId;
 
@@ -974,21 +1364,46 @@ class StudentController extends Controller
                 $student->password = Hash::make($defaultPassword);
                 $student->decrypt_pw = $defaultPassword;
 
-                // Optional fields
-                if (!empty($row['admission_date'])) {
-                    try {
-                        $student->admission_date = Carbon::createFromFormat('Y-m-d', $row['admission_date'])->format('Y-m-d');
-                    } catch (\Exception $e) {
-                        // Skip invalid admission date
+                // Parse admission date if provided
+                if (!empty($normalizedRow['admission_date'])) {
+                    $admissionDate = null;
+                    foreach ($dobFormats as $format) {
+                        try {
+                            $admissionDate = Carbon::createFromFormat($format, trim($normalizedRow['admission_date']));
+                            break;
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                    }
+                    if ($admissionDate) {
+                        $student->admission_date = $admissionDate->format('Y-m-d');
                     }
                 }
 
-                $student->admission_number = $row['admission_number'] ?? null;
-                $student->roll_number = $row['roll_number'] ?? null;
-                $student->religion = $row['religion'] ?? null;
-                $student->blood_group = $row['blood_group'] ?? null;
-                $student->father_name = $row['father_name'] ?? null;
-                $student->mother_name = $row['mother_name'] ?? null;
+                // Map Excel columns to database fields
+                $student->admission_number = $normalizedRow['admission_number'] ?? null;
+                $student->roll_number = $normalizedRow['roll_number'] ?? null;
+                $student->pen_no = $normalizedRow['pen_no'] ?? null;
+                $student->aadhaar_no = $normalizedRow['aadhaar_no'] ?? null;
+                $student->religion = $normalizedRow['religion'] ?? null;
+                $student->blood_group = $normalizedRow['blood_group'] ?? null;
+                $student->father_name = $normalizedRow['father_name'] ?? null;
+                $student->mother_name = $normalizedRow['mother_name'] ?? null;
+                $student->previous_school_name = $normalizedRow['previous_school_name'] ?? null;
+                $student->previous_school_result = $normalizedRow['previous_school_result'] ?? null;
+                
+                // Handle admission status if provided
+                if (!empty($normalizedRow['admission_status'])) {
+                    $admissionStatus = strtolower(trim($normalizedRow['admission_status']));
+                    if (in_array($admissionStatus, ['admitted', 'active', '1', 'yes'])) {
+                        $student->status = 1;
+                    } elseif (in_array($admissionStatus, ['inactive', '0', 'no', 'pending'])) {
+                        $student->status = 0;
+                    }
+                }
+                
+                // Note: Fields like Address Verification, Admission Amount, KSO ID, Total Payment
+                // are not stored in the database but are included in the Excel for reference
 
                 $student->save();
                 $successful++;
@@ -1004,6 +1419,98 @@ class StudentController extends Controller
             'failed' => $failed,
             'errors' => $errors
         ];
+    }
+
+    /**
+     * Download import template with all Excel headings
+     */
+    public function downloadTemplate()
+    {
+        $csvData = [];
+
+        // Excel Headers - exact format as provided
+        $csvData[] = [
+            'Old / New',
+            'Roll No.',
+            'Name',
+            'Gender',
+            'DOB',
+            'DOB Status',
+            'PEN No.',
+            'Aadhaar No.',
+            'Mother\'s Name',
+            'Father\'s Name',
+            'WhatsApp No.',
+            'Admission Date',
+            'Address',
+            'Verification',
+            'Admission Amount',
+            'KSO',
+            'ID',
+            'Total',
+            'Payment',
+            'Admission Status',
+            'Sibling',
+            'Name of the School',
+            'Class',
+            'Result'
+        ];
+
+        // Add example row
+        $csvData[] = [
+            'New',
+            '001',
+            'John Michael Doe',
+            'Male',
+            '15/05/2010',
+            'Verified',
+            'PEN123456',
+            '123456789012',
+            'Jane Doe',
+            'John Doe Sr',
+            '9876543210',
+            '15/01/2024',
+            '123 Main Street',
+            'Verified',
+            '5000',
+            'KSO',
+            '001',
+            '5000',
+            '5000',
+            'Admitted',
+            'Jane Doe Jr',
+            'ABC School',
+            'Class 1',
+            'Pass'
+        ];
+
+        // Generate filename
+        $filename = 'students_import_template.csv';
+
+        // Set headers for CSV download
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ];
+
+        // Create CSV content
+        $callback = function() use ($csvData) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for UTF-8
+            fwrite($file, "\xEF\xBB\xBF");
+
+            foreach ($csvData as $row) {
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**
@@ -1084,63 +1591,76 @@ class StudentController extends Controller
     {
         $csvData = [];
 
-        // CSV Headers
+        // Excel Headers - exact format as provided
         $csvData[] = [
-            'Student ID',
-            'First Name',
-            'Last Name',
-            'Middle Name',
-            'Email',
-            'Phone',
-            'Date of Birth',
-            'Address',
-            'Permanent Address',
-            'Pincode',
+            'Old / New',
+            'Roll No.',
+            'Name',
             'Gender',
-            'Caste/Tribe',
-            'District',
+            'DOB',
+            'DOB Status',
+            'PEN No.',
+            'Aadhaar No.',
+            'Mother\'s Name',
+            'Father\'s Name',
+            'WhatsApp No.',
             'Admission Date',
-            'Admission Number',
-            'Roll Number',
-            'Religion',
-            'Blood Group',
-            'Father Name',
-            'Mother Name',
+            'Address',
+            'Verification',
+            'Admission Amount',
+            'KSO',
+            'ID',
+            'Total',
+            'Payment',
+            'Admission Status',
+            'Sibling',
+            'Name of the School',
             'Class',
-            'Section',
-            'Teacher',
-            'Status',
-            'Institution Code'
+            'Result'
         ];
 
         // Add student data
         foreach ($students as $student) {
+            // Combine name fields
+            $fullName = trim(($student->first_name ?? '') . ' ' . ($student->middle_name ?? '') . ' ' . ($student->last_name ?? ''));
+            
+            // Get sibling names if available
+            $siblingNames = '';
+            if ($student->has_sibling && $student->sibling_ids) {
+                $siblingIds = is_array($student->sibling_ids) ? $student->sibling_ids : json_decode($student->sibling_ids, true);
+                if ($siblingIds) {
+                    $siblings = Student::whereIn('id', $siblingIds)->get(['first_name', 'middle_name', 'last_name']);
+                    $siblingNames = $siblings->map(function($s) {
+                        return trim(($s->first_name ?? '') . ' ' . ($s->middle_name ?? '') . ' ' . ($s->last_name ?? ''));
+                    })->implode(', ');
+                }
+            }
+            
             $csvData[] = [
-                $student->id,
-                $student->first_name,
-                $student->last_name,
-                $student->middle_name ?? '',
-                $student->email,
-                $student->phone ?? '',
-                $student->dob ?? '',
-                $student->address ?? '',
-                $student->permanent_address ?? '',
-                $student->pincode ?? '',
-                $student->gender ?? '',
-                $student->caste_tribe ?? '',
-                $student->district ?? '',
-                $student->admission_date ?? '',
-                $student->admission_number ?? '',
+                'New', // Old / New - default to New for existing students
                 $student->roll_number ?? '',
-                $student->religion ?? '',
-                $student->blood_group ?? '',
-                $student->father_name ?? '',
+                $fullName,
+                $student->gender ?? '',
+                $student->dob ? Carbon::parse($student->dob)->format('d/m/Y') : '',
+                $student->dob_status ?? 'Not Verified',
+                $student->pen_no ?? '',
+                $student->aadhaar_no ?? '',
                 $student->mother_name ?? '',
-                $student->schoolClass->name ?? '',
-                $student->section->name ?? '',
-                $student->teacher ? $student->teacher->first_name . ' ' . $student->teacher->last_name : '',
-                $student->status == 1 ? 'Active' : 'Inactive',
-                $student->institution_code ?? ''
+                $student->father_name ?? '',
+                $student->phone ?? '', // WhatsApp No. - using phone field
+                $student->admission_date ? Carbon::parse($student->admission_date)->format('d/m/Y') : '',
+                $student->address ?? '', // Address
+                '', // Verification - not stored in DB
+                '', // Admission Amount - not stored in DB
+                '', // KSO - not stored in DB
+                '', // ID - not stored in DB
+                '', // Total - not stored in DB
+                '', // Payment - not stored in DB
+                $student->status == 1 ? 'Admitted' : 'Inactive', // Admission Status
+                $siblingNames, // Sibling
+                $student->previous_school_name ?? '', // Name of the School
+                $student->schoolClass->name ?? '', // Class
+                $student->previous_school_result ?? '' // Result
             ];
         }
 

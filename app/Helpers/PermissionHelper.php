@@ -91,6 +91,7 @@ class PermissionHelper
                 'students' => 'Students',
                 'nonworkingstaff' => 'Non-Working Staff',
                 'attendance' => 'Attendance',
+                'boarding' => 'Boarding',
             ],
             'Academics' => [
                 'academics' => 'Academics (Main Menu)',

@@ -95,7 +95,7 @@ use App\Helpers\PermissionHelper;
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"
-                                class="<?php echo e(request()->routeIs('institution.institutions*') || request()->routeIs('institution.teachers*') || request()->routeIs('institution.students*') || request()->routeIs('institution.nonworkingstaff*') || request()->routeIs('institution.attendance*') ? 'active subdrop' : ''); ?>">
+                                class="<?php echo e(request()->routeIs('institution.institutions*') || request()->routeIs('institution.teachers*') || request()->routeIs('institution.students*') || request()->routeIs('institution.nonworkingstaff*') || request()->routeIs('institution.attendance*') || request()->routeIs('institution.boarding*') ? 'active subdrop' : ''); ?>">
                                 <i class="ti ti-layout-dashboard"></i><span>Administration</span>
                                 <span class="menu-arrow"></span>
                             </a>
@@ -132,6 +132,15 @@ use App\Helpers\PermissionHelper;
                                     <a class="<?php echo e(request()->routeIs('institution.attendance*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('institution.attendance')); ?>">
                                         <i class="ti ti-activity"></i><span>Attendance</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+
+                                <?php if(PermissionHelper::canShowMenu('boarding')): ?>
+                                <li class="">
+                                    <a class="<?php echo e(request()->routeIs('institution.boarding*') ? 'active' : ''); ?>"
+                                        href="<?php echo e(route('institution.boarding.index')); ?>">
+                                        <i class="ti ti-home"></i><span>Boarding</span>
                                     </a>
                                 </li>
                                 <?php endif; ?>

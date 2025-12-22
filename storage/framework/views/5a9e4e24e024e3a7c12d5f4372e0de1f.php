@@ -49,6 +49,8 @@
                         role="tab">Documents</a>
                     <a href="#nav_tab_5" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
                         role="tab">Medical Info</a>
+                    <a href="#nav_tab_7" class="btn btn-sm btn-light border fs-14 me-2" data-bs-toggle="tab"
+                        role="tab">Payment Records</a>
                     <a href="#nav_tab_6" class="btn btn-sm btn-light border fs-14" data-bs-toggle="tab"
                         role="tab">Settings</a>
                 </div>
@@ -822,6 +824,109 @@
                                             <h6 class="fw-semibold fs-14 mb-1">Pincode</h6>
                                             <p class="mb-0"><?php echo e($student->pincode ?? 'N/A'); ?></p>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Records Tab -->
+                    <div class="tab-pane" id="nav_tab_7" role="tabpanel">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card rounded-0 shadow mb-0">
+                                    <div class="card-header d-flex align-items-center justify-content-between">
+                                        <h6 class="mb-0 fw-bold">Payment Records</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <?php if(!empty($paymentsByMonth) && count($paymentsByMonth) > 0): ?>
+                                            <?php $__currentLoopData = $paymentsByMonth; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $monthData): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <div class="mb-4">
+                                                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                                        <h6 class="mb-0 fw-bold text-primary">
+                                                            <i class="ti ti-calendar me-2"></i><?php echo e($monthData['month']); ?>
+
+                                                        </h6>
+                                                        <div>
+                                                            <span class="badge badge-soft-success fs-14">
+                                                                Total: ₹<?php echo e(number_format($monthData['total_amount'], 2)); ?>
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm table-bordered mb-0">
+                                                            <thead class="bg-light">
+                                                                <tr>
+                                                                    <th>Date</th>
+                                                                    <th>Type</th>
+                                                                    <th>Fee Structure</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Discount</th>
+                                                                    <th>Payment Method</th>
+                                                                    <th>Receipt No.</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php $__currentLoopData = $monthData['payments']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $payment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                    <tr>
+                                                                        <td class="fs-13">
+                                                                            <?php echo e(\Carbon\Carbon::parse($payment['date'])->format('d M Y')); ?>
+
+                                                                        </td>
+                                                                        <td class="fs-13">
+                                                                            <span class="badge badge-soft-info"><?php echo e($payment['type']); ?></span>
+                                                                            <?php if(isset($payment['months'])): ?>
+                                                                                <br><small class="text-muted"><?php echo e($payment['months']); ?></small>
+                                                                            <?php endif; ?>
+                                                                        </td>
+                                                                        <td class="fs-13"><?php echo e($payment['fee_structure']); ?></td>
+                                                                        <td class="fs-13 fw-semibold">₹<?php echo e(number_format($payment['amount'], 2)); ?></td>
+                                                                        <td class="fs-13">
+                                                                            <?php if($payment['discount'] > 0): ?>
+                                                                                <span class="text-success">-₹<?php echo e(number_format($payment['discount'], 2)); ?></span>
+                                                                            <?php else: ?>
+                                                                                <span class="text-muted">-</span>
+                                                                            <?php endif; ?>
+                                                                        </td>
+                                                                        <td class="fs-13">
+                                                                            <span class="badge badge-soft-primary">
+                                                                                <?php echo e(ucfirst(str_replace('_', ' ', $payment['method']))); ?>
+
+                                                                            </span>
+                                                                        </td>
+                                                                        <td class="fs-13">
+                                                                            <code class="text-primary"><?php echo e($payment['receipt']); ?></code>
+                                                                        </td>
+                                                                        <td class="fs-13">
+                                                                            <?php if($payment['status'] == 'completed'): ?>
+                                                                                <span class="badge badge-soft-success">Completed</span>
+                                                                            <?php elseif($payment['status'] == 'pending'): ?>
+                                                                                <span class="badge badge-soft-warning">Pending</span>
+                                                                            <?php elseif($payment['status'] == 'failed'): ?>
+                                                                                <span class="badge badge-soft-danger">Failed</span>
+                                                                            <?php else: ?>
+                                                                                <span class="badge badge-soft-secondary"><?php echo e(ucfirst($payment['status'])); ?></span>
+                                                                            <?php endif; ?>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php else: ?>
+                                            <div class="text-center py-5">
+                                                <div class="avatar avatar-lg bg-light text-muted rounded-circle mx-auto mb-3">
+                                                    <i class="ti ti-credit-card fs-24"></i>
+                                                </div>
+                                                <h6 class="text-muted mb-2">No Payment Records</h6>
+                                                <p class="text-muted mb-0">No payment records found for this student.</p>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>

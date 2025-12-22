@@ -1,5 +1,62 @@
 @extends('layouts.institution')
 @section('title', 'Institution | Students Management')
+
+@push('styles')
+    <style>
+        #search-results {
+            top: 100%;
+            left: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        #search-results .list-group-item {
+            border-left: none;
+            border-right: none;
+            transition: background-color 0.2s;
+        }
+        
+        #search-results .list-group-item:first-child {
+            border-top: none;
+        }
+        
+        #search-results .list-group-item:last-child {
+            border-bottom: none;
+        }
+        
+        #search-results .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        #student-search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        #siblings-cards-container .card {
+            border: 1px solid #e9ecef;
+        }
+        
+        #siblings-cards-container .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+@endpush
+
 @section('content')
     @if (session('success'))
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
@@ -33,6 +90,9 @@
                 </nav>
             </div>
             <div>
+                <button type="button" class="btn btn-info" id="viewSiblingsBtn">
+                    <i class="ti ti-users me-1"></i>View Students with Siblings
+                </button>
                 <a href="{{ route('institution.admission.admission-form') }}" class="btn btn-outline-secondary"
                     id="openAdmissionForm">
                     <i class="ti ti-form me-1"></i>Open Admission Form
@@ -49,6 +109,80 @@
             </div>
         </div>
         <!-- End Page Header -->
+
+        <!-- Student Search Section -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="position-relative">
+                    <label for="student-search-input" class="form-label fw-semibold mb-2">
+                        <i class="ti ti-search me-1"></i>Search Students
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="ti ti-search"></i>
+                        </span>
+                        <input type="text" 
+                               class="form-control border-start-0" 
+                               id="student-search-input" 
+                               placeholder="Search by name, student ID, admission number, roll number, or email..."
+                               autocomplete="off">
+                        <button class="btn btn-outline-secondary" type="button" id="clear-search" style="display: none;">
+                            <i class="ti ti-x"></i>
+                        </button>
+                    </div>
+                    <!-- Search Results Dropdown -->
+                    <div id="search-results" class="position-absolute w-100 bg-white border rounded shadow-lg mt-1" 
+                         style="display: none; z-index: 1000; max-height: 400px; overflow-y: auto;">
+                        <div id="search-results-list" class="list-group list-group-flush">
+                            <!-- Results will be populated here -->
+                        </div>
+                        <div id="search-loading" class="text-center p-3" style="display: none;">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span class="ms-2 text-muted">Searching...</span>
+                        </div>
+                        <div id="search-empty" class="text-center p-3 text-muted" style="display: none;">
+                            <i class="ti ti-search-off fs-24 mb-2 d-block"></i>
+                            <p class="mb-0">No students found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students with Siblings Section (Hidden by default) -->
+        <div id="siblings-section" style="display: none;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="backToClassesBtn">
+                        <i class="ti ti-arrow-left me-1"></i>Back to Classes
+                    </button>
+                    <h5 class="mb-0 fw-bold">
+                        <i class="ti ti-users me-2"></i>Students with Siblings
+                    </h5>
+                </div>
+            </div>
+            
+            <div id="siblings-loading" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted mt-2">Loading students with siblings...</p>
+            </div>
+            
+            <div id="siblings-empty" class="text-center py-5" style="display: none;">
+                <div class="avatar avatar-lg bg-light text-muted rounded-circle mx-auto mb-3">
+                    <i class="ti ti-users-off fs-24"></i>
+                </div>
+                <h5 class="text-muted">No Students with Siblings</h5>
+                <p class="text-muted">No students with siblings found in your institution.</p>
+            </div>
+            
+            <div id="siblings-cards-container" class="row">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
 
         <!-- Classes Cards Section -->
         <div id="classes-section">
@@ -200,26 +334,28 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="section_id" class="form-label">Select Section <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-select" id="section_id" name="section_id" required>
-                                        <option value="">Choose Section</option>
+                                    <label for="section_id" class="form-label">Select Section</label>
+                                    <select class="form-select" id="section_id" name="section_id">
+                                        <option value="">Choose Section (Optional)</option>
                                     </select>
                                     @error('section_id')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
+                                    <div class="form-text">
+                                        <small class="text-muted">Section is optional. Leave blank if not applicable.</small>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="csv_file" class="form-label">Upload CSV File <span
+                                <label for="csv_file" class="form-label">Upload CSV/Excel File <span
                                         class="text-danger">*</span></label>
                                 <input type="file" class="form-control" id="csv_file" name="csv_file"
-                                    accept=".csv" required>
+                                    accept=".csv,.xlsx,.xls" required>
                                 <div class="form-text">
                                     <small class="text-muted">
                                         <i class="ti ti-info-circle me-1"></i>
-                                        Please upload a CSV file with student data.
+                                        Please upload a CSV or Excel file (.csv, .xlsx, .xls) with student data.
                                         <a href="#" id="downloadTemplate" class="text-primary">Download
                                             template</a>
                                     </small>
@@ -229,42 +365,54 @@
                                 @enderror
                             </div>
 
-                            <!-- CSV Template Information -->
+                            <!-- CSV/Excel Template Information -->
                             <div class="alert alert-info">
                                 <h6 class="alert-heading">
-                                    <i class="ti ti-info-circle me-1"></i>CSV Format Requirements
+                                    <i class="ti ti-info-circle me-1"></i>CSV/Excel Format Requirements
                                 </h6>
-                                <p class="mb-2">Your CSV file should contain the following columns:</p>
+                                <p class="mb-2">Your file should contain the following columns (Excel format supported):</p>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <small>
                                             <strong>Required Fields:</strong><br>
-                                            • first_name<br>
-                                            • last_name<br>
-                                            • email<br>
-                                            • phone<br>
-                                            • dob (YYYY-MM-DD)<br>
-                                            • address<br>
-                                            • pincode<br>
-                                            • gender (Male/Female/Other)<br>
-                                            • district
+                                            • <strong>Name</strong> (First Middle Last or First Last)<br>
+                                            • <strong>Gender</strong> (Male/Female/Other)<br>
+                                            • <strong>DOB</strong> (Date of Birth - YYYY-MM-DD, DD/MM/YYYY, or DD-MM-YYYY)<br>
                                         </small>
                                     </div>
                                     <div class="col-md-6">
                                         <small>
                                             <strong>Optional Fields:</strong><br>
-                                            • middle_name<br>
-                                            • permanent_address<br>
-                                            • caste_tribe<br>
-                                            • admission_date<br>
-                                            • admission_number<br>
-                                            • roll_number<br>
-                                            • religion<br>
-                                            • blood_group<br>
-                                            • father_name<br>
-                                            • mother_name
+                                            • Roll No.<br>
+                                            • DOB Status<br>
+                                            • PEN No.<br>
+                                            • Aadhaar No.<br>
+                                            • Mother's Name<br>
+                                            • Father's Name<br>
+                                            • WhatsApp No. (used as phone if phone not provided)<br>
+                                            • Admission Date<br>
+                                            • Address Verification<br>
+                                            • Admission Amount<br>
+                                            • KSO ID<br>
+                                            • Total Payment<br>
+                                            • Admission Status<br>
+                                            • Sibling Name<br>
+                                            • Name of the School<br>
+                                            • Class<br>
+                                            • Result<br>
+                                            • Email<br>
+                                            • Phone<br>
+                                            • Address<br>
+                                            • Pincode<br>
+                                            • District
                                         </small>
                                     </div>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <strong>Note:</strong> The system will automatically map Excel column headers to database fields. 
+                                        Section assignment is optional and can be set during import or left blank.
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -507,26 +655,8 @@
             // Handle template download
             downloadTemplate.addEventListener('click', function(e) {
                 e.preventDefault();
-
-                // Create CSV template content
-                const csvContent = [
-                    'first_name,last_name,middle_name,email,phone,dob,address,permanent_address,pincode,gender,caste_tribe,district,admission_date,admission_number,roll_number,religion,blood_group,father_name,mother_name',
-                    'John,Doe,Michael,john.doe@example.com,1234567890,2010-05-15,123 Main St,123 Main St,12345,Male,General,New York,2024-01-15,ADM001,001,Christian,A+,John Doe Sr,Jane Doe',
-                    'Jane,Smith,,jane.smith@example.com,0987654321,2010-08-20,456 Oak Ave,,54321,Female,General,California,2024-01-15,ADM002,002,Muslim,B+,Robert Smith,Mary Smith'
-                ].join('\n');
-
-                // Create and download file
-                const blob = new Blob([csvContent], {
-                    type: 'text/csv'
-                });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'students_import_template.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+                // Redirect to server-side template download
+                window.location.href = '{{ route("institution.students.download-template") }}';
             });
 
             // Handle export class selection change
@@ -656,5 +786,309 @@
 @endsection
 
 @push('scripts')
+    <script>
+        // Escape HTML function (shared)
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('student-search-input');
+            const searchResults = document.getElementById('search-results');
+            const searchResultsList = document.getElementById('search-results-list');
+            const searchLoading = document.getElementById('search-loading');
+            const searchEmpty = document.getElementById('search-empty');
+            const clearSearchBtn = document.getElementById('clear-search');
+            let searchTimeout;
+
+            // Show/hide clear button
+            searchInput.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    clearSearchBtn.style.display = 'block';
+                } else {
+                    clearSearchBtn.style.display = 'none';
+                    hideSearchResults();
+                }
+            });
+
+            // Clear search
+            clearSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                this.style.display = 'none';
+                hideSearchResults();
+                searchInput.focus();
+            });
+
+            // Search on keypress
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                // Clear previous timeout
+                clearTimeout(searchTimeout);
+                
+                if (query.length < 2) {
+                    hideSearchResults();
+                    return;
+                }
+
+                // Show loading state
+                showSearchLoading();
+
+                // Debounce search
+                searchTimeout = setTimeout(function() {
+                    performSearch(query);
+                }, 300);
+            });
+
+            // Hide results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    hideSearchResults();
+                }
+            });
+
+            // Perform search
+            function performSearch(query) {
+                fetch(`{{ route('institution.students.search') }}?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideSearchLoading();
+                    
+                    if (data.students && data.students.length > 0) {
+                        displaySearchResults(data.students);
+                    } else {
+                        showSearchEmpty();
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    hideSearchLoading();
+                    showSearchEmpty();
+                });
+            }
+
+            // Display search results
+            function displaySearchResults(students) {
+                searchResultsList.innerHTML = '';
+                searchEmpty.style.display = 'none';
+                
+                students.forEach(function(student) {
+                    const listItem = document.createElement('a');
+                    listItem.href = student.url;
+                    listItem.className = 'list-group-item list-group-item-action';
+                    listItem.style.cursor = 'pointer';
+                    
+                    const photoHtml = student.photo 
+                        ? `<img src="/${student.photo}" alt="${student.name}" class="avatar avatar-sm avatar-rounded me-2" style="object-fit: cover;" onerror="this.onerror=null; this.src=''; this.outerHTML='<span class=\\'avatar avatar-sm avatar-rounded bg-light border me-2\\'><i class=\\'ti ti-user text-muted\\'></i></span>';">`
+                        : `<span class="avatar avatar-sm avatar-rounded bg-light border me-2"><i class="ti ti-user text-muted"></i></span>`;
+                    
+                    listItem.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            ${photoHtml}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-semibold">${escapeHtml(student.name)}</h6>
+                                <small class="text-muted">
+                                    <span class="me-2"><i class="ti ti-id me-1"></i>${escapeHtml(student.student_id || 'N/A')}</span>
+                                    ${student.admission_number ? `<span class="me-2"><i class="ti ti-ticket me-1"></i>${escapeHtml(student.admission_number)}</span>` : ''}
+                                    ${student.roll_number ? `<span class="me-2"><i class="ti ti-hash me-1"></i>${escapeHtml(student.roll_number)}</span>` : ''}
+                                </small>
+                                <div class="mt-1">
+                                    <span class="badge badge-soft-primary me-1">${escapeHtml(student.class)}</span>
+                                    ${student.section !== 'N/A' ? `<span class="badge badge-soft-secondary">${escapeHtml(student.section)}</span>` : ''}
+                                </div>
+                            </div>
+                            <i class="ti ti-chevron-right text-muted"></i>
+                        </div>
+                    `;
+                    
+                    searchResultsList.appendChild(listItem);
+                });
+                
+                searchResults.style.display = 'block';
+            }
+
+            // Show loading state
+            function showSearchLoading() {
+                searchResultsList.innerHTML = '';
+                searchEmpty.style.display = 'none';
+                searchLoading.style.display = 'block';
+                searchResults.style.display = 'block';
+            }
+
+            // Hide loading state
+            function hideSearchLoading() {
+                searchLoading.style.display = 'none';
+            }
+
+            // Show empty state
+            function showSearchEmpty() {
+                searchResultsList.innerHTML = '';
+                searchLoading.style.display = 'none';
+                searchEmpty.style.display = 'block';
+                searchResults.style.display = 'block';
+            }
+
+            // Hide search results
+            function hideSearchResults() {
+                searchResults.style.display = 'none';
+                searchResultsList.innerHTML = '';
+                searchLoading.style.display = 'none';
+                searchEmpty.style.display = 'none';
+            }
+
+            // Handle keyboard navigation
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    hideSearchResults();
+                    this.blur();
+                }
+            });
+        });
+
+        // Students with Siblings functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewSiblingsBtn = document.getElementById('viewSiblingsBtn');
+            const backToClassesBtn = document.getElementById('backToClassesBtn');
+            const siblingsSection = document.getElementById('siblings-section');
+            const classesSection = document.getElementById('classes-section');
+            const siblingsCardsContainer = document.getElementById('siblings-cards-container');
+            const siblingsLoading = document.getElementById('siblings-loading');
+            const siblingsEmpty = document.getElementById('siblings-empty');
+
+            // View students with siblings
+            if (viewSiblingsBtn) {
+                viewSiblingsBtn.addEventListener('click', function() {
+                    loadStudentsWithSiblings();
+                });
+            }
+
+            // Back to classes
+            if (backToClassesBtn) {
+                backToClassesBtn.addEventListener('click', function() {
+                    classesSection.style.display = 'block';
+                    siblingsSection.style.display = 'none';
+                });
+            }
+
+            function loadStudentsWithSiblings() {
+                // Show siblings section and hide classes section
+                classesSection.style.display = 'none';
+                siblingsSection.style.display = 'block';
+                siblingsCardsContainer.innerHTML = '';
+                siblingsLoading.style.display = 'block';
+                siblingsEmpty.style.display = 'none';
+
+                fetch('{{ route("institution.students.with-siblings") }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    siblingsLoading.style.display = 'none';
+                    
+                    if (data.students && data.students.length > 0) {
+                        displaySiblingsCards(data.students);
+                    } else {
+                        siblingsEmpty.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading students with siblings:', error);
+                    siblingsLoading.style.display = 'none';
+                    siblingsEmpty.style.display = 'block';
+                });
+            }
+
+            function displaySiblingsCards(students) {
+                siblingsCardsContainer.innerHTML = '';
+                
+                students.forEach(function(student) {
+                    const card = document.createElement('div');
+                    card.className = 'col-lg-4 col-md-6 mb-4';
+                    
+                    const photoHtml = student.photo 
+                        ? `<img src="/${student.photo}" alt="${student.name}" class="avatar avatar-xl avatar-rounded mb-3" style="object-fit: cover;" onerror="this.onerror=null; this.src=''; this.outerHTML='<span class=\\'avatar avatar-xl avatar-rounded bg-light border mb-3\\'><i class=\\'ti ti-user fs-24 text-muted\\'></i></span>';"`
+                        : `<span class="avatar avatar-xl avatar-rounded bg-light border mb-3"><i class="ti ti-user fs-24 text-muted"></i></span>`;
+                    
+                    let siblingsHtml = '';
+                    if (student.siblings && student.siblings.length > 0) {
+                        siblingsHtml = '<div class="mt-3"><h6 class="fs-14 fw-semibold mb-2"><i class="ti ti-users me-1"></i>Siblings:</h6><div class="list-group list-group-flush">';
+                        student.siblings.forEach(function(sibling) {
+                            const siblingPhoto = sibling.photo 
+                                ? `<img src="/${sibling.photo}" alt="${sibling.name}" class="avatar avatar-sm avatar-rounded me-2" style="object-fit: cover;" onerror="this.onerror=null; this.src=''; this.outerHTML='<span class=\\'avatar avatar-sm avatar-rounded bg-light border me-2\\'><i class=\\'ti ti-user text-muted\\'></i></span>';"`
+                                : `<span class="avatar avatar-sm avatar-rounded bg-light border me-2"><i class="ti ti-user text-muted"></i></span>`;
+                            
+                            siblingsHtml += `
+                                <a href="${sibling.url}" class="list-group-item list-group-item-action border-0 px-0 py-2">
+                                    <div class="d-flex align-items-center">
+                                        ${siblingPhoto}
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0 fs-13 fw-semibold">${escapeHtml(sibling.name)}</h6>
+                                            <small class="text-muted">
+                                                <span class="me-2">${escapeHtml(sibling.student_id)}</span>
+                                                <span class="badge badge-soft-primary">${escapeHtml(sibling.class)}</span>
+                                            </small>
+                                        </div>
+                                        <i class="ti ti-chevron-right text-muted"></i>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                        siblingsHtml += '</div></div>';
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body text-center">
+                                ${photoHtml}
+                                <h5 class="card-title mb-2">
+                                    <a href="${student.url}" class="text-dark text-decoration-none">
+                                        ${escapeHtml(student.name)}
+                                    </a>
+                                </h5>
+                                <p class="text-muted mb-2">
+                                    <i class="ti ti-id me-1"></i>${escapeHtml(student.student_id || 'N/A')}
+                                </p>
+                                ${student.admission_number ? `<p class="text-muted mb-2"><i class="ti ti-ticket me-1"></i>${escapeHtml(student.admission_number)}</p>` : ''}
+                                ${student.roll_number ? `<p class="text-muted mb-2"><i class="ti ti-hash me-1"></i>${escapeHtml(student.roll_number)}</p>` : ''}
+                                <div class="mb-2">
+                                    <span class="badge badge-soft-primary me-1">${escapeHtml(student.class)}</span>
+                                    ${student.section !== 'N/A' ? `<span class="badge badge-soft-secondary">${escapeHtml(student.section)}</span>` : ''}
+                                </div>
+                                <div class="mb-2">
+                                    <span class="badge badge-soft-info">
+                                        <i class="ti ti-users me-1"></i>${student.siblings_count} Sibling${student.siblings_count !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
+                                ${siblingsHtml}
+                                <div class="mt-3">
+                                    <a href="${student.url}" class="btn btn-sm btn-primary">
+                                        <i class="ti ti-eye me-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    siblingsCardsContainer.appendChild(card);
+                });
+            }
+        });
+    </script>
     <script src="{{ asset('custom/js/institution/students.js') }}"></script>
 @endpush

@@ -151,6 +151,7 @@ class Institution extends Authenticatable
             'students' => 'Students',
             'nonworkingstaff' => 'Non-Working Staff',
             'attendance' => 'Attendance',
+            'boarding' => 'Boarding',
             'academics' => 'Academics',
             'classes' => 'Classes',
             'sections' => 'Sections',
