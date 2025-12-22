@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/w82ytnzbuzhe/envisiontechsolution
+    - /bin/rsync -av --exclude='.git' --exclude='node_modules' ./ $DEPLOYPATH
